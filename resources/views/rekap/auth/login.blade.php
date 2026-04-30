@@ -35,7 +35,7 @@
     </style>
 </head>
 
-<body>disini kan harsusnya ada pengecekan apakah sudah login atau belum, kalau sudah login maka akan diarahkan ke halaman rekapitulasi, kalau belum maka akan tetap di halaman login
+<body>
     <main class="main-content  mt-0">
         <div class="page-header align-items-start min-vh-100"
             style="background-image: url('https://images.unsplash.com/photo-1484417894907-623942c8ee29?auto=format&fit=crop&q=80&w=1932&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">

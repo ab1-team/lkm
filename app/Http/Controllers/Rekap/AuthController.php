@@ -20,7 +20,6 @@ class AuthController extends Controller
         return view('rekap.auth.login')->with(compact('nama_rekap'));
     }
 
-
     public function login(Request $request)
     {
         $url = $request->getHost();
