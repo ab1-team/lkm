@@ -13,6 +13,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        error_reporting(E_ALL & ~E_DEPRECATED);
+
         if ($this->app->isLocal()) {
             $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
         }

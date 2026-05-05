@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL & ~E_DEPRECATED);
+ini_set('display_errors', '0'); // Prevent warnings from breaking headers
+
 ini_set('memory_limit', '3072M');
 ini_set('max_execution_time', '300');
 
