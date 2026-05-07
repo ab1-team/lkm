@@ -330,6 +330,9 @@ $keuangan = new Keuangan();
 <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
     <tr>
         <td colspan="3">&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="3">&nbsp;</td>
         <td align="center">
             {{ $kec->nama_kec }}, {{ Tanggal::tglLatin($tgl_kondisi) }}
         </td>
