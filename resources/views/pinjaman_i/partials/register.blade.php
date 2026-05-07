@@ -227,7 +227,7 @@
             </p>
         </div>
     </div>
-    <button type="submit" id="SimpanProposal" class="btn btn-dark btn-sm custom-button">Simpan Proposal</button>
+    <button type="submit" id="SimpanProposal" class="btn btn-dark custom-button">Simpan Proposal</button>
     <br><br><br>
 </div>
 <script>

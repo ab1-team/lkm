@@ -51,6 +51,7 @@
         .settings-nav-item {
             display: flex !important;
             align-items: center !important;
+            justify-content: flex-start !important;
             gap: 16px !important;
             padding: 10px 16px !important;
             color: #475569 !important;
