@@ -17,14 +17,10 @@
 
     <!-- Guidance & Button -->
     <div class="mt-2">
-        <p class="text-xs text-muted mb-3" style="color: #64748b; font-size: 0.75rem;">
+        <p class="text-xs text-muted mb-0" style="color: #64748b; font-size: 0.75rem;">
             <i class="fa-solid fa-circle-info me-1 text-primary"></i> 
             Format didukung: <strong>JPG, JPEG, PNG</strong> (Maks. 4MB).
         </p>
-        <button class="btn btn-primary px-4 py-2 border-radius-lg font-weight-bold shadow-sm" 
-                id="EditLogoTrigger" style="background: linear-gradient(90deg, #3b82f6, #8b5cf6); border: none; font-size: 0.85rem; letter-spacing: 0.5px; transition: all 0.3s ease; border-radius: 8px; color: white;">
-            <i class="fa fa-cloud-upload-alt me-2"></i> Pilih File Logo
-        </button>
     </div>
 </div>
 
@@ -47,19 +43,11 @@
     .logo-upload-container:hover .logo-hover-overlay i {
         transform: scale(1) !important;
     }
-    #EditLogoTrigger:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(139, 92, 246, 0.35) !important;
-        opacity: 0.95;
-    }
-    #EditLogoTrigger:active {
-        transform: translateY(0);
-    }
 </style>
 
 <script>
     $(document).ready(function() {
-        $(document).on('click', '#EditLogoTrigger', function(e) {
+        $(document).on('click', '#EditLogo', function(e) {
             e.preventDefault();
             $('#logo_kec').trigger('click');
         });

@@ -6,12 +6,12 @@
     <style>
         /* Modern Sidebar Navigation Styling */
         .settings-sidebar-card {
-            border: none;
-            border-radius: 16px;
-            background-color: #ffffff;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), 0 1px 8px rgba(0, 0, 0, 0.02);
-            overflow: hidden;
-            padding: 16px 12px;
+            border: none !important;
+            border-radius: 16px !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), 0 1px 8px rgba(0, 0, 0, 0.02) !important;
+            overflow: hidden !important;
+            padding: 16px 12px !important;
         }
 
         .settings-sidebar-title {
@@ -38,46 +38,50 @@
         .settings-nav-list {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 0px;
             padding-left: 0;
             list-style: none;
             margin-bottom: 0;
         }
 
         .settings-nav-list .mb-3 {
-            margin-bottom: 2px !important;
+            margin-bottom: 0px !important;
         }
 
         .settings-nav-item {
             display: flex !important;
             align-items: center !important;
             gap: 16px !important;
-            padding: 8px 16px !important;
+            padding: 10px 16px !important;
             color: #475569 !important;
-            background-color: transparent;
-            border: none;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            cursor: pointer;
-            width: 100%;
+            background-color: transparent !important;
+            background: transparent !important;
+            border: none !important;
+            border-radius: 12px !important;
+            text-decoration: none !important;
+            font-weight: 600 !important;
+            font-size: 0.9rem !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            position: relative !important;
+            cursor: pointer !important;
+            width: 100% !important;
+            box-shadow: none !important;
         }
 
         /* Hover State */
         .settings-nav-item:hover {
             color: #1e293b !important;
-            background-color: #f8fafc;
-            transform: translateX(4px);
+            background-color: rgba(241, 245, 249, 0.6) !important;
+            transform: translateX(4px) !important;
+            box-shadow: none !important;
         }
 
         /* Active State */
         .settings-nav-item.active {
             color: #2563eb !important;
-            background: linear-gradient(90deg, rgba(37, 99, 235, 0.08), rgba(139, 92, 246, 0.03));
-            box-shadow: none;
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.12), 0 4px 8px -4px rgba(37, 99, 235, 0.08) !important;
         }
 
         .settings-nav-item::before {
@@ -132,7 +136,10 @@
                     <div class="col-md-4">
                         <div class="main-card mb-3 card settings-sidebar-card">
                             <ul class="body-tabs body-tabs-layout tabs-animated body-tabs-animated nav flex-column settings-nav-list">
-                                <h5 class="card-title settings-sidebar-title">&nbsp;&nbsp;&nbsp;Pengaturan !</h5>
+                                <div class="settings-sidebar-title">
+                                    <i class="fa-solid fa-sliders"></i>
+                                    <span>Pengaturan SOP</span>
+                                </div>
                                 <div class="mb-3">
                                     <a role="tab" class="btn btn-white settings-nav-item active" id="wellcome" data-bs-toggle="tab" href="#tab-content-0">
                                         <i class="fa-solid fa-home"></i>
