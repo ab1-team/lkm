@@ -2,34 +2,36 @@
 
 @section('content')
     <div class="app-main__inner">
-        <div class="card-body">
-            <ul class="nav nav-pills nav-fill">
-                <li class="nav-item">
-                    <a data-bs-toggle="tab" id="tab-0" href="#Proposal" class="nav-link {{ $status == 'p' ? 'active' : '' }}">
-                        <i class="fa-solid fa-file-circle-plus"></i><b>&nbsp; &nbsp;Proposal (P)</b>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="tab" id="tab-1" href="#Verified" class="nav-link {{ $status == 'v' ? 'active' : '' }}">
-                        <i class="fa fa-window-restore"></i><b>&nbsp; &nbsp;Verified (V)</b>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="tab" id="tab-2" href="#Waiting" class="nav-link {{ $status == 'w' ? 'active' : '' }}">
-                        <i class="fa-solid fa-history"></i><b>&nbsp; &nbsp;Waiting (W)</b>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="tab" id="tab-3" href="#Aktif" class="nav-link {{ $status == 'a' ? 'active' : '' }}">
-                        <i class="fa-solid fa-arrow-down-up-across-line"></i><b>&nbsp; &nbsp;Aktif (A)</b>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="tab" id="tab-4" href="#Lunas" class="nav-link {{ $status == 'l' ? 'active' : '' }}">
-                        <i class="fa-solid fa-person-circle-check"></i><b>&nbsp; &nbsp;Lunas (L)</b>
-                    </a>
-                </li>
-            </ul>
+        <div class="card mb-3 border-0 shadow-sm" style="border-radius: 12px; overflow: hidden; background: #fff;">
+            <div class="card-body p-1">
+                <ul class="nav nav-pills nav-fill" style="margin: 0 !important;">
+                    <li class="nav-item">
+                        <a data-bs-toggle="tab" id="tab-0" href="#Proposal" class="nav-link {{ $status == 'p' ? 'active' : '' }}" style="border-radius: 10px !important;">
+                            <i class="fa-solid fa-file-circle-plus"></i><b>&nbsp; &nbsp;Proposal (P)</b>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a data-bs-toggle="tab" id="tab-1" href="#Verified" class="nav-link {{ $status == 'v' ? 'active' : '' }}" style="border-radius: 10px !important;">
+                            <i class="fa fa-window-restore"></i><b>&nbsp; &nbsp;Verified (V)</b>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a data-bs-toggle="tab" id="tab-2" href="#Waiting" class="nav-link {{ $status == 'w' ? 'active' : '' }}" style="border-radius: 10px !important;">
+                            <i class="fa-solid fa-history"></i><b>&nbsp; &nbsp;Waiting (W)</b>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a data-bs-toggle="tab" id="tab-3" href="#Aktif" class="nav-link {{ $status == 'a' ? 'active' : '' }}" style="border-radius: 10px !important;">
+                            <i class="fa-solid fa-arrow-down-up-across-line"></i><b>&nbsp; &nbsp;Aktif (A)</b>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a data-bs-toggle="tab" id="tab-4" href="#Lunas" class="nav-link {{ $status == 'l' ? 'active' : '' }}" style="border-radius: 10px !important;">
+                            <i class="fa-solid fa-person-circle-check"></i><b>&nbsp; &nbsp;Lunas (L)</b>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
         
         <style>

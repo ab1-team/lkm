@@ -2,65 +2,80 @@
 <html lang="en">
 
 <head>
+    <style>body { opacity: 0 !important; }</style>
+    <script>
+        window.paceOptions = {
+            ajax: false,
+            document: true,
+            eventLag: false,
+            restartOnPushState: false,
+            restartOnRequestAfter: false
+        };
+    </script>
 
     <style>
-        .loader-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9998;
+        body.loaded {
+            opacity: 1 !important;
+            transition: opacity 0.15s ease-in-out;
         }
 
-        .loader {
-            width: 120px;
-            height: 20px;
-            border-radius: 20px;
-            background:
-                linear-gradient(orange 0 0) 0/0% no-repeat lightblue;
-            animation: l2 2s infinite steps(10);
+        /* ===================== UNIFIED CARD & TYPOGRAPHY SYSTEM ===================== */
+        .card {
+            border-radius: 12px !important;
+            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02) !important;
+            border: 1px solid rgba(0, 0, 0, 0.07) !important;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
+        }
+        .card:hover {
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08), 0 8px 8px -4px rgba(0, 0, 0, 0.03) !important;
+        }
+        .card-header, .card-footer {
+            border-radius: 12px !important;
+        }
+        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+            font-family: 'Open Sans', sans-serif !important;
+            font-weight: 600 !important;
+            color: #344767 !important;
+            letter-spacing: -0.025em !important;
+        }
+        body, p, span, td, th, li, a {
+            font-family: 'Open Sans', sans-serif !important;
+            letter-spacing: -0.01em !important;
         }
 
-        @keyframes l2 {
-            100% {
-                background-size: 110%
-            }
+        /* ===================== UNIFIED BUTTON SYSTEM ===================== */
+        .btn {
+            border-radius: 8px !important; /* Lengkungan tombol seragam */
+            font-weight: 600 !important;
+            padding: 0.55rem 1.25rem !important; /* Padding elegan modern */
+            font-size: 0.825rem !important;
+            letter-spacing: -0.01em !important;
+            transition: all 0.15s ease-in-out !important;
+            text-transform: none !important; /* Nonaktifkan paksaan uppercase */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 6px !important;
         }
-
-        .hidden {
-            display: none;
+        .btn:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 7px 14px -3px rgba(0, 0, 0, 0.12), 0 3px 6px -2px rgba(0, 0, 0, 0.08) !important;
         }
-    </style>
-
-
-    <style>
-        .loader {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 120px;
-            height: 20px;
-            border-radius: 20px;
-            background:
-                linear-gradient(orange 0 0) 0/0% no-repeat lightblue;
-            animation: l2 2s infinite steps(10);
-            z-index: 9999;
+        .btn:active {
+            transform: translateY(0) !important;
         }
-
-        @keyframes l2 {
-            100% {
-                background-size: 110%
-            }
+        /* Tombol Ukuran Kecil */
+        .btn.btn-sm, .btn-sm, .btn-xs, button.btn-sm {
+            padding: 0.35rem 0.85rem !important;
+            font-size: 0.75rem !important;
+            border-radius: 6px !important;
         }
-
-        .hidden {
-            display: none;
+        /* Tombol Ukuran Besar */
+        .btn.btn-lg, .btn-lg {
+            padding: 0.75rem 1.75rem !important;
+            font-size: 0.95rem !important;
+            border-radius: 10px !important;
         }
     </style>
 
@@ -93,7 +108,7 @@
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pe7-icon@1.0.4/dist/dist/pe-icon-7-stroke.css">
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
 
     <script defer src="/assets/scripts/main.js"></script>
@@ -194,9 +209,7 @@
 </head>
 
 <body>
-    <div class="loader-overlay">
-        <div class="loader"></div>
-    </div>
+
     <div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
         @include('layouts.navbar')
         <div class="ui-theme-settings">
@@ -655,7 +668,7 @@
     <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
     <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
 
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
@@ -918,10 +931,16 @@
     @endif
 
     <script>
-        window.addEventListener("load", function() {
-            document.querySelector(".loader").classList.add("hidden");
-            document.querySelector(".loader-overlay").classList.add("hidden");
-        });
+        (function() {
+            var isLoaded = false;
+            function showPage() {
+                if (isLoaded) return;
+                isLoaded = true;
+                document.body.classList.add('loaded');
+            }
+            window.addEventListener('load', showPage);
+            setTimeout(showPage, 300);
+        })();
     </script>
 
 

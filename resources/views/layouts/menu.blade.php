@@ -9,6 +9,34 @@
                     if (request()->is(ltrim($subchild->link, '/'))) { $hasActiveChild = true; break 2; }
                 }
             }
+
+            // Override "Pelayanan Kredit" to "Pelayanan Kredit Individu"
+            $title = $item->title;
+            if ($title === 'Pelayanan Kredit') {
+                $title = 'Pelayanan Kredit Individu';
+            }
+
+            // Map generic icons to beautiful, specific FontAwesome icons
+            $icon = $item->icon;
+            if (empty($icon) || $icon === 'ni ni-bullet-list-67') {
+                if ($item->title === 'Dashboard') {
+                    $icon = 'fas fa-chart-line';
+                } elseif ($item->title === 'Pengaturan') {
+                    $icon = 'fas fa-sliders-h';
+                } elseif ($item->title === 'Basis Data') {
+                    $icon = 'fas fa-database';
+                } elseif ($item->title === 'Pelayanan Kredit') {
+                    $icon = 'fas fa-user-tie';
+                } elseif ($item->title === 'Pelayanan Kredit Kelompok') {
+                    $icon = 'fas fa-users';
+                } elseif ($item->title === 'Transaksi') {
+                    $icon = 'fas fa-exchange-alt';
+                } elseif ($item->title === 'Laporan') {
+                    $icon = 'fas fa-file-invoice-dollar';
+                } else {
+                    $icon = 'ni ni-bullet-list-67';
+                }
+            }
         @endphp
 
         @if($item->child->isEmpty())
@@ -17,9 +45,9 @@
                 <a class="nav-link {{ $isActive ? 'active' : '' }}"
                    href="{{ $item->link !== '#' && !str_contains($item->link, '#') ? url($item->link) : 'javascript:;' }}">
                     <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="{{ $item->icon ?? 'ni ni-bullet-list-67' }} text-dark text-sm opacity-10"></i>
+                        <i class="{{ $icon }} text-dark text-sm opacity-10"></i>
                     </div>
-                    <span class="nav-link-text ms-1">{{ $item->title }}</span>
+                    <span class="nav-link-text ms-1">{{ $title }}</span>
                 </a>
             </li>
         @else
@@ -29,9 +57,9 @@
                    href="javascript:;"
                    data-target="submenu-{{ $item->id }}">
                     <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="{{ $item->icon ?? 'ni ni-bullet-list-67' }} text-dark text-sm opacity-10"></i>
+                        <i class="{{ $icon }} text-dark text-sm opacity-10"></i>
                     </div>
-                    <span class="nav-link-text ms-1">{{ $item->title }}</span>
+                    <span class="nav-link-text ms-1">{{ $title }}</span>
                     <i class="fas fa-chevron-down menu-arrow"></i>
                 </a>
 
@@ -88,6 +116,18 @@
 </ul>
 
 <style>
+    /* Lebarkan sidebar sedikit pada Desktop agar teks panjang muat sempurna */
+    @media (min-width: 1200px) {
+        #sidenav-main {
+            width: 270px !important;
+            max-width: 270px !important;
+        }
+        /* Geser main-content agar tidak menabrak sidebar */
+        .g-sidenav-show .main-content {
+            margin-left: 290px !important;
+        }
+    }
+
     /* Submenu tersembunyi default, tampil saat .open */
     .sidenav-submenu {
         display: none;
@@ -102,13 +142,21 @@
         display: none !important;
     }
 
-    /* Panah custom 1 saja */
+    /* Jadikan nav-link menu-toggle sebagai flexbox agar posisi icon buka-tutup sejajar di pojok kanan */
+    #sidenav-main .nav-link.menu-toggle {
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding-right: 1.5rem !important;
+    }
+
+    /* Panah custom - Sejajar sempurna di Pojok Kanan */
     .menu-toggle .menu-arrow {
-        margin-left: auto;
-        font-size: 0.65rem;
+        margin-left: auto !important;
+        font-size: 0.75rem !important;
         color: #7b809a;
         transition: transform 0.3s ease;
-        display: inline-block;
+        display: inline-block !important;
     }
     .menu-toggle.open .menu-arrow {
         transform: rotate(180deg);

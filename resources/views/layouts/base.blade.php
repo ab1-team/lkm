@@ -8,6 +8,16 @@
 <html lang="en">
 
 <head>
+    <style>body { opacity: 0 !important; }</style>
+    <script>
+        window.paceOptions = {
+            ajax: false,
+            document: true,
+            eventLag: false,
+            restartOnPushState: false,
+            restartOnRequestAfter: false
+        };
+    </script>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Language" content="en">
@@ -43,8 +53,7 @@
   <!-- Quill -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" />
 
-  <!-- Summernote -->
-  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
 
   <!-- jQuery UI -->
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
@@ -92,42 +101,72 @@
             }
         }
 
-        /* ===================== LOADER ===================== */
-        .loader-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9998;
+        /* ===================== FADE-IN FOUC PREVENTER ===================== */
+        body {
+            opacity: 0;
+            transition: opacity 0.15s ease-in-out;
+        }
+        body.loaded {
+            opacity: 1 !important;
         }
 
-        .loader {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            height: 4px;
-            width: 130px;
-            --c: no-repeat linear-gradient(#5e72e4 0 0);
-            background: var(--c), var(--c), #c5cdf9;
-            background-size: 60% 100%;
-            animation: l16 3s infinite;
-            z-index: 9999;
+        /* ===================== UNIFIED CARD & TYPOGRAPHY SYSTEM ===================== */
+        .card {
+            border-radius: 12px !important;
+            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02) !important;
+            border: 1px solid rgba(0, 0, 0, 0.07) !important;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
+        }
+        .card:hover {
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08), 0 8px 8px -4px rgba(0, 0, 0, 0.03) !important;
+        }
+        .card-header, .card-footer {
+            border-radius: 12px !important;
+        }
+        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+            font-family: 'Open Sans', sans-serif !important;
+            font-weight: 600 !important;
+            color: #344767 !important;
+            letter-spacing: -0.025em !important;
+        }
+        body, p, span, td, th, li, a {
+            font-family: 'Open Sans', sans-serif !important;
+            letter-spacing: -0.01em !important;
         }
 
-        @keyframes l16 {
-            0%   { background-position: -150% 0, -150% 0; }
-            66%  { background-position:  250% 0, -150% 0; }
-            100% { background-position:  250% 0,  250% 0; }
+        /* ===================== UNIFIED BUTTON SYSTEM ===================== */
+        .btn {
+            border-radius: 8px !important; /* Lengkungan tombol seragam */
+            font-weight: 600 !important;
+            padding: 0.55rem 1.25rem !important; /* Padding elegan modern */
+            font-size: 0.825rem !important;
+            letter-spacing: -0.01em !important;
+            transition: all 0.15s ease-in-out !important;
+            text-transform: none !important; /* Nonaktifkan paksaan uppercase */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 6px !important;
         }
-
-        .hidden {
-            display: none;
+        .btn:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 7px 14px -3px rgba(0, 0, 0, 0.12), 0 3px 6px -2px rgba(0, 0, 0, 0.08) !important;
+        }
+        .btn:active {
+            transform: translateY(0) !important;
+        }
+        /* Tombol Ukuran Kecil */
+        .btn.btn-sm, .btn-sm, .btn-xs, button.btn-sm {
+            padding: 0.35rem 0.85rem !important;
+            font-size: 0.75rem !important;
+            border-radius: 6px !important;
+        }
+        /* Tombol Ukuran Besar */
+        .btn.btn-lg, .btn-lg {
+            padding: 0.75rem 1.75rem !important;
+            font-size: 0.95rem !important;
+            border-radius: 10px !important;
         }
 
         .cke_notifications_area {
@@ -227,10 +266,7 @@
 
 <body class="g-sidenav-show bg-gray-100">
 
-    {{-- ===================== LOADER OVERLAY ===================== --}}
-    <div class="loader-overlay">
-        <div class="loader"></div>
-    </div>
+
 
     <div class="min-height-300 bg-dark position-absolute w-100"></div>
 
@@ -555,7 +591,7 @@
     <script src="/assets/js/plugins/choices.min.js"></script>
     <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
     <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <script src="//cdn.quilljs.com/1.3.7/quill.min.js"></script>
 
@@ -1005,14 +1041,18 @@
     {{-- ===================== ARGON DASHBOARD JS ===================== --}}
     <script src="{{ asset('argon/js/argon-dashboard.min.js') }}?v=2.1.0"></script>
 
-    {{-- Sembunyikan loader setelah halaman selesai dimuat --}}
+    {{-- Fade-in halaman setelah selesai dimuat --}}
     <script>
-        window.addEventListener('load', function () {
-            var overlay = document.querySelector('.loader-overlay');
-            var loader  = document.querySelector('.loader');
-            if (overlay) overlay.classList.add('hidden');
-            if (loader)  loader.classList.add('hidden');
-        });
+        (function() {
+            var isLoaded = false;
+            function showPage() {
+                if (isLoaded) return;
+                isLoaded = true;
+                document.body.classList.add('loaded');
+            }
+            window.addEventListener('load', showPage);
+            setTimeout(showPage, 300);
+        })();
     </script>
 </body>
 

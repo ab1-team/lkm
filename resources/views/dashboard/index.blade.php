@@ -86,7 +86,7 @@
                                 </div>
                                 <div class="widget-content-right">
                                     <div class="widget-numbers text-warning" style="font-size: 17px;">
-                                            {{ $proposal + $verifikasi + $waiting }} File
+                                        {{ $proposal + $verifikasi + $waiting }} File
                                     </div>
                                 </div>
                             </div>
@@ -129,66 +129,66 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6 col-lg-4">
-                <div class="main-card mb-3 card">
-                    <div class="card-body">
-                        <h5 class="card-title">Angsuran Hari Ini</h5>
-                        <div class="card-body pb-0 p-3 pt-0 mt-4">
-                            <canvas id="myChart" width="200" height="200"></canvas>
-                        </div>
-                        <div class="card-footer pt-0 pb-2 p-3 d-flex align-items-center justify-content-between">
-                            <div class="w-60">
-                                <div class="text-sm">
-                                    Total Ang.Pokok: <b>Rp. <span id="total_angsur_pokok"></span></b>
-                                </div>
+            <div class="row">
+                <div class="col-md-6 col-lg-4">
+                    <div class="main-card mb-3 card">
+                        <div class="card-body">
+                            <h5 class="card-title">Angsuran Hari Ini</h5>
+                            <div class="card-body pb-0 p-3 pt-0 mt-4">
+                                <canvas id="myChart" width="200" height="200"></canvas>
                             </div>
-                            <div class="w-60">
-                                <div class="text-sm">
-                                    Total Ang.Jasa: <b>Rp. <span id="total_angsur_jasa"></span></b>
+                            <div class="card-footer pt-0 pb-2 p-3 d-flex align-items-center justify-content-between">
+                                <div class="w-60">
+                                    <div class="text-sm">
+                                        Total Ang.Pokok: <b>Rp. <span id="total_angsur_pokok"></span></b>
+                                    </div>
                                 </div>
+                                <div class="w-60">
+                                    <div class="text-sm">
+                                        Total Ang.Jasa: <b>Rp. <span id="total_angsur_jasa"></span></b>
+                                    </div>
+                                </div>
+                                {{-- <div class="w-40 d-flex justify-content-end">
+                                            <button type="button" id="btnDetailAngsuran" class="btn btn-outline-secondary">Detail</button>
+                                        </div> --}}
                             </div>
-                            {{-- <div class="w-40 d-flex justify-content-end">
-                                        <button type="button" id="btnDetailAngsuran" class="btn btn-outline-secondary">Detail</button>
-                                    </div> --}}
-                        </div>
 
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-8">
-                <div class="card">
-                    <div class="card-header pb-0 p-3">
-                        <div class="d-flex justify-content-between">
-                            <h5 class="card-title">Realisasi Pendapatan dan Beban</h5>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <span class="badge badge-md badge-dot me-4">
-                                <i class="bg-success"></i>
-                                <span class="text-dark text-xs">Pendapatan</span>
-                            </span>
-                            <span class="badge badge-md badge-dot me-4">
-                                <i class="bg-warning"></i>
-                                <span class="text-dark text-xs">Beban</span>
-                            </span>
-                            <span class="badge badge-md badge-dot me-4">
-                                <i class="bg-info"></i>
-                                <span class="text-dark text-xs">Laba</span>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="card-body p-3">
-                        <div class="chart">
-                            <canvas id="chart-line" class="chart-canvas" height="400"
-                                style="display: block; box-sizing: border-box; height: 210px; width: 844.4px;"
-                                width="1688"></canvas>
                         </div>
                     </div>
                 </div>
+                <div class="col-md-6 col-lg-8">
+                    <div class="card">
+                        <div class="card-header pb-0 p-3">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title">Realisasi Pendapatan dan Beban</h5>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="badge badge-md badge-dot me-4">
+                                    <i class="bg-success"></i>
+                                    <span class="text-dark text-xs">Pendapatan</span>
+                                </span>
+                                <span class="badge badge-md badge-dot me-4">
+                                    <i class="bg-warning"></i>
+                                    <span class="text-dark text-xs">Beban</span>
+                                </span>
+                                <span class="badge badge-md badge-dot me-4">
+                                    <i class="bg-info"></i>
+                                    <span class="text-dark text-xs">Laba</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="chart">
+                                <canvas id="chart-line" class="chart-canvas" height="400"
+                                    style="display: block; box-sizing: border-box; height: 210px; width: 844.4px;"
+                                    width="1688"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
 
     @php
@@ -342,7 +342,8 @@
                                             <div class="row mt-4">
                                                 <div class="col-md-5">
                                                     <div class="form-group mb-3">
-                                                        <label class="form-label font-weight-bolder text-xs mb-1">TGL JATUH TEMPO</label>
+                                                        <label class="form-label font-weight-bolder text-xs mb-1">TGL JATUH
+                                                            TEMPO</label>
                                                         <input autocomplete="off" type="text" name="tgl_tagihan"
                                                             id="tgl_tagihan" class="form-control date pesan border p-2"
                                                             style="height: 40px;" value="{{ date('d/m/Y') }}">
@@ -351,7 +352,8 @@
                                                 </div>
                                                 <div class="col-md-5">
                                                     <div class="form-group mb-3">
-                                                        <label class="form-label font-weight-bolder text-xs mb-1">TGL PEMBAYARAN</label>
+                                                        <label class="form-label font-weight-bolder text-xs mb-1">TGL
+                                                            PEMBAYARAN</label>
                                                         <input autocomplete="off" type="text" name="tgl_pembayaran"
                                                             id="tgl_pembayaran" class="form-control date pesan border p-2"
                                                             style="height: 40px;" value="{{ date('d/m/Y') }}">
@@ -894,8 +896,7 @@
             type: "line",
             data: {
                 labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
-                datasets: [
-                    {
+                datasets: [{
                         label: "Pendapatan",
                         tension: 0,
                         pointRadius: 0,
@@ -906,9 +907,12 @@
                         backgroundColor: gradientPendapatan,
                         fill: true,
                         data: [
-                            "{{ $p['1'] }}", "{{ $p['2'] }}", "{{ $p['3'] }}", "{{ $p['4'] }}",
-                            "{{ $p['5'] }}", "{{ $p['6'] }}", "{{ $p['7'] }}", "{{ $p['8'] }}",
-                            "{{ $p['9'] }}", "{{ $p['10'] }}", "{{ $p['11'] }}", "{{ $p['12'] }}"
+                            "{{ $p['1'] }}", "{{ $p['2'] }}", "{{ $p['3'] }}",
+                            "{{ $p['4'] }}",
+                            "{{ $p['5'] }}", "{{ $p['6'] }}", "{{ $p['7'] }}",
+                            "{{ $p['8'] }}",
+                            "{{ $p['9'] }}", "{{ $p['10'] }}", "{{ $p['11'] }}",
+                            "{{ $p['12'] }}"
                         ],
                         maxBarThickness: 6
                     },
@@ -923,9 +927,12 @@
                         backgroundColor: gradientBeban,
                         fill: true,
                         data: [
-                            "{{ $b['1'] }}", "{{ $b['2'] }}", "{{ $b['3'] }}", "{{ $b['4'] }}",
-                            "{{ $b['5'] }}", "{{ $b['6'] }}", "{{ $b['7'] }}", "{{ $b['8'] }}",
-                            "{{ $b['9'] }}", "{{ $b['10'] }}", "{{ $b['11'] }}", "{{ $b['12'] }}"
+                            "{{ $b['1'] }}", "{{ $b['2'] }}", "{{ $b['3'] }}",
+                            "{{ $b['4'] }}",
+                            "{{ $b['5'] }}", "{{ $b['6'] }}", "{{ $b['7'] }}",
+                            "{{ $b['8'] }}",
+                            "{{ $b['9'] }}", "{{ $b['10'] }}", "{{ $b['11'] }}",
+                            "{{ $b['12'] }}"
                         ],
                         maxBarThickness: 6
                     },
@@ -940,9 +947,12 @@
                         backgroundColor: gradientLaba,
                         fill: true,
                         data: [
-                            "{{ $surplus['1'] }}", "{{ $surplus['2'] }}", "{{ $surplus['3'] }}", "{{ $surplus['4'] }}",
-                            "{{ $surplus['5'] }}", "{{ $surplus['6'] }}", "{{ $surplus['7'] }}", "{{ $surplus['8'] }}",
-                            "{{ $surplus['9'] }}", "{{ $surplus['10'] }}", "{{ $surplus['11'] }}", "{{ $surplus['12'] }}"
+                            "{{ $surplus['1'] }}", "{{ $surplus['2'] }}", "{{ $surplus['3'] }}",
+                            "{{ $surplus['4'] }}",
+                            "{{ $surplus['5'] }}", "{{ $surplus['6'] }}", "{{ $surplus['7'] }}",
+                            "{{ $surplus['8'] }}",
+                            "{{ $surplus['9'] }}", "{{ $surplus['10'] }}", "{{ $surplus['11'] }}",
+                            "{{ $surplus['12'] }}"
                         ],
                         maxBarThickness: 6
                     }
@@ -1009,20 +1019,20 @@
 
         // Palette warna Argon — otomatis cycling
         var argonColors = [
-            '#5e72e4','#2dce89','#11cdef','#fb6340','#f5365c',
-            '#825ee4','#2dcecc','#8392ab','#ffd600','#f4a423',
+            '#5e72e4', '#2dce89', '#11cdef', '#fb6340', '#f5365c',
+            '#825ee4', '#2dcecc', '#8392ab', '#ffd600', '#f4a423',
         ];
 
         // Data dari backend — dinamis sesuai jenis produk di DB
         var angsuranData = @json($angsuran);
 
-        var pieLabels   = [];
-        var piePokok    = [];
-        var pieJasa     = [];
+        var pieLabels = [];
+        var piePokok = [];
+        var pieJasa = [];
         var pieBgColors = [];
         var total_pokok = 0;
-        var total_jasa  = 0;
-        var colorIdx    = 0;
+        var total_jasa = 0;
+        var colorIdx = 0;
 
         Object.values(angsuranData).forEach(function(jp) {
             pieLabels.push(jp.label);
@@ -1031,13 +1041,19 @@
             // Gunakan warna_ipp dari DB (argon class), atau fallback ke palette
             var warna = jp.warna;
             var warnaMap = {
-                'primary':'#5e72e4','success':'#2dce89','info':'#11cdef',
-                'warning':'#fb6340','danger':'#f5365c','default':'#344767',
-                'secondary':'#8392ab','dark':'#212529','light':'#ced4da'
+                'primary': '#5e72e4',
+                'success': '#2dce89',
+                'info': '#11cdef',
+                'warning': '#fb6340',
+                'danger': '#f5365c',
+                'default': '#344767',
+                'secondary': '#8392ab',
+                'dark': '#212529',
+                'light': '#ced4da'
             };
             pieBgColors.push(warnaMap[warna] || argonColors[colorIdx % argonColors.length]);
             total_pokok += parseFloat(jp.pokok) || 0;
-            total_jasa  += parseFloat(jp.jasa)  || 0;
+            total_jasa += parseFloat(jp.jasa) || 0;
             colorIdx++;
         });
 
@@ -1060,7 +1076,9 @@
                     legend: {
                         display: true,
                         position: 'right',
-                        labels: { usePointStyle: true }
+                        labels: {
+                            usePointStyle: true
+                        }
                     }
                 },
                 interaction: {
