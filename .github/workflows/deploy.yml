@@ -18,4 +18,4 @@ jobs:
           script: |
             cd /var/www/silkm.net
             git pull origin master
-            /usr/bin/php81 /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction
+            /usr/bin/php81 /usr/local/bin/composer install
