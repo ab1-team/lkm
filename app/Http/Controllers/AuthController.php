@@ -29,14 +29,18 @@ class AuthController extends Controller
         $host = request()->getHost();
 
         // Handle URL lokal
-        if (request()->server('SERVER_NAME') === '127.0.0.1' ||
-            request()->server('SERVER_NAME') === 'localhost' ||
-            str_ends_with(request()->server('SERVER_NAME'), '.test')) {
-            $kec = Kecamatan::where('id', self::ID_KEC)->first();
-        } else {
-            $kec = Kecamatan::where('web_kec', $host)
-                ->orWhere('web_alternatif', $host)
-                ->first();
+        // Try to find by host first (to support subdomains in local dev)
+        $kec = Kecamatan::where('web_kec', $host)
+            ->orWhere('web_alternatif', $host)
+            ->first();
+
+        // Default to ID_KEC if not found and on local/test domain
+        if (!$kec) {
+            if (request()->server('SERVER_NAME') === '127.0.0.1' ||
+                request()->server('SERVER_NAME') === 'localhost' ||
+                str_ends_with(request()->server('SERVER_NAME'), '.test')) {
+                $kec = Kecamatan::where('id', self::ID_KEC)->first();
+            }
         }
 
         if (! $kec) {
@@ -80,17 +84,21 @@ class AuthController extends Controller
         }
 
         // Handle URL lokal
-        if (request()->server('SERVER_NAME') === '127.0.0.1' ||
-            request()->server('SERVER_NAME') === 'localhost' ||
-            str_ends_with(request()->server('SERVER_NAME'), '.test')) {
-            $kec = Kecamatan::where('id', self::ID_KEC)
-                ->with('kabupaten')
-                ->first();
-        } else {
-            $kec = Kecamatan::where('web_kec', $host)
-                ->orWhere('web_alternatif', $host)
-                ->with('kabupaten')
-                ->first();
+        // Try to find by host first (to support subdomains in local dev)
+        $kec = Kecamatan::where('web_kec', $host)
+            ->orWhere('web_alternatif', $host)
+            ->with('kabupaten')
+            ->first();
+
+        // Default to ID_KEC if not found and on local/test domain
+        if (!$kec) {
+            if (request()->server('SERVER_NAME') === '127.0.0.1' ||
+                request()->server('SERVER_NAME') === 'localhost' ||
+                str_ends_with(request()->server('SERVER_NAME'), '.test')) {
+                $kec = Kecamatan::where('id', self::ID_KEC)
+                    ->with('kabupaten')
+                    ->first();
+            }
         }
 
         if (! $kec) {
