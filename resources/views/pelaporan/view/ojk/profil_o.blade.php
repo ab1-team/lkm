@@ -310,7 +310,7 @@ $keuangan = new Keuangan();
                         {{ $u->tempat_lahir ? $u->tempat_lahir . ', ' : '' }}
                         {{ $u->tgl_lahir ? Tanggal::tglLatin($u->tgl_lahir) : '-' }}&nbsp;
                     </td>
-                    <td class="style9 bottom align-center">{{ $u->p->nama_pendidikan ?? '-' }}&nbsp;</td>
+                    <td class="style9 bottom align-center">{{ $u->p->deskripsi_p ?? '-' }}&nbsp;</td>
                     <td class="style9 bottom align-center">
                         {{ $u->sejak ? Tanggal::tglLatin($u->sejak) : '-' }}&nbsp;
                     </td>
