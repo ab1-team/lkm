@@ -354,7 +354,7 @@ $keuangan = new Keuangan();
         <td width="70" align="center"></td>
         <td width="50" align="center"></td>
         <td width="60" align="center">
-            <strong>{{ $kec->ttd_mengetahui_lap == '2' ? 'Direktur' : $kec->sebutan_level_1 }}</strong>
+             <strong>{{ $dir->j->nama_jabatan }}</strong>
         </td>
         
     </tr> 

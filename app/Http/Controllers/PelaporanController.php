@@ -391,10 +391,19 @@ class PelaporanController extends Controller
         $data['laporan'] = 'Profil';
 
         $data['pengurus'] = User::with(['j', 'p'])
-            ->where('lokasi', Session::get('lokasi'))
-            ->whereNotNull('jabatan')
-            ->orderBy('jabatan', 'asc') 
+            ->where('users.lokasi', Session::get('lokasi'))
+            ->whereNotNull('users.jabatan')
+            ->join('jabatan', 'users.jabatan', '=', 'jabatan.id')
+            ->orderBy('jabatan.urutan', 'asc')
+            ->select('users.*')
             ->get();
+
+        $data['dir'] = User::where('users.lokasi', Session::get('lokasi'))
+            ->whereNotNull('users.jabatan')
+            ->join('jabatan', 'users.jabatan', '=', 'jabatan.id')
+            ->orderBy('jabatan.urutan', 'asc')
+            ->select('users.*')
+            ->first();
 
         $view = view('pelaporan.view.ojk.profil_o', $data)->render();
 
