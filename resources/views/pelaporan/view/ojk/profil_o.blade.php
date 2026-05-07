@@ -277,6 +277,10 @@ $keuangan = new Keuangan();
     <tr>
         <td width="2%" class="style9">&nbsp;</td>
     </tr>
+</table>
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" 
+       style="font-size: 11px; page-break-inside: avoid; page-break-before: auto;">
+<table width="97%" border="0" align="center" cellpadding="3" cellspacing="0">
     <tr>
         <td width="2%" class="style9">10.</td>
         <td width="30%" class="style9">Pengurus :</td>
@@ -358,6 +362,7 @@ $keuangan = new Keuangan();
         </td>
         
     </tr> 
+</table>
 </table>
                         
 @endsection
