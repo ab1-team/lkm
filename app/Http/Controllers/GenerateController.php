@@ -8,8 +8,11 @@ use App\Models\PinjamanIndividu;
 use App\Models\PinjamanKelompok;
 use App\Models\RealAngsuran;
 use App\Models\RealAngsuranI;
+use App\Models\RealSimpanan;
 use App\Models\RencanaAngsuran;
 use App\Models\RencanaAngsuranI;
+use App\Models\Simpanan;
+use App\Models\Transaksi;
 use App\Utils\Keuangan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -515,5 +518,134 @@ class GenerateController extends Controller
         $data = $request->all();
         $offset = $offset + $limit;
         return view('generate.generate')->with(compact('data_id_pinj', 'data', 'offset', 'limit'));
+    }
+
+    /**
+     * Halaman generate simpanan - menampilkan form input CIF
+     * dan memproses batch generate real_simpanan
+     */
+    public function simpanan(Request $request)
+    {
+        $kec = Kecamatan::where('web_kec', explode('//', URL::to('/'))[1])
+            ->orWhere('web_alternatif', explode('//', URL::to('/'))[1])
+            ->first();
+
+        if (!$kec) {
+            abort(404, 'Wilayah tidak ditemukan untuk domain ini.');
+        }
+
+        Session::put('lokasi', $kec->id);
+
+        $id = $request->get('id');
+        $start = $request->get('start', 0);
+        $limit = $request->get('limit', 25);
+        $isMigrate = $request->has('migrate');
+
+        // Jika belum ada parameter id, tampilkan form input
+        if (!$request->has('id')) {
+            return view('generate.simpanan', [
+                'step' => 'form',
+            ]);
+        }
+
+        // Build query berdasarkan input CIF
+        $query = Simpanan::query()->orderBy('id', 'ASC');
+
+        if ($id !== null && $id !== '') {
+            $id_array = explode(',', $id);
+            $id_array = array_map('trim', $id_array);
+            $id_array = array_filter($id_array, 'is_numeric');
+
+            if (!empty($id_array)) {
+                $query->whereIn('id', $id_array);
+            }
+        }
+
+        $total = $query->count();
+
+        // Proses batch
+        if ($isMigrate) {
+            $start = (int) $start;
+        }
+
+        $simpanans = (clone $query)->skip($start)->take($limit)->get();
+
+        foreach ($simpanans as $simp) {
+            // Hapus real_simpanan untuk CIF ini
+            RealSimpanan::where('cif', $simp->id)->delete();
+
+            // Ambil transaksi terkait
+            $transaksis = Transaksi::where('id_simp', $simp->id)
+                ->whereNull('deleted_at')
+                ->orderBy('tgl_transaksi', 'ASC')
+                ->orderBy('urutan', 'ASC')
+                ->orderBy('idt', 'ASC')
+                ->get();
+
+            $sum = 0;
+            foreach ($transaksis as $trx) {
+                $real_d = 0;
+                $real_k = 0;
+                $kode = 0;
+
+                if (
+                    str_starts_with($trx->rekening_kredit, '2.1.04.') ||
+                    str_starts_with($trx->rekening_kredit, '3.1.01.')
+                ) {
+                    $real_k = $trx->jumlah;
+                    $sum += $trx->jumlah;
+
+                    if ($trx->rekening_debit === '1.1.01.01') {
+                        $kode = 1;
+                        if ($sum != 0) {
+                            $kode = 2;
+                        }
+                    }
+                    if (str_starts_with($trx->rekening_debit, '5.3.04.')) {
+                        $kode = 4;
+                    }
+                } elseif (
+                    str_starts_with($trx->rekening_debit, '2.1.04.') ||
+                    str_starts_with($trx->rekening_debit, '3.1.01.')
+                ) {
+                    $real_d = $trx->jumlah;
+                    $sum -= $trx->jumlah;
+
+                    if ($trx->rekening_kredit === '1.1.01.01') {
+                        $kode = 3;
+                    }
+                    if (str_starts_with($trx->rekening_kredit, '4.1.03.')) {
+                        $kode = 5;
+                    }
+                    if ($trx->rekening_kredit === '2.1.03.01') {
+                        $kode = 10;
+                    }
+                }
+
+                RealSimpanan::create([
+                    'cif'           => $simp->id,
+                    'idt'           => $trx->idt,
+                    'kode'          => $kode,
+                    'tgl_transaksi' => $trx->tgl_transaksi,
+                    'real_d'        => $real_d,
+                    'real_k'        => $real_k,
+                    'sum'           => $sum,
+                    'lu'            => now(),
+                    'id_user'       => $trx->id_user,
+                ]);
+            }
+        }
+
+        $nextStart = $start + $limit;
+        $isFinished = $nextStart > $total;
+
+        return view('generate.simpanan', [
+            'step' => 'process',
+            'id' => $id,
+            'total' => $total,
+            'start' => $nextStart,
+            'limit' => $limit,
+            'isFinished' => $isFinished,
+        ]);
     }
 }

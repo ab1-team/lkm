@@ -398,6 +398,7 @@ Route::get('/generate/kelompok', [GenerateController::class, 'kelompok']);
 Route::get('/generate/agent', [GenerateController::class, 'agent']);
 Route::get('/generate/supplier', [GenerateController::class, 'agent']);
 Route::post('/generate/save/{offset?}', [GenerateController::class, 'generate']);
+Route::get('/generate_simpanan', [GenerateController::class, 'simpanan']);
 
 Route::get('/simpanan/cari_nik', [SimpananController::class, 'cariNik'])->middleware('auth', 'is_aktif');
 

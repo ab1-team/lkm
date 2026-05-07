@@ -166,7 +166,7 @@
     <div class="content">
         <?php
 
-            $koneksi = mysqli_connect('cpanel.siupk.net', 'siupk_global', 'siupk_global', 'siupk_lkm');
+            $koneksi = mysqli_connect('cpanel.siupk.net', 'siupk', 'cpanelUpk2026', 'siupk_lkm');
 
             $domain = $_SERVER['HTTP_HOST']; 
 
