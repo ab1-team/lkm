@@ -4,132 +4,199 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     {{-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet"> --}}
     <style>
-        .btn-white-custom {
+        /* Modern Sidebar Navigation Styling */
+        .settings-sidebar-card {
+            border: none;
+            border-radius: 16px;
+            background-color: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), 0 1px 8px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            padding: 16px 12px;
+        }
+
+        .settings-sidebar-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #64748b;
+            font-weight: 800;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
             display: flex;
             align-items: center;
-            background-color: rgb(253, 12, 12);
-            color: black;
-            border-color: #ffffff;
-            /* Menjaga warna border asli */
+            gap: 10px;
         }
 
-        .btn-white-custom:hover,
-        .btn-white-custom:focus,
-        .btn-white-custom.active {
-            background-color: #202b3c;
-            /* Warna asli saat aktif atau hover */
-            color: rgb(255, 250, 250);
+        .settings-sidebar-title i {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.1rem;
         }
 
-        .left-align {
+        .settings-nav-list {
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            gap: 2px;
+            padding-left: 0;
+            list-style: none;
+            margin-bottom: 0;
         }
 
-        .left-align span {
-            font-size: 14px;
-            /* Adjust the text size as needed */
+        .settings-nav-list .mb-3 {
+            margin-bottom: 2px !important;
+        }
+
+        .settings-nav-item {
+            display: flex !important;
+            align-items: center !important;
+            gap: 16px !important;
+            padding: 8px 16px !important;
+            color: #475569 !important;
+            background-color: transparent;
+            border: none;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Hover State */
+        .settings-nav-item:hover {
+            color: #1e293b !important;
+            background-color: #f8fafc;
+            transform: translateX(4px);
+        }
+
+        /* Active State */
+        .settings-nav-item.active {
+            color: #2563eb !important;
+            background: linear-gradient(90deg, rgba(37, 99, 235, 0.08), rgba(139, 92, 246, 0.03));
+            box-shadow: none;
+        }
+
+        .settings-nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 15%;
+            height: 70%;
+            width: 4px;
+            background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+            border-radius: 0 4px 4px 0;
+            opacity: 0;
+            transition: all 0.25s ease;
+        }
+
+        .settings-nav-item.active::before {
+            opacity: 1;
+        }
+
+        .settings-nav-item i {
+            font-size: 1.1rem !important;
+            width: 24px !important;
+            margin-right: 16px !important;
+            color: #64748b;
+            transition: all 0.25s ease;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            position: relative !important;
+        }
+
+        .settings-nav-item:hover i {
+            color: #3b82f6;
+        }
+
+        .settings-nav-item.active i {
+            color: #2563eb;
+            transform: scale(1.1);
+        }
+
+        .settings-nav-item span {
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.2px;
         }
     </style>
 
     <div class="app-main__inner">
 
         <div class="tab-content">
-            <div class="tab-pane  fade show active" id="" role="tabpanel">
+            <div class="tab-pane fade show active" id="" role="tabpanel">
                 <div class="row">
                     <div class="col-md-4">
-                        <div class="main-card mb-3 card">
-                            <ul class="body-tabs body-tabs-layout tabs-animated body-tabs-animated nav flex-column">
-                                <h5 class="card-title">&nbsp;&nbsp;&nbsp;Pengaturan !</h5>
-                                <div class="mb-3">&nbsp;
-                                    <a role="tab" class="btn btn-white  active" style="width: 280px;" id="wellcome"
-                                        data-bs-toggle="tab" href="#tab-content-0">
-                                        <div class="left-align">
-                                            <i class="fa-solid fa-home"></i>&nbsp;&nbsp;<span>Wellcome</span>
-                                        </div>
+                        <div class="main-card mb-3 card settings-sidebar-card">
+                            <ul class="body-tabs body-tabs-layout tabs-animated body-tabs-animated nav flex-column settings-nav-list">
+                                <h5 class="card-title settings-sidebar-title">&nbsp;&nbsp;&nbsp;Pengaturan !</h5>
+                                <div class="mb-3">
+                                    <a role="tab" class="btn btn-white settings-nav-item active" id="wellcome" data-bs-toggle="tab" href="#tab-content-0">
+                                        <i class="fa-solid fa-home"></i>
+                                        <span>Wellcome</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">&nbsp;
-                                    <a role="tab" class="btn btn-white " style="width: 280px;" id="lembaga"
-                                        data-bs-toggle="tab" href="#tab-content-1">
-                                        <div class="left-align">
-                                            <i class="fa-solid fa-tree-city"></i>&nbsp;&nbsp;<span>Identitas Lembaga</span>
-                                        </div>
+                                <div class="mb-3">
+                                    <a role="tab" class="btn btn-white settings-nav-item" id="lembaga" data-bs-toggle="tab" href="#tab-content-1">
+                                        <i class="fa-solid fa-tree-city"></i>
+                                        <span>Identitas Lembaga</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">&nbsp;
-                                    <a role="tab" class="btn btn-white " style="width: 280px;" id="pengelola"
-                                        data-bs-toggle="tab" href="#tab-content-2">
-                                        <div class="left-align">
-                                            <i class="fa-solid fa-person-chalkboard"></i>&nbsp;&nbsp;<span>Sebutan
-                                                Pengelola</span>
-                                        </div>
+                                <div class="mb-3">
+                                    <a role="tab" class="btn btn-white settings-nav-item" id="pengelola" data-bs-toggle="tab" href="#tab-content-2">
+                                        <i class="fa-solid fa-person-chalkboard"></i>
+                                        <span>Sebutan Pengelola</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">&nbsp;
-                                    <a role="tab" class="btn btn-white " style="width: 280px;" id="peminjam"
-                                        data-bs-toggle="tab" href="#tab-content-3">
-                                        <div class="left-align">
-                                            <i class="fa-solid fa-chart-simple"></i>&nbsp;&nbsp;<span>Sistem Pinjaman</span>
-                                        </div>
+                                <div class="mb-3">
+                                    <a role="tab" class="btn btn-white settings-nav-item" id="peminjam" data-bs-toggle="tab" href="#tab-content-3">
+                                        <i class="fa-solid fa-chart-simple"></i>
+                                        <span>Sistem Pinjaman</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">&nbsp;
-                                    <a role="tab" class="btn btn-white" style="width: 280px;" data-bs-toggle="tab"
-                                        href="#tab-content-9">
-                                        <div class="left-align">
-                                            <i class="fa-solid fa-square-poll-horizontal"></i>&nbsp;&nbsp;<span>Kolektibilitas</span>
-                                        </div>
+                                <div class="mb-3">
+                                    <a role="tab" class="btn btn-white settings-nav-item" data-bs-toggle="tab" href="#tab-content-9">
+                                        <i class="fa-solid fa-square-poll-horizontal"></i>
+                                        <span>Kolektibilitas</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">&nbsp;
-                                    <a role="tab" class="btn btn-white " style="width: 280px;" id="simpanan"
-                                        data-bs-toggle="tab" href="#tab-content-8">
-                                        <div class="left-align">
-                                            <i class="fa-solid fa-vault"></i>&nbsp;&nbsp;<span>Sistem Simpanan</span>
-
-                                        </div>
+                                <div class="mb-3">
+                                    <a role="tab" class="btn btn-white settings-nav-item" id="simpanan" data-bs-toggle="tab" href="#tab-content-8">
+                                        <i class="fa-solid fa-vault"></i>
+                                        <span>Sistem Simpanan</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">&nbsp;
-                                    <a role="tab" class="btn btn-white " style="width: 280px;" id="asuransi"
-                                        data-bs-toggle="tab" href="#tab-content-4">
-                                        <div class="left-align">
-                                            <i class="fa-solid fa-money-bill-transfer"></i>&nbsp;&nbsp;<span> Pengaturan
-                                                Asuransi</span>
-                                        </div>
+                                <div class="mb-3">
+                                    <a role="tab" class="btn btn-white settings-nav-item" id="asuransi" data-bs-toggle="tab" href="#tab-content-4">
+                                        <i class="fa-solid fa-money-bill-transfer"></i>
+                                        <span>Pengaturan Asuransi</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">&nbsp;
-                                    <a role="tab" class="btn btn-white" style="width: 280px;" data-bs-toggle="tab"
-                                        href="#tab-content-5">
-                                        <div class="left-align">
-                                            <i class="fa-solid fa-laptop-file"></i>&nbsp;&nbsp;<span>Redaksi SPK</span>
-                                        </div>
+                                <div class="mb-3">
+                                    <a role="tab" class="btn btn-white settings-nav-item" data-bs-toggle="tab" href="#tab-content-5">
+                                        <i class="fa-solid fa-laptop-file"></i>
+                                        <span>Redaksi SPK</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">&nbsp;
-                                    <a role="tab" class="btn btn-white" style="width: 280px;" data-bs-toggle="tab"
-                                        href="#tab-kustomisasi-calk">
-                                        <div class="left-align">
-                                            <i class="fa-solid fa-laptop-file"></i>&nbsp;&nbsp;<span>Kustomisasi CALK</span>
-                                        </div>
+                                <div class="mb-3">
+                                    <a role="tab" class="btn btn-white settings-nav-item" data-bs-toggle="tab" href="#tab-kustomisasi-calk">
+                                        <i class="fa-solid fa-laptop-file"></i>
+                                        <span>Kustomisasi CALK</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">&nbsp;
-                                    <a role="tab" class="btn btn-white" style="width: 280px;" data-bs-toggle="tab"
-                                        href="#tab-content-6">
-                                        <div class="left-align">
-                                            <i class="fa-solid fa-panorama"></i>&nbsp;&nbsp;<span>Logo</span>
-                                        </div>
+                                <div class="mb-3">
+                                    <a role="tab" class="btn btn-white settings-nav-item" data-bs-toggle="tab" href="#tab-content-6">
+                                        <i class="fa-solid fa-panorama"></i>
+                                        <span>Logo</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">&nbsp;
-                                    <a role="tab" class="btn btn-white" style="width: 280px;" data-bs-toggle="tab"
-                                        href="#tab-content-7">
-                                        <div class="left-align">
-                                            <i class="fa-solid fa-camera-rotate"></i>&nbsp;&nbsp;<span>Whatsapp</span>
-                                        </div>
+                                <div class="mb-3">
+                                    <a role="tab" class="btn btn-white settings-nav-item" data-bs-toggle="tab" href="#tab-content-7">
+                                        <i class="fa-solid fa-camera-rotate"></i>
+                                        <span>Whatsapp</span>
                                     </a>
                                 </div>
                             </ul>
