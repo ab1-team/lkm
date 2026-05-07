@@ -87,7 +87,7 @@
     </div>
 
     <div class="d-flex">
-        <a href="/database/kelompok/register_kelompok" class="btn btn-primary btn-sm text-nowrap" style="height: 40px; border-radius: 8px !important; margin: 0 !important; display: inline-flex; align-items: center;">
+        <a href="/database/kelompok/register_kelompok" class="btn btn-primary btn-sm text-nowrap" style="height: 36px; border-radius: 8px !important; margin: 0 !important; display: inline-flex; align-items: center; font-size: 0.75rem !important; padding: 0 12px !important;">
             Register Kelompok
         </a>
     </div>

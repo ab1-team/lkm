@@ -91,11 +91,11 @@
 
     <div class="d-flex gap-2">
         <a href="/database/penduduk/register_penduduk" class="btn btn-primary btn-sm text-nowrap"
-            style="height: 40px; border-radius: 8px !important; margin: 0 !important; display: inline-flex; align-items: center;">
+            style="height: 36px; border-radius: 8px !important; margin: 0 !important; display: inline-flex; align-items: center; font-size: 0.75rem !important; padding: 0 12px !important;">
             Reg. Calon Nasabah
         </a>
         <button class="btn btn-warning btn-sm text-nowrap" onclick="window.open('/cetak_formulir/')" type="button"
-            style="height: 40px; border-radius: 8px !important; margin: 0 !important; display: inline-flex; align-items: center;">
+            style="height: 36px; border-radius: 8px !important; margin: 0 !important; display: inline-flex; align-items: center; font-size: 0.75rem !important; padding: 0 12px !important;">
             Cetak Form Pendaftaran
         </button>
     </div>

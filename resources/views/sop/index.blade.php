@@ -6,10 +6,10 @@
     <style>
         /* Modern Sidebar Navigation Styling */
         .settings-sidebar-card {
-            border: none !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
             border-radius: 16px !important;
-            background-color: #ffffff !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), 0 1px 8px rgba(0, 0, 0, 0.02) !important;
+            background-color: #323b44 !important;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25) !important;
             overflow: hidden !important;
             padding: 16px 12px !important;
         }
@@ -18,11 +18,11 @@
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.12em;
-            color: #64748b;
+            color: #94a3b8;
             font-weight: 800;
             padding: 12px 16px;
             margin-bottom: 12px;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -54,7 +54,7 @@
             justify-content: flex-start !important;
             gap: 16px !important;
             padding: 10px 16px !important;
-            color: #475569 !important;
+            color: #cbd5e1 !important;
             background-color: transparent !important;
             background: transparent !important;
             border: none !important;
@@ -71,8 +71,8 @@
 
         /* Hover State */
         .settings-nav-item:hover {
-            color: #1e293b !important;
-            background-color: rgba(241, 245, 249, 0.6) !important;
+            color: #ffffff !important;
+            background-color: rgba(255, 255, 255, 0.08) !important;
             transform: translateX(4px) !important;
             box-shadow: none !important;
         }
@@ -106,12 +106,8 @@
             font-size: 1.1rem !important;
             width: 24px !important;
             margin-right: 16px !important;
-            color: #64748b;
+            color: #94a3b8;
             transition: all 0.25s ease;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            position: relative !important;
         }
 
         .settings-nav-item:hover i {
@@ -127,6 +123,17 @@
             font-family: 'Inter', sans-serif;
             letter-spacing: 0.2px;
         }
+
+        @media (min-width: 768px) {
+            .settings-sidebar-col {
+                flex: 0 0 29% !important;
+                max-width: 29% !important;
+            }
+            .settings-content-col {
+                flex: 0 0 71% !important;
+                max-width: 71% !important;
+            }
+        }
     </style>
 
     <div class="app-main__inner">
@@ -134,7 +141,7 @@
         <div class="tab-content">
             <div class="tab-pane fade show active" id="" role="tabpanel">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3 settings-sidebar-col">
                         <div class="main-card mb-3 card settings-sidebar-card">
                             <ul class="body-tabs body-tabs-layout tabs-animated body-tabs-animated nav flex-column settings-nav-list">
                                 <div class="settings-sidebar-title">
@@ -210,7 +217,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-9 settings-content-col">
                         <div class="tab-content">
                             <div class="tab-pane tabs-animation fade show active" id="tab-content-0" role="tabpanel">
                                 <div class="row">
