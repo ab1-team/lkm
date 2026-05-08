@@ -315,8 +315,9 @@ class SimpananController extends Controller
     public function cetakPadaBuku($idt)
     {
         $saldo = 0;
-        $transaksi = Transaksi::where('idt', $idt)->with('realSimpanan')->orderBy('tgl_transaksi', 'asc')->first();
+        $transaksi = Transaksi::where('idt', $idt)->whereNull('deleted_at')->with('realSimpanan')->orderBy('tgl_transaksi', 'asc')->first();
         $transaksiCount = Transaksi::where('id_simp', $transaksi->id_simp)
+            ->whereNull('deleted_at')
             ->where(function ($query) use ($transaksi) {
                 $query->where('tgl_transaksi', '<', $transaksi->tgl_transaksi)
                       ->orWhere(function ($subQuery) use ($transaksi) {
@@ -360,6 +361,7 @@ class SimpananController extends Controller
 
             // Ambil semua transaksi simpanan, urutkan sama persis dengan generate_simpanan.php
             $transaksis = Transaksi::where('id_simp', $cif)
+                ->whereNull('deleted_at')
                 ->orderBy('tgl_transaksi', 'asc')
                 ->orderBy('urutan', 'asc')
                 ->orderBy('idt', 'asc')
