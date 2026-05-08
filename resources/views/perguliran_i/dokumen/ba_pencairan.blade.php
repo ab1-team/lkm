@@ -161,11 +161,7 @@
             <td align="center">:</td>
             <td>
                 <b>
-                    @if (is_numeric($pinkel->anggota->usaha))
-                        {{ $pinkel->anggota->u->nama_usaha }}
-                    @else
-                        {{ $pinkel->anggota->usaha }}
-                    @endif
+					{{is_numeric($pinkel->anggota->usaha) ? $pinkel->anggota->u->nama_usaha : $pinkel->anggota->usaha}}
                 </b>
             </td>
 

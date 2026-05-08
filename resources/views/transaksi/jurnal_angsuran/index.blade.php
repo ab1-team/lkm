@@ -257,20 +257,7 @@
                 theme: 'bootstrap4'
             });
 
-            // Set default value untuk denda
-            setTimeout(function() {
-                if ($('#denda').val() == '' || $('#denda').val() == null) {
-                    $('#denda').val('0.00');
-                }
-            }, 100);
 
-            // Handle blur event untuk memastikan denda tidak null
-            $('#denda').on('blur', function() {
-                var currentValue = $(this).val();
-                if (currentValue == '' || currentValue == null || currentValue.trim() == '') {
-                    $(this).val('0.00');
-                }
-            });
         });
 
         var chartP;
@@ -287,12 +274,17 @@
             } else {
                 $.get('/transaksi/detail/' + id, function(result) {
                     if (result.status == 'success') {
-                        $('#loan-id').html(result.perguliran.id)
-                        $('#_pokok').val(result.alokasi_pokok)
-                        $('#_jasa').val(result.alokasi_jasa)
+                        var alokasi_pokok = result.alokasi_pokok ?? 0
+                        var alokasi_jasa  = result.alokasi_jasa  ?? 0
+                        var real_pokok    = result.real_pokok    ?? 0
+                        var real_jasa     = result.real_jasa     ?? 0
 
-                        $('#alokasi_pokok').html('Rp. ' + formatter.format(result.alokasi_pokok))
-                        $('#alokasi_jasa').html('Rp. ' + formatter.format(result.alokasi_jasa))
+                        $('#loan-id').html(result.perguliran.id)
+                        $('#_pokok').val(alokasi_pokok)
+                        $('#_jasa').val(alokasi_jasa)
+
+                        $('#alokasi_pokok').html('Rp. ' + formatter.format(alokasi_pokok))
+                        $('#alokasi_jasa').html('Rp. ' + formatter.format(alokasi_jasa))
 
                         if (typeof chartP != "undefined") {
                             chartP.destroy();
@@ -308,7 +300,7 @@
                                 labels: ['Pokok', 'Sisa'],
                                 datasets: [{
                                     label: 'Rp. ',
-                                    data: [result.real_pokok, result.alokasi_pokok - result.real_pokok],
+                                    data: [real_pokok, alokasi_pokok - real_pokok],
                                     backgroundColor: [
                                         'rgb(54, 162, 235)',
                                         'rgb(255, 99, 132)',
@@ -325,7 +317,7 @@
                                 labels: ['Jasa', 'Sisa'],
                                 datasets: [{
                                     label: 'Rp. ',
-                                    data: [result.real_jasa, result.alokasi_jasa - result.real_jasa],
+                                    data: [real_jasa, alokasi_jasa - real_jasa],
                                     backgroundColor: [
                                         'rgb(255, 205, 86)',
                                         'rgb(255, 99, 132)',
@@ -345,39 +337,30 @@
             }
         })
 
-        $(document).on('change keyup blur', '#pokok, #jasa, #denda', function(e) {
+        $(document).on('change', '#pokok,#jasa,#denda', function(e) {
             var pokok = $('#pokok').val()
             var jasa = $('#jasa').val()
             var denda = $('#denda').val()
 
-            console.log('Event triggered:', e.type, 'Raw values:', {pokok, jasa, denda})
-
-            if (pokok && pokok != '') {
-                pokok = pokok.toString().split(',').join('').split('.00').join('')
-                pokok = parseFloat(pokok)
-            }
-            if (!pokok || isNaN(pokok)) {
+            pokok = parseFloat(pokok.split(',').join('').split('.00').join(''))
+            if (!pokok) {
                 pokok = 0;
+                $('#pokok').val(formatter.format('0'))
             }
 
-            if (jasa && jasa != '') {
-                jasa = jasa.toString().split(',').join('').split('.00').join('')
-                jasa = parseFloat(jasa)
-            }
-            if (!jasa || isNaN(jasa)) {
+            jasa = parseFloat(jasa.split(',').join('').split('.00').join(''))
+            if (!jasa) {
                 jasa = 0;
+                $('#jasa').val(formatter.format('0'))
             }
 
-            if (denda && denda != '') {
-                denda = denda.toString().split(',').join('').split('.00').join('')
-                denda = parseFloat(denda)
-            }
-            if (!denda || isNaN(denda)) {
+            denda = parseFloat(denda.split(',').join('').split('.00').join(''))
+            if (!denda) {
+                $('#denda').val(formatter.format('0'))
                 denda = 0;
             }
 
             var total = pokok + jasa + denda
-            console.log('Parsed values:', {pokok, jasa, denda, total})
             $('#total').val(formatter.format(total))
         })
 

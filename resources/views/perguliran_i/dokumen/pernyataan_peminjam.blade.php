@@ -54,11 +54,7 @@
                 <div style="display:table-cell;">Pekerjaan</div>
                 <div style="display:table-cell; text-align:right;">:</div>
                 <div style="display:table-cell;">
-                    @if (is_numeric($pinkel->anggota->usaha))
-                        {{ $pinkel->anggota->u->nama_usaha }}
-                    @else
-                        {{ $pinkel->anggota->usaha }}
-                    @endif
+					{{is_numeric($pinkel->anggota->usaha) ? $pinkel->anggota->u->nama_usaha : $pinkel->anggota->usaha}}
                 </div>
             </div>
         </div>
