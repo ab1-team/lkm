@@ -54,11 +54,7 @@
             <td height="10" class="style9">Pekerjaan</td>
             <td class="style27">
                 :
-                @if (is_numeric($pinkel->anggota->usaha))
-                    {{ $pinkel->anggota->u->nama_usaha }}
-                @else
-                    {{ $pinkel->anggota->usaha }}
-                @endif
+				{{is_numeric($pinkel->anggota->usaha) ? $pinkel->anggota->u->nama_usaha : $pinkel->anggota->usaha}}
 
             </td>
             <td height="10" class="style9">&nbsp;</td>
