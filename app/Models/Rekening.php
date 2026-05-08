@@ -22,12 +22,12 @@ class Rekening extends Model
 
     public function trx_debit()
     {
-        return $this->hasMany(Transaksi::class, 'rekening_debit', 'kode_akun');
+        return $this->hasMany(Transaksi::class, 'rekening_debit', 'kode_akun')->whereNull('deleted_at');
     }
 
     public function trx_kredit()
     {
-        return $this->hasMany(Transaksi::class, 'rekening_kredit', 'kode_akun');
+        return $this->hasMany(Transaksi::class, 'rekening_kredit', 'kode_akun')->whereNull('deleted_at');
     }
 
     public function inventaris()

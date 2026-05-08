@@ -96,7 +96,7 @@ class PinjamanIndividu extends Model
 
     public function trx()
     {
-        return $this->hasMany(Transaksi::class, 'id_pinj_i', 'id')->orderBy('tgl_transaksi', 'ASC')->orderBy('idtp', 'ASC');
+        return $this->hasMany(Transaksi::class, 'id_pinj_i', 'id')->whereNull('deleted_at')->orderBy('tgl_transaksi', 'ASC')->orderBy('idtp', 'ASC');
     }
 
     public function saldo_pinjaman()

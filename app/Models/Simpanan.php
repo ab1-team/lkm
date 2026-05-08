@@ -42,7 +42,7 @@ class Simpanan extends Model
 
     public function trx()
     {
-        return $this->hasMany(Transaksi::class, 'id_simp', 'id')->orderBy('tgl_transaksi', 'ASC')->orderBy('idtp', 'ASC');
+        return $this->hasMany(Transaksi::class, 'id_simp', 'id')->whereNull('deleted_at')->orderBy('tgl_transaksi', 'ASC')->orderBy('idtp', 'ASC');
     }
 
 
