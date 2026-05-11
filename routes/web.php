@@ -46,10 +46,44 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/symlink', function() {
     try {
-        \Illuminate\Support\Facades\Artisan::call('storage:link');
-        return "✅ Storage link generated successfully!";
+        $target = storage_path('app/public');
+        $link = public_path('storage');
+
+        // Check and clear existing blocker
+        if (file_exists($link) || is_link($link)) {
+            if (is_link($link)) {
+                unlink($link);
+            } elseif (is_dir($link)) {
+                rename($link, $link . '_backup_' . time());
+            }
+        }
+
+        // 1. Try artisan first
+        try {
+            \Illuminate\Support\Facades\Artisan::call('storage:link');
+            return "✅ [Metode 1] Storage link via Artisan SUKSES!";
+        } catch (\Exception $e1) {
+            // 2. Try explicit symlink
+            if (symlink($target, $link)) {
+                return "✅ [Metode 2] Storage link via Native symlink SUKSES!";
+            }
+            throw $e1;
+        }
     } catch (\Exception $e) {
-        return "❌ Error: " . $e->getMessage();
+        // 3. Fallback Shell Command for Linux Sharing Hosts
+        try {
+            $target = storage_path('app/public');
+            $link = public_path('storage');
+            
+            $output = shell_exec("ln -s \"$target\" \"$link\" 2>&1");
+            
+            if (file_exists($link) || is_link($link)) {
+                 return "✅ [Metode 3] Storage link via Shell Command SUKSES! Hasil: $output";
+            }
+            return "❌ SEMUA GAGAL. Terakhir: " . $e->getMessage() . " | Shell: $output";
+        } catch (\Exception $eFinal) {
+             return "❌ FATAL: " . $eFinal->getMessage();
+        }
     }
 });
 
