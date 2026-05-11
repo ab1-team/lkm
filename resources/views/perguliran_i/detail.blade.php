@@ -255,26 +255,20 @@
         </div>
         <div id="layout">
         </div>
-        <div class="main-card mb-3 card">
-            <div class="card-body">
-                @if ($perguliran_i->status == 'L' || $perguliran_i->status == 'H')
-                    @if ($perguliran_i->status != 'H')
-                        <button type="button" data-bs-toggle="tooltip"
-                            onclick="window.open('/cetak_keterangan_lunas_i/{{ $perguliran_i->id }}')" type="button"
-                            class="btn-shadow me-3 btn btn-danger">
-                            <i class="fa fa-print"></i>&nbsp; Cetak Keterangan Pelunasan
-                        </button>
-                    @endif
-                    <a href="/perguliran_i?status={{ $perguliran_i->status }}" class="btn-shadow me-3 btn btn-primary"
-                        style="float: right;">
-                        <i class="fa fa-reply-all"></i>&nbsp;<b>KEMBALI</b></a>
-                @else
-                    <a href="/perguliran_i?status={{ $perguliran_i->status }}" class="btn-shadow me-3 btn btn-primary"
-                        style="float: right;">
-                        <i class="fa fa-reply-all"></i>&nbsp;<b>KEMBALI</b></a>
+        <div class="d-flex justify-content-end mt-2 px-3" style="margin-bottom: 60px !important;">
+            @if ($perguliran_i->status == 'L' || $perguliran_i->status == 'H')
+                @if ($perguliran_i->status != 'H')
+                    <button type="button" data-bs-toggle="tooltip"
+                        onclick="window.open('/cetak_keterangan_lunas_i/{{ $perguliran_i->id }}')" type="button"
+                        class="btn-shadow me-2 btn btn-danger mb-0">
+                        <i class="fa fa-print me-1"></i> Cetak Keterangan Pelunasan
+                    </button>
                 @endif
-            </div>
-        </div><br><br><br>
+            @endif
+            <a href="/perguliran_i?status={{ $perguliran_i->status }}" class="btn bg-gradient-secondary text-white mb-0 shadow-sm font-weight-bold">
+                <i class="fa fa-reply-all me-1"></i> KEMBALI
+            </a>
+        </div>
     </div>
 @endsection
 @section('modal')
