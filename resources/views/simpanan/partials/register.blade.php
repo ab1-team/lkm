@@ -1,42 +1,32 @@
 <style>
-    /* CSS untuk .app-wrapper-title */
     .app-title {
-        background-color: #18cf008d; /* Warna latar belakang untuk app-page-title */
-        padding: 20px; /* Padding untuk ruang di sekitar konten */
-        border-radius: 8px; /* Membuat sudut melengkung */
-        margin-bottom: 10px; /* Jarak bawah dari elemen lain */
+        background-color: #18cf008d; 
+        padding: 20px; 
+        border-radius: 8px; 
+        margin-bottom: 10px; 
     }
-    
-    /* CSS untuk .page-title-wrapper */
-    .app-wrapper {
-        display: flex; /* Gunakan flexbox untuk mengatur tata letak */
-        align-items: center; /* Menyelaraskan item di tengah secara vertikal */
+.app-wrapper {
+        display: flex; 
+        align-items: center; 
     }
-    
-    /* CSS untuk .page-title-heading */
-    .app-heading {
-        display: flex; /* Gunakan flexbox untuk mengatur tata letak */
-        align-items: center; /* Menyelaraskan item di tengah secara vertikal */
+.app-heading {
+        display: flex; 
+        align-items: center; 
     }
-    
-    /* CSS untuk .app-bg-icon */
-    .app-bg-icon {
-        display: flex; /* Gunakan flexbox untuk mengatur tata letak ikon */
-        align-items: center; /* Menyelaraskan ikon di tengah secara vertikal */
-        justify-content: center; /* Menyelaraskan ikon di tengah secara horizontal */
-        width: 40px; /* Lebar tetap untuk ikon */
-        height: 40px; /* Tinggi tetap untuk ikon */
-        background-color: #c0c4c505; /* Warna latar belakang untuk ikon */
-        border-radius: 10%; /* Membuat ikon menjadi lingkaran */
-        margin-right: 15px; /* Jarak kanan dari teks */
+.app-bg-icon {
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        width: 40px; 
+        height: 40px; 
+        background-color: #c0c4c505; 
+        border-radius: 10%; 
+        margin-right: 15px; 
     }
-    
-    
-    /* CSS untuk .page-title-subheading */
-    .app-text_fount {
-        font-size: 14px; /* Ukuran font untuk subjudul */
-        color: #ffffff; /* Warna teks untuk subjudul */
-        margin-top: 15px; /* Jarak atas dari judul */
+.app-text_fount {
+        font-size: 14px; 
+        color: #ffffff; 
+        margin-top: 15px; 
     }
     </style>
                         <div class="card-body">
@@ -54,7 +44,6 @@
                                 </div>
                                     <form action="/simpanan" method="post" id="FormRegisterSimpanan">
                                         @csrf
-                                        
                                         <input type="hidden" name="nia" id="nia" value="{{ $anggota->id }}">
                                         <div class="row">
                                             <div class="col-md-12">
@@ -84,14 +73,11 @@
             $(document).ready(function() {
              // Atur nilai awal jenis_simpanan ke 1
             $('#jenis_simpanan').val('{{ $js_dipilih }}');
-    
             // Panggil fungsi jenis_simpanan() saat halaman dimuat
             jenis_simpanan();
-    
             $(document).on('change', '#jenis_simpanan', function() {
                 jenis_simpanan();
             });
-    
             function jenis_simpanan() {
                 let jenis_simpanan = $('#jenis_simpanan').val();
                 let nia = $('#nia').val();

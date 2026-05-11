@@ -2,60 +2,49 @@
 
 @section('content')
 <style>
-    /* CSS untuk .app-wrapper-title */
     .app-title {
-        background-color: #6797a385; /* Warna latar belakang untuk app-page-title */
-        padding: 20px; /* Padding untuk ruang di sekitar konten */
-        border-radius: 8px; /* Membuat sudut melengkung */
-        margin-bottom: 10px; /* Jarak bawah dari elemen lain */
+        background-color: #6797a385; 
+        padding: 20px; 
+        border-radius: 8px; 
+        margin-bottom: 10px; 
     }
-    
-    /* CSS untuk .page-title-wrapper */
-    .app-wrapper {
-        display: flex; /* Gunakan flexbox untuk mengatur tata letak */
-        align-items: center; /* Menyelaraskan item di tengah secara vertikal */
+.app-wrapper {
+        display: flex; 
+        align-items: center; 
     }
-    
-    /* CSS untuk .page-title-heading */
-    .app-heading {
-        display: flex; /* Gunakan flexbox untuk mengatur tata letak */
-        align-items: center; /* Menyelaraskan item di tengah secara vertikal */
+.app-heading {
+        display: flex; 
+        align-items: center; 
     }
-    
-    /* CSS untuk .app-bg-icon */
-    .app-bg-icon {
-        display: flex; /* Gunakan flexbox untuk mengatur tata letak ikon */
-        align-items: center; /* Menyelaraskan ikon di tengah secara vertikal */
-        justify-content: center; /* Menyelaraskan ikon di tengah secara horizontal */
-        width: 40px; /* Lebar tetap untuk ikon */
-        height: 40px; /* Tinggi tetap untuk ikon */
-        background-color: #c0c4c505; /* Warna latar belakang untuk ikon */
-        border-radius: 10%; /* Membuat ikon menjadi lingkaran */
-        margin-right: 15px; /* Jarak kanan dari teks */
+.app-bg-icon {
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        width: 40px; 
+        height: 40px; 
+        background-color: #c0c4c505; 
+        border-radius: 10%; 
+        margin-right: 15px; 
     }
-    
-    
-    /* CSS untuk .page-title-subheading */
-    .app-text_fount {
-        font-size: 14px; /* Ukuran font untuk subjudul */
-        color: #373636; /* Warna teks untuk subjudul */
-        margin-top: 15px; /* Jarak atas dari judul */
+.app-text_fount {
+        font-size: 14px; 
+        color: #373636; 
+        margin-top: 15px; 
     }
     .custom-button {
-        width: 200px; /* Atur panjang tombol sesuai kebutuhan */
+        width: 200px; 
         float: right; /* Tempatkan tombol di sebelah kanan */
-        margin: 20px; /* Atur margin untuk tata letak */
-        padding: 10px; /* Atur padding untuk ukuran tombol */
-        text-align: center; /* Pusatkan teks di tombol */
-        background-color: #343a40; /* Warna latar belakang */
-        color: white; /* Warna teks */
-        border: none; /* Hilangkan border */
-        border-radius: 5px; /* Atur radius sudut */
-        cursor: pointer; /* Ubah kursor saat dihover */
+        margin: 20px; 
+        padding: 10px; 
+        text-align: center; 
+        background-color: #343a40; 
+        color: white; 
+        border: none; 
+        border-radius: 5px; 
+        cursor: pointer; 
     }
-    
     .custom-button:hover {
-        background-color: #495057; /* Warna latar belakang saat dihover */
+        background-color: #495057; 
     }  
     .header {
     display: flex;
@@ -65,13 +54,12 @@
     .header img {
         width: 150px;
         /* Tambahkan margin kanan untuk memberikan jarak antara gambar dan teks */
-        margin-right: 15px; /* Atur sesuai keinginan Anda */
+        margin-right: 15px; 
     }
 
     .header h3 {
         margin: 40px;
-        /* Jika ingin mengatur margin kiri untuk memberikan jarak dari gambar */
-        margin-left:100px; /* Atur sesuai keinginan Anda */
+        margin-left:100px; 
     }
 
     </style>

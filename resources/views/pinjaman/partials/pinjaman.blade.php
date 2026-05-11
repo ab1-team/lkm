@@ -4,19 +4,17 @@
     $perguliran = $kelompok->pinjaman;
 @endphp
 <style>
-    /* CSS untuk .app-wrapper-title */
     .app-title {
-        background-color: #ffa200; /* Warna latar belakang untuk app-page-title */
-        padding: 15px; /* Padding untuk ruang di sekitar konten */
-        border-radius: 8px; /* Membuat sudut melengkung */
-        margin-bottom: 20px; /* Jarak bawah dari elemen lain */
+        background-color: #ffa200; 
+        padding: 15px; 
+        border-radius: 8px; 
+        margin-bottom: 20px; 
     }
-    /* CSS untuk .page-title-subheading */
     .app-text_fount {
-    font-size: 18px; /* Ukuran font untuk subjudul */
-    color: #ffffff; /* Warna teks untuk subjudul */
-    margin-top: 0px; /* Jarak atas dari judul */
-    text-align: center; /* Pusatkan teks secara horizontal */
+    font-size: 18px; 
+    color: #ffffff; 
+    margin-top: 0px; 
+    text-align: center; 
 }
 </style>
 <div class="card-body">
