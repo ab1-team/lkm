@@ -1,4 +1,3 @@
-
 <form action="/perguliran_i/{{ $perguliran_i->id }}" method="post" id="FormInput">
     @csrf
     @method('PUT')
@@ -166,15 +165,11 @@
                     </div>
                     <div class="card-body">
                         <button id="Simpan" class="btn btn-primary float-end  flex-grow-1 me-2"
-                            @if (!in_array('perguliran.simpan_verifikator', Session::get('tombol', [])))
-                                disabled
-                            @endif
-                            >SIMPAN REKOM VERIFIKATOR
+                            @if (!in_array('perguliran.simpan_verifikator', Session::get('tombol', []))) disabled @endif>SIMPAN REKOM VERIFIKATOR
                         </button>
-                        <button type="button" id="tdklayak" class="btn btn-dark text-danger float-end  flex-grow-1 me-2"
-                            @if (!in_array('perguliran.simpan_verifikator', Session::get('tombol', [])))
-                                disabled
-                            @endif >
+                        <button type="button" id="tdklayak"
+                            class="btn btn-warning text-danger float-end  flex-grow-1 me-2"
+                            @if (!in_array('perguliran.simpan_verifikator', Session::get('tombol', []))) disabled @endif>
                             <i class="fa fa-ban" aria-hidden="true"></i> &nbsp; TIDAK LAYAK
                         </button>
                     </div>

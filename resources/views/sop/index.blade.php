@@ -642,6 +642,7 @@
 
                             reader.onload = function() {
                                 $("#previewLogo").attr("src", reader.result);
+                                $(".navbar-brand-img").attr("src", reader.result);
                                 $(".colored-shadow").css('background-image',
                                     "url(" + reader.result + ")")
                             }

@@ -1,10 +1,19 @@
+@php
+    $logo = '/assets/img/logo.jpeg';
+    if (isset($kec) && $kec->logo) {
+        $logo = '/storage/logo/' . $kec->logo;
+    }
+@endphp
+
 <div class="text-center py-4">
     <!-- Logo Preview Container -->
     <div class="position-relative d-inline-block mb-4 logo-upload-container" id="EditLogo" style="cursor: pointer; transition: all 0.3s ease;">
         <div class="logo-preview-wrapper p-3 bg-white shadow-sm d-flex align-items-center justify-content-center position-relative" 
              style="width: 180px; height: 180px; border-radius: 12px; border: 3px dashed #cbd5e1; transition: all 0.3s ease; overflow: hidden; margin: 0 auto;">
-            <img src="{{ asset('storage/logo/' . Session::get('logo')) }}" alt="Logo Lembaga"
-                class="img-fluid" id="previewLogo" style="max-width: 100%; max-height: 100%; object-fit: contain; transition: all 0.3s ease;">
+            <img src="{{ $logo }}" alt="Logo Lembaga"
+                class="img-fluid" id="previewLogo" 
+                onerror="this.onerror=null; this.src='/assets/img/logo.jpeg';"
+                style="max-width: 100%; max-height: 100%; object-fit: contain; transition: all 0.3s ease;">
             
             <!-- Hover Overlay -->
             <div class="logo-hover-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white"
@@ -45,11 +54,3 @@
     }
 </style>
 
-<script>
-    $(document).ready(function() {
-        $(document).on('click', '#EditLogo', function(e) {
-            e.preventDefault();
-            $('#logo_kec').trigger('click');
-        });
-    });
-</script>
