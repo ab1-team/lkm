@@ -87,6 +87,27 @@ Route::get('/symlink', function() {
     }
 });
 
+// PAMUNGKAS: Serve images via PHP if symlink fails on server
+Route::get('/storage/logo/{filename}', function ($filename) {
+    $path = storage_path('app/public/logo/' . $filename);
+    if (!Illuminate\Support\Facades\File::exists($path)) {
+        // check if it exists in generic app/logo too just in case
+        $path = storage_path('app/logo/' . $filename);
+    }
+    
+    if (Illuminate\Support\Facades\File::exists($path)) {
+        return response()->file($path);
+    }
+    
+    // Last resort default fallback
+    $default = public_path('assets/img/logo.jpeg');
+    if (Illuminate\Support\Facades\File::exists($default)) {
+        return response()->file($default);
+    }
+    
+    abort(404);
+})->where('filename', '.*');
+
 Route::get('/master', [AdminAuthController::class, 'index'])->middleware('guest');
 Route::post('/master/login', [AdminAuthController::class, 'login'])->middleware('guest');
 Route::group(['prefix' => 'master', 'as' => 'master.', 'middleware' => 'master'], function () {
