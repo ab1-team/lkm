@@ -44,6 +44,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/symlink', function() {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('storage:link');
+        return "✅ Storage link generated successfully!";
+    } catch (\Exception $e) {
+        return "❌ Error: " . $e->getMessage();
+    }
+});
+
 Route::get('/master', [AdminAuthController::class, 'index'])->middleware('guest');
 Route::post('/master/login', [AdminAuthController::class, 'login'])->middleware('guest');
 Route::group(['prefix' => 'master', 'as' => 'master.', 'middleware' => 'master'], function () {
