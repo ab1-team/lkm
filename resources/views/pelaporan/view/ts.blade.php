@@ -84,9 +84,9 @@
             </div>
             <div style="text-align: center; font-weight: bold;">
                 @if($kec->id == '530')
-                    mmf 530 nama lengkap {{ $kec->nama_kec }}
+                    MMF 530 nama lengkap {{ $kec->nama_kec }}
                 @else
-                    UPK {{ $kec->id }} Nama Lengkap {{ $kec->nama_kec }}
+                    LKM {{ $kec->id }} Nama Lengkap {{ $kec->nama_kec }}
                 @endif
             </div>
         </li>
