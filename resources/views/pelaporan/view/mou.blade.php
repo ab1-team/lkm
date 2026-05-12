@@ -128,7 +128,7 @@
 
     <footer>
         <div style="text-align: right; font-size: 8px;" id="page-number">
-            Page <span class="page"></span> - MoU Si Micro Finance
+            Page <span class="page"></span> - MoU Sistem Micro Finance
         </div>
     </footer>
 
@@ -141,7 +141,7 @@
             </tr>
             <tr>
                 <td style="font-weight: bold; font-size: 16px;" align="center">
-                    IMPLEMENTASI SI MICRO FINANCE (SI LKM)
+                    IMPLEMENTASI SISTEM MICRO FINANCE
                 </td>
             </tr>
             <tr>
@@ -241,19 +241,19 @@
             <ol style="text-align: justify;">
                 <li>
                     Pihak Pertama adalah sebuah Software Company yang telah me-release software akuntansi yang diberikan
-                    nama Si Micro Finance (Si LKM).
+                    nama Sistem Micro Finance.
                 </li>
                 <li>
                     Pihak Kedua adalah sebuah lembaga yang menyelenggarakan kegiatan penyaluran dana bergulir bagi
                     kelompok-kelompok yang membutuhkan modal usaha dalam rangka pengentasan kemiskinan.
                 </li>
                 <li>
-                    Pihak kedua akan menggunakan Software Akuntansi "Si Micro Finance (Si LKM)" dalam pengelolaan
+                    Pihak kedua akan menggunakan Software Akuntansi "Sistem Micro Finance" dalam pengelolaan
                     keuangan maupun
                     pengelolaan dana bergulir.
                 </li>
                 <li>
-                    Si Micro Finance (Si LKM) yang digunakan dalam perjanjian ini adalah versi 4.0 dengan sistem
+                    Sistem Micro Finance yang digunakan dalam perjanjian ini adalah versi 4.0 dengan sistem
                     manajemen keuangan
                     double
                     entry.
@@ -270,7 +270,7 @@
                     Pihak Pertama berkewajiban untuk :
                     <ul style="list-style: lower-alpha;">
                         <li>
-                            Menyediakan aplikasi Si Micro Finance (Si LKM) Full Version yang dapat diakses secara online
+                            Menyediakan aplikasi Sistem Micro Finance Full Version yang dapat diakses secara online
                             24 jam
                             dalam
                             sehari dan 7 hari dalam seminggu oleh Pihak Kedua melalui nama domain yang telah
@@ -319,7 +319,7 @@
                             </table>
                         </li>
                         <li>
-                            Melakukan migrasi data dari laporan excel ke aplikasi Si Micro Finance (Si LKM) pada awal
+                            Melakukan migrasi data dari laporan excel ke aplikasi Sistem Micro Finance pada awal
                             masa
                             implementasi.
                         </li>
@@ -330,7 +330,7 @@
                             Memberikan pelatihan (training) 1 (satu) kali pada awal kerja sama selama 2 (dua) hari
                             dengan durasi 8 jam per hari, kepada maksimal 8 orang calon operator Pihak Kedua meliputi
                             unsur pengurus , BKAD atau sebutan lainya , Pengelola
-                            Perguliran, Pengawas dan Verifikator yang akan menggunakan Si Micro Finance (Si LKM) di
+                            Perguliran, Pengawas dan Verifikator yang akan menggunakan Sistem Micro Finance di
                             tempat pelatihan
                             yang
                             ditentukan
@@ -342,7 +342,7 @@
                             Memberikan layanan maintenance dan backup data secara berkala.
                         </li>
                         <li>
-                            Mengadakan ujian Certified Si Micro Finance (Si LKM) bagi para operator yang telah mengikuti
+                            Mengadakan ujian Certified Sistem Micro Finance bagi para operator yang telah mengikuti
                             training.
                         </li>
                         <li>
@@ -352,7 +352,7 @@
                             Menginformasikan versi upgrade jika telah di-release versi yang terbaru.
                         </li>
                         <li>
-                            Memberikan jaminan bebas menggunakan Si Micro Finance (Si LKM) secara legal dan sah dan
+                            Memberikan jaminan bebas menggunakan Sistem Micro Finance secara legal dan sah dan
                             bebas dari
                             tuntutan
                             pihak manapun.
@@ -363,7 +363,7 @@
                     Pihak Kedua berkewajiban untuk :
                     <ul style="list-style: lower-alpha;">
                         <li>
-                            Menggunakan Si Micro Finance (Si LKM) sebagai software aplikasi dalam pengelolaan keuangan
+                            Menggunakan Sistem Micro Finance sebagai software aplikasi dalam pengelolaan keuangan
                             dan dana
                             bergulir
                             pihak
@@ -371,7 +371,7 @@
                         </li>
                         <li>
                             Menyampaikan laporan keuangan dalam bentuk softcopy excel untuk bahan migrasi kedalam
-                            database Si Micro Finance (Si LKM).
+                            database Sistem Micro Finance.
                         </li>
                         <li>
                             Menyediakan sarana hardware yang akan digunakan untuk mengakses aplikasi seperti komputer
@@ -391,7 +391,7 @@
                     Pihak Pertama mempunyai hak :
                     <ul style="list-style: lower-alpha;">
                         <li>
-                            Menerima masukan dan saran perbaikan fitur Si Micro Finance (Si LKM) sesuai dengan regulasi
+                            Menerima masukan dan saran perbaikan fitur Sistem Micro Finance sesuai dengan regulasi
                             yang
                             mengatur
                             LKM
@@ -415,7 +415,7 @@
                     Pihak Kedua mempunyai hak :
                     <ul style="list-style: lower-alpha;">
                         <li>
-                            Menggunakan Si Micro Finance (Si LKM) sebagai software aplikasi untuk pengelolaan keuangan
+                            Menggunakan Sistem Micro Finance sebagai software aplikasi untuk pengelolaan keuangan
                             dan manajemen
                             LKM
                             sesuai regulasi yang berlaku secara nasional.
@@ -427,14 +427,14 @@
                             Mendapatkan Support setiap ada kendala penggunaan melalui WA, Telpon, E-mail, Facebook.
                         </li>
                         <li>
-                            Mendapatkan informasi mengenai release Si Micro Finance (Si LKM) yang terbaru dari Pihak
+                            Mendapatkan informasi mengenai release Sistem Micro Finance yang terbaru dari Pihak
                             Pertama, dan
                             informasi
                             terbaru
-                            tentang Si Micro Finance (Si LKM) dan perkembangannya.
+                            tentang Sistem Micro Finance dan perkembangannya.
                         </li>
                         <li>
-                            Memperoleh jaminan bebas menggunakan Si Micro Finance (Si LKM) secara legal dan sah dan
+                            Memperoleh jaminan bebas menggunakan Sistem Micro Finance secara legal dan sah dan
                             bebas dari
                             tuntutan
                             pihak
@@ -508,13 +508,13 @@
                 </li>
                 <li>
                     Apabila terjadi kehilangan kemampuan dan atau pembaharuan manajemen PT. Asta Brata Teknologi dalam
-                    menjalankan fungsi manajemen dan layanan kepada User Si Micro Finance (Si LKM), maka sebagai bagian
+                    menjalankan fungsi manajemen dan layanan kepada User Sistem Micro Finance, maka sebagai bagian
                     proses
                     likuidasi
                     dan
                     atau pembaharuan manajemen PT. Asta Brata Teknologi berkewajiban melakukan pengalihan kewajiban
                     layanan
-                    User Si Micro Finance (Si LKM) kepada pihak yang berkompeten dengan persetujuan kedua belah pihak.
+                    User Sistem Micro Finance kepada pihak yang berkompeten dengan persetujuan kedua belah pihak.
                 </li>
             </ol>
         </div>

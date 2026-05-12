@@ -19,13 +19,15 @@
     }
 
 </style>
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
-    <div>
-        <h4 class="text-white font-weight-bolder mb-1 d-flex align-items-center">
-            <i class="fa fa-street-view me-2"></i>
-            Data Nasabah
-        </h4>
-        <p class="text-white opacity-8 text-sm mb-0">{{ Session::get('nama_lembaga') }}</p>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4 ps-2">
+    <div class="d-flex align-items-center">
+        <div class="icon icon-shape bg-white shadow-sm text-center border-radius-md d-flex align-items-center justify-content-center me-3" style="width: 42px; height: 42px; background: rgba(255,255,255,0.9) !important;">
+            <i class="fa fa-street-view text-primary opacity-10" style="font-size: 1.1rem;"></i>
+        </div>
+        <div class="d-flex flex-column justify-content-center">
+            <h4 class="text-white font-weight-bolder mb-0" style="letter-spacing: 0.5px;">Data Nasabah</h4>
+            <p class="text-white opacity-8 text-xs font-weight-bold mb-0 mt-1" style="letter-spacing: 0.5px; text-transform: uppercase;">{{ Session::get('nama_lembaga') }}</p>
+        </div>
     </div>
     <div class="d-flex gap-2">
         @if (in_array('data_penduduk.export_excel', Session::get('tombol', [])) || true) {{-- Selalu tampil seperti sebelumnya namun rapi --}}
