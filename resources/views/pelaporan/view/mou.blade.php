@@ -3,7 +3,7 @@
 
     $tgl_mou = date('Y-m-d', strtotime('-1 month', strtotime($kec->tgl_registrasi)));
 
-    $jumlah = $kec->id == '340' ? 15000000 : 12500000;
+    $jumlah = in_array($kec->id, ['340', '530', '1']) ? 15000000 : 12500000;
     $nominal = $kec->biaya_tahunan;
 @endphp
 
@@ -141,7 +141,7 @@
             </tr>
             <tr>
                 <td style="font-weight: bold; font-size: 16px;" align="center">
-                    IMPLEMENTASI SISTEM MICRO FINANCE
+                    IMPLEMENTASI SISTEM INFORMASI LEMBAGA KEUANGAN MIKRO
                 </td>
             </tr>
             <tr>
@@ -244,16 +244,17 @@
                     nama Sistem Micro Finance.
                 </li>
                 <li>
-                    Pihak Kedua adalah sebuah lembaga yang menyelenggarakan kegiatan penyaluran dana bergulir bagi
-                    kelompok-kelompok yang membutuhkan modal usaha dalam rangka pengentasan kemiskinan.
+                    Pihak Kedua adalah sebuah lembaga yang menyelenggarakan kegiatan simpan pinjam bagi
+                    masyarakat yang membutuhkan layanan permodalan keuangan mikro.
                 </li>
                 <li>
-                    Pihak kedua akan menggunakan Software Akuntansi "Sistem Micro Finance" dalam pengelolaan
-                    keuangan maupun
-                    pengelolaan dana bergulir.
+                    Pihak kedua akan menggunakan Software Akuntansi "Sistem Informasi Lembaga Keuangan Mikro" dalam
+                    pengelolaan
+                    keuangan maupun layanan simpan pinjam.
                 </li>
                 <li>
-                    Sistem Micro Finance yang digunakan dalam perjanjian ini adalah versi 4.0 dengan sistem
+                    Sistem Informasi Lembaga Keuangan Mikro yang digunakan dalam perjanjian ini adalah versi 4.0 dengan
+                    sistem
                     manajemen keuangan
                     double
                     entry.
@@ -270,7 +271,8 @@
                     Pihak Pertama berkewajiban untuk :
                     <ul style="list-style: lower-alpha;">
                         <li>
-                            Menyediakan aplikasi Sistem Micro Finance Full Version yang dapat diakses secara online
+                            Menyediakan aplikasi Sistem Informasi Lembaga Keuangan Mikro Full Version yang dapat diakses
+                            secara online
                             24 jam
                             dalam
                             sehari dan 7 hari dalam seminggu oleh Pihak Kedua melalui nama domain yang telah
@@ -319,8 +321,9 @@
                             </table>
                         </li>
                         <li>
-                            Melakukan migrasi data dari laporan excel ke aplikasi Sistem Micro Finance pada awal
-                            masa
+                            Melakukan migrasi data dari laporan excel ke dalam aplikasi Sistem Informasi Lembaga
+                            Keuangan Mikro
+                            pada awal
                             implementasi.
                         </li>
                         <li>
@@ -329,8 +332,9 @@
                         <li>
                             Memberikan pelatihan (training) 1 (satu) kali pada awal kerja sama selama 2 (dua) hari
                             dengan durasi 8 jam per hari, kepada maksimal 8 orang calon operator Pihak Kedua meliputi
-                            unsur pengurus , BKAD atau sebutan lainya , Pengelola
-                            Perguliran, Pengawas dan Verifikator yang akan menggunakan Sistem Micro Finance di
+                            unsur pengurus, Pengelola
+                            Simpan Pinjam, Pengawas dan Verifikator yang akan menggunakan Sistem Informasi Lembaga
+                            Keuangan Mikro di
                             tempat pelatihan
                             yang
                             ditentukan
@@ -364,8 +368,7 @@
                     <ul style="list-style: lower-alpha;">
                         <li>
                             Menggunakan Sistem Micro Finance sebagai software aplikasi dalam pengelolaan keuangan
-                            dan dana
-                            bergulir
+                            dan dana simpan pinjam
                             pihak
                             Kedua dengan sebagaimana mestinya dan dengan rasa penuh tanggung jawab.
                         </li>
@@ -394,12 +397,13 @@
                             Menerima masukan dan saran perbaikan fitur Sistem Micro Finance sesuai dengan regulasi
                             yang
                             mengatur
-                            LKM
-                            khususnya yang berkaitan dengan pengaturan pelaporan keuangan LKM .
+                            Lembaga Keuangan Mikro
+                            khususnya yang berkaitan dengan pengaturan pelaporan keuangan.
                         </li>
                         <li>
-                            Memberikan sertifikat pelatihan bagi peserta yang mengikuti Ujian Sertifikasi Si Micro
-                            Finance (Si LKM).
+                            Memberikan sertifikat pelatihan bagi peserta yang mengikuti Ujian Sertifikasi Sistem
+                            Informasi
+                            Lembaga Keuangan Mikro.
                         </li>
                         <li>
                             Menerima pembayaran instalasi dan migrasi data satu kali untuk selama pemakaian aplikasi
@@ -417,7 +421,7 @@
                         <li>
                             Menggunakan Sistem Micro Finance sebagai software aplikasi untuk pengelolaan keuangan
                             dan manajemen
-                            LKM
+                            Lembaga Keuangan Mikro
                             sesuai regulasi yang berlaku secara nasional.
                         </li>
                         <li>
@@ -495,6 +499,7 @@
                 </li>
             </ol>
         </div>
+        <br><br>
 
         <div style="text-align: center;">
             <div><b style="font-size: 14px;">PASAL 6</b></div>
@@ -526,7 +531,7 @@
             <div style="text-align: justify;">
                 Apabila ada hal-hal mendesak yang harus dilakukan dalam rangka meningkatkan kerja sama ini, maka akan
                 diatur
-                dikemudian hari oleh para pihak dan akan dituangkan dalam addendum perjanjian yang tidak terpisahkan
+                dikemudian hari oleh para pihak dan akan dituangkan dalam Addendum perjanjian yang tidak terpisahkan
                 dari
                 perjanjian kerja sama ini.
             </div>
@@ -545,10 +550,10 @@
                 <td align="center">Pihak Kedua,</td>
             </tr>
             <tr>
-                <td align="center" height="60">
-
-                    <img src="../storage/app/public/ttd.png" alt="Tanda Tangan"
-                        style="position:absolute; top:180px; left:40px; width:200px; height:auto; z-index:10;">
+                <td align="center" height="40">
+                    <img src="{{ asset('assets/img/ttd.png') }}" alt="Tanda Tangan"
+                        style="width:160px; height:auto; margin-bottom:-70px; position:relative; z-index:100; top:-10px;">
+                </td>
                 <td align="center">&nbsp;</td>
             </tr>
             <tr>

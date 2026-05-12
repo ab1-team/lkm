@@ -1,3 +1,63 @@
+@php
+    // Desain Imutable: Buat koleksi DUPLIKAT untuk menghindari pencemaran data session!
+    $clonedMenu = [];
+    foreach ($parent_menu as $origParent) {
+        $newPItem = clone $origParent; // Clone untuk mengisolasi perubahan memory
+        
+        if ($newPItem->title === 'Basis Data') {
+            $clusters = ['Nasabah', 'Kelompok'];
+            
+            // 1. Cek preventif: Apakah data session saat ini TERNYATA SUDAH terkelompok?
+            $isAlreadyGrouped = false;
+            foreach($newPItem->child as $childCheck) {
+                if ($childCheck->link === '#' && in_array($childCheck->title, $clusters)) {
+                    $isAlreadyGrouped = true; 
+                    break;
+                }
+            }
+
+            // Hanya jalankan pengelompokan jika BELUM terkelompok
+            if (!$isAlreadyGrouped) {
+                $clusteredMap = [];
+                $unmatchedItems = [];
+                foreach ($clusters as $w) { $clusteredMap[$w] = []; }
+
+                foreach ($newPItem->child as $cItem) {
+                    $found = false;
+                    // Abaikan placeholder #, hanya sortir link AKTIF yang memiliki kata kunci
+                    if ($cItem->link !== '#' && $cItem->link !== '#database#') {
+                        foreach ($clusters as $w) {
+                            if (stripos($cItem->title, $w) !== false) {
+                                $clusteredMap[$w][] = clone $cItem;
+                                $found = true; break;
+                            }
+                        }
+                    }
+                    if (!$found) { $unmatchedItems[] = clone $cItem; }
+                }
+
+                $syntheticList = [];
+                $synthBaseId = 99880;
+                foreach ($clusters as $idx => $w) {
+                    if (!empty($clusteredMap[$w])) {
+                        $sNode = new \stdClass;
+                        $sNode->id = $synthBaseId + $idx;
+                        $sNode->title = $w;
+                        $sNode->link = '#';
+                        $sNode->icon = 'ni ni-bullet-list-67';
+                        $sNode->child = collect($clusteredMap[$w]);
+                        $syntheticList[] = $sNode;
+                    }
+                }
+                $newPItem->child = collect(array_merge($syntheticList, $unmatchedItems));
+            }
+        }
+        $clonedMenu[] = $newPItem;
+    }
+    // Aktifkan data copy ke scope View Loop
+    $parent_menu = collect($clonedMenu);
+@endphp
+
 <ul class="navbar-nav">
     @foreach($parent_menu as $item)
         @php
@@ -78,7 +138,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link {{ $childActive ? 'active' : '' }}"
                                        href="{{ $child->link !== '#' && !str_contains($child->link, '#') ? url($child->link) : 'javascript:;' }}">
-                                        <span class="sidenav-mini-icon">•</span>
+                                        <i class="far fa-circle text-secondary opacity-5 me-2" style="font-size: 6px;"></i>
                                         <span class="sidenav-normal">{{ $child->title }}</span>
                                     </a>
                                 </li>
@@ -87,7 +147,7 @@
                                     <a class="nav-link {{ $hasActiveSubChild ? 'active' : '' }} menu-toggle"
                                        href="javascript:;"
                                        data-target="submenu-{{ $child->id }}">
-                                        <span class="sidenav-mini-icon">•</span>
+                                        <i class="far fa-circle text-secondary opacity-5 me-2" style="font-size: 6px;"></i>
                                         <span class="sidenav-normal">{{ $child->title }}</span>
                                         <i class="fas fa-chevron-down menu-arrow"></i>
                                     </a>
@@ -98,7 +158,7 @@
                                                 <li class="nav-item">
                                                     <a class="nav-link {{ request()->is(ltrim($subchild->link, '/')) ? 'active' : '' }}"
                                                        href="{{ $subchild->link !== '#' && !str_contains($subchild->link, '#') ? url($subchild->link) : 'javascript:;' }}">
-                                                        <span class="sidenav-mini-icon">-</span>
+                                                        <i class="fas fa-circle text-secondary opacity-5 me-2" style="font-size: 6px;"></i>
                                                         <span class="sidenav-normal">{{ $subchild->title }}</span>
                                                     </a>
                                                 </li>
