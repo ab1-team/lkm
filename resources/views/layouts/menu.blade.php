@@ -163,6 +163,11 @@
     }
 
     /* Scrollbar tipis sidebar */
+    .sidenav-scroll-wrapper {
+        height: calc(100vh - 100px);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
     .sidenav-scroll-wrapper::-webkit-scrollbar { width: 4px; }
     .sidenav-scroll-wrapper::-webkit-scrollbar-thumb {
         background-color: rgba(0,0,0,0.15);

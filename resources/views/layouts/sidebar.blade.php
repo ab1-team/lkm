@@ -2,8 +2,7 @@
     <div class="sidenav-header" style="text-align:center; padding:2px 0; min-height:unset;">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-xl-none"
          aria-hidden="true" id="iconSidenav"
-         style="cursor:pointer; font-size:1.1rem; opacity:0.7 !important;"
-         onclick="document.body.classList.remove('g-sidenav-pinned'); document.getElementById('sidenavOverlay').style.display='none'; this.closest('#sidenav-main').classList.remove('show-mobile');"></i>
+         style="cursor:pointer; font-size:1.1rem; opacity:0.7 !important;"></i>
       <a class="navbar-brand m-0" href="/dashboard">
         <img src="{{ $logo }}" 
              class="navbar-brand-img" 

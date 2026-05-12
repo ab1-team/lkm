@@ -84,15 +84,25 @@
         /* ===================== MOBILE SIDENAV ===================== */
         @media (max-width: 1199.98px) {
             #sidenav-main {
-                transform: translateX(-300px);
+                display: block !important;
+                visibility: visible !important;
+                transform: translateX(-300px) !important;
                 transition: transform 0.3s ease, box-shadow 0.3s ease;
-                z-index: 1050;
+                z-index: 2000 !important;
                 position: fixed !important;
+                width: 270px !important;
+                max-width: 270px !important;
+                height: 100vh !important;
+                top: 0;
+                left: 0;
+                margin: 0 !important;
+                border-radius: 0 !important;
+                overflow: hidden !important;
             }
 
             #sidenav-main.show-mobile,
             body.g-sidenav-pinned #sidenav-main {
-                transform: translateX(0);
+                transform: translateX(0) !important;
                 box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35) !important;
             }
 
@@ -260,6 +270,27 @@
 .search-input.expanded,
 .search-input:focus {
     width: var(--search-expanded-width, 400px);
+}
+
+@media (max-width: 767.98px) {
+    .search-input {
+        min-width: 140px;
+        width: 140px;
+    }
+    .dataTables_filter label {
+        width: 100% !important;
+        justify-content: flex-start !important;
+    }
+    .dataTables_filter label input {
+        width: 100% !important;
+        margin-left: 0.5rem;
+    }
+    .navbar .container-fluid {
+        flex-wrap: nowrap !important;
+    }
+    .breadcrumb {
+        display: none !important;
+    }
 }
     </style>
 </head>
@@ -649,6 +680,7 @@
 
                 function calcExpandedWidth() {
                     if (!userDropdown) return 400;
+                    if (window.innerWidth < 768) return 180; // smaller expanded width on mobile
                     var inputRect = searchInput.getBoundingClientRect();
                     var dropRect  = userDropdown.getBoundingClientRect();
                     var available = dropRect.left - inputRect.left - 16;
@@ -661,7 +693,7 @@
 
                 function collapseSearch() {
                     if (searchInput.value.trim() === '') {
-                        searchInput.style.width = '230px';
+                        searchInput.style.width = window.innerWidth < 768 ? '140px' : '230px';
                     }
                 }
 
@@ -678,10 +710,64 @@
                 window.addEventListener('resize', function () {
                     if (document.activeElement === searchInput || searchInput.value.trim() !== '') {
                         expandSearch();
+                    } else {
+                        collapseSearch();
                     }
                 });
             }
             // ===================== END SEARCH EXPAND =====================
+
+            // ===================== MOBILE SIDENAV TOGGLE =====================
+            var mobileSidenavToggle = document.getElementById('mobileSidenavToggle');
+            var sidenavMain = document.getElementById('sidenav-main');
+            
+            if (mobileSidenavToggle && sidenavMain) {
+                // Create overlay backdrop
+                var overlay = document.createElement('div');
+                overlay.id = 'sidenavOverlay';
+                overlay.className = 'sidenav-overlay d-xl-none';
+                overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1040; display: none; transition: opacity 0.3s ease; opacity: 0;';
+                document.body.appendChild(overlay);
+
+                function toggleSidenav() {
+                    var isShowing = sidenavMain.classList.contains('show-mobile');
+                    if (isShowing) {
+                        sidenavMain.classList.remove('show-mobile');
+                        document.body.classList.remove('g-sidenav-pinned');
+                        overlay.style.opacity = '0';
+                        setTimeout(() => overlay.style.display = 'none', 300);
+                    } else {
+                        sidenavMain.classList.add('show-mobile');
+                        document.body.classList.add('g-sidenav-pinned');
+                        overlay.style.display = 'block';
+                        setTimeout(() => overlay.style.opacity = '1', 10);
+                    }
+                }
+
+                mobileSidenavToggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    toggleSidenav();
+                });
+
+                var iconSidenav = document.getElementById('iconSidenav');
+                if (iconSidenav) {
+                    iconSidenav.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        toggleSidenav();
+                    });
+                }
+
+                overlay.addEventListener('click', toggleSidenav);
+
+                sidenavMain.addEventListener('click', function (e) {
+                    if (window.innerWidth >= 1200) return;
+                    if (e.target.closest('.nav-link:not(.menu-toggle)')) {
+                        var isShowing = sidenavMain.classList.contains('show-mobile');
+                        if (isShowing) toggleSidenav();
+                    }
+                });
+            }
+            // ===================== END MOBILE SIDENAV TOGGLE =====================
         });
 
         // Formatter angka rupiah
@@ -987,57 +1073,7 @@
     {{-- Github buttons --}}
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 
-    {{-- ===================== MOBILE SIDEBAR TOGGLE ===================== --}}
-    <script>
-        (function () {
-            var toggleBtn = document.getElementById('mobileSidenavToggle');
-            var sidenav   = document.getElementById('sidenav-main');
-            var body      = document.body;
-            var SIDENAV_W = 275;
 
-            var overlay = document.createElement('div');
-            overlay.id  = 'sidenavOverlay';
-            Object.assign(overlay.style, {
-                display:    'none',
-                position:   'fixed',
-                top:        '0',
-                left:       SIDENAV_W + 'px',
-                right:      '0',
-                bottom:     '0',
-                background: 'rgba(0,0,0,0.45)',
-                zIndex:     '1048',
-                cursor:     'pointer'
-            });
-            document.body.appendChild(overlay);
-
-            function openSidenav() {
-                body.classList.add('g-sidenav-pinned');
-                overlay.style.display = 'block';
-                if (sidenav) sidenav.classList.add('show-mobile');
-            }
-
-            function closeSidenav() {
-                body.classList.remove('g-sidenav-pinned');
-                overlay.style.display = 'none';
-                if (sidenav) sidenav.classList.remove('show-mobile');
-            }
-
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', function () {
-                    body.classList.contains('g-sidenav-pinned') ? closeSidenav() : openSidenav();
-                });
-            }
-
-            overlay.addEventListener('click', closeSidenav);
-
-            if (sidenav) {
-                sidenav.addEventListener('click', function (e) {
-                    if (window.innerWidth >= 1200) return;
-                    if (e.target.closest('.nav-link:not(.menu-toggle)')) closeSidenav();
-                });
-            }
-        })();
-    </script>
 
     {{-- ===================== ARGON DASHBOARD JS ===================== --}}
     <script src="{{ asset('argon/js/argon-dashboard.min.js') }}?v=2.1.0"></script>

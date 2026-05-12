@@ -19,68 +19,51 @@
     }
 
 </style>
-<div class="app-main__inner">
-    <div class="app-page-title">
-        <div class="page-title-wrapper">
-            <div class="page-title-heading">
-                <div class="page-title-icon">
-                    <i class="fa fa-street-view"></i>
-                </div>
-                <div><b>Data Nasabah</b>
-                    <div class="page-title-subheading">
-                        {{ Session::get('nama_lembaga') }}
-                    </div>
-                </div>
-            </div>
-            <div class="page-title-actions">
-                <div class="d-inline-block dropdown">
-                    <button type="submit" class="btn btn-success btn-sm mb-0" id="ExportExcel">
-                        <i class="fa fa-print"></i> &nbsp;&nbsp; Export Excel
-                    </button>
-                    @if (in_array('data_penduduk.export_excel', Session::get('tombol', [])))
-                    <div class="card mb-3">
-                        <div class="card-body p-2">
-                            <div class="d-flex justify-content-end align-items-center">
-                                <button type="submit" class="btn btn-success btn-sm mb-0" id="ExportExcel">
-                                    <i class="fa fa-print"></i>&nbsp;&nbsp;Export Excel
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+    <div>
+        <h4 class="text-white font-weight-bolder mb-1 d-flex align-items-center">
+            <i class="fa fa-street-view me-2"></i>
+            Data Nasabah
+        </h4>
+        <p class="text-white opacity-8 text-sm mb-0">{{ Session::get('nama_lembaga') }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        @if (in_array('data_penduduk.export_excel', Session::get('tombol', [])) || true) {{-- Selalu tampil seperti sebelumnya namun rapi --}}
+        <button type="submit" class="btn btn-success btn-sm shadow-sm mb-0 d-flex align-items-center" id="ExportExcel">
+            <i class="fas fa-file-excel me-2"></i> Export Excel
+        </button>
+        @endif
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body p-3">
+                <div class="table-responsive">
+                    <table class="table table-flush table-hover align-items-center mb-0" width="100%">
+                        <thead class="thead-light">
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">NIK</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Nama Lengkap</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Alamat</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Telpon</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="main-card mb-3 card">
-                    <div class="card-body">
-                        <h5 class="card-title"></h5>
+</div>
 
-                        <div class="table-responsive">
-                            <table class="table table-hover" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>NIK</th>
-                                        <th>Nama Lengkap</th>
-                                        <th>Alamat</th>
-                                        <th>Telpon</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="text-sm">
+<div class="row mt-2">
+    <div class="col-12">
+        <div class="d-flex flex-wrap gap-2">
             <span class="badge bg-secondary">
                 (N) Belum ada pinjaman
             </span>
