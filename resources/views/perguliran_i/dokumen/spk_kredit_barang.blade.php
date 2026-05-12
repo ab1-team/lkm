@@ -3,7 +3,7 @@
     use Carbon\Carbon;
     Carbon::setLocale('id');
     $waktu = date('H:i');
-    $tempat = 'Kantor UPK';
+    $tempat = 'Kantor LKM';
     $wt_cair = explode('_', $pinkel->wt_cair);
     if (count($wt_cair) == 1) {
         $waktu = $wt_cair[0];

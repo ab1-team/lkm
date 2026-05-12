@@ -181,7 +181,7 @@
                                 <span class="sidenav-mini-icon">
                                     <i class="material-icons-round opacity-10">redo</i>
                                 </span>
-                                <span class="sidenav-normal  ms-2  ps-1"> Pengguna UPK </span>
+                                <span class="sidenav-normal  ms-2  ps-1"> Pengguna LKM </span>
                             </a>
                         </li>
                     </ul>

@@ -4,7 +4,7 @@
     $title_form = [
         1 => 'Kelembagaan',
         2 => 'Dana Sosial',
-        3 => 'Bonus UPK',
+        3 => 'Bonus LKM',
         4 => 'Lain-lain',
     ];
 @endphp
