@@ -111,6 +111,13 @@
             }
         }
 
+        /* ===================== DESKTOP CONTENT SPACING ===================== */
+        @media (min-width: 1200px) {
+            .sidenav.fixed-start + .main-content {
+                margin-left: 19.5rem !important; /* Memberikan jarak antara sidebar dan konten */
+            }
+        }
+
         /* ===================== FADE-IN FOUC PREVENTER ===================== */
         body {
             opacity: 0;
