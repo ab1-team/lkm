@@ -1,0 +1,622 @@
+[
+    {
+        "Filename":  "agungan_jaminan.blade.php",
+        "LineNumber":  157,
+        "Line":  "        \u003ctd class=\"style27\" \u003e: {{$pinkel-\u003eanggota-\u003enamadepan}}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "analisis_keputusan_kredit.blade.php",
+        "LineNumber":  50,
+        "Line":  "                \u003cb\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "analisis_keputusan_kredit.blade.php",
+        "LineNumber":  144,
+        "Line":  "                {{-- \u003cb\u003e {{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/b\u003e --}}"
+    },
+    {
+        "Filename":  "analisis_keputusan_kredit.blade.php",
+        "LineNumber":  196,
+        "Line":  "                {{-- \u003cb\u003e {{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/b\u003e --}}"
+    },
+    {
+        "Filename":  "analisis_keputusan_kredit.blade.php",
+        "LineNumber":  226,
+        "Line":  "                {{-- \u003cb\u003e {{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/b\u003e --}}"
+    },
+    {
+        "Filename":  "analisis_keputusan_kredit.blade.php",
+        "LineNumber":  387,
+        "Line":  "                {{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}"
+    },
+    {
+        "Filename":  "analisis_keputusan_kredit.blade.php",
+        "LineNumber":  390,
+        "Line":  "                {{ $pinkel-\u003eanggota-\u003enamadepan }}"
+    },
+    {
+        "Filename":  "anggota.blade.php",
+        "LineNumber":  16,
+        "Line":  "                    \u003cb\u003eNasabah {{ strtoupper($pinkel-\u003eanggota-\u003enamadepan) }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "anggota.blade.php",
+        "LineNumber":  39,
+        "Line":  "                \u003ctd\u003e{{ $pa-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "ba_pencairan.blade.php",
+        "LineNumber":  55,
+        "Line":  "                \u003cb\u003e {{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "ba_pencairan.blade.php",
+        "LineNumber":  224,
+        "Line":  "                {{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}"
+    },
+    {
+        "Filename":  "ba_pencairan.blade.php",
+        "LineNumber":  227,
+        "Line":  "                {{ $pinkel-\u003eanggota-\u003enamadepan }}"
+    },
+    {
+        "Filename":  "cek_list.blade.php",
+        "LineNumber":  202,
+        "Line":  "            \u003cdiv\u003e\u003cb\u003e{{ $dir-\u003enamadepan }}\u003c/b\u003e\u003c/div\u003e"
+    },
+    {
+        "Filename":  "cetak_kartu_angsuran.blade.php",
+        "LineNumber":  113,
+        "Line":  "                \u003ctd style=\"font-weight: bold;\" colspan=\"4\"\u003e{{ $nia-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "cetak_kartu_angsuran.blade.php",
+        "LineNumber":  369,
+        "Line":  "                    {{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}"
+    },
+    {
+        "Filename":  "cetak_kartu_angsuran.blade.php",
+        "LineNumber":  372,
+        "Line":  "                    {{-- {{ $pinkel-\u003eanggota-\u003enamadepan }} --}}"
+    },
+    {
+        "Filename":  "cetak_kartu_angsuran_anggota.blade.php",
+        "LineNumber":  124,
+        "Line":  "                    \u003ctd style=\"font-weight: bold;\" colspan=\"4\"\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "cetak_kartu_angsuran_anggota.blade.php",
+        "LineNumber":  137,
+        "Line":  "                    \u003ctd style=\"font-weight: bold;\"\u003e{{ $pinj-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "cetak_kartu_angsuran_anggota.blade.php",
+        "LineNumber":  441,
+        "Line":  "                        {{ $pinkel-\u003eanggota-\u003enamadepan }}"
+    },
+    {
+        "Filename":  "cetak_kartu_angsuran_anggota.blade.php",
+        "LineNumber":  444,
+        "Line":  "                        \u003cdiv\u003e{{ $pinj-\u003eanggota-\u003enamadepan }}\u003c/div\u003e"
+    },
+    {
+        "Filename":  "check.blade.php",
+        "LineNumber":  41,
+        "Line":  "            \u003ctd style=\"font-weight: bold;\"\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "check.blade.php",
+        "LineNumber":  47,
+        "Line":  "            \u003ctd style=\"font-weight: bold;\"\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "cover_pencairan.blade.php",
+        "LineNumber":  14,
+        "Line":  "\u003ctitle\u003eCOVER PENCAIRAN ({{ $pinkel-\u003eanggota-\u003enamadepan . \u0027 - Loan ID. \u0027 . $pinkel-\u003eid }})\u003c/title\u003e"
+    },
+    {
+        "Filename":  "cover_pencairan.blade.php",
+        "LineNumber":  73,
+        "Line":  "                {{ $pinkel-\u003eanggota-\u003enamadepan }}"
+    },
+    {
+        "Filename":  "cover_proposal.blade.php",
+        "LineNumber":  11,
+        "Line":  "\u003ctitle\u003eCOVER PROPOSAL ({{ $pinkel-\u003eanggota-\u003enamadepan . \u0027 - Loan ID. \u0027 . $pinkel-\u003eid }})\u003c/title\u003e"
+    },
+    {
+        "Filename":  "cover_proposal.blade.php",
+        "LineNumber":  73,
+        "Line":  "                 {{ $pinkel-\u003eanggota-\u003enamadepan }} "
+    },
+    {
+        "Filename":  "daftar_hadir_pencairan.blade.php",
+        "LineNumber":  72,
+        "Line":  "                \u003ctd\u003e{{ $pa-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "daftar_hadir_verifikasi.blade.php",
+        "LineNumber":  64,
+        "Line":  "                    \u003cdiv class=\"fw-bold\" style=\"font-size: 12pt;\"\u003e{{ $pa-\u003eanggota-\u003enamadepan }}\u003c/div\u003e"
+    },
+    {
+        "Filename":  "form_verifikasi.blade.php",
+        "LineNumber":  25,
+        "Line":  "            \u003ctd colspan=\"4\"\u003e: {{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "form_verifikasi.blade.php",
+        "LineNumber":  256,
+        "Line":  "                                \u003cdiv\u003e{{ $r-\u003enamadepan }} {{ $r-\u003enamabelakang }}\u003c/div\u003e"
+    },
+    {
+        "Filename":  "form_verifikasi.blade.php",
+        "LineNumber":  269,
+        "Line":  "                            {{ $pinkel-\u003euser-\u003enamadepan }}"
+    },
+    {
+        "Filename":  "form_verifikasi_anggota.blade.php",
+        "LineNumber":  17,
+        "Line":  "                    \u0027value\u0027 =\u003e $pa-\u003eanggota-\u003enamadepan,"
+    },
+    {
+        "Filename":  "form_verifikasi_anggota.blade.php",
+        "LineNumber":  221,
+        "Line":  "                                            \u003cb\u003e{{ $verif-\u003enamadepan . \u0027 \u0027 . $verif-\u003enamabelakang }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "iptw.blade.php",
+        "LineNumber":  98,
+        "Line":  "                \u003ctd\u003e{{ $pa-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "kartu_angsuran.blade.php",
+        "LineNumber":  108,
+        "Line":  "                \u003ctd style=\"font-weight: bold;\"\u003e{{ $nia-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "kartu_angsuran.blade.php",
+        "LineNumber":  417,
+        "Line":  "                    {{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}"
+    },
+    {
+        "Filename":  "kartu_angsuran.blade.php",
+        "LineNumber":  420,
+        "Line":  "                    {{ $nia-\u003eanggota-\u003enamadepan }}"
+    },
+    {
+        "Filename":  "kartu_angsuran_anggota.blade.php",
+        "LineNumber":  137,
+        "Line":  "                    \u003ctd style=\"font-weight: bold;\"\u003e{{ $pinj-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "kartu_angsuran_anggota.blade.php",
+        "LineNumber":  443,
+        "Line":  "                        \u003cdiv\u003e{{ $pinj-\u003eanggota-\u003enamadepan }}\u003c/div\u003e"
+    },
+    {
+        "Filename":  "ktp.blade.php",
+        "LineNumber":  11,
+        "Line":  "                    \u003cb\u003eNASABAH {{ strtoupper($pinkel-\u003eanggota-\u003enamadepan) }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "kuitansi.blade.php",
+        "LineNumber":  45,
+        "Line":  "                    Pencairan Pinjaman Individu Atas Nama {{ $pinkel-\u003eanggota-\u003enamadepan }}"
+    },
+    {
+        "Filename":  "kuitansi.blade.php",
+        "LineNumber":  124,
+        "Line":  "            \u003cb\u003e{{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "kuitansi.blade.php",
+        "LineNumber":  127,
+        "Line":  "            \u003cb\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "kuitansi.blade.php",
+        "LineNumber":  168,
+        "Line":  "            \u003cb\u003e{{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "kuitansi.blade.php",
+        "LineNumber":  171,
+        "Line":  "            \u003cb\u003e{{ $bend-\u003enamadepan }} {{ $bend-\u003enamabelakang }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "kuitansi.blade.php",
+        "LineNumber":  174,
+        "Line":  "            \u003cb\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "kuitansi_anggota.blade.php",
+        "LineNumber":  69,
+        "Line":  "                        a.n. {{ $pinj-\u003eanggota-\u003enamadepan }} NIK. {{ $pinj-\u003eanggota-\u003enik }}"
+    },
+    {
+        "Filename":  "kuitansi_anggota.blade.php",
+        "LineNumber":  149,
+        "Line":  "                        \u003cb\u003e{{ $pinj-\u003eanggota-\u003enamadepan }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "pemanfaat.blade.php",
+        "LineNumber":  76,
+        "Line":  "                \u003ctd\u003e{{ $pa-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "pemanfaat.blade.php",
+        "LineNumber":  127,
+        "Line":  "            \u003ctd align=\"center\"\u003e{{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "pemberitahuan_desa.blade.php",
+        "LineNumber":  73,
+        "Line":  "                        \u003ctd\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "pemberitahuan_desa.blade.php",
+        "LineNumber":  153,
+        "Line":  "                                            \u003cb\u003e{{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "pengajuan_kredit.blade.php",
+        "LineNumber":  116,
+        "Line":  "        \u003ctd style=\"font-weight: bold;\"\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "pengajuan_kredit.blade.php",
+        "LineNumber":  222,
+        "Line":  "            \u003cp\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003cbr\u003e \u003c/p\u003e"
+    },
+    {
+        "Filename":  "pengambilan_jaminan.blade.php",
+        "LineNumber":  25,
+        "Line":  "        \u003ctd class=\"style27\" \u003e: {{$pinkel-\u003eanggota-\u003enamadepan}}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "pengambilan_jaminan.blade.php",
+        "LineNumber":  194,
+        "Line":  "            \u003cp\u003e{{$pinkel-\u003eanggota-\u003enamadepan}}\u003c/p\u003e"
+    },
+    {
+        "Filename":  "pengikat_diri_sebagai_penjamin.blade.php",
+        "LineNumber":  80,
+        "Line":  "            \u003ctd width=\"70%\"\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "pengikat_diri_sebagai_penjamin.blade.php",
+        "LineNumber":  173,
+        "Line":  "                {{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}"
+    },
+    {
+        "Filename":  "perjanjian_kredit.blade.php",
+        "LineNumber":  61,
+        "Line":  "            \u003cli\u003e\u003cb\u003e{{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "perjanjian_kredit.blade.php",
+        "LineNumber":  72,
+        "Line":  "                \u003cb\u003e {{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/b\u003e, Nomor Induk Kependudukan {{ $pinkel-\u003eanggota-\u003enik }} bertempat"
+    },
+    {
+        "Filename":  "perjanjian_kredit.blade.php",
+        "LineNumber":  142,
+        "Line":  "            @endif atas nama{{ $pinkel-\u003eanggota-\u003enamadepan }} (peminjam) yang terletak di"
+    },
+    {
+        "Filename":  "permohonan_kredit_barang.blade.php",
+        "LineNumber":  27,
+        "Line":  "            \u003ctd\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "pernyataan_peminjam.blade.php",
+        "LineNumber":  24,
+        "Line":  "                \u003cdiv style=\"display:table-cell;\"\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/div\u003e"
+    },
+    {
+        "Filename":  "pernyataan_peminjam.blade.php",
+        "LineNumber":  148,
+        "Line":  "                \u003cb\u003e{{ $dir-\u003enamadepan}} {{ $dir-\u003enamabelakang}}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "pernyataan_peminjam.blade.php",
+        "LineNumber":  154,
+        "Line":  "                \u003cb\u003e{{ $pinkel-\u003eanggota-\u003enamadepan}}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "pernyataan_tanggung_renteng.blade.php",
+        "LineNumber":  37,
+        "Line":  "                    \u003ctd\u003e{{ $pa-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "peserta_asuransi.blade.php",
+        "LineNumber":  22,
+        "Line":  "                \u003cb\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }} / {{ $pinkel-\u003eid }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "rekening_koran.blade.php",
+        "LineNumber":  28,
+        "Line":  "                    \u003cb\u003ePIUTANG {{ strtoupper($pinkel-\u003eanggota-\u003enamadepan) }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "rekening_koran.blade.php",
+        "LineNumber":  41,
+        "Line":  "                \u003cb\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }} \u0026ndash; {{ $pinkel-\u003eid }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "rekomendasi_kredit.blade.php",
+        "LineNumber":  132,
+        "Line":  "                \u003ctd\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }} \u003c/td\u003e"
+    },
+    {
+        "Filename":  "rekomendasi_verifikator.blade.php",
+        "LineNumber":  38,
+        "Line":  "                \u003ctd\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}  \u003c/td\u003e"
+    },
+    {
+        "Filename":  "rekomendasi_verifikator.blade.php",
+        "LineNumber":  140,
+        "Line":  "                        \u003cu\u003e {{$user-\u003enamadepan }} {{$user-\u003enamabelakang }}\u003c/u\u003e"
+    },
+    {
+        "Filename":  "rencana_angsuran.blade.php",
+        "LineNumber":  64,
+        "Line":  "                \u003cb\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }} \u003c/b\u003e"
+    },
+    {
+        "Filename":  "rencana_angsuran.blade.php",
+        "LineNumber":  200,
+        "Line":  "                            \u003cb\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "sk_menjual.blade.php",
+        "LineNumber":  60,
+        "Line":  "            \u003ctd\u003e {{ $pinkel-\u003eanggota-\u003enamadepan }} \u003c/td\u003e"
+    },
+    {
+        "Filename":  "sk_menjual.blade.php",
+        "LineNumber":  101,
+        "Line":  "            \u003ctd\u003e {{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }} \u003c/td\u003e"
+    },
+    {
+        "Filename":  "sk_menjual.blade.php",
+        "LineNumber":  238,
+        "Line":  "\t\t\t\t\t\t\t\t{{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}"
+    },
+    {
+        "Filename":  "sk_menjual.blade.php",
+        "LineNumber":  241,
+        "Line":  "\t\t\t\t\t\t\t\t{{ $pinkel-\u003eanggota-\u003enamadepan }}"
+    },
+    {
+        "Filename":  "sk_menjual.blade.php",
+        "LineNumber":  265,
+        "Line":  "                            \u003ctd width=\"80\" align=\"left\"\u003e{{ $saksi-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "sph.blade.php",
+        "LineNumber":  66,
+        "Line":  "            \u003ctd\u003e {{ $pinkel-\u003eanggota-\u003enamadepan }} \u003c/td\u003e"
+    },
+    {
+        "Filename":  "sph.blade.php",
+        "LineNumber":  103,
+        "Line":  "            \u003ctd\u003e {{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }} \u003c/td\u003e"
+    },
+    {
+        "Filename":  "sph.blade.php",
+        "LineNumber":  177,
+        "Line":  "                    atas Nama {{ $pinkel-\u003eanggota-\u003enamadepan }} Yang nilainya dianggap sama dengan uang pinjaman dari Pihak"
+    },
+    {
+        "Filename":  "sph.blade.php",
+        "LineNumber":  179,
+        "Line":  "                    Apabila kemudian hari ternyata {{ $pinkel-\u003eanggota-\u003enamadepan }} tidak dapat membayar utang tersebut"
+    },
+    {
+        "Filename":  "sph.blade.php",
+        "LineNumber":  225,
+        "Line":  "                            \u003ctd width=\"20\" align=\"center\"\u003e{{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}\u003cbr\u003e"
+    },
+    {
+        "Filename":  "sph.blade.php",
+        "LineNumber":  229,
+        "Line":  "                            \u003ctd width=\"70\" align=\"center\"\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }} \u003cbr\u003e"
+    },
+    {
+        "Filename":  "spk.blade.php",
+        "LineNumber":  64,
+        "Line":  "            \u003ctd\u003e {{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }} \u003c/td\u003e"
+    },
+    {
+        "Filename":  "spk.blade.php",
+        "LineNumber":  98,
+        "Line":  "            \u003ctd\u003e {{ $pinkel-\u003eanggota-\u003enamadepan }} \u003c/td\u003e"
+    },
+    {
+        "Filename":  "spk_kredit_barang.blade.php",
+        "LineNumber":  60,
+        "Line":  "            \u003ctd\u003e {{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }} \u003c/td\u003e"
+    },
+    {
+        "Filename":  "spk_kredit_barang.blade.php",
+        "LineNumber":  94,
+        "Line":  "            \u003ctd\u003e {{ $pinkel-\u003eanggota-\u003enamadepan }} \u003c/td\u003e"
+    },
+    {
+        "Filename":  "surat_ahli_waris.blade.php",
+        "LineNumber":  67,
+        "Line":  "                    Adalah benar-benar ahli waris dari \u003cb\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/b\u003e Dengan ini menyatakan"
+    },
+    {
+        "Filename":  "surat_kelayakan.blade.php",
+        "LineNumber":  80,
+        "Line":  "                        \u003ctd\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "surat_kelayakan.blade.php",
+        "LineNumber":  155,
+        "Line":  "            \u003ctd align=\"center\"\u003e{{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "surat_kuasa.blade.php",
+        "LineNumber":  43,
+        "Line":  "                \u003ctd class=\"l b\"\u003e{{ $pa-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "surat_kuasa.blade.php",
+        "LineNumber":  112,
+        "Line":  "                                    {{ $i }}. {{ $pinkel-\u003epinjaman_anggota[$j]-\u003eanggota-\u003enamadepan }}"
+    },
+    {
+        "Filename":  "surat_kuasa.blade.php",
+        "LineNumber":  123,
+        "Line":  "                                    {{ $pinkel-\u003epinjaman_anggota[$j + $batas_pemanfaat]-\u003eanggota-\u003enamadepan }}"
+    },
+    {
+        "Filename":  "surat_pemberitahuan.blade.php",
+        "LineNumber":  67,
+        "Line":  "                    Bpk/Ibu \u003cb\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "surat_pemberitahuan.blade.php",
+        "LineNumber":  227,
+        "Line":  "                {{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}"
+    },
+    {
+        "Filename":  "surat_pemberitahuan.blade.php",
+        "LineNumber":  230,
+        "Line":  "                {{ $pinkel-\u003eanggota-\u003enamadepan }}"
+    },
+    {
+        "Filename":  "Surat_Pernyataan.blade.php",
+        "LineNumber":  49,
+        "Line":  "            \u003ctd\u003e {{ $pinkel-\u003eanggota-\u003enamadepan }} \u003c/td\u003e"
+    },
+    {
+        "Filename":  "Surat_Pernyataan.blade.php",
+        "LineNumber":  202,
+        "Line":  "                            \u003ctd width=\"100\" align=\"center\"\u003e \u003cb\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "Surat_Pernyataan.blade.php",
+        "LineNumber":  233,
+        "Line":  "                            \u003ctd width=\"100\" align=\"center\"\u003e \u003cb\u003e{{ $mgr-\u003enamadepan }} {{ $mgr-\u003enamabelakang }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "Surat_Pernyataan.blade.php",
+        "LineNumber":  236,
+        "Line":  "                            \u003ctd width=\"100\" align=\"center\"\u003e \u003cb\u003e{{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "surat_pernyataan_suami.blade.php",
+        "LineNumber":  73,
+        "Line":  "            \u003ctd width=\"70%\"\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "surat_pernyataan_suami.blade.php",
+        "LineNumber":  152,
+        "Line":  "                {{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}"
+    },
+    {
+        "Filename":  "surat_persetujuan_kuasa.blade.php",
+        "LineNumber":  25,
+        "Line":  "            \u003ctd class=\"style27\"\u003e: {{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "surat_persetujuan_kuasa.blade.php",
+        "LineNumber":  76,
+        "Line":  "            \u003ctd class=\"style27\"\u003e: {{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "surat_persetujuan_kuasa.blade.php",
+        "LineNumber":  156,
+        "Line":  "                {{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}"
+    },
+    {
+        "Filename":  "surat_persetujuan_kuasa.blade.php",
+        "LineNumber":  159,
+        "Line":  "                {{ $pinkel-\u003eanggota-\u003enamadepan }}"
+    },
+    {
+        "Filename":  "tagihan.blade.php",
+        "LineNumber":  66,
+        "Line":  "                    Bpk/Ibu \u003cb\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "tagihan.blade.php",
+        "LineNumber":  91,
+        "Line":  "                    antara {{ $PL }} {{ $pinkel-\u003eanggota-\u003enamadepan }}"
+    },
+    {
+        "Filename":  "tagihan.blade.php",
+        "LineNumber":  141,
+        "Line":  "                    dan mendasar pada catatan pembukuan kami {{ $PL }} {{ $pinkel-\u003eanggota-\u003enamadepan }}"
+    },
+    {
+        "Filename":  "tagihan.blade.php",
+        "LineNumber":  217,
+        "Line":  "            \u003ctd align=\"center\"\u003e{{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "tanda_terima.blade.php",
+        "LineNumber":  27,
+        "Line":  "            \u003ctd\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }} - {{ $pinkel-\u003eid }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "tanda_terima.blade.php",
+        "LineNumber":  77,
+        "Line":  "            \u003ctd class=\"t l b\"\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "tanda_terima.blade.php",
+        "LineNumber":  130,
+        "Line":  "                        \u003ctd align=\"center\"\u003e{{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "tanda_terima_jaminan.blade.php",
+        "LineNumber":  25,
+        "Line":  "        \u003ctd class=\"style27\" \u003e: {{$pinkel-\u003eanggota-\u003enamadepan}}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "tanda_terima_jaminan.blade.php",
+        "LineNumber":  218,
+        "Line":  "              {{ $pinkel-\u003euser-\u003enamadepan }}"
+    },
+    {
+        "Filename":  "tanggung_renteng.blade.php",
+        "LineNumber":  36,
+        "Line":  "                \u003ctd\u003e{{ $pa-\u003eanggota-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "tanggung_renteng.blade.php",
+        "LineNumber":  47,
+        "Line":  "                    Selaku Nasabah {{ $pinkel-\u003eanggota-\u003enamadepan }} yang beralamatkan di"
+    },
+    {
+        "Filename":  "tanggung_renteng_kematian.blade.php",
+        "LineNumber":  45,
+        "Line":  "                \u003cb\u003e{{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "tanggung_renteng_kematian.blade.php",
+        "LineNumber":  147,
+        "Line":  "                \u003cb\u003e{{ $dir-\u003enamadepan }} {{ $dir-\u003enamabelakang }}\u003c/b\u003e"
+    },
+    {
+        "Filename":  "terima_jaminan.blade.php",
+        "LineNumber":  53,
+        "Line":  "        \u003ctd class=\"style27\"\u003e: {{ $login-\u003enamadepan }}\u003c/td\u003e"
+    },
+    {
+        "Filename":  "terima_jaminan.blade.php",
+        "LineNumber":  139,
+        "Line":  "            \u003cstrong\u003e{{ $pinkel-\u003eanggota-\u003enamadepan }}\u003c/strong\u003e"
+    },
+    {
+        "Filename":  "terima_jaminan.blade.php",
+        "LineNumber":  144,
+        "Line":  "            \u003cstrong\u003e{{ $login-\u003enamadepan }}\u003c/strong\u003e"
+    }
+]

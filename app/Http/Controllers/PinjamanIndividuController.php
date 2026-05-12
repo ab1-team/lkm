@@ -1338,11 +1338,20 @@ class PinjamanIndividuController extends Controller
         $kec = Kecamatan::where('id', Session::get('lokasi'))->with('kabupaten', 'kabupaten.wilayah', 'desa', 'ttd')->first();
         $kab = $kec->kabupaten;
         $dir = User::where([
-            ['lokasi', Session::get('lokasi')],
-            ['jabatan', '1'],
             ['level', '1'],
-            ['sejak', '<=', date('Y-m-t', strtotime($data['tahun'].'-'.$data['bulan'].'-01'))],
-        ])->first();
+            ['lokasi', Session::get('lokasi')],
+        ])
+            ->where(function ($query) {
+                if (Session::get('lokasi') == '351') {
+                    $query->where('jabatan', '3');
+                } else {
+                    $query->where('jabatan', '1');
+                }
+            })->with(['j'])->first();
+
+        if (!$dir) {
+            $dir = new User;
+        }
 
         $data['logo'] = $kec->logo;
         $data['nama_lembaga'] = $kec->nama_lembaga_sort;
@@ -3640,6 +3649,10 @@ class PinjamanIndividuController extends Controller
             ['level', '4'],
             ['jabatan', '1'],
         ])->with(['j'])->first();
+
+        if (!$data['user']) {
+            $data['user'] = new User;
+        }
         $data['judul'] = 'Rekomendasi Verifikator ('.$data['pinkel']->anggota->namadepan.' - Loan ID. '.$data['pinkel']->id.')';
         $view = view('perguliran_i.dokumen.rekomendasi_verifikator', $data)->render();
 

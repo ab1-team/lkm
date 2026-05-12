@@ -215,8 +215,8 @@
             <p>&nbsp;</p>
             <p>&nbsp;</p>
             <p>
-              {{ $pinkel->user->namadepan }}
-              {{ $pinkel->user->namabelakang }}<br>                                
+              {{ $pinkel->user->namadepan ?? '' }}
+              {{ $pinkel->user->namabelakang ?? '' }}<br>                                
             </p>
         </td>
     </tr>
