@@ -120,15 +120,15 @@
         <div style="color: rgb(200,200,200); font-weight: bold;">
             MEMO OF UNDERSTANDING
             <span style="float: right; color: #000; font-size: 8px; font-weight: normal; font-style: italic;">
-                MOU Nomor : {{ str_pad($kec->id, '3', '0', STR_PAD_LEFT) }}/Si Micro
-                Finance/{{ Tanggal::tglRomawi($tgl_mou) }}
+                MOU Nomor : {{ str_pad($kec->id, '3', '0', STR_PAD_LEFT) }}/Sistem Informasi Lembaga
+                Mikro/{{ Tanggal::tglRomawi($tgl_mou) }}
             </span>
         </div>
     </header>
 
     <footer>
         <div style="text-align: right; font-size: 8px;" id="page-number">
-            Page <span class="page"></span> - MoU Sistem Micro Finance
+            Page <span class="page"></span> - MoU Sistem Informasi Lembaga Keuangan Mikro
         </div>
     </footer>
 
@@ -241,7 +241,7 @@
             <ol style="text-align: justify;">
                 <li>
                     Pihak Pertama adalah sebuah Software Company yang telah me-release software akuntansi yang diberikan
-                    nama Sistem Micro Finance.
+                    nama Sistem Informasi Lembaga Keuangan Mikro.
                 </li>
                 <li>
                     Pihak Kedua adalah sebuah lembaga yang menyelenggarakan kegiatan simpan pinjam bagi
@@ -346,7 +346,8 @@
                             Memberikan layanan maintenance dan backup data secara berkala.
                         </li>
                         <li>
-                            Mengadakan ujian Certified Sistem Micro Finance bagi para operator yang telah mengikuti
+                            Mengadakan ujian Certified Sistem Informasi Lembaga Keuangan Mikro bagi para operator yang
+                            telah mengikuti
                             training.
                         </li>
                         <li>
@@ -356,7 +357,8 @@
                             Menginformasikan versi upgrade jika telah di-release versi yang terbaru.
                         </li>
                         <li>
-                            Memberikan jaminan bebas menggunakan Sistem Micro Finance secara legal dan sah dan
+                            Memberikan jaminan bebas menggunakan Sistem Informasi Lembaga Keuangan Mikro secara legal
+                            dan sah dan
                             bebas dari
                             tuntutan
                             pihak manapun.
@@ -367,14 +369,15 @@
                     Pihak Kedua berkewajiban untuk :
                     <ul style="list-style: lower-alpha;">
                         <li>
-                            Menggunakan Sistem Micro Finance sebagai software aplikasi dalam pengelolaan keuangan
+                            Menggunakan Sistem Informasi Lembaga Keuangan Mikro sebagai software aplikasi dalam
+                            pengelolaan keuangan
                             dan dana simpan pinjam
                             pihak
                             Kedua dengan sebagaimana mestinya dan dengan rasa penuh tanggung jawab.
                         </li>
                         <li>
                             Menyampaikan laporan keuangan dalam bentuk softcopy excel untuk bahan migrasi kedalam
-                            database Sistem Micro Finance.
+                            database Sistem Informasi Lembaga Keuangan Mikro.
                         </li>
                         <li>
                             Menyediakan sarana hardware yang akan digunakan untuk mengakses aplikasi seperti komputer
@@ -394,7 +397,8 @@
                     Pihak Pertama mempunyai hak :
                     <ul style="list-style: lower-alpha;">
                         <li>
-                            Menerima masukan dan saran perbaikan fitur Sistem Micro Finance sesuai dengan regulasi
+                            Menerima masukan dan saran perbaikan fitur Sistem Informasi Lembaga Keuangan Mikro sesuai
+                            dengan regulasi
                             yang
                             mengatur
                             Lembaga Keuangan Mikro
@@ -419,7 +423,8 @@
                     Pihak Kedua mempunyai hak :
                     <ul style="list-style: lower-alpha;">
                         <li>
-                            Menggunakan Sistem Micro Finance sebagai software aplikasi untuk pengelolaan keuangan
+                            Menggunakan Sistem Informasi Lembaga Keuangan Mikro sebagai software aplikasi untuk
+                            pengelolaan keuangan
                             dan manajemen
                             Lembaga Keuangan Mikro
                             sesuai regulasi yang berlaku secara nasional.
@@ -431,14 +436,16 @@
                             Mendapatkan Support setiap ada kendala penggunaan melalui WA, Telpon, E-mail, Facebook.
                         </li>
                         <li>
-                            Mendapatkan informasi mengenai release Sistem Micro Finance yang terbaru dari Pihak
+                            Mendapatkan informasi mengenai release Sistem Informasi Lembaga Keuangan Mikro yang terbaru
+                            dari Pihak
                             Pertama, dan
                             informasi
                             terbaru
-                            tentang Sistem Micro Finance dan perkembangannya.
+                            tentang Sistem Informasi Lembaga Keuangan Mikro dan perkembangannya.
                         </li>
                         <li>
-                            Memperoleh jaminan bebas menggunakan Sistem Micro Finance secara legal dan sah dan
+                            Memperoleh jaminan bebas menggunakan Sistem Informasi Lembaga Keuangan Mikro secara legal
+                            dan sah dan
                             bebas dari
                             tuntutan
                             pihak
@@ -513,13 +520,15 @@
                 </li>
                 <li>
                     Apabila terjadi kehilangan kemampuan dan atau pembaharuan manajemen PT. Asta Brata Teknologi dalam
-                    menjalankan fungsi manajemen dan layanan kepada User Sistem Micro Finance, maka sebagai bagian
+                    menjalankan fungsi manajemen dan layanan kepada User Sistem Informasi Lembaga Keuangan Mikro, maka
+                    sebagai bagian
                     proses
                     likuidasi
                     dan
                     atau pembaharuan manajemen PT. Asta Brata Teknologi berkewajiban melakukan pengalihan kewajiban
                     layanan
-                    User Sistem Micro Finance kepada pihak yang berkompeten dengan persetujuan kedua belah pihak.
+                    User Sistem Informasi Lembaga Keuangan Mikro kepada pihak yang berkompeten dengan persetujuan kedua
+                    belah pihak.
                 </li>
             </ol>
         </div>
