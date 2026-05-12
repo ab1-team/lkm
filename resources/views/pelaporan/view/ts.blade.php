@@ -82,8 +82,12 @@
             <div>
                 Regristasikan terlebih dahulu Nomor Bapak/Ibu dengan cara ketik :
             </div>
-            <div style="text-align: center; font-weight: bold;">UPK {{ $kec->id }} Nama Lengkap
-                {{ $kec->nama_kec }}
+            <div style="text-align: center; font-weight: bold;">
+                @if($kec->id == '530')
+                    mmf 530 nama lengkap {{ $kec->nama_kec }}
+                @else
+                    UPK {{ $kec->id }} Nama Lengkap {{ $kec->nama_kec }}
+                @endif
             </div>
         </li>
         <li style="text-align: justify;">
