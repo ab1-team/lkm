@@ -459,8 +459,8 @@
 
                         {{-- Configurator toggle --}}
                         <li class="nav-item px-3 d-flex align-items-center">
-                            <a href="javascript:;" class="nav-link text-white p-0">
-                                <i class="fa fa-cog fixed-plugin-button-nav cursor-pointer"></i>
+                            <a href="/pengaturan/sop" class="nav-link text-white p-0">
+                                <i class="fa fa-cog cursor-pointer"></i>
                             </a>
                         </li>
                     </ul>
@@ -518,8 +518,8 @@
 
     {{-- ===================== ARGON CONFIGURATOR ===================== --}}
     <div class="fixed-plugin">
-        <a class="fixed-plugin-button text-dark position-fixed px-3 py-2" 
-           style="bottom: 15px !important; border-radius: 50% !important; width: 50px !important; height: 50px !important; display: flex !important; align-items: center !important; justify-content: center !important;">
+        <a href="/pengaturan/sop" class="text-dark position-fixed px-3 py-2" 
+           style="background: #fff; right: 30px; z-index: 990; box-shadow: 0 2px 12px 0 rgba(0,0,0,0.16); font-size: 1.25rem; cursor: pointer; bottom: 15px !important; border-radius: 50% !important; width: 50px !important; height: 50px !important; display: flex !important; align-items: center !important; justify-content: center !important;">
             <i class="fa fa-cog fa-spin py-2"></i>
         </a>
         <div class="card shadow-lg">
