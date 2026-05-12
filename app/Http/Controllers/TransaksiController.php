@@ -88,7 +88,7 @@ class TransaksiController extends Controller
             ['lev4', '!=', '02']
         ])->orderBy('kode_akun')->get();
 
-        $title = 'Jurnal Angsuran';
+        $title = 'Jurnal Angsuran Individu';
 
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
         if (request()->get('pinkel')) {

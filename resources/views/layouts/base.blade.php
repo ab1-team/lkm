@@ -264,26 +264,94 @@
             z-index: 10055;
         }
 
-.search-expandable {
-    transition: width 0.3s ease;
+.navbar-search-full {
+    flex-grow: 1;
 }
 
-.search-input {
-    min-width: 230px;
-    width: 230px;
-    transition: width 0.3s ease;
+.navbar-search-full .input-group {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 8px !important;
+    transition: all 0.25s ease-in-out !important;
+    backdrop-filter: blur(4px);
 }
 
-.search-input.expanded,
-.search-input:focus {
-    width: var(--search-expanded-width, 400px);
+.navbar-search-full .input-group-text, 
+.navbar-search-full .form-control {
+    background: transparent !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    height: 42px;
+}
+
+.navbar-search-full .input-group-text {
+    padding-left: 15px;
+}
+
+.navbar-search-full .input-group-text i {
+    color: #ffffff !important;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.navbar-search-full .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.navbar-search-full .input-group:focus-within {
+    background: rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    transform: translateY(-1px);
+}
+
+.navbar-search-full .input-group:focus-within .form-control {
+    color: #ffffff !important;
+}
+
+.navbar-search-full .input-group:focus-within .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.navbar-search-full .input-group:focus-within .input-group-text i {
+    color: #ffffff !important;
+}
+
+/* Fix dropdown overflow and z-index visibility issues */
+#navbar.collapse.navbar-collapse {
+    overflow: visible !important;
+}
+
+.typeahead.dropdown-menu {
+    z-index: 9999 !important;
+    background-color: #ffffff !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
+    margin-top: 5px !important;
+    padding: 5px 0;
+}
+
+.typeahead.dropdown-menu li a {
+    color: #344767 !important;
+    padding: 8px 16px;
+    font-weight: 500;
+}
+
+.typeahead.dropdown-menu li.active a,
+.typeahead.dropdown-menu li a:hover {
+    background-color: #f8f9fa !important;
+    color: #5e72e4 !important;
 }
 
 @media (max-width: 767.98px) {
-    .search-input {
-        min-width: 140px;
-        width: 140px;
+    .navbar-search-full {
+        margin-left: 0.5rem;
+        max-width: 100%;
     }
+    .navbar-search-full .form-control {
+        font-size: 0.85rem;
+    }
+}
     .dataTables_filter label {
         width: 100% !important;
         justify-content: flex-start !important;
@@ -293,7 +361,7 @@
         margin-left: 0.5rem;
     }
     .navbar .container-fluid {
-        flex-wrap: nowrap !important;
+        flex-wrap: wrap !important;
     }
     .breadcrumb {
         display: none !important;
@@ -319,10 +387,10 @@
         @endphp
 
         {{-- ===================== NAVBAR ===================== --}}
-        <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl"
+        <nav class="navbar navbar-main navbar-expand-lg px-0 ms-0 me-4 shadow-none border-radius-xl"
              id="navbarBlur"
              data-scroll="false">
-            <div class="container-fluid py-1 px-3 align-items-center">
+            <div class="container-fluid py-1 px-3 align-items-center d-flex flex-wrap">
 
                 {{-- Hamburger (mobile) --}}
                 <div class="d-xl-none me-3 d-flex align-items-center">
@@ -336,41 +404,42 @@
                     </button>
                 </div>
 
-                {{-- Breadcrumb --}}
-                <nav aria-label="breadcrumb" class="d-flex flex-column justify-content-center">
-                    <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-                        <li class="breadcrumb-item text-sm">
-                            <a class="opacity-5 text-white" href="/dashboard">Pages</a>
-                        </li>
-                        <li class="breadcrumb-item text-sm text-white active" aria-current="page">
-                            {{ ucwords(str_replace('/', ' / ', Request::path())) }}
-                        </li>
-                    </ol>
+                {{-- Title Stack Labels --}}
+                <div class="d-flex flex-column justify-content-center me-auto {{ ($showIndividu || $showKelompok) ? 'order-last w-100 mt-2' : '' }}" style="flex-shrink: 0;">
                     <h6 class="font-weight-bolder text-white mb-0">
                         {{ Session::get('nama_lembaga') }}
                     </h6>
-                </nav>
+                    <div class="text-white text-xs font-weight-bold opacity-9" style="margin-top: -2px;">
+                        @if (Request::is('transaksi/jurnal_angsuran_individu'))
+                            Jurnal Angsuran Individu
+                        @elseif (Request::is('transaksi/jurnal_angsuran'))
+                            Jurnal Angsuran Kelompok
+                        @else
+                            {{ ucwords(str_replace(['/', '_'], [' / ', ' '], Request::path())) }}
+                        @endif
+                    </div>
+                </div>
 
-                <div class="collapse navbar-collapse me-md-0 me-sm-4 align-items-center" id="navbar">
-
-                    {{-- Search box kondisional --}}
+                <div class="collapse navbar-collapse me-md-0 me-sm-4 align-items-center flex-grow-1" id="navbar">
+                    {{-- Search Box Aligned with Profile --}}
                     @if ($showIndividu || $showKelompok)
-                        <div class="pe-md-3 d-flex align-items-center">
-                            <div class="input-group search-expandable">
+                        <div class="navbar-search-full me-3">
+                            <div class="input-group shadow-none">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search" aria-hidden="true"></i>
+                                </span>
                                 @if ($showIndividu)
                                     <input id="cariAnggota"
                                            type="text"
-                                           class="form-control border-start-0 ps-1 search-input"
-                                           placeholder="Individu (NIK / Nama Peminjam)"
-                                           autocomplete="off"
-                                           style="min-width: 230px;">
+                                           class="form-control ps-2"
+                                           placeholder="Cari Jurnal Angsuran Individu (Nama / NIK)"
+                                           autocomplete="off">
                                 @else
                                     <input id="cariKelompok"
                                            type="text"
-                                           class="form-control border-start-0 ps-1 search-input"
-                                           placeholder="Kelompok (Nama / Kode Kelompok)"
-                                           autocomplete="off"
-                                           style="min-width: 230px;">
+                                           class="form-control ps-2"
+                                           placeholder="Cari Jurnal Angsuran Kelompok (Kode / Nama)"
+                                           autocomplete="off">
                                 @endif
                             </div>
                         </div>
@@ -680,49 +749,7 @@
                 document.getElementById('formLogout').submit();
             }
 
-            // ===================== SEARCH EXPAND =====================
-            var searchInput = document.querySelector('.search-input');
-            if (searchInput) {
-                var userDropdown = document.getElementById('userDropdown');
-
-                function calcExpandedWidth() {
-                    if (!userDropdown) return 400;
-                    if (window.innerWidth < 768) return 180; // smaller expanded width on mobile
-                    var inputRect = searchInput.getBoundingClientRect();
-                    var dropRect  = userDropdown.getBoundingClientRect();
-                    var available = dropRect.left - inputRect.left - 16;
-                    return Math.max(available, 230);
-                }
-
-                function expandSearch() {
-                    searchInput.style.width = calcExpandedWidth() + 'px';
-                }
-
-                function collapseSearch() {
-                    if (searchInput.value.trim() === '') {
-                        searchInput.style.width = window.innerWidth < 768 ? '140px' : '230px';
-                    }
-                }
-
-                searchInput.addEventListener('focus', expandSearch);
-                searchInput.addEventListener('input', function () {
-                    if (this.value.trim() !== '') {
-                        expandSearch();
-                    } else {
-                        collapseSearch();
-                    }
-                });
-                searchInput.addEventListener('blur', collapseSearch);
-
-                window.addEventListener('resize', function () {
-                    if (document.activeElement === searchInput || searchInput.value.trim() !== '') {
-                        expandSearch();
-                    } else {
-                        collapseSearch();
-                    }
-                });
-            }
-            // ===================== END SEARCH EXPAND =====================
+            // ===================== SEARCH EXPAND REMOVED =====================
 
             // ===================== MOBILE SIDENAV TOGGLE =====================
             var mobileSidenavToggle = document.getElementById('mobileSidenavToggle');
