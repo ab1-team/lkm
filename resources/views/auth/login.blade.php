@@ -226,12 +226,18 @@
         }
 
         @media (max-width: 576px) {
+            .login-left {
+                padding: 1rem;
+            }
+
             .login-card {
-                padding: 2rem 1.5rem;
+                padding: 1rem 0.25rem;
             }
 
             .login-content {
                 width: 100%;
+                max-width: 100%;
+                padding: 2rem 1.25rem !important;
             }
 
             .logo-container img {
