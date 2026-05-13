@@ -113,11 +113,24 @@
 
         /* ===================== DESKTOP CONTENT SPACING ===================== */
         @media (min-width: 1200px) {
-            .sidenav.fixed-start + .main-content {
+            .sidenav.fixed-start ~ .main-content {
                 margin-left: 19.5rem !important; /* Memberikan jarak antara sidebar dan konten */
             }
         }
-
+        /* ===================== UNIFIED SIDENAV & MENU SYSTEM ===================== */
+        #sidenav-main.sidenav {
+            border-radius: 8px !important;
+        }
+        /* Harmonize active pills, icons and navlinks inside sidebar to 8px */
+        .navbar-vertical .navbar-nav .nav-link,
+        .sidenav .nav-link,
+        .sidenav .nav-link .icon {
+            border-radius: 8px !important;
+        }
+        .sidenav-header {
+            border-top-left-radius: 8px !important;
+            border-top-right-radius: 8px !important;
+        }
         /* ===================== FADE-IN FOUC PREVENTER ===================== */
         body {
             opacity: 0;
@@ -129,7 +142,7 @@
 
         /* ===================== UNIFIED CARD & TYPOGRAPHY SYSTEM ===================== */
         .card {
-            border-radius: 12px !important;
+            border-radius: 8px !important;
             box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02) !important;
             border: 1px solid rgba(0, 0, 0, 0.07) !important;
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
@@ -137,8 +150,22 @@
         .card:hover {
             box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08), 0 8px 8px -4px rgba(0, 0, 0, 0.03) !important;
         }
+        
+        /* Prevent color bleed by rounding direct top/bottom child elements */
+        .card > :first-child,
+        .card-header:first-child {
+            border-top-left-radius: 8px !important;
+            border-top-right-radius: 8px !important;
+        }
+        
+        .card > :last-child,
+        .card-footer:last-child {
+            border-bottom-left-radius: 8px !important;
+            border-bottom-right-radius: 8px !important;
+        }
+
         .card-header, .card-footer {
-            border-radius: 12px !important;
+            border-radius: 8px !important;
         }
         h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
             font-family: 'Open Sans', sans-serif !important;
@@ -428,7 +455,7 @@
         {{-- ===================== NAVBAR ===================== --}}
         <nav class="navbar navbar-main navbar-expand-lg px-0 ms-0 me-4 shadow-none border-radius-xl"
              id="navbarBlur"
-             data-scroll="false">
+             data-scroll="false" style="z-index: 1050; position: relative;">
             <div class="container-fluid py-1 px-3 align-items-center d-flex flex-wrap">
 
                 {{-- Hamburger (mobile) --}}

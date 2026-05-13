@@ -101,7 +101,7 @@
                             </div>
                             <div class="col-4">
                                 <div class="d-grid">
-                                    <button class="btn btn-danger btn-sm mb-2" id="btnDetailAngsuran">Detail</button>
+                                    <button class="btn btn-danger btn-sm mb-2" id="btnDetailAngsuran">Riwayat Angsuran</button>
                                 </div>
                             </div>
                             <div class="col-4">

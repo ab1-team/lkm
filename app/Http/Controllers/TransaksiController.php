@@ -2139,7 +2139,7 @@ class TransaksiController extends Controller
             'label' => '<i class="fas fa-book"></i> Detail Angsuran Individu ' . $nia->anggota->namadepan,
             'label_cetak' => '<i class="fas fa-book"></i> Cetak Dokumen Angsuran Individu ' . $nia->anggota->namadepan,
             'view' => view('transaksi.jurnal_angsuran.individu.detail')->with(compact('nia'))->render(),
-            'cetak' => view('transaksi.jurnal_angsuran.individu.detail')->with(compact('nia'))->render()
+            'cetak' => view('transaksi.jurnal_angsuran.individu._detail')->with(compact('nia'))->render()
         ];
     }
 

@@ -5,7 +5,42 @@
         .btn--text {
             color: white;
             font-weight: bold;
+        }
 
+        /* Harmonize text inputs to uniform 40px height */
+        .form-control {
+            height: 40px !important;
+            font-size: 0.875rem !important;
+        }
+
+        /* Harmonize Select2 structure & center components */
+        .select2-container--bootstrap4 .select2-selection--single {
+            height: 40px !important;
+            min-height: 40px !important;
+            border: 1px solid #d2d6da !important;
+            border-radius: 0.5rem !important;
+            display: flex !important;
+            align-items: center !important;
+            position: relative !important;
+        }
+
+        /* Align placeholder and selected text in vertical center */
+        .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
+            line-height: 38px !important;
+            padding-left: 0.75rem !important;
+            color: #495057 !important;
+            font-size: 0.875rem !important;
+            margin-top: 0 !important;
+        }
+
+        /* Center Dropdown Arrow perfectly */
+        .select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
+            height: 38px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            right: 8px !important;
+            display: flex !important;
+            align-items: center !important;
         }
     </style>
     <div class="app-main__inner">
@@ -15,7 +50,7 @@
 
                 <div class="col-md-9">
                     <div class="main-card mb-3 card">
-                        <div class="card-body">
+                        <div class="card-body pb-3">
                             <form action="/transaksi" method="post" id="FormTransaksi">
                                 @csrf
                                 <div class="row">
@@ -66,7 +101,7 @@
                                     </div>
                                 </div>
                                 <div class="row" id="form_nominal">
-                                    <div class="col-md-12">
+                                    <div class="col-md-6">
                                         <div class="position-relative mb-3">
                                             <label for="keterangan">Keterangan</label>
                                             <input autocomplete="off" type="text" name="keterangan" id="keterangan"
@@ -74,7 +109,7 @@
                                             <small class="text-danger" id="msg_keterangan"></small>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-6">
                                         <div class="position-relative mb-3">
                                             <label for="nominal">Nominal Rp.</label>
                                             <input autocomplete="off" type="text" name="nominal"
@@ -82,51 +117,55 @@
                                             <small class="text-danger" id="msg_nominal"></small>
                                         </div>
                                     </div>
-                                </div><br>
+                                </div>
                                 <div style="text-align: right;">
                                     <button type="button" id="SimpanTransaksi" class="mt-2 btn btn-focus btn--text">SIMPAN
                                         TRANSAKSI</button>
-                                </div><br>
+                                </div><br><br>
                             </form>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-3">
-                    <div class="mb-12 card">
-
-                        <div class="card-body">
-                            <form class="">
-                                <div class="d-flex justify-content-between">
+                    <div class="mb-3 card">
+                        <div class="card-body pb-2">
+                            <form>
+                                <div class="d-flex justify-content-between mt-1">
                                     <div class="text-sm">Saldo:</div>
                                     <div class="text-sm fw-bold">
                                         Rp. <span id="saldo">0.00</span>
                                     </div>
                                 </div>
 
-                                <hr class="horizontal dark">
+                                <hr class="horizontal dark my-2">
                                 <div class="text-sm fw-bold text-center">Cetak Buku Bantu</div>
-                                <hr class="horizontal dark mb-0">
+                                <hr class="horizontal dark mt-2 mb-2">
+
                                 <div class="row">
-                                    <div class="position-relative mb-3">
-                                        <label class="form-label" for="tahun">Tahunan</label>
-                                        <select class="js-example-basic-single form-control" name="tahun" id="tahun">
-                                            @php
-                                                $tgl_pakai = $kec->tgl_pakai;
-                                                $th_pakai = explode('-', $tgl_pakai)[0];
-                                            @endphp
-                                            @for ($i = date('Y'); $i >= $th_pakai; $i--)
-                                                <option {{ $i == date('Y') ? 'selected' : '' }} value="{{ $i }}">
-                                                    {{ $i }}
-                                                </option>
-                                            @endfor
-                                        </select>
-                                        <small class="text-danger" id="msg_tahun"></small>
+                                    <div class="col-md-12">
+                                        <div class="position-relative mb-2">
+                                            <label class="form-label" for="tahun">Tahunan</label>
+                                            <select class="js-example-basic-single form-control" name="tahun"
+                                                id="tahun">
+                                                @php
+                                                    $tgl_pakai = $kec->tgl_pakai;
+                                                    $th_pakai = explode('-', $tgl_pakai)[0];
+                                                @endphp
+                                                @for ($i = date('Y'); $i >= $th_pakai; $i--)
+                                                    <option {{ $i == date('Y') ? 'selected' : '' }}
+                                                        value="{{ $i }}">
+                                                        {{ $i }}
+                                                    </option>
+                                                @endfor
+                                            </select>
+                                            <small class="text-danger" id="msg_tahun"></small>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="position-relative mb-3">
+                                        <div class="position-relative mb-2">
                                             <label class="form-label" for="bulan">Bulanan</label>
                                             <select class="js-example-basic-single form-control" name="bulan"
                                                 id="bulan">
@@ -165,7 +204,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="position-relative mb-3">
+                                        <div class="position-relative mb-1">
                                             <label class="form-label" for="tanggal">Tanggal</label>
                                             <select class="js-example-basic-single form-control" name="tanggal"
                                                 id="tanggal">
@@ -181,12 +220,10 @@
                                 </div>
                                 <div style="text-align: right;">
                                     <button type="button" id="BtndetailTransaksi"
-                                        class="mt-2 btn btn-success btn--text">DETAIL TRANSAKSI</button>
+                                        class="mt-2 btn btn-success btn--text">DAFTAR TRANSAKSI</button>
                                 </div>
-
                             </form>
                         </div>
-
                     </div>
                 </div>
             </div>

@@ -3,6 +3,7 @@
     $t_pokok = 0;
     $t_jasa = 0;
     $t_denda = 0;
+	$total_rencana_jasa = $nia->ra_i->sum('wajib_jasa');
 @endphp
 
 <form action="" method="post" id="FormCetakBuktiAngsuran" target="_blank">
@@ -30,28 +31,32 @@
                 <td colspan="4" align="center" style="text-transform: uppercase;">
                     <b>Target Pembayaran</b>
                 </td>
-                <td align="right"><b>{{ number_format($pinkel->alokasi) }}</b></td>
-                <td align="right"><b>{{ number_format($pinkel->alokasi) }}</b></td>
-                <td align="right"><b>{{ number_format(($pinkel->alokasi * $pinkel->pros_jasa) / 100) }}</b></td>
+                <td align="right"><b>{{ number_format($nia->alokasi) }}</b></td>
+                <td align="right"><b>{{ number_format($nia->alokasi) }}</b></td>
+                <td align="right"><b>{{ number_format($total_rencana_jasa) }}</b></td>
                 <td align="right"><b>0</b></td>
             </tr>
-            @foreach ($pinkel->real as $real)
+            @foreach ($nia->real_i as $real_i)
                 @php
                     $keterangan = '';
                     $denda = 0;
                     $idt = 0;
                 @endphp
-                @foreach ($real->trx as $trx)
+                @foreach ($real_i->trx as $trx)
                     @php
-                        $keterangan .= $trx->keterangan_transaksi . '<br>';
                         if (
-                            $trx->rekening_kredit == '4.1.01.04' ||
-                            $trx->rekening_kredit == '4.1.01.05' ||
-                            $trx->rekening_kredit == '4.1.01.06'
+                            $trx->rekening_kredit == '4.1.02.01' ||
+                            $trx->rekening_kredit == '4.1.02.02' ||
+                            $trx->rekening_kredit == '4.1.02.03' ||
+                            $trx->rekening_kredit == '4.1.02.04' ||
+                            $trx->rekening_kredit == '4.1.02.05'
                         ) {
                             $denda += $trx->jumlah;
+                            $idt = $trx->idt;
+                            continue;
                         }
 
+                        $keterangan .= $trx->keterangan_transaksi . '<br>';
                         $idt = $trx->idt;
                     @endphp
                 @endforeach
@@ -62,18 +67,18 @@
                                 id="{{ $idt }}" name="cetak[]" data-input="checked">
                         </div>
                     </td>
-                    <td align="center">{{ Tanggal::tglIndo($real->tgl_transaksi) }}</td>
+                    <td align="center">{{ Tanggal::tglIndo($real_i->tgl_transaksi) }}</td>
                     <td>{!! $keterangan !!}</td>
-                    <td align="center">{{ $real->id }}</td>
+                    <td align="center">{{ $real_i->id }}</td>
                     <td align="right">0</td>
-                    <td align="right">{{ number_format($real->realisasi_pokok) }}</td>
-                    <td align="right">{{ number_format($real->realisasi_jasa) }}</td>
+                    <td align="right">{{ number_format($real_i->realisasi_pokok) }}</td>
+                    <td align="right">{{ number_format($real_i->realisasi_jasa) }}</td>
                     <td align="right">{{ number_format($denda) }}</td>
                 </tr>
 
                 @php
-                    $t_pokok += $real->realisasi_pokok;
-                    $t_jasa += $real->realisasi_jasa;
+                    $t_pokok += $real_i->realisasi_pokok;
+                    $t_jasa += $real_i->realisasi_jasa;
                     $t_denda += $denda;
                 @endphp
             @endforeach
@@ -92,10 +97,9 @@
                 <td colspan="4" align="right" style="text-transform: uppercase;">
                     <b>Saldo</b>
                 </td>
-                <td align="right"><b>{{ number_format($pinkel->alokasi) }}</b></td>
-                <td align="right"><b>{{ number_format($pinkel->alokasi - $t_pokok) }}</b></td>
-                <td align="right"><b>{{ number_format(($pinkel->alokasi * $pinkel->pros_jasa) / 100 - $t_jasa) }}</b>
-                </td>
+                <td align="right"><b>{{ number_format($nia->alokasi) }}</b></td>
+                <td align="right"><b>{{ number_format($nia->alokasi - $t_pokok) }}</b></td>
+                <td align="right"><b>{{ number_format(($total_rencana_jasa) - $t_jasa) }}</b></td>
                 <td align="right"><b>{{ number_format($t_denda) }}</b></td>
             </tr>
         </tbody>

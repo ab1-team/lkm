@@ -16,6 +16,24 @@
         .text-justify {
             text-align: justify;
         }
+
+        .widget-content.card {
+            height: 95px !important;
+            min-height: 95px !important;
+            max-height: 95px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin-bottom: 1rem !important;
+        }
+
+        .widget-content-outer,
+        .widget-content-wrapper {
+            width: 100% !important;
+            height: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+        }
     </style>
     <div class="app-main__inner">
 
@@ -128,40 +146,32 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> <br>
             <div class="row">
-                <div class="col-md-6 col-lg-4">
-                    <div class="main-card mb-3 card">
-                        <div class="card-body">
-                            <h5 class="card-title">Angsuran Hari Ini</h5>
-                            <div class="card-body pb-0 p-3 pt-0 mt-4">
-                                <canvas id="myChart" width="200" height="200"></canvas>
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="main-card card w-100">
+                        <div class="card-body p-3 pb-2">
+                            <h5 class="card-title mb-1">Angsuran Hari Ini</h5>
+                            <div class="mb-3" style="height: 180px; min-height: 180px; position: relative;">
+                                <canvas id="myChart"></canvas>
                             </div>
-                            <div class="card-footer pt-0 pb-2 p-3 d-flex align-items-center justify-content-between">
-                                <div class="w-60">
-                                    <div class="text-sm">
-                                        Total Ang.Pokok: <b>Rp. <span id="total_angsur_pokok"></span></b>
+                            <div class="pt-3 border-top">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="text-xs">
+                                        Total Ang.Pokok: <b>Rp. <span id="total_angsur_pokok">0.00</span></b>
+                                    </div>
+                                    <div class="text-xs">
+                                        Total Ang.Jasa: <b>Rp. <span id="total_angsur_jasa">0.00</span></b>
                                     </div>
                                 </div>
-                                <div class="w-60">
-                                    <div class="text-sm">
-                                        Total Ang.Jasa: <b>Rp. <span id="total_angsur_jasa"></span></b>
-                                    </div>
-                                </div>
-                                {{-- <div class="w-40 d-flex justify-content-end">
-                                            <button type="button" id="btnDetailAngsuran" class="btn btn-outline-secondary">Detail</button>
-                                        </div> --}}
                             </div>
-
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-8">
-                    <div class="card">
-                        <div class="card-header pb-0 p-3">
-                            <div class="d-flex justify-content-between">
-                                <h5 class="card-title">Realisasi Pendapatan dan Beban</h5>
-                            </div>
+                <div class="col-md-6 col-lg-8 mb-4">
+                    <div class="card w-100">
+                        <div class="card-header pb-0 p-4 d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-4">Realisasi Pendapatan dan Beban</h5>
                             <div class="d-flex align-items-center">
                                 <span class="badge badge-md badge-dot me-4">
                                     <i class="bg-success"></i>
@@ -171,19 +181,18 @@
                                     <i class="bg-warning"></i>
                                     <span class="text-dark text-xs">Beban</span>
                                 </span>
-                                <span class="badge badge-md badge-dot me-4">
+                                <span class="badge badge-md badge-dot">
                                     <i class="bg-info"></i>
                                     <span class="text-dark text-xs">Laba</span>
                                 </span>
                             </div>
                         </div>
                         <div class="card-body p-3">
-                            <div class="chart">
-                                <canvas id="chart-line" class="chart-canvas" height="400"
-                                    style="display: block; box-sizing: border-box; height: 210px; width: 844.4px;"
-                                    width="1688"></canvas>
+                            <div class="chart w-100">
+                                <canvas id="chart-line" class="chart-canvas" height="180"></canvas>
                             </div>
                         </div>
+                        <br>
                     </div>
                 </div>
             </div>
@@ -1077,7 +1086,11 @@
                         display: true,
                         position: 'right',
                         labels: {
-                            usePointStyle: true
+                            usePointStyle: true,
+                            boxWidth: 10,
+                            font: {
+                                size: 10
+                            }
                         }
                     }
                 },
