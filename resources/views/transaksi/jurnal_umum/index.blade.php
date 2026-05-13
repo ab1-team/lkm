@@ -218,9 +218,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div style="text-align: right;">
-                                    <button type="button" id="BtndetailTransaksi"
-                                        class="mt-2 btn btn-success btn--text">DAFTAR TRANSAKSI</button>
+                                <div style="text-align: center;"><button type="button" id="BtndetailTransaksi"
+                                        class="mt-2 btn btn-success btn-sm">
+                                        DAFTAR TRANSAKSI
+                                    </button>
                                 </div>
                             </form>
                         </div>
