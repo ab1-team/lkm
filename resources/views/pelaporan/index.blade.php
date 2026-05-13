@@ -15,7 +15,7 @@
             box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, .15) !important;
         }
 
-        .icon-shape {
+        .card-pelaporan-icon-shape {
             width: 56px;
             height: 56px;
             background-position: 50%;
@@ -136,7 +136,7 @@
                     style="cursor: pointer; border-radius: 12px;">
                     <div class="card-body p-3 d-flex flex-column align-items-center text-center justify-content-center">
                         <div
-                            class="icon-shape bg-gradient-danger shadow-danger text-center rounded-circle mb-2 d-flex align-items-center justify-content-center">
+                            class="card-pelaporan-icon-shape bg-gradient-danger shadow-danger text-center rounded-circle mb-2 d-flex align-items-center justify-content-center">
                             <i class="fas fa-save text-white" style="font-size: 1.3rem;"></i>
                         </div>
                         <h5 class="font-weight-bolder text-dark mb-1" style="font-size: 1rem;">Simpan Saldo</h5>
@@ -150,7 +150,7 @@
                     style="cursor: pointer; border-radius: 12px;">
                     <div class="card-body p-3 d-flex flex-column align-items-center text-center justify-content-center">
                         <div
-                            class="icon-shape bg-gradient-success shadow-success text-center rounded-circle mb-2 d-flex align-items-center justify-content-center">
+                            class="card-pelaporan-icon-shape bg-gradient-success shadow-success text-center rounded-circle mb-2 d-flex align-items-center justify-content-center">
                             <i class="fas fa-file-excel text-white" style="font-size: 1.3rem;"></i>
                         </div>
                         <h5 class="font-weight-bolder text-dark mb-1" style="font-size: 1rem;">Export Excel</h5>
@@ -164,7 +164,7 @@
                     style="cursor: pointer; border-radius: 12px;">
                     <div class="card-body p-3 d-flex flex-column align-items-center text-center justify-content-center">
                         <div
-                            class="icon-shape bg-gradient-dark shadow-dark text-center rounded-circle mb-2 d-flex align-items-center justify-content-center">
+                            class="card-pelaporan-icon-shape bg-gradient-dark shadow-dark text-center rounded-circle mb-2 d-flex align-items-center justify-content-center">
                             <i class="fas fa-file-pdf text-white" style="font-size: 1.3rem;"></i>
                         </div>
                         <h5 class="font-weight-bolder text-dark mb-1" style="font-size: 1rem;">Preview PDF</h5>
