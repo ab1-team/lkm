@@ -190,8 +190,8 @@
                 </tr> --}}
             </table>
             </p>
-        </li>
     @endif
+
         <li style="margin-top: 12px;">
             <div style="text-transform: uppercase;">
                 Ikhtisar Kebijakan Akutansi
@@ -264,14 +264,14 @@
                 Informasi Tambahan Laporan Keuangan
             </div>
             <div>
-                <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+                <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px; table-layout: fixed; word-wrap: break-word;">
                     <tr>
                         <td colspan="3" height="5"></td>
                     </tr>
                     <tr style="background: #000; color: #fff;">
-                        <td width="30">Kode</td>
-                        <td width="300">Nama Akun</td>
-                        <td align="right">Saldo</td>
+                        <td width="15%">Kode</td>
+                        <td width="55%">Nama Akun</td>
+                        <td width="30%" align="right">Saldo</td>
                     </tr>
                     <tr>
                         <td colspan="3" height="2"></td>
@@ -371,12 +371,13 @@
                         </td>
                         <td align="right">{{ number_format($kredit, 2) }}</td>
                     </tr>
-                    @if(round($kredit, 2) != round($debit, 2))
-                    <tr style="color: rgb(250, 0, 0); font-weight: bold;">
-                        <td height="20" colspan="3" align="left">
-                            <b>Terdapat selisih antara Aset dengan Liabilitas + Ekuitas sebesar {{ number_format($debit-$kredit, 2) }}</b>
-                        </td>
-                    </tr>
+                    @if (round($kredit, 2) != round($debit, 2))
+                        <tr style="color: rgb(250, 0, 0); font-weight: bold;">
+                            <td height="20" colspan="3" align="left">
+                                <b>Terdapat selisih antara Aset dengan Liabilitas + Ekuitas sebesar
+                                    {{ number_format($debit - $kredit, 2) }}</b>
+                            </td>
+                        </tr>
                     @endif
                 </table>
             </div>

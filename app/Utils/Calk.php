@@ -32,7 +32,12 @@ class Calk
     $tanggal_laporan = Tanggal::namaBulan($tgl_kondisi) . ' tahun ' . Tanggal::tahun($tgl_kondisi);
     $view_neraca = $data['view_neraca'];
 
-    $calk = strtr(json_decode($text), [
+    $decoded_text = json_decode($text);
+    if ($decoded_text === null && json_last_error() !== JSON_ERROR_NONE) {
+        $decoded_text = $text;
+    }
+
+    $calk = strtr((string) $decoded_text, [
       '{nama_lembaga}' => $kec->nama_lembaga_sort,
       '{nomor_badan_hukum}' => $kec->nomor_bh,
       '{tanggal_laporan}' => $tanggal_laporan,

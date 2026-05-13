@@ -1,11 +1,11 @@
-<table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+<table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px; table-layout: fixed; word-wrap: break-word;">
     <tr>
         <td colspan="3" height="5"></td>
     </tr>
     <tr style="background: #000; color: #fff;">
-        <td width="30">Kode</td>
-        <td width="300">Nama Akun</td>
-        <td align="right">Saldo</td>
+        <td width="15%">Kode</td>
+        <td width="55%">Nama Akun</td>
+        <td width="30%" align="right">Saldo</td>
     </tr>
     <tr>
         <td colspan="3" height="2"></td>
