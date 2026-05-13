@@ -59,7 +59,7 @@
             <div class="tab-content">
                 <div class="main-card mb-3 card">
                     <div class="card-body">
-                        <div class="p-5"></div>
+                        <div class="p-2"></div>
                     </div>
                 </div>
             </div>
@@ -93,7 +93,7 @@
             e.preventDefault()
             $('#FormTahunTutupBuku').attr('action', '/transaksi/tutup_buku/saldo')
             $('#LayoutPreview').html(
-                '<div class="card"><div class="card-body p-3"><div class="p-5"></div></div></div>')
+                '<div class="card"><div class="card-body p-3"><div class="p-2"></div></div></div>')
 
             var form = $('#FormTahunTutupBuku')
             $.ajax({
@@ -119,7 +119,7 @@
             if (event.data === 'closed') {
                 $('#FormTahunTutupBuku').attr('action', '/transaksi/tutup_buku/saldo')
                 $('#LayoutPreview').html(
-                    '<div class="card"><div class="card-body p-3"><div class="p-5"></div></div></div>')
+                    '<div class="card"><div class="card-body p-3"><div class="p-2"></div></div></div>')
 
                 var form = $('#FormTahunTutupBuku')
                 $.ajax({
