@@ -35,8 +35,27 @@
         </div>
         
         <style>
+            /* Selective Nuclear CSS Reset to purge all pseudo-element hyphens and artifacts */
+            .card-body::before,
+            .card-body::after,
+            .card-body ul.nav-pills::before,
+            .card-body ul.nav-pills::after,
+            .nav-pills .nav-item::before,
+            .nav-pills .nav-item::after {
+                content: none !important;
+                display: none !important;
+            }
+
             .card-body ul.nav-pills {
                 gap: 6px;
+                list-style: none !important;
+                list-style-type: none !important;
+                padding-left: 0 !important;
+            }
+            
+            .nav-pills .nav-item {
+                list-style: none !important;
+                list-style-type: none !important;
             }
             
             .nav-pills .nav-item .nav-link {
@@ -52,14 +71,10 @@
             .nav-pills .nav-item .nav-link:not(.active):hover {
                 background-color: rgba(94, 114, 228, 0.06) !important;
                 color: #5e72e4 !important;
-                transform: translateY(-1px);
                 box-shadow: 0 4px 6px rgba(50, 50, 93, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
             }
 
-            .nav-pills .nav-item .nav-link.active {
-                box-shadow: 0 4px 15px rgba(94, 114, 228, 0.25) !important;
-                transform: scale(1.01) translateY(-1px);
-            }
+
 
             @media (max-width: 576px) {
                 .nav-item .nav-link {
