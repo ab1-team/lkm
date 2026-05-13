@@ -78,7 +78,6 @@
                     Tembusan :
                     <ol>
                         <li>Arsip</li>
-                        <li>OJK</li>
                     </ol>
                 </div>
             </td>
