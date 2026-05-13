@@ -47,6 +47,14 @@
                 display: none !important;
             }
 
+            /* Force-Disable Dynamic Background Moving-Tab Effects */
+            .card-body .nav-pills .moving-tab {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                pointer-events: none !important;
+            }
+
             .card-body ul.nav-pills {
                 gap: 6px;
                 list-style: none !important;
