@@ -51,21 +51,8 @@ class PinjamanIndividuController extends Controller
         if (request()->ajax()) {
             $pinj_i = PinjamanIndividu::where('status', 'P')
                 ->where('jenis_pinjaman', 'I')
+                ->has('anggota')
                 ->with('anggota', 'anggota.d', 'jpp', 'sts')->get();
-
-            /**
-             * [
-             *  pinjaman => [
-             *      ...,
-             *      anggota => [
-             *          ...,
-             *          d => []
-             *      ],
-             *      jpp => [],
-             *      sts => []
-             *  ]
-             * ]
-             */
 
             return DataTables::of($pinj_i)
                 ->addColumn('jasa', function ($row) {
@@ -78,9 +65,11 @@ class PinjamanIndividuController extends Controller
                 })
                 ->editColumn('namadepan', function ($row) {
                     $jpp = $row->jpp;
-                    $status = $row->sts->warna_status;
+                    $status = $row->sts ? $row->sts->warna_status : 'secondary';
 
-                    $namadepan = $row->anggota->namadepan.'('.$jpp->nama_jpp.')';
+                    $nama = $row->anggota ? $row->anggota->namadepan : 'N/A';
+                    $produk = $jpp ? $jpp->nama_jpp : 'N/A';
+                    $namadepan = $nama.'('.$produk.')';
 
                     return '<div>'.$namadepan.' <small class="float-end badge bg-'.$status.'">Loan ID.'.$row->id.'</small></div>';
                 })
@@ -91,7 +80,9 @@ class PinjamanIndividuController extends Controller
                     return number_format($row->proposal);
                 })
                 ->editColumn('anggota.alamat', function ($row) {
-                    return $row->anggota->alamat.' '.$row->anggota->d->nama_desa;
+                    $alamat = $row->anggota ? $row->anggota->alamat : '';
+                    $desa = ($row->anggota && $row->anggota->d) ? $row->anggota->d->nama_desa : '';
+                    return $alamat.' '.$desa;
                 })
                 ->rawColumns(['namadepan'])
                 ->make(true);
@@ -103,6 +94,7 @@ class PinjamanIndividuController extends Controller
         if (request()->ajax()) {
             $pinj_i = PinjamanIndividu::where('status', 'V')
                 ->where('jenis_pinjaman', 'I')
+                ->has('anggota')
                 ->with('anggota', 'anggota.d', 'jpp', 'sts')->get();
 
             return DataTables::of($pinj_i)
@@ -116,15 +108,13 @@ class PinjamanIndividuController extends Controller
                 })
                 ->editColumn('namadepan', function ($row) {
                     $jpp = $row->jpp;
-                    if ($row->sts) {
-                        $status = $row->sts->warna_status;
+                    $status = $row->sts ? $row->sts->warna_status : 'secondary';
 
-                        $namadepan = $row->anggota->namadepan.'('.$jpp->nama_jpp.')';
+                    $nama = $row->anggota ? $row->anggota->namadepan : 'N/A';
+                    $produk = $jpp ? $jpp->nama_jpp : 'N/A';
+                    $namadepan = $nama.'('.$produk.')';
 
-                        return '<div>'.$namadepan.' <small class="float-end badge bg-'.$status.'">Loan ID.'.$row->id.'</small></div>';
-                    } else {
-                        return '';
-                    }
+                    return '<div>'.$namadepan.' <small class="float-end badge bg-'.$status.'">Loan ID.'.$row->id.'</small></div>';
                 })
                 ->editColumn('tgl_verifikasi', function ($row) {
                     return Tanggal::tglIndo($row->tgl_verifikasi);
@@ -133,7 +123,9 @@ class PinjamanIndividuController extends Controller
                     return number_format($row->verifikasi);
                 })
                 ->editColumn('anggota.alamat', function ($row) {
-                    return $row->anggota->alamat.' '.$row->anggota->d->nama_desa;
+                    $alamat = $row->anggota ? $row->anggota->alamat : '';
+                    $desa = ($row->anggota && $row->anggota->d) ? $row->anggota->d->nama_desa : '';
+                    return $alamat.' '.$desa;
                 })
                 ->rawColumns(['namadepan'])
                 ->make(true);
@@ -145,6 +137,7 @@ class PinjamanIndividuController extends Controller
         if (request()->ajax()) {
             $pinj_i = PinjamanIndividu::where('status', 'W')
                 ->where('jenis_pinjaman', 'I')
+                ->has('anggota')
                 ->with('anggota', 'anggota.d', 'jpp', 'sts')->get();
 
             return DataTables::of($pinj_i)
@@ -158,9 +151,11 @@ class PinjamanIndividuController extends Controller
                 })
                 ->editColumn('namadepan', function ($row) {
                     $jpp = $row->jpp;
-                    $status = $row->sts->warna_status;
+                    $status = $row->sts ? $row->sts->warna_status : 'secondary';
 
-                    $namadepan = $row->anggota->namadepan.'('.$jpp->nama_jpp.')';
+                    $nama = $row->anggota ? $row->anggota->namadepan : 'N/A';
+                    $produk = $jpp ? $jpp->nama_jpp : 'N/A';
+                    $namadepan = $nama.'('.$produk.')';
 
                     return '<div>'.$namadepan.' <small class="float-end badge bg-'.$status.'">Loan ID.'.$row->id.'</small></div>';
                 })
@@ -171,7 +166,9 @@ class PinjamanIndividuController extends Controller
                     return number_format($row->alokasi);
                 })
                 ->editColumn('anggota.alamat', function ($row) {
-                    return $row->anggota->alamat.' '.$row->anggota->d->nama_desa;
+                    $alamat = $row->anggota ? $row->anggota->alamat : '';
+                    $desa = ($row->anggota && $row->anggota->d) ? $row->anggota->d->nama_desa : '';
+                    return $alamat.' '.$desa;
                 })
                 ->rawColumns(['namadepan'])
                 ->make(true);
@@ -183,6 +180,7 @@ class PinjamanIndividuController extends Controller
         if (request()->ajax()) {
             $pinj_i = PinjamanIndividu::where('status', 'A')
                 ->where('jenis_pinjaman', 'I')
+                ->has('anggota')
                 ->with('anggota', 'anggota.d', 'jpp', 'sts')->get();
 
             return DataTables::of($pinj_i)
@@ -196,9 +194,11 @@ class PinjamanIndividuController extends Controller
                 })
                 ->editColumn('namadepan', function ($row) {
                     $jpp = $row->jpp;
-                    $status = $row->sts->warna_status;
+                    $status = $row->sts ? $row->sts->warna_status : 'secondary';
 
-                    $namadepan = $row->anggota->namadepan.'('.$jpp->nama_jpp.')';
+                    $nama = $row->anggota ? $row->anggota->namadepan : 'N/A';
+                    $produk = $jpp ? $jpp->nama_jpp : 'N/A';
+                    $namadepan = $nama.'('.$produk.')';
 
                     return '<div>'.$namadepan.' <small class="float-end badge bg-'.$status.'">Loan ID.'.$row->id.'</small></div>';
                 })
@@ -209,7 +209,9 @@ class PinjamanIndividuController extends Controller
                     return number_format($row->alokasi);
                 })
                 ->editColumn('anggota.alamat', function ($row) {
-                    return $row->anggota->alamat.' '.$row->anggota->d->nama_desa;
+                    $alamat = $row->anggota ? $row->anggota->alamat : '';
+                    $desa = ($row->anggota && $row->anggota->d) ? $row->anggota->d->nama_desa : '';
+                    return $alamat.' '.$desa;
                 })
                 ->rawColumns(['namadepan'])
                 ->make(true);
@@ -222,6 +224,7 @@ class PinjamanIndividuController extends Controller
             $tb_pinkel = 'pinjaman_anggota_'.Session::get('lokasi');
             $pinj_i = PinjamanIndividu::where('status', 'A')
                 ->where('jenis_pinjaman', 'I')
+                ->has('anggota')
                 ->whereRaw($tb_pinkel.'.alokasi<=(SELECT SUM(realisasi_pokok) FROM real_angsuran_i_'.Session::get('lokasi').' WHERE loan_id='.$tb_pinkel.'.id)')
                 ->with('anggota', 'jpp', 'sts')->get();
 
@@ -236,9 +239,11 @@ class PinjamanIndividuController extends Controller
                 })
                 ->editColumn('namadepan', function ($row) {
                     $jpp = $row->jpp;
-                    $status = $row->sts->warna_status;
+                    $status = $row->sts ? $row->sts->warna_status : 'secondary';
 
-                    $namadepan = $row->anggota->namadepan.'('.$jpp->nama_jpp.')';
+                    $nama = $row->anggota ? $row->anggota->namadepan : 'N/A';
+                    $produk = $jpp ? $jpp->nama_jpp : 'N/A';
+                    $namadepan = $nama.'('.$produk.')';
 
                     return '<div>'.$namadepan.' <small class="float-end badge bg-'.$status.'">Loan ID.'.$row->id.'</small></div>';
                 })
