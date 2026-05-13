@@ -1,0 +1,181 @@
+# ROADMAP PENGEMBANGAN & ALUR KERJA APLIKASI LKM
+Dokumen ini disusun untuk memetakan alur kerja, routing, dan controller sistem LKM guna memudahkan pemeliharaan sistem dan proses onboarding bagi developer baru.
+
+---
+
+## 🎯 1. Arsitektur & Autentikasi Utama
+Aplikasi LKM menggunakan sistem Multi-Tenancy berbasis Hostname/Subdomain.
+
+*   **Identifikasi Lokasi (Kecamatan)**: 
+    *   Dijalankan di `App\Http\Controllers\AuthController::index()` dan `login()`.
+    *   Sistem membaca host (`$request->getHost()`), mencocokkan dengan tabel `Kecamatan` di kolom `web_kec` atau `web_alternatif`.
+    *   ID Kecamatan disimpan di Session sebagai `'lokasi'`.
+*   **Menu Dinamis**:
+    *   Menu dirender di database berdasarkan kolom `lokasi` dan `kecuali` (untuk pengecualian fitur tertentu di beberapa lokasi).
+    *   Session menu disimpan di `Session::get('menu')` saat login berhasil.
+
+---
+
+## 👥 2. Modul Pinjaman Kelompok (Perguliran)
+Modul ini mengatur siklus proposal kredit dari pendaftaran kelompok hingga pelunasan.
+
+*   **Controller Utama**: `App\Http\Controllers\PinjamanKelompokController` & `App\Http\Controllers\PinjamanAnggotaController`
+*   **Tabel Terkait**: `pinjaman_kelompok`, `pinjaman_anggota`, `real_angsuran`
+
+### Alur Workflow Proposal (State-Machine):
+Setiap tahapan merujuk pada view dan tab di database berdasarkan status pinjaman (`P`, `V`, `W`, `A`, `L`).
+
+1.  **Pendaftaran Proposal**:
+    *   **URL**: `/register_proposal/{id_kel}` ➡️ Method: `register()`
+    *   Mengisi form pinjaman awal untuk satu kelompok.
+2.  **Daftar Tunggu Proposal (Status: Proposal)**:
+    *   **URL**: `/perguliran/proposal` ➡️ Method: `proposal()`
+    *   Melihat antrean proposal kelompok baru yang didaftarkan.
+3.  **Verifikasi Proposal (Status: Verified)**:
+    *   **URL**: `/perguliran/verified` ➡️ Method: `verified()`
+    *   Tahap analisis dan review oleh tim verifikator sebelum pencairan.
+4.  **Menunggu Pencairan (Status: Waiting)**:
+    *   **URL**: `/perguliran/waiting` ➡️ Method: `waiting()`
+    *   Proposal yang telah disetujui dan menunggu tanda tangan pencairan/cetak SPK.
+5.  **Pinjaman Aktif (Status: Aktif)**:
+    *   **URL**: `/perguliran/aktif` ➡️ Method: `aktif()`
+    *   Dana sudah dicairkan dan sistem mulai menghitung masa pembayaran angsuran.
+    *   Jadwal angsuran di-generate via `/perguliran/generate/{id_pinj}` ➡️ Method: `generate()`.
+6.  **Pelunasan (Status: Lunas)**:
+    *   **URL**: `/perguliran/lunas` ➡️ Method: `lunas()`
+    *   Kelompok yang pinjamannya telah dibayar 100%.
+    *   Cetak surat lunas via `/cetak_keterangan_lunas/{perguliran}` ➡️ Method: `keterangan()`.
+
+---
+
+## 👤 3. Modul Pinjaman Individu (Perguliran Individu)
+Memiliki kemiripan struktur dengan Modul Kelompok, namun memfasilitasi data Agunan (Jaminan) karena menyasar personal.
+
+*   **Controller Utama**: `App\Http\Controllers\PinjamanIndividuController`
+*   **Tabel Terkait**: `pinjaman_anggota` (dengan referensi non-kelompok), `jaminan`
+
+### Alur Kerja Unik Pinjaman Individu:
+*   **Registrasi**: `/register_proposal_i/{nia}` ➡️ Method: `register()`
+*   **Manajemen Jaminan**:
+    *   Input Jaminan Awal: `/register_proposal_i/jaminan/{id}` ➡️ Method: `Jaminan()`
+    *   Edit Jaminan Aktif: `/perguliran_i/jaminan/{id}` ➡️ Method: `EditJaminan()`
+    *   Menunggu Persetujuan Jaminan: `/perguliran_i/waitingjaminan/{id}` ➡️ Method: `Waiting_Edit_Jaminan()`
+*   **Kondisi Penolakan (Tidak Layak)**:
+    *   Pindah status ke tidak layak: POST `/perguliran_i/tdklayak/{id}` ➡️ Method: `tdklayak()`
+    *   Mengembalikan verifikasi: POST `/perguliran_i/kembali_verifikasi/{id}` ➡️ Method: `kembaliverifikasi()`
+
+---
+
+## 🏦 4. Modul Simpanan (Tabungan Nasabah)
+Pengaturan tabungan umum, deposito, dan tabungan berjangka.
+
+*   **Controller Utama**: `App\Http\Controllers\SimpananController`
+*   **Tabel Terkait**: `simpanan`, `real_simpanan`, `jenis_simpanan`
+
+### Alur Proses Inti Simpanan:
+1.  **Pendaftaran Rekening**:
+    *   Cari NIK Nasabah: `/simpanan/cari_nik` ➡️ Method: `cariNik()`
+    *   Registrasi Tabungan: `/register_simpanan/{nia}` ➡️ Method: `register()`
+2.  **Transaksi Simpanan (Setor & Tarik)**:
+    *   Mengambil data transaksi: GET `/simpanan/get-transaksi` ➡️ Method: `getTransaksi()`
+    *   Simpan Setor/Tarik: POST `/simpanan/simpan-transaksi` ➡️ Method: `simpanTransaksi()`
+3.  **Dokumen & Pencetakan**:
+    *   Formulir CIF: `/cetak_formulir/{simpanan?}` ➡️ Method: `cetakFormulir()`
+    *   Cetak Buku Tabungan: `/cetak_buku/{idt}` ➡️ Method: `cetakPadaBuku()`
+    *   Cetak Sertifikat (Deposito): `/cetak_sertifikat/{simpanan}` ➡️ Method: `cetakSertifikat()`
+    *   Mutasi Rekening Koran: `/cetak_koran/{simpanan}` ➡️ Method: `koran()`
+4.  **Bunga Periodik**:
+    *   Perhitungan Bunga: `/bunga` ➡️ Method: `bunga()`
+    *   Proses Posting Bunga Bulanan: GET `/simpan_bunga` ➡️ Method: `simpanBunga()`
+
+---
+
+## 📊 5. Modul Transaksi, Angsuran & Jurnal
+Pusat keuangan sistem yang menangani penjurnalan ganda (double-entry bookkeeping).
+
+*   **Controller Utama**: `App\Http\Controllers\TransaksiController`
+*   **Tabel Terkait**: `transaksi`, `real_angsuran`, `rekening`
+
+### Fitur Utama:
+*   **Jurnal Umum**: `/transaksi/jurnal_umum` ➡️ Mencatat transaksi kas keluar/masuk manual.
+*   **Jurnal Angsuran (Kelompok)**:
+    *   Formulir Input Angsuran: `/transaksi/form_angsuran/{id_pinkel}` ➡️ Method: `formAngsuran()`
+    *   Melihat Target Angsuran Saat Ini: `/transaksi/angsuran/target/{id_pinkel}` ➡️ Method: `targetAngsuran()`
+    *   Posting Pembayaran Angsuran: POST `/transaksi/angsuran` ➡️ Method: `angsuran()`
+*   **Jurnal Angsuran (Individu)**:
+    *   Formulir Input: `/transaksi/form_angsuran_individu/{id_pinkel}` ➡️ Method: `formAngsuranIndividu()`
+    *   Posting Pembayaran: POST `/transaksi/angsuran_individu` ➡️ Method: `angsuranIndividu()`
+*   **Pembukuan Tahunan / Tutup Buku**:
+    *   URL: `/transaksi/tutup_buku` ➡️ Method: `jurnalTutupBuku()`
+    *   Proses Tutup Buku: POST `/transaksi/tutup_buku` ➡️ Method: `simpanTutupBuku()`
+*   **Cetak Kuitansi & Struk**:
+    *   Struk Matrix: `/transaksi/dokumen/struk_matrix/{id}`
+    *   Struk Thermal: `/transaksi/dokumen/struk_thermal/{id}`
+
+## 📈 6. Modul Pelaporan (Dynamic Reporting System)
+Modul terbesar yang mengurus pelaporan keuangan, rincian pinjaman, simpanan, arus kas, hingga standar laporan OJK. Sistem menggunakan mekanisme pemanggilan fungsi internal secara dinamis!
+
+*   **Controller Utama**: `App\Http\Controllers\PelaporanController`
+*   **Engine Pemuatan**: Method `preview()`
+
+### Mekanisme Eksekusi Dinamis:
+1.  **Menu Utama**: GET `/pelaporan` ➡️ Method: `index()` memuat daftar jenis laporan dasar.
+2.  **Nested Selector**: GET `/pelaporan/sub_laporan/{file}` ➡️ Method: `subLaporan()` memuat form/filter tambahan untuk laporan bertingkat (seperti memilih akun buku besar tertentu atau pilihan triwulan).
+3.  **Heart Engine (`preview()`)**: 
+    *   Mengambil parameter filter: `tahun`, `bulan`, `hari`, `laporan`, `sub_laporan`, dan `type` (HTML / PDF).
+    *   Melakukan pemanggilan method internal menggunakan teknik **Dynamic Method Invocation**:
+        `return $this->$file($data);` di mana `$file` bernilai string nama fungsi pelaporan internal!
+4.  **Format Keluaran**: 
+    *   Jika `type = 'html'`, controller me-render view dari direktori `resources/views/pelaporan/view/...` secara mentah ke halaman.
+    *   Jika `type = 'pdf'`, HTML hasil render dibungkus ke engine DomPDF untuk streaming dokumen via `PDF::loadHTML($view)->stream()`.
+
+### Kumpulan Sub-Metode Pelaporan Penting:
+Metode-metode ini dipanggil secara dinamis di dalam engine `preview()`:
+*   `cover()` & `CV()` ➡️ Cover standar & Cover pelaporan OJK.
+*   `PF()` ➡️ Profil kepengurusan lembaga.
+*   `OJKP()` ➡️ Pembuatan Neraca Keuangan format OJK (mengakses tabel `rekening_ojk`).
+*   `LRL()` ➡️ Laporan Laba Rugi komprehensif (tahunan/bulanan).
+*   `DRS()` ➡️ Daftar Rincian Simpanan (mengaudit realisasi setor/tarik tiap nasabah).
+*   `DRP()` ➡️ Rincian Pinjaman Aktif (menghitung sisa pinjaman & tunggakan amortisasi).
+*   `DRPL()` ➡️ Rincian Pinjaman yang Telah Lunas.
+
+---
+
+## ⚙️ 7. Modul Pengaturan & SOP
+Tempat admin menentukan parameter bunga, kolektibilitas, sistem pinjaman, dan sinkronisasi WhatsApp Gateway.
+
+*   **Controller Utama**: `App\Http\Controllers\SopController`
+*   **View Utama**: `resources/views/sop/index.blade.php`
+
+### Endpoint Pembaruan Parameter:
+Semua method di bawah menggunakan HTTP Method `PUT` dan mengupdate tabel `Kecamatan`.
+*   **Identitas Lembaga**: `/pengaturan/lembaga/{kec}` ➡️ `lembaga()`
+*   **Sebutan Pengelola**: `/pengaturan/pengelola/{kec}` ➡️ `pengelola()`
+*   **Parameter Pinjaman**: `/pengaturan/pinjaman/{kec}` ➡️ `pinjaman()`
+*   **Tingkat Kolektibilitas**: `/pengaturan/kolek/{kec}` ➡️ `kolek()`
+*   **Sistem Simpanan**: `/pengaturan/simpanan/{kec}` ➡️ `simpanan()` (Kondisional berdasarkan ketersediaan menu Simpanan di Sidebar)
+*   **Asuransi**: `/pengaturan/asuransi/{kec}` ➡️ `asuransi()`
+*   **Redaksi SPK**: `/pengaturan/spk/{kec}` ➡️ `spk()`
+*   **WhatsApp Gateway**:
+    *   Menyimpan Sesi Device: POST `/pengaturan/whatsapp/save_device` ➡️ `save_whatsapp_session()`
+    *   Keluar/Hapus Sesi: POST `/pengaturan/whatsapp/delete_session` ➡️ `delete_whatsapp_session()`
+
+---
+
+## 💾 8. Modul Basis Data (Master Data)
+Menggunakan standar `Route::resource` Laravel untuk CRUD data primer.
+
+*   **Desa**: `/database/desa` ➡️ `DesaController`
+*   **Penduduk (Nasabah)**: `/database/penduduk` ➡️ `AnggotaController`
+    *   Blokir Nasabah: POST `/database/penduduk/{nik}/blokir` ➡️ Method: `blokir()`
+*   **Kelompok**: `/database/kelompok` ➡️ `KelompokController`
+*   **Supplier & Agent**: `/database/supplier` & `/database/agent` ➡️ Dipakai untuk modul dagang.
+*   **Saham**: `/database/saham` ➡️ `SahamController`
+
+---
+
+## 💡 Catatan bagi Developer Baru
+1.  **Session Keamanan**: Sebagian besar route backend dibungkus oleh middleware `auth` dan `is_aktif`. Pastikan user memiliki field `aktif = Y` di database.
+2.  **Pemisahan Individu dan Kelompok**: Biasakan mencari akhiran `_i` pada controller, route, atau view untuk fitur individu (contoh: `/perguliran_i`, `formAngsuranIndividu`).
+3.  **Logika Simpanan**: Jika ingin mematikan atau menghidupkan fitur Simpanan di area tertentu, Anda cukup menambah/menghapus ID lokasi di kolom `kecuali` pada tabel `menu` untuk baris menu Simpanan. Sistem akan otomatis merespons visualisasinya baik di Sidebar maupun di panel SOP.
+4.  **Pentingnya Pelaporan Dinamis**: Jika ingin menambahkan laporan baru, buat metodenya secara private di `PelaporanController.php` dan daftarkan nama filenya di database `jenis_laporan`. Engine `preview()` akan memanggil metodenya secara otomatis tanpa perlu menambah rute (`Route`) baru.
