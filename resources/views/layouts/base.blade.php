@@ -67,7 +67,7 @@
     {{-- ===================== LOCAL CSS ===================== --}}
     <link rel="stylesheet" href="/assets/css/pace.css?v=1716515606">
     <link rel="stylesheet" href="/assets/css/style.css">
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> -->
 
     {{-- ===================== DEFERRED LOCAL SCRIPTS ===================== --}}
     <script defer src="/assets/scripts/main.js"></script>
@@ -377,6 +377,9 @@
     <div class="min-height-300 bg-dark position-absolute w-100"></div>
 
     @include('layouts.sidebar')
+
+    {{-- Dummy element to prevent Argon PerfectScrollbar crash on navbar-expand-lg layouts --}}
+    <div class="navbar d-none"><div class="navbar-collapse"></div></div>
 
     <main class="main-content position-relative border-radius-lg">
 
@@ -735,7 +738,7 @@
   <script src="/assets/js/plugins/flatpickr.min.js"></script>
 
   <!-- Argon Dashboard JS -->
-  <script async src="/assets/js/material-dashboard.min.js?v=1716515606"></script>
+  <!-- <script async src="/assets/js/material-dashboard.min.js?v=1716515606"></script> -->
 
     @yield('script')
     {{-- ===================== INLINE SCRIPTS ===================== --}}
@@ -1111,6 +1114,106 @@
 
     {{-- ===================== ARGON DASHBOARD JS ===================== --}}
     <script src="{{ asset('argon/js/argon-dashboard.min.js') }}?v=2.1.0"></script>
+
+    {{-- Fade-in halaman setelah selesai dimuat --}}
+    {{-- Global Loader & Double Submit Prevention --}}
+    <script>
+        $(document).ready(function() {
+            var $lastClickedBtn = null;
+
+            // 1. Simpan referensi tombol yang terakhir diklik user
+            $(document).on('click', 'button, input[type="submit"], input[type="button"], .btn', function() {
+                $lastClickedBtn = $(this);
+            });
+
+            // 2. Handler Global untuk Transaksi AJAX (Otomatis mendisable & menampilkan spinner)
+            $(document).ajaxSend(function(event, xhr, settings) {
+                if ($lastClickedBtn && $lastClickedBtn.length) {
+                    var text = $lastClickedBtn.text().toLowerCase().trim();
+                    var id = ($lastClickedBtn.attr('id') || '').toLowerCase();
+                    
+                    // Skip jika itu tombol Batal / Tutup / Close
+                    if (text.indexOf('batal') !== -1 || text.indexOf('tutup') !== -1 || text.indexOf('close') !== -1 || $lastClickedBtn.hasClass('btn-close') || $lastClickedBtn.attr('data-bs-dismiss')) {
+                        return;
+                    }
+
+                    // Filter hanya untuk tombol aksi/submit/simpan/proses/register
+                    var isActionBtn = $lastClickedBtn.attr('type') === 'submit' || 
+                                      $lastClickedBtn.hasClass('btn-primary') || 
+                                      $lastClickedBtn.hasClass('btn-success') ||
+                                      $lastClickedBtn.hasClass('btn-info') ||
+                                      text.indexOf('simpan') !== -1 || 
+                                      text.indexOf('proses') !== -1 ||
+                                      text.indexOf('cetak') !== -1 ||
+                                      text.indexOf('register') !== -1 ||
+                                      text.indexOf('daftar') !== -1 ||
+                                      text.indexOf('save') !== -1 ||
+                                      id.indexOf('simpan') !== -1 ||
+                                      id.indexOf('register') !== -1 ||
+                                      id.indexOf('submit') !== -1;
+
+                    if (isActionBtn && !$lastClickedBtn.hasClass('btn-loading-state')) {
+                        $lastClickedBtn.data('original-html', $lastClickedBtn.html());
+                        $lastClickedBtn.prop('disabled', true);
+                        $lastClickedBtn.addClass('btn-loading-state');
+                        
+                        // Menampilkan spinner animasi
+                        var originalHtml = $lastClickedBtn.data('original-html') || '';
+                        $lastClickedBtn.html('<i class="fas fa-spinner fa-spin me-1"></i> ' + (originalHtml.indexOf('fa-') > -1 ? '' : 'Loading...'));
+                    }
+                }
+            });
+
+            // 3. Mengembalikan status tombol setelah AJAX selesai (sukses/error)
+            $(document).ajaxComplete(function() {
+                $('.btn-loading-state').each(function() {
+                    var $btn = $(this);
+                    if ($btn.data('original-html')) {
+                        $btn.html($btn.data('original-html'));
+                    }
+                    $btn.prop('disabled', false);
+                    $btn.removeClass('btn-loading-state');
+                });
+                $lastClickedBtn = null;
+            });
+
+            // 4. Handler untuk Form HTML Konvensional (Submit Tradisional)
+            $(document).on('submit', 'form', function(e) {
+                var $form = $(this);
+                
+                // Abaikan jika target form _blank (misal cetak PDF tab baru) agar tombol tidak nyangkut disabled
+                if ($form.attr('target') === '_blank') {
+                    return true;
+                }
+
+                var $btn = $form.find('button[type="submit"], input[type="submit"]');
+                if ($btn.hasClass('btn-loading-state')) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                $btn.each(function() {
+                    var $thisBtn = $(this);
+                    $thisBtn.data('original-html', $thisBtn.html());
+                    $thisBtn.prop('disabled', true);
+                    $thisBtn.addClass('btn-loading-state');
+                    $thisBtn.html('<i class="fas fa-spinner fa-spin me-1"></i> Memproses...');
+                });
+
+                // Safety fallback: kembalikan tombol jika 15 detik halaman tidak berpindah/error
+                setTimeout(function() {
+                    $btn.each(function() {
+                        var $b = $(this);
+                        if ($b.hasClass('btn-loading-state')) {
+                            $b.html($b.data('original-html'));
+                            $b.prop('disabled', false);
+                            $b.removeClass('btn-loading-state');
+                        }
+                    });
+                }, 15000);
+            });
+        });
+    </script>
 
     {{-- Fade-in halaman setelah selesai dimuat --}}
     <script>
