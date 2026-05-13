@@ -239,8 +239,8 @@
 
         .dataTables_filter input, 
         .dataTables_filter label input {
-            width: 180px !important;
-            max-width: 180px !important;
+            width: 240px !important;
+            max-width: 240px !important;
             height: 38px !important;
             display: inline-block !important;
             border: 1px solid #dee2e6 !important;
