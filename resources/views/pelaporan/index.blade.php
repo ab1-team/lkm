@@ -4,6 +4,29 @@
 
 @extends('layouts.base')
 
+@section('style')
+    <style>
+        .btn-action-card {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        }
+
+        .btn-action-card:hover {
+            transform: translateY(-5px) !important;
+            box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, .15) !important;
+        }
+
+        .icon-shape {
+            width: 56px;
+            height: 56px;
+            background-position: 50%;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="app-main__inner">
 
@@ -107,33 +130,53 @@
             </div>
         </div>
 
-        <div class="main-card mb-3 card">
-            <div class="card-body">
-                <br>
-                <div class="card-body p-2" id="LayoutPreview">
-                    <div class="p-2"></div>
+        <div class="row mt-2 mb-3">
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="card overflow-hidden border-0 shadow btn-action-card h-10" id="CardSimpanSaldo"
+                    style="cursor: pointer; border-radius: 12px;">
+                    <div class="card-body p-3 d-flex flex-column align-items-center text-center justify-content-center">
+                        <div
+                            class="icon-shape bg-gradient-danger shadow-danger text-center rounded-circle mb-2 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-save text-white" style="font-size: 1.3rem;"></i>
+                        </div>
+                        <h5 class="font-weight-bolder text-dark mb-1" style="font-size: 1rem;">Simpan Saldo</h5>
+                        <p class="text-xs text-secondary px-2 mb-0">Menyimpan dan mengunci saldo transaksi untuk periode
+                            yang dipilih.</p>
+                    </div>
                 </div>
-                <script>
-                    // Example starter JavaScript for disabling form submissions if there are invalid fields
-                    (function() {
-                        'use strict';
-                        window.addEventListener('load', function() {
-                            // Fetch all the forms we want to apply custom Bootstrap validation styles to
-                            var forms = document.getElementsByClassName('needs-validation');
-                            // Loop over them and prevent submission
-                            var validation = Array.prototype.filter.call(forms, function(form) {
-                                form.addEventListener('submit', function(event) {
-                                    if (form.checkValidity() === false) {
-                                        event.preventDefault();
-                                        event.stopPropagation();
-                                    }
-                                    form.classList.add('was-validated');
-                                }, false);
-                            });
-                        }, false);
-                    })();
-                </script>
             </div>
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="card overflow-hidden border-0 shadow btn-action-card h-10" id="CardExcel"
+                    style="cursor: pointer; border-radius: 12px;">
+                    <div class="card-body p-3 d-flex flex-column align-items-center text-center justify-content-center">
+                        <div
+                            class="icon-shape bg-gradient-success shadow-success text-center rounded-circle mb-2 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-file-excel text-white" style="font-size: 1.3rem;"></i>
+                        </div>
+                        <h5 class="font-weight-bolder text-dark mb-1" style="font-size: 1rem;">Export Excel</h5>
+                        <p class="text-xs text-secondary px-2 mb-0">Mengunduh berkas laporan dalam format Microsoft Excel
+                            (.xlsx).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12 mb-3">
+                <div class="card overflow-hidden border-0 shadow btn-action-card h-10" id="CardPreview"
+                    style="cursor: pointer; border-radius: 12px;">
+                    <div class="card-body p-3 d-flex flex-column align-items-center text-center justify-content-center">
+                        <div
+                            class="icon-shape bg-gradient-dark shadow-dark text-center rounded-circle mb-2 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-file-pdf text-white" style="font-size: 1.3rem;"></i>
+                        </div>
+                        <h5 class="font-weight-bolder text-dark mb-1" style="font-size: 1rem;">Preview PDF</h5>
+                        <p class="text-xs text-secondary px-2 mb-0">Melihat pratinjau visual cetakan laporan dalam format
+                            dokumen PDF.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="LayoutPreview" style="display:none;">
+            <div class="p-2"></div>
         </div>
     </div>
 @endsection
@@ -290,5 +333,37 @@
 
             return 'Januari';
         }
+
+        $(document).on('click', '#CardSimpanSaldo', function(e) {
+            e.preventDefault();
+            $('#SimpanSaldo').trigger('click');
+        });
+
+        $(document).on('click', '#CardExcel', function(e) {
+            e.preventDefault();
+            $('#Excel').trigger('click');
+        });
+
+        $(document).on('click', '#CardPreview', function(e) {
+            e.preventDefault();
+            $('#Preview').trigger('click');
+        });
+
+        // Bootstrap validation initializer
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
     </script>
 @endsection
