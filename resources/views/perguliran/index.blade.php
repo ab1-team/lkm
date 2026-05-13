@@ -74,7 +74,37 @@
                 box-shadow: 0 4px 6px rgba(50, 50, 93, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
             }
 
-
+            /* Modern Soft Tint Transparent Style for Loan ID Badges */
+            .table .badge {
+                box-shadow: none !important;
+                font-weight: 600;
+                padding: 4px 8px !important;
+            }
+            .table .badge.bg-primary, .table .badge.badge-light-blue, .table .badge.bg-info {
+                background-color: rgba(94, 114, 228, 0.12) !important;
+                color: #5e72e4 !important;
+                border: 1px solid rgba(94, 114, 228, 0.2) !important;
+            }
+            .table .badge.bg-success {
+                background-color: rgba(45, 206, 137, 0.12) !important;
+                color: #2dce89 !important;
+                border: 1px solid rgba(45, 206, 137, 0.2) !important;
+            }
+            .table .badge.bg-danger {
+                background-color: rgba(245, 54, 92, 0.12) !important;
+                color: #f5365c !important;
+                border: 1px solid rgba(245, 54, 92, 0.2) !important;
+            }
+            .table .badge.bg-warning {
+                background-color: rgba(251, 99, 64, 0.12) !important;
+                color: #fb6340 !important;
+                border: 1px solid rgba(251, 99, 64, 0.2) !important;
+            }
+            .table .badge.bg-secondary {
+                background-color: rgba(136, 152, 170, 0.12) !important;
+                color: #8898aa !important;
+                border: 1px solid rgba(136, 152, 170, 0.2) !important;
+            }
 
             @media (max-width: 576px) {
                 .nav-item .nav-link {

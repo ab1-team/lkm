@@ -75,7 +75,37 @@
                 box-shadow: 0 4px 6px rgba(50, 50, 93, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
             }
 
-
+            /* Modern Soft Tint Transparent Style for Loan ID Badges */
+            .table .badge {
+                box-shadow: none !important;
+                font-weight: 600;
+                padding: 4px 8px !important;
+            }
+            .table .badge.bg-primary, .table .badge.badge-light-blue, .table .badge.bg-info {
+                background-color: rgba(94, 114, 228, 0.12) !important;
+                color: #5e72e4 !important;
+                border: 1px solid rgba(94, 114, 228, 0.2) !important;
+            }
+            .table .badge.bg-success {
+                background-color: rgba(45, 206, 137, 0.12) !important;
+                color: #2dce89 !important;
+                border: 1px solid rgba(45, 206, 137, 0.2) !important;
+            }
+            .table .badge.bg-danger {
+                background-color: rgba(245, 54, 92, 0.12) !important;
+                color: #f5365c !important;
+                border: 1px solid rgba(245, 54, 92, 0.2) !important;
+            }
+            .table .badge.bg-warning {
+                background-color: rgba(251, 99, 64, 0.12) !important;
+                color: #fb6340 !important;
+                border: 1px solid rgba(251, 99, 64, 0.2) !important;
+            }
+            .table .badge.bg-secondary {
+                background-color: rgba(136, 152, 170, 0.12) !important;
+                color: #8898aa !important;
+                border: 1px solid rgba(136, 152, 170, 0.2) !important;
+            }
 
             @media (max-width: 576px) {
                 .nav-item .nav-link {
@@ -98,7 +128,6 @@
                                     <table class="table table-flush table-hover table-click " width="100%" id="TbProposal">
                                         <thead>
                                             <tr>
-                                                <th>Loan id</th>
                                                 <th>Nama Anggota P</th>
                                                 <th>Desa</th>
                                                 <th>Nama Barang</th>
@@ -127,7 +156,6 @@
                                     <table class="table table-flush table-hover table-click" width="100%" id="TbVerified">
                                         <thead>
                                             <tr>
-                                                <th>Loan id</th>
                                                 <th>Nama Anggota V</th>
                                                 <th>Desa</th>
                                                 <th>Tgl Verified</th>
@@ -155,7 +183,6 @@
                                     <table class="table table-flush table-hover table-click" width="100%" id="TbWaiting">
                                         <thead>
                                             <tr>
-                                                <th>Loan id</th>
                                                 <th>Nama Anggota W</th>
                                                 <th>Desa</th>
                                                 <th>Tgl Waiting</th>
@@ -181,7 +208,6 @@
                                     <table class="table table-flush table-hover table-click" width="100%" id="TbAktif">
                                         <thead>
                                             <tr>
-                                                <th>Loan id</th>
                                                 <th>Nama Anggota A</th>
                                                 <th>Desa</th>
                                                 <th>Tgl Cair</th>
@@ -207,7 +233,6 @@
                                     <table class="table table-flush table-hover table-click" width="100%" id="TbLunas">
                                         <thead>
                                             <tr>
-                                                <th>Loan id</th>
                                                 <th>Nama Anggota L</th>
                                                 <th>Alamat</th>
                                                 <th>Tgl Cair</th>
@@ -230,12 +255,9 @@
 
 @section('script')
     <script>
-        var tbProposal = CreateTable('#TbProposal', '/perguliran_i/proposal', [ {
-            data: 'id',
-            name: 'id'
-        }, {
-            data: 'anggota.namadepan',
-            name: 'anggota.namadepan'
+        var tbProposal = CreateTable('#TbProposal', '/perguliran_i/proposal', [{
+            data: 'namadepan',
+            name: 'namadepan'
         }, {
             data: 'anggota.d.nama_desa',
             name: 'anggota.d.nama_desa'
@@ -256,11 +278,8 @@
         }])
 
         var tbVerified = CreateTable('#TbVerified', '/perguliran_i/verified', [{
-            data: 'id',
-            name: 'id'
-        },{
-            data: 'anggota.namadepan',
-            name: 'anggota.namadepan'
+            data: 'namadepan',
+            name: 'namadepan'
         }, {
             data: 'anggota.d.nama_desa',
             name: 'anggota.d.nama_desa'
@@ -278,11 +297,8 @@
         }])
 
         var tbWaiting = CreateTable('#TbWaiting', '/perguliran_i/waiting', [{
-            data: 'id',
-            name: 'id'
-        },{
-            data: 'anggota.namadepan',
-            name: 'anggota.namadepan'
+            data: 'namadepan',
+            name: 'namadepan'
         }, {
             data: 'anggota.d.nama_desa',
             name: 'anggota.d.nama_desa'
@@ -300,11 +316,8 @@
         }])
 
         var tbAktif = CreateTable('#TbAktif', '/perguliran_i/aktif', [{
-            data: 'id',
-            name: 'id'
-        },{
-            data: 'anggota.namadepan',
-            name: 'anggota.namadepan'
+            data: 'namadepan',
+            name: 'namadepan'
         }, {
             data: 'anggota.d.nama_desa',
             name: 'anggota.d.nama_desa'
@@ -322,11 +335,8 @@
         }])
 
         var tbLunas = CreateTable('#TbLunas', '/perguliran_i/lunas', [{
-            data: 'id',
-            name: 'id'
-        },{
-            data: 'anggota.namadepan',
-            name: 'anggota.namadepan'
+            data: 'namadepan',
+            name: 'namadepan'
         }, {
             data: 'anggota.alamat',
             name: 'anggota.alamat'
@@ -356,7 +366,7 @@
                 ajax: url,
                 columns: column,
                 order: [
-                    [2, 'desc']
+                    [1, 'desc']
                 ]
             })
 
