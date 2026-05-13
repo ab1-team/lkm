@@ -122,18 +122,20 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <div class="nav-wrapper position-relative end-0">
-                        <div class="d-flex justify-content-between p-1" role="tablist">
-                            <button class="btn btn-outline-primary flex-fill me-1 active" data-bs-toggle="tab"
-                                data-bs-target="#Pokok" role="tab" aria-controls="Pokok" aria-selected="true">
-                                Pokok
-                            </button>
-                            <button class="btn btn-outline-warning flex-fill" data-bs-toggle="tab" data-bs-target="#Jasa"
-                                role="tab" aria-controls="Jasa" aria-selected="false">
-                                Jasa
-                            </button>
+                        <div class="card card-body p-1 mb-3">
+                            <div class="d-flex justify-content-between" role="tablist">
+                                <button class="btn btn-outline-warning flex-fill me-1 mb-0 active" data-bs-toggle="tab"
+                                    data-bs-target="#Pokok" role="tab" aria-controls="Pokok" aria-selected="true">
+                                    Pokok
+                                </button>
+                                <button class="btn btn-outline-warning flex-fill mb-0" data-bs-toggle="tab" data-bs-target="#Jasa"
+                                    role="tab" aria-controls="Jasa" aria-selected="false">
+                                    Jasa
+                                </button>
+                            </div>
                         </div>
 
-                        <div class="tab-content mt-3">
+                        <div class="tab-content">
                             <div class="tab-pane fade show active" id="Pokok" role="tabpanel"
                                 aria-labelledby="Pokok">
                                 <div class="card card-body p-2">

@@ -92,7 +92,8 @@
 
 <script>
     $('.sublaporanselect2').select2({
-        theme: 'bootstrap-5'
+        theme: 'bootstrap-5',
+        width: '100%'
     });
 </script>
 

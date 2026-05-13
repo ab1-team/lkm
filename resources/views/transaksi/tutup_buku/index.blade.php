@@ -5,56 +5,52 @@
 @section('content')
     <div class="app-main__inner">
         <div class="tab-content">
-            <div class="main-card mb-3 card">
-                <div class="card-body">
-                    @if ($success)
-                        <div class="alert alert-success alert-dismissible text-bl fade show" role="alert">
-                            <span class="alert-icon align-middle">
-                                &nbsp;
-                            </span>
-                            <span class="alert-text">
-                                <i class="fa-brands fa-signal-messenger"></i>
-                                <strong>Tutup Buku Tahun {{ $tahun }}</strong> berhasil.
-                            </span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    @endif
-                    <br>
-                    <form action="" method="post" id="FormTahunTutupBuku">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="position-relative mb-3"><label for="exampleEmail11"
-                                        class="form-label">Tahun</label>
-                                    <select class="tutupbukuselect2 form-control" name="tahun" id="tahun">
-                                        @php
-                                            $tgl_pakai = $kec->tgl_pakai;
-                                            $th_pakai = explode('-', $tgl_pakai)[0];
-                                        @endphp
-                                        @for ($i = date('Y'); $i >= $th_pakai; $i--)
-                                            <option {{ $i == date('Y') ? 'selected' : '' }} value="{{ $i }}">
-                                                {{ $i }}
-                                            </option>
-                                        @endfor
-                                    </select>
-                                    <small class="text-danger" id="msg_tahun"></small>
-                                    <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
-
-                                </div>
-                            </div>
-                        </div>
-                        <input type="hidden" name="pembagian_laba" id="pembagian_laba" value="true">
-
-                    </form>
-                    <div class="d-flex justify-content-end"style=" float: right;">
-                        <button type="button" id="TutupBuku" {{ date('m') <= 10 ? 'disabled' : '' }}
-                            class="btn btn-sm btn-dark mb-0 ms-3 ">1. Tutup Buku</button>
-                        <button type="button" id="PembagianLaba" class="btn btn-sm btn-success mb-0 ms-3">
-                            2. Simpan Alokasi Laba
+            <div class="card card-body py-2 mb-3">
+                @if ($success)
+                    <div class="alert alert-success alert-dismissible text-bl fade show" role="alert">
+                        <span class="alert-icon align-middle">
+                            &nbsp;
+                        </span>
+                        <span class="alert-text">
+                            <i class="fa-brands fa-signal-messenger"></i>
+                            <strong>Tutup Buku Tahun {{ $tahun }}</strong> berhasil.
+                        </span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+                @endif
+                <form action="" method="post" id="FormTahunTutupBuku">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="position-relative mb-3"><label for="exampleEmail11"
+                                    class="form-label">Tahun</label>
+                                <select class="tutupbukuselect2 form-select" name="tahun" id="tahun" style="width: 100%;">
+                                    @php
+                                        $tgl_pakai = $kec->tgl_pakai;
+                                        $th_pakai = explode('-', $tgl_pakai)[0];
+                                    @endphp
+                                    @for ($i = date('Y'); $i >= $th_pakai; $i--)
+                                        <option {{ $i == date('Y') ? 'selected' : '' }} value="{{ $i }}">
+                                            {{ $i }}
+                                        </option>
+                                    @endfor
+                                </select>
+                                <small class="text-danger" id="msg_tahun"></small>
+
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="pembagian_laba" id="pembagian_laba" value="true">
+
+                </form>
+                <div class="d-flex justify-content-end"style=" float: right;">
+                    <button type="button" id="TutupBuku" {{ date('m') <= 10 ? 'disabled' : '' }}
+                        class="btn btn-sm btn-dark mb-0 ms-3 ">1. Tutup Buku</button>
+                    <button type="button" id="PembagianLaba" class="btn btn-sm btn-success mb-0 ms-3">
+                        2. Simpan Alokasi Laba
+                    </button>
                 </div>
             </div>
         </div>
@@ -76,6 +72,7 @@
         $(document).ready(function() {
             $('.tutupbukuselect2').select2({
                 theme: 'bootstrap4',
+                width: '100%'
             });
         });
         var tahun = "{{ date('Y') }}"

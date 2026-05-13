@@ -122,22 +122,20 @@
                 
                 <div class="col-md-4 mb-3">
                     <div class="nav-wrapper position-relative end-0">
-                        <ul class="nav nav-pills nav-fill p-1" role="tablist">
-                            <li class="nav-item">
-                                <a class="btn btn-outline-primary active  custom-width" data-bs-toggle="tab" href="#Pokok" role="tab"
-                                    aria-controls="Pokok" aria-selected="true">
-                                    Pokok   
-                                 </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-outline-primary custom-width" data-bs-toggle="tab" href="#Jasa" role="tab" aria-controls="Jasa" aria-selected="false">
+                        <div class="card card-body p-1 mb-3">
+                            <div class="d-flex justify-content-between" role="tablist">
+                                <a class="btn btn-outline-warning flex-fill me-1 mb-0 active" data-bs-toggle="tab"
+                                    href="#Pokok" role="tab" aria-controls="Pokok" aria-selected="true">
+                                    Pokok
+                                </a>
+                                <a class="btn btn-outline-warning flex-fill mb-0" data-bs-toggle="tab" href="#Jasa"
+                                    role="tab" aria-controls="Jasa" aria-selected="false">
                                     Jasa
                                 </a>
-                            </li>
-                            
-                        </ul>
+                            </div>
+                        </div>
         
-                        <div class="tab-content mt-3">
+                        <div class="tab-content">
                             <div class="tab-pane fade show active" id="Pokok" role="tabpanel" aria-labelledby="Pokok">
                                 <div class="card card-body p-2">
                                     <canvas id="chartP"></canvas>

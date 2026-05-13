@@ -145,6 +145,7 @@
         $(document).ready(function() {
             $('.pelaporanselect2').select2({
                 theme: 'bootstrap4',
+                width: '100%'
             });
         });
 
