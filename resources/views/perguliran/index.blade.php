@@ -35,6 +35,32 @@
         </div>
         
         <style>
+            .card-body ul.nav-pills {
+                gap: 6px;
+            }
+            
+            .nav-pills .nav-item .nav-link {
+                cursor: pointer !important;
+                font-weight: 600;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                border: 1px solid transparent;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .nav-pills .nav-item .nav-link:not(.active):hover {
+                background-color: rgba(94, 114, 228, 0.06) !important;
+                color: #5e72e4 !important;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 6px rgba(50, 50, 93, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+            }
+
+            .nav-pills .nav-item .nav-link.active {
+                box-shadow: 0 4px 15px rgba(94, 114, 228, 0.25) !important;
+                transform: scale(1.01) translateY(-1px);
+            }
+
             @media (max-width: 576px) {
                 .nav-item .nav-link {
                     display: flex;
