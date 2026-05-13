@@ -114,6 +114,7 @@
                 border: 1px solid rgba(136, 152, 170, 0.2) !important;
             }
 
+
             @media (max-width: 576px) {
                 .nav-item .nav-link {
                     display: flex;

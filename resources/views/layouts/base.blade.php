@@ -200,30 +200,66 @@
             justify-content: flex-end !important;
         }
 
-        #DataTables_Table_0_filter.dataTables_filter label {
-            display: flex;
-            align-items: center;
-            justify-content: end;
+        /* ===================== COMPACT GLOBAL DATATABLES SEARCH ===================== */
+        /* Force the DataTables Controls Grid to span 100% and align right */
+        .dataTables_wrapper .row:first-child {
+            display: flex !important;
+            width: 100% !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+        
+        .dataTables_wrapper .row:first-child > div:last-child {
+            display: flex !important;
+            justify-content: flex-end !important;
+            align-items: center !important;
+            margin-left: auto !important;
         }
 
-        #DataTables_Table_0_filter.dataTables_filter label input {
-            width: 200px;
+        .dataTables_filter {
+            display: flex !important;
+            justify-content: flex-end !important;
+            text-align: right !important;
+            margin-left: auto !important;
+        }
+
+        .dataTables_filter label {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            margin-bottom: 0 !important;
+            font-weight: 600 !important;
+            color: #344767 !important;
+            gap: 8px !important;
+            width: auto !important;
+            text-align: right !important;
+            float: right !important;
+            margin-left: auto !important;
+        }
+
+        .dataTables_filter input, 
+        .dataTables_filter label input {
+            width: 180px !important;
+            max-width: 180px !important;
+            height: 38px !important;
+            display: inline-block !important;
+            border: 1px solid #dee2e6 !important;
+            padding: 0.4rem 0.75rem !important;
+            font-size: 0.875rem !important;
+            border-radius: 8px !important;
+            background-color: #fff !important;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        
+        .dataTables_filter input:focus,
+        .dataTables_filter label input:focus {
+            border-color: #5e72e4 !important;
+            box-shadow: 0 3px 8px rgba(94, 114, 228, 0.12) !important;
+            outline: 0 !important;
         }
 
         .search-wrapper .input-holder {
             overflow: unset !important;
-        }
-
-        .dataTables_filter {
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .dataTables_filter label {
-            display: flex !important;
-            align-items: center;
-            width: 200px;
-            gap: 10px;
         }
 
         /* ===================== BADGE CUSTOM ===================== */
