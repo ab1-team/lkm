@@ -1,6 +1,32 @@
 @extends('layouts.base')
 
 @section('content')
+    @php
+        $hasSimpananMenu = false;
+        $parent_menu = session('menu') ?? collect([]);
+        foreach ($parent_menu as $item) {
+            if (stripos($item->title, 'Simpanan') !== false || stripos($item->link, 'simpanan') !== false) {
+                $hasSimpananMenu = true;
+                break;
+            }
+            if (isset($item->child)) {
+                foreach ($item->child as $child) {
+                    if (stripos($child->title, 'Simpanan') !== false || stripos($child->link, 'simpanan') !== false) {
+                        $hasSimpananMenu = true;
+                        break 2;
+                    }
+                    if (isset($child->child)) {
+                        foreach ($child->child as $subchild) {
+                            if (stripos($subchild->title, 'Simpanan') !== false || stripos($subchild->link, 'simpanan') !== false) {
+                                $hasSimpananMenu = true;
+                                break 3;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    @endphp
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     {{-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet"> --}}
     <style>
@@ -178,12 +204,14 @@
                                         <span>Kolektibilitas</span>
                                     </a>
                                 </div>
+                                @if ($hasSimpananMenu)
                                 <div class="mb-3">
                                     <a role="tab" class="btn btn-white settings-nav-item" id="simpanan" data-bs-toggle="tab" href="#tab-content-8">
                                         <i class="fa-solid fa-vault"></i>
                                         <span>Sistem Simpanan</span>
                                     </a>
                                 </div>
+                                @endif
                                 <div class="mb-3">
                                     <a role="tab" class="btn btn-white settings-nav-item" id="asuransi" data-bs-toggle="tab" href="#tab-content-4">
                                         <i class="fa-solid fa-money-bill-transfer"></i>
@@ -322,6 +350,7 @@
                                 </div>
                             </div>
 
+                            @if ($hasSimpananMenu)
                             <div class="tab-pane tabs-animation fade" id="tab-content-8" role="tabpanel">
                                 <div class="row">
                                     <div class="main-card mb-3 card">
@@ -332,6 +361,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @endif
                         </div>
                     </div>
 

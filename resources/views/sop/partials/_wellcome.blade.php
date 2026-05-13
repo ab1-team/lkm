@@ -140,8 +140,8 @@
 
             <!-- Header -->
             <h2 class="welcome-title">Standar Operasional Prosedur (SOP)</h2>
-            <div class="welcome-subtitle">Aplikasi LKM {{ $kec->nama_lembaga_sort }}</div>
-            
+            <div class="welcome-subtitle">{{ $kec->nama_lembaga_sort }}</div>
+
             <div class="welcome-divider"></div>
 
             <!-- Instructions -->
@@ -152,19 +152,21 @@
                 </li>
                 <li>
                     <i class="fa-solid fa-check"></i>
-                    <span>Silakan sesuaikan seluruh parameter SOP secara berkala menggunakan <strong>menu navigasi di sebelah kiri Anda</strong>.</span>
+                    <span>Silakan sesuaikan seluruh parameter SOP secara berkala menggunakan <strong>menu navigasi di
+                            sebelah kiri Anda</strong>.</span>
                 </li>
                 <li>
                     <i class="fa-solid fa-check"></i>
-                    <span>Gunakanlah wewenang akses administratif Anda secara bijaksana, tertib, dan penuh tanggung jawab.</span>
+                    <span>Gunakanlah wewenang akses administratif Anda secara bijaksana, tertib, dan penuh tanggung
+                        jawab.</span>
                 </li>
             </ul>
 
             <!-- Badge Signature -->
-            <div class="welcome-badge">
+            {{-- <div class="welcome-badge">
                 <i class="fa-solid fa-heart text-danger"></i>
-                <span>Salam hangat, <strong>Siap Tunai</strong></span>
-            </div>
+                <span>Salam hangat, <strong></strong></span>
+            </div> --}}
         </div>
     </div>
 </div>
