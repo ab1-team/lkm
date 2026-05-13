@@ -1888,7 +1888,15 @@ class PelaporanController extends Controller
             },
         ])->orderBy('kode_akun', 'ASC')->get();
 
-        if ($data['kec']->custom_calk) {
+        $custom_calk = $data['kec']->custom_calk;
+        $decoded_calk = json_decode($custom_calk);
+        if ($decoded_calk === null && json_last_error() !== JSON_ERROR_NONE) {
+            $decoded_calk = $custom_calk;
+        }
+        $calk_content = trim((string) $decoded_calk);
+        $is_empty_editor = in_array($calk_content, ['', '0', '<p>0</p>', '<p><br></p>', 'null']);
+
+        if ($custom_calk && !$is_empty_editor) {
             $data['view_neraca'] = view('pelaporan.view.partials.neraca_calk', $data)->render();
             $data['view_calk'] = UtilsCalk::calk($data['kec']->custom_calk, $data);
             $view = view('pelaporan.view.calk_custom', $data)->render();
