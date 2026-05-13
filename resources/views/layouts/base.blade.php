@@ -115,6 +115,21 @@
         @media (min-width: 1200px) {
             .sidenav.fixed-start ~ .main-content {
                 margin-left: 19.5rem !important; /* Memberikan jarak antara sidebar dan konten */
+                transition: margin-left 0.3s ease-in-out !important;
+            }
+            
+            /* Desktop Collapsed Sidenav State */
+            body.g-sidenav-hidden #sidenav-main {
+                transform: translateX(-300px) !important;
+                visibility: hidden !important;
+            }
+            body.g-sidenav-hidden .sidenav.fixed-start ~ .main-content,
+            body.g-sidenav-hidden.g-sidenav-show .main-content {
+                margin-left: 20px !important;
+            }
+            
+            #sidenav-main {
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s !important;
             }
         }
         /* ===================== UNIFIED SIDENAV & MENU SYSTEM ===================== */
@@ -458,8 +473,8 @@
              data-scroll="false" style="z-index: 1050; position: relative;">
             <div class="container-fluid py-1 px-3 align-items-center d-flex flex-wrap">
 
-                {{-- Hamburger (mobile) --}}
-                <div class="d-xl-none me-3 d-flex align-items-center">
+                {{-- Hamburger Toggle (Desktop & Mobile) --}}
+                <div class="me-3 d-flex align-items-center">
                     <button type="button"
                             class="btn btn-sm p-2 shadow-none border-0"
                             id="mobileSidenavToggle"
@@ -652,7 +667,7 @@
         </div>
 
         {{-- ===================== PAGE CONTENT ===================== --}}
-        <div class="container-fluid py-4">
+        <div class="container-fluid py-4 pe-4">
             @yield('content')
         </div>
 
@@ -830,17 +845,21 @@
                 document.body.appendChild(overlay);
 
                 function toggleSidenav() {
-                    var isShowing = sidenavMain.classList.contains('show-mobile');
-                    if (isShowing) {
-                        sidenavMain.classList.remove('show-mobile');
-                        document.body.classList.remove('g-sidenav-pinned');
-                        overlay.style.opacity = '0';
-                        setTimeout(() => overlay.style.display = 'none', 300);
+                    if (window.innerWidth >= 1200) {
+                        document.body.classList.toggle('g-sidenav-hidden');
                     } else {
-                        sidenavMain.classList.add('show-mobile');
-                        document.body.classList.add('g-sidenav-pinned');
-                        overlay.style.display = 'block';
-                        setTimeout(() => overlay.style.opacity = '1', 10);
+                        var isShowing = sidenavMain.classList.contains('show-mobile');
+                        if (isShowing) {
+                            sidenavMain.classList.remove('show-mobile');
+                            document.body.classList.remove('g-sidenav-pinned');
+                            overlay.style.opacity = '0';
+                            setTimeout(() => overlay.style.display = 'none', 300);
+                        } else {
+                            sidenavMain.classList.add('show-mobile');
+                            document.body.classList.add('g-sidenav-pinned');
+                            overlay.style.display = 'block';
+                            setTimeout(() => overlay.style.opacity = '1', 10);
+                        }
                     }
                 }
 
