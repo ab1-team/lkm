@@ -10,8 +10,6 @@ services:
         working_dir: /var/www
         volumes:
             - ./:/var/www:z
-            - php_framework_cache:/var/www/storage/framework:z
-            - php_bootstrap_cache:/var/www/bootstrap/cache:z
         networks:
             - lkm-network
             - web-network
@@ -25,8 +23,6 @@ services:
             - "8004:80"
         volumes:
             - ./:/var/www:z
-            - php_framework_cache:/var/www/storage/framework:z
-            - php_bootstrap_cache:/var/www/bootstrap/cache:z
             - .docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:z
         networks:
             - lkm-network
