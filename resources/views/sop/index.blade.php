@@ -28,16 +28,21 @@
         }
     @endphp
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    {{-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet"> --}}
+    
     <style>
-        /* Modern Sidebar Navigation Styling */
+        
         .settings-sidebar-card {
             border: 1px solid rgba(255, 255, 255, 0.08) !important;
-            border-radius: 16px !important;
+            border-radius: 8px !important;
             background-color: #323b44 !important;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25) !important;
+            box-shadow: none !important;
             overflow: hidden !important;
-            padding: 16px 12px !important;
+            padding: 12px 12px !important;
+        }
+
+        .settings-sidebar-card:hover {
+            box-shadow: none !important;
+            transform: none !important;
         }
 
         .settings-sidebar-title {
@@ -46,8 +51,8 @@
             letter-spacing: 0.12em;
             color: #94a3b8;
             font-weight: 800;
-            padding: 12px 16px;
-            margin-bottom: 12px;
+            padding: 8px 16px;
+            margin-bottom: 8px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
@@ -64,14 +69,15 @@
         .settings-nav-list {
             display: flex;
             flex-direction: column;
-            gap: 0px;
+            gap: 0px !important;
             padding-left: 0;
             list-style: none;
             margin-bottom: 0;
         }
 
-        .settings-nav-list .mb-3 {
+        .settings-nav-list > div {
             margin-bottom: 0px !important;
+            margin-top: 0px !important;
         }
 
         .settings-nav-item {
@@ -80,11 +86,14 @@
             justify-content: flex-start !important;
             gap: 16px !important;
             padding: 10px 16px !important;
+            margin: 0px !important;
+            text-align: left !important;
+            white-space: nowrap !important;
             color: #cbd5e1 !important;
             background-color: transparent !important;
             background: transparent !important;
             border: none !important;
-            border-radius: 12px !important;
+            border-radius: 8px !important;
             text-decoration: none !important;
             font-weight: 600 !important;
             font-size: 0.9rem !important;
@@ -95,7 +104,7 @@
             box-shadow: none !important;
         }
 
-        /* Hover State */
+        
         .settings-nav-item:hover {
             color: #ffffff !important;
             background-color: rgba(255, 255, 255, 0.08) !important;
@@ -103,12 +112,12 @@
             box-shadow: none !important;
         }
 
-        /* Active State */
+        
         .settings-nav-item.active {
             color: #2563eb !important;
             background-color: #ffffff !important;
             background: #ffffff !important;
-            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.12), 0 4px 8px -4px rgba(37, 99, 235, 0.08) !important;
+            box-shadow: none !important;
         }
 
         .settings-nav-item::before {
@@ -160,6 +169,12 @@
                 max-width: 71% !important;
             }
         }
+
+        .app-main__inner {
+            padding-right: 24px !important;
+            padding-left: 16px !important;
+            padding-top: 16px !important;
+        }
     </style>
 
     <div class="app-main__inner">
@@ -169,93 +184,86 @@
                 <div class="row">
                     <div class="col-md-3 settings-sidebar-col">
                         <div class="main-card mb-3 card settings-sidebar-card">
-                            <ul class="body-tabs body-tabs-layout tabs-animated body-tabs-animated nav flex-column settings-nav-list">
+                            <div class="body-tabs body-tabs-layout tabs-animated body-tabs-animated nav flex-column settings-nav-list">
                                 <div class="settings-sidebar-title">
                                     <i class="fa-solid fa-sliders"></i>
                                     <span>Pengaturan SOP</span>
                                 </div>
-                                <div class="mb-3">
+                                <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item active" id="wellcome" data-bs-toggle="tab" href="#tab-content-0">
                                         <i class="fa-solid fa-home"></i>
                                         <span>Wellcome</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">
+                                <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item" id="lembaga" data-bs-toggle="tab" href="#tab-content-1">
                                         <i class="fa-solid fa-tree-city"></i>
                                         <span>Identitas Lembaga</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">
+                                <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item" id="pengelola" data-bs-toggle="tab" href="#tab-content-2">
                                         <i class="fa-solid fa-person-chalkboard"></i>
                                         <span>Sebutan Pengelola</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">
+                                <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item" id="peminjam" data-bs-toggle="tab" href="#tab-content-3">
                                         <i class="fa-solid fa-chart-simple"></i>
                                         <span>Sistem Pinjaman</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">
+                                <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item" data-bs-toggle="tab" href="#tab-content-9">
                                         <i class="fa-solid fa-square-poll-horizontal"></i>
                                         <span>Kolektibilitas</span>
                                     </a>
                                 </div>
                                 @if ($hasSimpananMenu)
-                                <div class="mb-3">
+                                <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item" id="simpanan" data-bs-toggle="tab" href="#tab-content-8">
                                         <i class="fa-solid fa-vault"></i>
                                         <span>Sistem Simpanan</span>
                                     </a>
                                 </div>
                                 @endif
-                                <div class="mb-3">
+                                <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item" id="asuransi" data-bs-toggle="tab" href="#tab-content-4">
                                         <i class="fa-solid fa-money-bill-transfer"></i>
                                         <span>Pengaturan Asuransi</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">
+                                <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item" data-bs-toggle="tab" href="#tab-content-5">
                                         <i class="fa-solid fa-laptop-file"></i>
                                         <span>Redaksi SPK</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">
+                                <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item" data-bs-toggle="tab" href="#tab-kustomisasi-calk">
                                         <i class="fa-solid fa-laptop-file"></i>
                                         <span>Kustomisasi CALK</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">
+                                <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item" data-bs-toggle="tab" href="#tab-content-6">
                                         <i class="fa-solid fa-panorama"></i>
                                         <span>Logo</span>
                                     </a>
                                 </div>
-                                <div class="mb-3">
+                                <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item" data-bs-toggle="tab" href="#tab-content-7">
                                         <i class="fa-solid fa-camera-rotate"></i>
                                         <span>Whatsapp</span>
                                     </a>
                                 </div>
-                            </ul>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-9 settings-content-col">
                         <div class="tab-content">
                             <div class="tab-pane tabs-animation fade show active" id="tab-content-0" role="tabpanel">
-                                <div class="row">
-                                    <div class="main-card mb-3 card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">Wellcome !!</h5>
-                                            @include('sop.partials._wellcome')
-                                        </div>
-                                    </div>
-                                </div>
+                                @include('sop.partials._wellcome')
                             </div>
                             <div class="tab-pane tabs-animation fade" id="tab-content-1" role="tabpanel">
                                 <div class="row">
@@ -482,7 +490,6 @@
             CKEDITOR.replace('editor_spk');
             CKEDITOR.replace('editor_calk');
 
-            // Cek status saat ini ke gateway
             $.ajax({
                 type: 'GET',
                 url: API + '/api/devices/' + CURRENT_ID,
@@ -526,7 +533,7 @@
             e.preventDefault()
 
             if (SAVED_ID) {
-                // Pemicu restart otomatis jika session sudah ada tapi tidak aktif
+
                 restartGateway(SAVED_ID, MASTER_KEY);
 
                 $('#ModalScanWA').modal('show')

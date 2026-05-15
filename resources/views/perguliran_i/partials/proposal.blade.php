@@ -3,9 +3,9 @@
     @method('PUT')
 
     <!-- INFO SUMMARY CARD -->
-    <div class="card mb-4 shadow-sm border-0" style="border-radius: 12px;">
+    <div class="card mb-4 shadow-sm border-0" style="border-radius: 8px;">
         <div class="card-header d-flex justify-content-between align-items-center bg-gradient-light border-bottom py-3"
-            style="border-radius: 12px 12px 0 0;">
+            style="border-radius: 8px 8px 0 0;">
             <div class="d-flex align-items-center">
                 <div class="icon icon-shape bg-white shadow text-center border-radius-md me-3 d-flex align-items-center justify-content-center"
                     style="width: 36px; height: 36px;">
@@ -71,7 +71,7 @@
     </div>
 
     <!-- INPUT RECOMMENDATION FORM -->
-    <div class="card mb-4 shadow-sm border-0" style="border-radius: 12px;">
+    <div class="card mb-4 shadow-sm border-0" style="border-radius: 8px;">
         <div class="card-header bg-white border-bottom py-3">
             <div class="d-flex align-items-center">
                 <div class="icon icon-shape bg-gradient-primary shadow-primary text-center border-radius-md me-3 d-flex align-items-center justify-content-center"

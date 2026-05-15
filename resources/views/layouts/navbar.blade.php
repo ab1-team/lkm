@@ -100,7 +100,7 @@
                                             class="pe-7s-comment">&nbsp;</i>&nbsp;MoU</button>
                                     <div tabindex="-1" class="dropdown-divider"></div>
                                     <button type="button" tabindex="0" class="dropdown-item" id="logout"><i
-                                            class="pe-7s-next-2">&nbsp;</i>&nbsp;Logout</button>
+                                            class="fas fa-sign-out-alt text-danger">&nbsp;</i>&nbsp;Logout</button>
                                 </div>
                             </div>
                         </div>

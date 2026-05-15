@@ -13,15 +13,15 @@
     <link rel="icon" type="image/png" href="{{ $logo }}">
     <title> Aplikasi LKM V.9.10</title>
 
-    <!-- Fonts -->
+    
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
 
-    <!-- Icons -->
+    
     <link href="/argon/css/nucleo-icons.css" rel="stylesheet" />
     <link href="/argon/css/nucleo-svg.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-    <!-- Argon CSS -->
+    
     <link href="/argon/css/argon-dashboard.min.css" rel="stylesheet" />
 
     <style>
@@ -65,7 +65,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 3rem;
+            padding: 1.5rem;
         }
 
         .login-right {
@@ -81,7 +81,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 1rem;
+            border-radius: 8px;
         }
 
         .login-card {
@@ -89,7 +89,7 @@
             backdrop-filter: none;
             border-radius: 0;
             box-shadow: none;
-            padding: 4rem 3.5rem;
+            padding: 0 !important;
             width: 100%;
             height: 100%;
             max-width: 100%;
@@ -101,29 +101,33 @@
 
         .login-content {
             width: 100%;
-            max-width: 420px;
-            padding: 2.25rem 2rem;
+            max-width: 380px;
+            height: 85% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            padding: 1.5rem 2rem;
             background: rgba(255, 255, 255, 0.35) !important;
             backdrop-filter: blur(12px) !important;
             -webkit-backdrop-filter: blur(12px) !important;
-            border-radius: 2.25rem !important;
+            border-radius: 8px !important;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
             border: 1px solid rgba(255, 255, 255, 0.45) !important;
         }
 
         .logo-container {
             text-align: center;
-            margin-bottom: 2.25rem;
+            margin-bottom: 1.25rem;
         }
 
         .logo-container img {
-            width: 135px;
-            height: 135px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
             padding: 9px;
             background: white;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.35rem;
+            margin-bottom: 0.75rem;
         }
 
         .logo-container h4 {
@@ -142,14 +146,14 @@
         }
 
         .form-group {
-            margin-bottom: 1.35rem;
+            margin-bottom: 0.85rem;
         }
 
         .input-group-alternative {
             box-shadow: 0 1px 3px rgba(50, 50, 93, .15), 0 1px 0 rgba(0, 0, 0, .02);
             border: 0;
             transition: box-shadow .15s ease;
-            border-radius: 0.375rem;
+            border-radius: 8px;
             background-color: #fff;
             display: flex !important;
             align-items: center !important;
@@ -164,7 +168,7 @@
             border: 0;
             background-color: transparent;
             font-size: 0.78rem;
-            padding: 1.08rem 0.9rem;
+            padding: 0.75rem 0.9rem;
             flex: 1 !important;
         }
 
@@ -186,27 +190,29 @@
         }
 
         .btn-primary {
-            background: linear-gradient(87deg, #7267E4 0, #7267E4 100%);
+            background: linear-gradient(87deg, #3b82f6 0%, #1d4ed8 100%) !important;
             border: none;
             width: 100%;
-            padding: 1.17rem;
-            font-weight: 600;
-            border-radius: 0.375rem;
+            padding: 0.85rem;
+            font-weight: 700;
+            border-radius: 8px;
             text-transform: uppercase;
             font-size: 0.78rem;
-            letter-spacing: 0.45px;
-            transition: all 0.15s ease;
-            margin-top: 0.9rem;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
         }
 
         .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 7px 14px rgba(50, 50, 93, .1), 0 3px 6px rgba(0, 0, 0, .08);
+            transform: translateY(-2px);
+            background: linear-gradient(87deg, #2563eb 0%, #1e40af 100%) !important;
+            box-shadow: 0 7px 14px rgba(29, 78, 216, 0.35), 0 3px 6px rgba(0, 0, 0, .1) !important;
         }
 
         .footer-text {
             text-align: center;
-            margin-top: 1.8rem;
+            margin-top: 1rem;
             color: #8898aa;
             font-size: 0.78rem;
         }
@@ -222,6 +228,7 @@
 
             .login-content {
                 width: 80%;
+                height: auto !important;
             }
         }
 
@@ -237,6 +244,7 @@
             .login-content {
                 width: 100%;
                 max-width: 100%;
+                height: auto !important;
                 padding: 2rem 1.25rem !important;
             }
 
@@ -250,7 +258,7 @@
 
 <body>
     <div class="login-container">
-        <!-- Left Side - Login Form -->
+        
         <div class="login-left">
             <div class="login-card">
                 <div class="login-content">
@@ -284,7 +292,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" name="login" class="btn btn-primary">Login</button>
+                        <button type="submit" name="login" class="btn btn-primary">Masuk ke Sistem</button>
                     </form>
 
                     <div class="footer-text">
@@ -295,20 +303,20 @@
             </div>
         </div>
 
-        <!-- Right Side - Background Image -->
+        
         <div class="login-right">
             <img src="/argon/img/bg.png" alt="Background">
         </div>
     </div>
 
-    <!-- Core -->
+    
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="/argon/js/core/bootstrap.bundle.min.js"></script>
 
-    <!-- Argon JS -->
+    
     <script src="/argon/js/argon-dashboard.min.js"></script>
 
-    <!-- SweetAlert2 -->
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>

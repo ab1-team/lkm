@@ -21,7 +21,7 @@
 
         /* ===================== UNIFIED CARD & TYPOGRAPHY SYSTEM ===================== */
         .card {
-            border-radius: 12px !important;
+            border-radius: 8px !important;
             box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02) !important;
             border: 1px solid rgba(0, 0, 0, 0.07) !important;
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
@@ -30,7 +30,7 @@
             box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08), 0 8px 8px -4px rgba(0, 0, 0, 0.03) !important;
         }
         .card-header, .card-footer {
-            border-radius: 12px !important;
+            border-radius: 8px !important;
         }
         h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
             font-family: 'Open Sans', sans-serif !important;
