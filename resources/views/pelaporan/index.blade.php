@@ -132,8 +132,7 @@
 
         <div class="row mt-2 mb-3">
             <div class="col-lg-4 col-md-6 mb-3">
-                <div class="card overflow-hidden border-0 shadow btn-action-card h-10" id="CardSimpanSaldo"
-                    style="cursor: pointer; border-radius: 8px;">
+                <div class="card overflow-hidden border-0 shadow h-10" style="border-radius: 8px;">
                     <div class="card-body p-3 d-flex flex-column align-items-center text-center justify-content-center">
                         <div
                             class="card-pelaporan-icon-shape bg-gradient-danger shadow-danger text-center rounded-circle mb-2 d-flex align-items-center justify-content-center">
@@ -146,8 +145,7 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6 mb-3">
-                <div class="card overflow-hidden border-0 shadow btn-action-card h-10" id="CardExcel"
-                    style="cursor: pointer; border-radius: 8px;">
+                <div class="card overflow-hidden border-0 shadow h-10" style="border-radius: 8px;">
                     <div class="card-body p-3 d-flex flex-column align-items-center text-center justify-content-center">
                         <div
                             class="card-pelaporan-icon-shape bg-gradient-success shadow-success text-center rounded-circle mb-2 d-flex align-items-center justify-content-center">
@@ -160,8 +158,7 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-12 mb-3">
-                <div class="card overflow-hidden border-0 shadow btn-action-card h-10" id="CardPreview"
-                    style="cursor: pointer; border-radius: 8px;">
+                <div class="card overflow-hidden border-0 shadow h-10" style="border-radius: 8px;">
                     <div class="card-body p-3 d-flex flex-column align-items-center text-center justify-content-center">
                         <div
                             class="card-pelaporan-icon-shape bg-gradient-dark shadow-dark text-center rounded-circle mb-2 d-flex align-items-center justify-content-center">
@@ -333,21 +330,6 @@
 
             return 'Januari';
         }
-
-        $(document).on('click', '#CardSimpanSaldo', function(e) {
-            e.preventDefault();
-            $('#SimpanSaldo').trigger('click');
-        });
-
-        $(document).on('click', '#CardExcel', function(e) {
-            e.preventDefault();
-            $('#Excel').trigger('click');
-        });
-
-        $(document).on('click', '#CardPreview', function(e) {
-            e.preventDefault();
-            $('#Preview').trigger('click');
-        });
 
         // Bootstrap validation initializer
         (function() {
