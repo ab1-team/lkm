@@ -1,0 +1,271 @@
+.settings-sidebar-card {
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    background-color: #323b44 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    padding: 12px 12px !important;
+}
+
+.settings-sidebar-card:hover {
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.settings-sidebar-title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #94a3b8;
+    font-weight: 800;
+    padding: 8px 16px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.settings-sidebar-title i {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 1.1rem;
+}
+
+.settings-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0px !important;
+    padding-left: 0;
+    list-style: none;
+    margin-bottom: 0;
+}
+
+.settings-nav-list > div {
+    margin-bottom: 0px !important;
+    margin-top: 0px !important;
+}
+
+.settings-nav-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 16px !important;
+    padding: 10px 16px !important;
+    margin: 0px !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+    color: #cbd5e1 !important;
+    background-color: transparent !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    box-shadow: none !important;
+}
+
+.settings-nav-item:hover {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    transform: translateX(4px) !important;
+    box-shadow: none !important;
+}
+
+.settings-nav-item.active {
+    color: #2563eb !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+}
+
+.settings-nav-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 15%;
+    height: 70%;
+    width: 4px;
+    background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+    border-radius: 0 4px 4px 0;
+    opacity: 0;
+    transition: all 0.25s ease;
+}
+
+.settings-nav-item.active::before {
+    opacity: 1;
+}
+
+.settings-nav-item i {
+    font-size: 1.1rem !important;
+    width: 24px !important;
+    margin-right: 16px !important;
+    color: #94a3b8;
+    transition: all 0.25s ease;
+}
+
+.settings-nav-item:hover i {
+    color: #3b82f6;
+}
+
+.settings-nav-item.active i {
+    color: #2563eb;
+    transform: scale(1.1);
+}
+
+.settings-nav-item span {
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.2px;
+}
+
+@media (min-width: 768px) {
+    .settings-sidebar-col {
+        flex: 0 0 29% !important;
+        max-width: 29% !important;
+    }
+    .settings-content-col {
+        flex: 0 0 71% !important;
+        max-width: 71% !important;
+    }
+}
+
+.app-main__inner {
+    padding-right: 24px !important;
+    padding-left: 16px !important;
+    padding-top: 16px !important;
+}
+
+.welcome-container {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 8px; 
+    padding: 24px 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04) !important; 
+}
+
+.welcome-container::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    right: -10%;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0) 70%);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.welcome-container::after {
+    content: '';
+    position: absolute;
+    bottom: -15%;
+    left: -5%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, rgba(139, 92, 246, 0) 70%);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.welcome-content {
+    position: relative;
+    z-index: 2;
+}
+
+.welcome-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.25);
+}
+
+.welcome-icon-wrapper i {
+    color: #ffffff;
+    font-size: 1.8rem;
+}
+
+.welcome-title {
+    font-family: 'Outfit', 'Inter', sans-serif;
+    color: #1e293b;
+    font-size: 1.35rem;
+    font-weight: 800;
+    line-height: 1.4;
+    margin-bottom: 8px;
+}
+
+.welcome-subtitle {
+    font-family: 'Outfit', 'Inter', sans-serif;
+    color: #4f46e5;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.welcome-divider {
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    border-radius: 2px;
+    margin: 12px auto;
+}
+
+.welcome-instructions-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 16px auto;
+    max-width: 520px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.welcome-instructions-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 0.925rem;
+    color: #475569;
+    line-height: 1.5;
+}
+
+.welcome-instructions-list li i {
+    color: #10b981;
+    font-size: 1rem;
+    margin-top: 3px;
+    background-color: rgba(16, 185, 129, 0.1);
+    padding: 4px;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.welcome-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.12);
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #2563eb;
+    margin-top: 24px;
+}

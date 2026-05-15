@@ -21,8 +21,8 @@
         <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     
-        <link rel="stylesheet" href="/admin/style.css">
-        <link id="pagestyle" href="/admin/css/material-dashboard.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="/assets/admin/style.css">
+        <link id="pagestyle" href="/assets/css/material-dashboard.min.css" rel="stylesheet" />
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
@@ -36,7 +36,7 @@
         <div class="login">
 
             <div class="avatar">
-                <img src="admin/img/1.png" style="width: 100px;" alt="Avatar">       
+                <img src="/assets/admin/img/1.png" style="width: 100px;" alt="Avatar">       
             </div>
 
             <h2><b>Login Administrator Aplikasi</b></h2>
