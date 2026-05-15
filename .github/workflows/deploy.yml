@@ -16,6 +16,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            cd /var/www/silkm.net
+            cd /home/enpii/apps/lkm
             git pull origin master
-            /usr/bin/php81 /usr/local/bin/composer install
+            docker compose up -d --build
+            docker compose exec -T php composer install --no-dev --optimize-autoloader --no-interaction
