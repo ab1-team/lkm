@@ -267,6 +267,7 @@ button.btn-sm {
 }
 
 .navbar-search-full .input-group {
+    position: relative !important;
     background: rgba(255, 255, 255, 0.15) !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     border-radius: 8px !important;
@@ -328,6 +329,13 @@ button.btn-sm {
     padding: 5px 0;
 }
 
+.navbar-search-full .typeahead.dropdown-menu {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    left: 0 !important;
+}
+
 .typeahead.dropdown-menu li a {
     color: #344767 !important;
     padding: 8px 16px;
@@ -336,7 +344,7 @@ button.btn-sm {
 
 .typeahead.dropdown-menu li.active a,
 .typeahead.dropdown-menu li a:hover {
-    background-color: #f8f9fa !important;
+    background-color: #e8ebfd !important;
     color: #5e72e4 !important;
 }
 
