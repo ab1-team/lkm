@@ -156,7 +156,7 @@
                                 <canvas id="myChart"></canvas>
                             </div>
                             <div class="pt-3 border-top">
-                                <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
                                     <div class="text-xs">
                                         Total Ang.Pokok: <b>Rp. <span id="total_angsur_pokok">0.00</span></b>
                                     </div>

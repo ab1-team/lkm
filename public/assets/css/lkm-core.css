@@ -368,3 +368,65 @@ button.btn-sm {
 .breadcrumb {
     display: none !important;
 }
+
+@media (max-width: 991.98px) {
+    .container-fluid {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+    .navbar-main {
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+        padding: 8px 12px !important;
+    }
+    .navbar-main .container-fluid {
+        flex-wrap: nowrap !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+    }
+    .navbar-main .navbar-collapse {
+        display: flex !important;
+        flex-basis: auto !important;
+        flex-grow: 0 !important;
+        margin-left: auto !important;
+    }
+    .navbar-main .navbar-nav {
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 12px !important;
+    }
+    .navbar-main .nav-item {
+        margin: 0 !important;
+    }
+    .navbar-main h6 {
+        font-size: 0.85rem !important;
+        max-width: 160px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+}
+@media (max-width: 576px) {
+    .main-content {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    .container-fluid {
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+    .card {
+        border-radius: 6px !important;
+        margin-bottom: 8px !important;
+    }
+    .card-body {
+        padding: 12px !important;
+    }
+    .fixed-plugin a {
+        right: 12px !important;
+        bottom: 12px !important;
+        width: 44px !important;
+        height: 44px !important;
+    }
+}
