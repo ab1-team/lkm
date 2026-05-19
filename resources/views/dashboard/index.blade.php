@@ -280,61 +280,146 @@
                         </div>
 
                         <div class="tab-content mt-2">
+
+                            {{-- Hari Ini --}}
                             <div class="tab-pane fade show active" id="tagihan_hari_ini" role="tabpanel"
                                 aria-labelledby="tagihan_hari_ini">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-striped midle" width="100%">
-                                                <thead>
-                                                    <tr>
-                                                        <td align="center">No</td>
-                                                        <td align="center">Load ID</td>
-                                                        <td align="center">Nama Pemohon</td>
-                                                        <td align="center">Tanggal Cair</td>
-                                                        <td align="center">Tunggakan Pokok</td>
-                                                        <td align="center">Tunggakan Jasa</td>
-                                                        <td align="center">Jumlah</td>
-                                                        <td align="center">Keterangan</td>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="TbHariIni"></tbody>
-                                            </table>
+                                <div class="d-flex p-1 gap-1" role="tablist">
+                                    <button class="btn btn-sm btn-outline-success active" data-bs-toggle="tab"
+                                        data-bs-target="#hari_ini_individu" role="tab">
+                                        Individu
+                                    </button>
+                                    @if(Session::get('lokasi') == 95)
+                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="tab"
+                                        data-bs-target="#hari_ini_kelompok" role="tab">
+                                        Kelompok
+                                    </button>
+                                    @endif
+                                </div>
+                                <div class="tab-content mt-1">
+                                    <div class="tab-pane fade show active" id="hari_ini_individu" role="tabpanel">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped midle" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <td align="center">No</td>
+                                                                <td align="center">Load ID</td>
+                                                                <td align="center">Nama Pemohon</td>
+                                                                <td align="center">Tanggal Cair</td>
+                                                                <td align="center">Tunggakan Pokok</td>
+                                                                <td align="center">Tunggakan Jasa</td>
+                                                                <td align="center">Jumlah</td>
+                                                                <td align="center">Keterangan</td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="TbHariIni"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                    @if(Session::get('lokasi') == 95)
+                                    <div class="tab-pane fade" id="hari_ini_kelompok" role="tabpanel">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped midle" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <td align="center">No</td>
+                                                                <td align="center">Load ID</td>
+                                                                <td align="center">Nama Kelompok</td>
+                                                                <td align="center">Tanggal Cair</td>
+                                                                <td align="center">Tunggakan Pokok</td>
+                                                                <td align="center">Tunggakan Jasa</td>
+                                                                <td align="center">Jumlah</td>
+                                                                <td align="center">Keterangan</td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="TbHariIniKelompok"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
+
+                            {{-- Menunggak --}}
                             <div class="tab-pane fade" id="menunggak" role="tabpanel" aria-labelledby="menunggak">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <form action="/perguliran_i/dokumen?status=A" target="_blank" method="post"
-                                            id="formCetakTagihan">
-                                            @csrf
-
-                                            <input type="hidden" name="id" id="tagihan_id">
-                                            <input type="hidden" name="report" value="suratTagihan#pdf">
-                                        </form>
-
-                                        <div class="table-responsive">
-                                            <table class="table table-striped midle" width="100%">
-                                                <thead>
-                                                    <tr>
-                                                        <td align="center">No</td>
-                                                        <td align="center">Tanggal Cair</td>
-                                                        <td align="center">Nama Pemohon</td>
-                                                        <td align="center">Desa</td>
-                                                        <td align="center">Alokasi</td>
-                                                        <td align="center">Tunggakan Pokok</td>
-                                                        <td align="center">Tunggakan Jasa</td>
-                                                        <td align="center">Jumlah</td>
-                                                        <td align="center">Keterangan</td>
-                                                        <th align="center">Tagihan</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="TbMenunggak"></tbody>
-                                            </table>
+                                <div class="d-flex p-1 gap-1" role="tablist">
+                                    <button class="btn btn-sm btn-outline-success active" data-bs-toggle="tab"
+                                        data-bs-target="#nunggak_individu" role="tab">
+                                        Individu
+                                    </button>
+                                    @if(Session::get('lokasi') == 95)
+                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="tab"
+                                        data-bs-target="#nunggak_kelompok" role="tab">
+                                        Kelompok
+                                    </button>
+                                    @endif
+                                </div>
+                                <div class="tab-content mt-1">
+                                    <div class="tab-pane fade show active" id="nunggak_individu" role="tabpanel">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <form action="/perguliran_i/dokumen?status=A" target="_blank" method="post"
+                                                    id="formCetakTagihan">
+                                                    @csrf
+                                                    <input type="hidden" name="id" id="tagihan_id">
+                                                    <input type="hidden" name="report" value="suratTagihan#pdf">
+                                                </form>
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped midle" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <td align="center">No</td>
+                                                                <td align="center">Tanggal Cair</td>
+                                                                <td align="center">Nama Pemohon</td>
+                                                                <td align="center">Desa</td>
+                                                                <td align="center">Alokasi</td>
+                                                                <td align="center">Tunggakan Pokok</td>
+                                                                <td align="center">Tunggakan Jasa</td>
+                                                                <td align="center">Jumlah</td>
+                                                                <td align="center">Keterangan</td>
+                                                                <th align="center">Tagihan</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="TbMenunggak"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                    @if(Session::get('lokasi') == 95)
+                                    <div class="tab-pane fade" id="nunggak_kelompok" role="tabpanel">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped midle" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <td align="center">No</td>
+                                                                <td align="center">Tanggal Cair</td>
+                                                                <td align="center">Nama Kelompok</td>
+                                                                <td align="center">Desa</td>
+                                                                <td align="center">Alokasi</td>
+                                                                <td align="center">Tunggakan Pokok</td>
+                                                                <td align="center">Tunggakan Jasa</td>
+                                                                <td align="center">Jumlah</td>
+                                                                <td align="center">Keterangan</td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="TbMenunggakKelompok"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="tagihan" role="tabpanel" aria-labelledby="tagihan">
@@ -425,76 +510,193 @@
                         </div>
 
                         <div class="tab-content mt-2">
-                            <div class="tab-pane fade show active" id="proposal" role="tabpanel"
-                                aria-labelledby="proposal">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-striped midle" width="100%">
-                                                <thead>
-                                                    <tr>
-                                                        <td align="center">No</td>
-                                                        <td align="center">Load id</td>
-                                                        <td align="center">Tanggal Proposal</td>
-                                                        <td align="center">Nama Pemohon P</td>
-                                                        <td align="center">Jenis</td>
-                                                        <td align="center">Alokasi</td>
-                                                        <td align="center">Nama Barang</td>
-                                                        <td align="center">Keterangan</td>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="tbProposal"></tbody>
-                                            </table>
+
+                            {{-- Proposal --}}
+                            <div class="tab-pane fade show active" id="proposal" role="tabpanel" aria-labelledby="proposal">
+                                <div class="d-flex p-1 gap-1" role="tablist">
+                                    <button class="btn btn-sm btn-outline-success active" data-bs-toggle="tab"
+                                        data-bs-target="#proposal_individu" role="tab">Individu</button>
+                                    @if(Session::get('lokasi') == 95)
+                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="tab"
+                                        data-bs-target="#proposal_kelompok" role="tab">Kelompok</button>
+                                    @endif
+                                </div>
+                                <div class="tab-content mt-1">
+                                    <div class="tab-pane fade show active" id="proposal_individu" role="tabpanel">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped midle" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <td align="center">No</td>
+                                                                <td align="center">Load id</td>
+                                                                <td align="center">Tanggal Proposal</td>
+                                                                <td align="center">Nama Pemohon P</td>
+                                                                <td align="center">Jenis</td>
+                                                                <td align="center">Alokasi</td>
+                                                                <td align="center">Nama Barang</td>
+                                                                <td align="center">Keterangan</td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="tbProposal"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                    @if(Session::get('lokasi') == 95)
+                                    <div class="tab-pane fade" id="proposal_kelompok" role="tabpanel">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped midle" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <td align="center">No</td>
+                                                                <td align="center">Load id</td>
+                                                                <td align="center">Tanggal Proposal</td>
+                                                                <td align="center">Nama Kelompok</td>
+                                                                <td align="center">Jenis</td>
+                                                                <td align="center">Alokasi</td>
+                                                                <td align="center">Nama Barang</td>
+                                                                <td align="center">Keterangan</td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="tbProposalKelompok"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
+
+                            {{-- Verifikasi --}}
                             <div class="tab-pane fade" id="verifikasi" role="tabpanel" aria-labelledby="verifikasi">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-striped midle" width="100%">
-                                                <thead>
-                                                    <tr>
-                                                        <td align="center">No</td>
-                                                        <td align="center">Load id</td>
-                                                        <td align="center">Tanggal Verifikasi</td>
-                                                        <td align="center">Nama Pemohon V</td>
-                                                        <td align="center">Jenis</td>
-                                                        <td align="center">Alokasi</td>
-                                                        <td align="center">Nama Barang</td>
-                                                        <td align="center">Keterangan</td>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="tbVerifikasi"></tbody>
-                                            </table>
+                                <div class="d-flex p-1 gap-1" role="tablist">
+                                    <button class="btn btn-sm btn-outline-success active" data-bs-toggle="tab"
+                                        data-bs-target="#verifikasi_individu" role="tab">Individu</button>
+                                    @if(Session::get('lokasi') == 95)
+                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="tab"
+                                        data-bs-target="#verifikasi_kelompok" role="tab">Kelompok</button>
+                                    @endif
+                                </div>
+                                <div class="tab-content mt-1">
+                                    <div class="tab-pane fade show active" id="verifikasi_individu" role="tabpanel">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped midle" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <td align="center">No</td>
+                                                                <td align="center">Load id</td>
+                                                                <td align="center">Tanggal Verifikasi</td>
+                                                                <td align="center">Nama Pemohon V</td>
+                                                                <td align="center">Jenis</td>
+                                                                <td align="center">Alokasi</td>
+                                                                <td align="center">Nama Barang</td>
+                                                                <td align="center">Keterangan</td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="tbVerifikasi"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                    @if(Session::get('lokasi') == 95)
+                                    <div class="tab-pane fade" id="verifikasi_kelompok" role="tabpanel">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped midle" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <td align="center">No</td>
+                                                                <td align="center">Load id</td>
+                                                                <td align="center">Tanggal Verifikasi</td>
+                                                                <td align="center">Nama Kelompok</td>
+                                                                <td align="center">Jenis</td>
+                                                                <td align="center">Alokasi</td>
+                                                                <td align="center">Nama Barang</td>
+                                                                <td align="center">Keterangan</td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="tbVerifikasiKelompok"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
+
+                            {{-- Waiting --}}
                             <div class="tab-pane fade" id="waiting" role="tabpanel" aria-labelledby="waiting">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-striped midle" width="100%">
-                                                <thead>
-                                                    <tr>
-                                                        <td align="center">No</td>
-                                                        <td align="center">Load id</td>
-                                                        <td align="center">Tanggal Tunggu</td>
-                                                        <td align="center">Nama Pemohon W</td>
-                                                        <td align="center">Jenis</td>
-                                                        <td align="center">Alokasi</td>
-                                                        <td align="center">Nama Barang</td>
-                                                        <td align="center">Keterangan</td>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="tbWaiting"></tbody>
-                                            </table>
+                                <div class="d-flex p-1 gap-1" role="tablist">
+                                    <button class="btn btn-sm btn-outline-success active" data-bs-toggle="tab"
+                                        data-bs-target="#waiting_individu" role="tab">Individu</button>
+                                    @if(Session::get('lokasi') == 95)
+                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="tab"
+                                        data-bs-target="#waiting_kelompok" role="tab">Kelompok</button>
+                                    @endif
+                                </div>
+                                <div class="tab-content mt-1">
+                                    <div class="tab-pane fade show active" id="waiting_individu" role="tabpanel">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped midle" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <td align="center">No</td>
+                                                                <td align="center">Load id</td>
+                                                                <td align="center">Tanggal Tunggu</td>
+                                                                <td align="center">Nama Pemohon W</td>
+                                                                <td align="center">Jenis</td>
+                                                                <td align="center">Alokasi</td>
+                                                                <td align="center">Nama Barang</td>
+                                                                <td align="center">Keterangan</td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="tbWaiting"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                    @if(Session::get('lokasi') == 95)
+                                    <div class="tab-pane fade" id="waiting_kelompok" role="tabpanel">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped midle" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <td align="center">No</td>
+                                                                <td align="center">Load id</td>
+                                                                <td align="center">Tanggal Tunggu</td>
+                                                                <td align="center">Nama Kelompok</td>
+                                                                <td align="center">Jenis</td>
+                                                                <td align="center">Alokasi</td>
+                                                                <td align="center">Nama Barang</td>
+                                                                <td align="center">Keterangan</td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="tbWaitingKelompok"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -510,9 +712,8 @@
         </div>
     </div>
 
-    {{-- Kelompok Aktif --}}
-    <div class="modal fade" id="aktif" aria-controls="individu_aktif" aria-labelledby="aktifLabel"
-        aria-hidden="true">
+    {{-- Pengguna Aktif --}}
+    <div class="modal fade" id="aktif" aria-labelledby="aktifLabel" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -521,8 +722,30 @@
                 </div>
                 <div class="modal-body">
                     <div class="nav-wrapper position-relative end-0">
+                        {{-- Tab nav --}}
+                        <div class="d-flex justify-content-between p-1" role="tablist">
+                            <button class="btn btn-outline-success flex-fill @if(Session::get('lokasi') == 95) me-1 @endif active"
+                                data-bs-toggle="tab" data-bs-target="#tab_individu_aktif"
+                                role="tab" aria-controls="tab_individu_aktif" aria-selected="true"
+                                id="btn_tab_individu">
+                                Individu
+                            </button>
+                            @if(Session::get('lokasi') == 95)
+                            <button class="btn btn-outline-primary flex-fill"
+                                data-bs-toggle="tab" data-bs-target="#tab_kelompok_aktif"
+                                role="tab" aria-controls="tab_kelompok_aktif" aria-selected="false"
+                                id="btn_tab_kelompok">
+                                Kelompok
+                            </button>
+                            @endif
+                        </div>
+
+                        {{-- Tab content --}}
                         <div class="tab-content mt-2">
-                            <div class="" id="anggota" role="" aria-labelledby="anggota">
+
+                            {{-- Tab Individu --}}
+                            <div class="tab-pane fade show active" id="tab_individu_aktif"
+                                role="tabpanel" aria-labelledby="btn_tab_individu">
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="table-responsive">
@@ -530,7 +753,7 @@
                                                 <thead>
                                                     <tr>
                                                         <td align="center">No</td>
-                                                        <td align="center">Nik </td>
+                                                        <td align="center">NIK</td>
                                                         <td align="center">Nama Nasabah</td>
                                                         <td align="center">Alamat</td>
                                                         <td align="center">T/S</td>
@@ -544,6 +767,34 @@
                                     </div>
                                 </div>
                             </div>
+
+                            {{-- Tab Kelompok (hanya lokasi 1) --}}
+                            @if(Session::get('lokasi') == 95)
+                            <div class="tab-pane fade" id="tab_kelompok_aktif"
+                                role="tabpanel" aria-labelledby="btn_tab_kelompok">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped midle" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <td align="center">No</td>
+                                                        <td align="center">Kode Kelompok</td>
+                                                        <td align="center">Nama Kelompok</td>
+                                                        <td align="center">Alamat</td>
+                                                        <td align="center">T/S</td>
+                                                        <td align="center">Tanggal Cair</td>
+                                                        <td align="center">Alokasi</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbKelompok"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+
                         </div>
                     </div>
                 </div>
@@ -638,6 +889,19 @@
             }
         })
 
+        @if(Session::get('lokasi') == 95)
+        $.ajax({
+            type: 'post',
+            url: '/dashboard/jatuh_tempo',
+            data: $('#defaultForm').serialize() + '&tipe=kelompok',
+            success: function(result) {
+                if (result.success) {
+                    $('#TbHariIniKelompok').html(result.hari_ini)
+                }
+            }
+        })
+        @endif
+
         $.ajax({
             type: 'post',
             url: '/dashboard/nunggak',
@@ -652,6 +916,19 @@
                 }
             }
         })
+
+        @if(Session::get('lokasi') == 95)
+        $.ajax({
+            type: 'post',
+            url: '/dashboard/nunggak',
+            data: $('#defaultForm').serialize() + '&tipe=kelompok',
+            success: function(result) {
+                if (result.success) {
+                    $('#TbMenunggakKelompok').html(result.table)
+                }
+            }
+        })
+        @endif
 
         function tagihan() {
             var tgl_tagihan = $('#tgl_tagihan').val()
@@ -719,11 +996,39 @@
             }
         })
 
+        @if(Session::get('lokasi') == 95)
+        $.get('/dashboard/pinjaman?status=P&tipe=kelompok', function(result) {
+            if (result.success) {
+                $('#tbProposalKelompok').html(result.table)
+            }
+        })
+
+        $.get('/dashboard/pinjaman?status=V&tipe=kelompok', function(result) {
+            if (result.success) {
+                $('#tbVerifikasiKelompok').html(result.table)
+            }
+        })
+
+        $.get('/dashboard/pinjaman?status=W&tipe=kelompok', function(result) {
+            if (result.success) {
+                $('#tbWaitingKelompok').html(result.table)
+            }
+        })
+        @endif
+
         $.get('/dashboard/pemanfaat?status=A', function(result) {
             if (result.success) {
                 $('#tbAnggota').html(result.table)
             }
         })
+
+        @if(Session::get('lokasi') == 95)
+        $.get('/dashboard/pemanfaat?status=A&tipe=kelompok', function(result) {
+            if (result.success) {
+                $('#tbKelompok').html(result.table)
+            }
+        })
+        @endif
 
         $(document).on('click', '#KirimPesan', function(e) {
             e.preventDefault()
