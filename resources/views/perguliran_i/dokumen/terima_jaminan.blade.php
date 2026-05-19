@@ -71,7 +71,7 @@
 
     {{-- Pilihan Jaminan --}}
     @if ($jaminan['jenis_jaminan'] == '1')
-        <tr>
+        <tr> 
             <td colspan="3" class="style9" style="padding-top: 10px;">
                 Dengan ini menyatakan telah menerima secara utuh dokumen jaminan berupa <strong>Sertifikat Hak Milik (SHM)</strong> dengan rincian:
             </td>
@@ -112,6 +112,18 @@
         <tr><td>&nbsp;</td><td class="style9">Nomor Jaminan</td><td class="style27">: {{ $jaminan['nama_jaminan'] }}</td></tr>
         <tr><td>&nbsp;</td><td class="style9">Keterangan</td><td class="style27">: {{ $jaminan['keterangan'] }}</td></tr>
         <tr><td>&nbsp;</td><td class="style9">Nilai Jaminan</td><td class="style27">: {{ rupiah($jaminan['nilai_jaminan']) }}</td></tr>
+
+   @elseif ($jaminan['jenis_jaminan'] == '5')
+        <tr>
+            <td colspan="3" class="style9" style="padding-top: 10px;">
+                Dengan ini menyatakan telah menerima secara utuh dokumen jaminan berupa <strong>Sertifikat Hak Milik (SHM) Tanah dan Bangunan</strong> dengan rincian:
+            </td>
+        </tr>
+        <tr><td>&nbsp;</td><td class="style9">Nomor Sertifikat</td><td class="style27">: {{ $jaminan['nomor_sertifikat'] }}</td></tr>
+        <tr><td>&nbsp;</td><td class="style9">Nama Pemilik</td><td class="style27">: {{ $jaminan['nama_pemilik'] }}</td></tr>
+        <tr><td>&nbsp;</td><td class="style9">Alamat</td><td class="style27">: {{ $jaminan['alamat'] }}</td></tr>
+        <tr><td>&nbsp;</td><td class="style9">Luas</td><td class="style27">: {{ $jaminan['luas'] }} m²</td></tr>
+        <tr><td>&nbsp;</td><td class="style9">Nilai Jual Tanah</td><td class="style27">: {{ rupiah($jaminan['nilai_jual_tanah']) }}</td></tr>
     @endif
 
     <tr>
