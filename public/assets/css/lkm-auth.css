@@ -207,22 +207,28 @@ body::before {
 
 @media (max-width: 576px) {
     .login-left {
-        padding: 1rem;
+        padding: 0.5rem !important;
     }
 
     .login-card {
-        padding: 1rem 0.25rem;
+        padding: 0 !important;
     }
 
     .login-content {
-        width: 100%;
-        max-width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
         height: auto !important;
-        padding: 2rem 1.25rem !important;
+        padding: 2.25rem 1.5rem !important;
+        border-radius: 16px !important;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+        background: rgba(255, 255, 255, 0.85) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
     }
 
     .logo-container img {
-        width: 80px;
-        height: 80px;
+        width: 90px;
+        height: 90px;
+        margin-bottom: 0.5rem !important;
     }
 }

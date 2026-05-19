@@ -151,117 +151,172 @@ class DashboardController extends Controller
     public function pinjaman()
     {
         $status = request()->get('status');
+        $tipe   = request()->get('tipe', 'individu');
+
         if ($status == 'P') {
-            $tgl = 'tgl_proposal';
+            $tgl     = 'tgl_proposal';
             $alokasi = 'proposal';
         } else if ($status == 'V') {
-            $tgl = 'tgl_verifikasi';
+            $tgl     = 'tgl_verifikasi';
             $alokasi = 'verifikasi';
         } else if ($status == 'W') {
-            $tgl = 'tgl_tunggu';
+            $tgl     = 'tgl_tunggu';
             $alokasi = 'alokasi';
         } else {
-            $tgl = 'tgl_cair';
+            $tgl     = 'tgl_cair';
             $alokasi = 'alokasi';
         }
 
         $table = '';
+        $no    = 1;
 
-        $no = 1;
-        $pinjaman = PinjamanAnggota::where('status', $status)->with('anggota', 'jpp', 'sts', 'saldo')
-            ->orderBy($tgl, 'ASC')->get();
-        foreach ($pinjaman as $pinj_anggota) {
-            $status = $pinj_anggota->sts->warna_status;
+        if ($tipe === 'kelompok') {
+            $pinjaman = PinjamanKelompok::where('status', $status)
+                ->with(['kelompok', 'jpp', 'sts'])
+                ->orderBy($tgl, 'ASC')
+                ->get();
 
-            $table .= '<tr>';
-            if ($pinj_anggota->status == 'A') {
+            foreach ($pinjaman as $pinj) {
+                $warna_status = $pinj->sts->warna_status ?? 'secondary';
+                $table .= '<tr>';
                 $table .= '<td align="center">' . $no . '</td>';
-                $table .= '<td class="text-start d-flex justify-content-between"><span class="badge bg-' . $status . '">' . $pinj_anggota->id . '</span></td>';
-                $table .= '<td align="center">' . Tanggal::tglIndo($pinj_anggota->tgl_cair) . '</td>';
-                $table .= '<td class="text-start d-flex justify-content-between">' . $pinj_anggota->anggota->nik . '&nbsp;' . $pinj_anggota->anggota->namadepan . '</td>';
-                $table .= '<td align="center">' . $pinj_anggota->jpp->nama_jpp . '</td>';
-                $table .= '<td align="right">' . number_format($pinj_anggota->alokasi) . '</td>';
-                $table .= '<td align="center">' . $pinj_anggota->nama_barang . '</td>';
-                $table .= '<td align="center">' . $pinj_anggota->catatan_verifikasi . '</td>';
-                if ($pinj_anggota->saldo) {
-                    $table .= '<td align="right">' . number_format($pinj_anggota->saldo->saldo_pokok) . '</td>';
-                } else {
-                    $table .= '<td align="right">' . number_format(0) . '</td>';
-                }
-                $table .= '<td align="center">' . $pinj_anggota->pinjaman_anggota_count . '</td>';
-            } else {
-                $table .= '<td align="center">' . $no . '</td>';
-                $table .= '<td class="text-start d-flex justify-content-between"><span class="badge bg-' . $status . '">' . $pinj_anggota->id . '</span></td>';
-                $table .= '<td align="center">' . Tanggal::tglIndo($pinj_anggota->$tgl) . '</td>';
-                $table .= '<td class="text-start d-flex justify-content-between">' . $pinj_anggota->anggota->nik . '&nbsp;' . $pinj_anggota->anggota->namadepan . '</td>';
-                $table .= '<td align="center">' . $pinj_anggota->jpp->nama_jpp . '</td>';
-                $table .= '<td align="right">' . number_format($pinj_anggota->$alokasi) . '</td>';
-                $table .= '<td align="center">' . $pinj_anggota->nama_barang . '</td>';
-                $table .= '<td align="center">' . $pinj_anggota->catatan_verifikasi . '</td>';
-                $table .= '<td align="center">' . $pinj_anggota->pinjaman_anggota_count . '</td>';
+                $table .= '<td class="text-start"><span class="badge bg-' . $warna_status . '">' . $pinj->id . '</span></td>';
+                $table .= '<td align="center">' . Tanggal::tglIndo($pinj->$tgl) . '</td>';
+                $table .= '<td>' . ($pinj->kelompok->nama_kelompok ?? '-') . '</td>';
+                $table .= '<td align="center">' . ($pinj->jpp->nama_jpp ?? '-') . '</td>';
+                $table .= '<td align="right">' . number_format($pinj->$alokasi) . '</td>';
+                $table .= '<td align="center">' . ($pinj->nama_barang ?? '') . '</td>';
+                $table .= '<td align="center">' . ($pinj->catatan_verifikasi ?? '') . '</td>';
+                $table .= '</tr>';
+                $no++;
             }
-            $table .= '</tr>';
+        } else {
+            $pinjaman = PinjamanAnggota::where('status', $status)
+                ->with('anggota', 'jpp', 'sts', 'saldo')
+                ->orderBy($tgl, 'ASC')
+                ->get();
 
-            $no++;
+            foreach ($pinjaman as $pinj_anggota) {
+                $warna_status = $pinj_anggota->sts->warna_status;
+                $table .= '<tr>';
+                if ($pinj_anggota->status == 'A') {
+                    $table .= '<td align="center">' . $no . '</td>';
+                    $table .= '<td class="text-start d-flex justify-content-between"><span class="badge bg-' . $warna_status . '">' . $pinj_anggota->id . '</span></td>';
+                    $table .= '<td align="center">' . Tanggal::tglIndo($pinj_anggota->tgl_cair) . '</td>';
+                    $table .= '<td class="text-start d-flex justify-content-between">' . $pinj_anggota->anggota->nik . '&nbsp;' . $pinj_anggota->anggota->namadepan . '</td>';
+                    $table .= '<td align="center">' . $pinj_anggota->jpp->nama_jpp . '</td>';
+                    $table .= '<td align="right">' . number_format($pinj_anggota->alokasi) . '</td>';
+                    $table .= '<td align="center">' . $pinj_anggota->nama_barang . '</td>';
+                    $table .= '<td align="center">' . $pinj_anggota->catatan_verifikasi . '</td>';
+                    if ($pinj_anggota->saldo) {
+                        $table .= '<td align="right">' . number_format($pinj_anggota->saldo->saldo_pokok) . '</td>';
+                    } else {
+                        $table .= '<td align="right">' . number_format(0) . '</td>';
+                    }
+                    $table .= '<td align="center">' . $pinj_anggota->pinjaman_anggota_count . '</td>';
+                } else {
+                    $table .= '<td align="center">' . $no . '</td>';
+                    $table .= '<td class="text-start d-flex justify-content-between"><span class="badge bg-' . $warna_status . '">' . $pinj_anggota->id . '</span></td>';
+                    $table .= '<td align="center">' . Tanggal::tglIndo($pinj_anggota->$tgl) . '</td>';
+                    $table .= '<td class="text-start d-flex justify-content-between">' . $pinj_anggota->anggota->nik . '&nbsp;' . $pinj_anggota->anggota->namadepan . '</td>';
+                    $table .= '<td align="center">' . $pinj_anggota->jpp->nama_jpp . '</td>';
+                    $table .= '<td align="right">' . number_format($pinj_anggota->$alokasi) . '</td>';
+                    $table .= '<td align="center">' . $pinj_anggota->nama_barang . '</td>';
+                    $table .= '<td align="center">' . $pinj_anggota->catatan_verifikasi . '</td>';
+                    $table .= '<td align="center">' . $pinj_anggota->pinjaman_anggota_count . '</td>';
+                }
+                $table .= '</tr>';
+                $no++;
+            }
         }
 
         return response()->json([
             'success' => true,
-            'table' => $table
+            'table'   => $table
         ]);
     }
 
     public function pemanfaat()
     {
         $status = request()->get('status');
+        $tipe   = request()->get('tipe', 'individu'); // default individu
+
         if ($status == 'P') {
-            $tgl = 'tgl_proposal';
+            $tgl    = 'tgl_proposal';
             $alokasi = 'proposal';
         } else if ($status == 'V') {
-            $tgl = 'tgl_verifikasi';
+            $tgl    = 'tgl_verifikasi';
             $alokasi = 'verifikasi';
         } else if ($status == 'W') {
-            $tgl = 'tgl_tunggu';
+            $tgl    = 'tgl_tunggu';
             $alokasi = 'alokasi';
         } else {
-            $tgl = 'tgl_cair';
+            $tgl    = 'tgl_cair';
             $alokasi = 'alokasi';
         }
 
         $table = '';
+        $no    = 1;
 
-        $no = 1;
-        $pinjaman = PinjamanAnggota::where([
-            ['status', $status],
-            ['jenis_pinjaman', 'I']
-        ])->with([
-            'anggota',
-            'anggota.d',
-            'anggota.d.sebutan_desa'
-        ])->orderBy('tgl_cair', 'ASC')->get();
-        foreach ($pinjaman as $pinj_anggota) {
-            $nama_desa = '';
-            if ($pinj_anggota->anggota->d) {
-                $nama_desa = $pinj_anggota->anggota->d->sebutan_desa->sebutan_desa . ' ' . $pinj_anggota->anggota->d->nama_desa;
+        if ($tipe === 'kelompok') {
+            $pinjaman = PinjamanKelompok::where('status', $status)
+                ->with(['kelompok', 'kelompok.d', 'kelompok.d.sebutan_desa'])
+                ->orderBy($tgl, 'ASC')
+                ->get();
+
+            foreach ($pinjaman as $pinj) {
+                $nama_desa = '';
+                if ($pinj->kelompok && $pinj->kelompok->d) {
+                    $nama_desa = optional($pinj->kelompok->d->sebutan_desa)->sebutan_desa
+                        . ' ' . $pinj->kelompok->d->nama_desa;
+                }
+
+                $table .= '<tr>';
+                $table .= '<td align="center">' . $no . '</td>';
+                $table .= '<td align="center">' . ($pinj->kelompok->kd_kelompok ?? '-') . '</td>';
+                $table .= '<td>' . ($pinj->kelompok->nama_kelompok ?? '-') . '</td>';
+                $table .= '<td>' . $nama_desa . '</td>';
+                $table .= '<td>' . $pinj->jangka . '/bulanan</td>';
+                $table .= '<td align="center">' . Tanggal::tglIndo($pinj->$tgl) . '</td>';
+                $table .= '<td align="right">' . number_format($pinj->$alokasi) . '</td>';
+                $table .= '</tr>';
+
+                $no++;
             }
-            $table .= '<tr>';
+        } else {
+            $pinjaman = PinjamanAnggota::where([
+                ['status', $status],
+                ['jenis_pinjaman', 'I']
+            ])->with([
+                'anggota',
+                'anggota.d',
+                'anggota.d.sebutan_desa'
+            ])->orderBy('tgl_cair', 'ASC')->get();
 
-            $table .= '<td align="center">' . $no . '</td>';
-            $table .= '<td align="center">' . $pinj_anggota->anggota->nik . '</td>';
-            $table .= '<td>' . $pinj_anggota->anggota->namadepan . '</td>';
-            $table .= '<td>' . $nama_desa . ' ' . $pinj_anggota->anggota->alamat . '</td>';
-            $table .= '<td>' .  $pinj_anggota->jangka . '/bulanan' . '</td>';
-            $table .= '<td align="center">' . Tanggal::tglIndo($pinj_anggota->$tgl) . '</td>';
-            $table .= '<td align="right">' . number_format($pinj_anggota->$alokasi) . '</td>';
+            foreach ($pinjaman as $pinj_anggota) {
+                $nama_desa = '';
+                if ($pinj_anggota->anggota->d) {
+                    $nama_desa = $pinj_anggota->anggota->d->sebutan_desa->sebutan_desa
+                        . ' ' . $pinj_anggota->anggota->d->nama_desa;
+                }
 
-            $table .= '</tr>';
+                $table .= '<tr>';
+                $table .= '<td align="center">' . $no . '</td>';
+                $table .= '<td align="center">' . $pinj_anggota->anggota->nik . '</td>';
+                $table .= '<td>' . $pinj_anggota->anggota->namadepan . '</td>';
+                $table .= '<td>' . $nama_desa . ' ' . $pinj_anggota->anggota->alamat . '</td>';
+                $table .= '<td>' . $pinj_anggota->jangka . '/bulanan</td>';
+                $table .= '<td align="center">' . Tanggal::tglIndo($pinj_anggota->$tgl) . '</td>';
+                $table .= '<td align="right">' . number_format($pinj_anggota->$alokasi) . '</td>';
+                $table .= '</tr>';
 
-            $no++;
+                $no++;
+            }
         }
 
         return response()->json([
             'success' => true,
-            'table' => $table
+            'table'   => $table
         ]);
     }
 
@@ -427,50 +482,241 @@ class DashboardController extends Controller
 
     public function jatuhTempo(Request $request)
     {
-        $tgl = Tanggal::tglNasional($request->tgl);
+        $tgl  = Tanggal::tglNasional($request->tgl);
+        $tipe = $request->get('tipe', 'individu');
 
+        $table      = '';
         $jatuh_tempo = '00';
-        $pinjaman = PinjamanAnggota::where('status', 'A')->whereDay('tgl_cair', date('d', strtotime($tgl)))->with([
-            'target' => function ($query) use ($tgl) {
-                $query->where([
-                    ['jatuh_tempo', $tgl],
-                    ['angsuran_ke', '!=', '0']
-                ]);
-            },
-            'saldo' => function ($query) use ($tgl) {
-                $query->where('tgl_transaksi', '<=', $tgl);
-            },
-            'anggota',
-            'anggota.d'
-        ])->get();
+        $no         = 1;
 
-        $table = '';
-        $no = 1;
-        foreach ($pinjaman as $pinj_anggota) {
-            if ($pinj_anggota->target) {
-                $sum_pokok = 0;
-                $sum_jasa = 0;
+        if ($tipe === 'kelompok') {
+            $pinjaman = PinjamanKelompok::where('status', 'A')
+                ->whereDay('tgl_cair', date('d', strtotime($tgl)))
+                ->with([
+                    'target' => function ($query) use ($tgl) {
+                        $query->where([
+                            ['jatuh_tempo', $tgl],
+                            ['angsuran_ke', '!=', '0']
+                        ]);
+                    },
+                    'saldo' => function ($query) use ($tgl) {
+                        $query->where('tgl_transaksi', '<=', $tgl);
+                    },
+                    'kelompok',
+                ])
+                ->get();
 
-                if ($pinj_anggota->saldo) {
-                    $sum_pokok = $pinj_anggota->saldo->sum_pokok;
-                    $sum_jasa = $pinj_anggota->saldo->sum_jasa;
+            foreach ($pinjaman as $pinj) {
+                if ($pinj->target) {
+                    $sum_pokok = 0;
+                    $sum_jasa  = 0;
+                    if ($pinj->saldo) {
+                        $sum_pokok = $pinj->saldo->sum_pokok;
+                        $sum_jasa  = $pinj->saldo->sum_jasa;
+                    }
+                    $nunggak_pokok    = $pinj->target->target_pokok - $sum_pokok;
+                    $nunggak_jasa     = $pinj->target->target_jasa  - $sum_jasa;
+                    $total_pokok_jasa = $nunggak_pokok + $nunggak_jasa;
+
+                    if ($nunggak_pokok > 0 || $nunggak_jasa > 0) {
+                        $jatuh_tempo++;
+                        $table .= '<tr>';
+                        $table .= '<td align="center">' . $no++ . '</td>';
+                        $table .= '<td align="center">' . $pinj->id . '</td>';
+                        $table .= '<td>' . ($pinj->kelompok->nama_kelompok ?? '-') . '</td>';
+                        $table .= '<td>' . Tanggal::tglIndo($pinj->tgl_cair) . '</td>';
+                        $table .= '<td align="right">' . number_format($nunggak_pokok) . '</td>';
+                        $table .= '<td align="right">' . number_format($nunggak_jasa) . '</td>';
+                        $table .= '<td align="right">' . number_format($total_pokok_jasa) . '</td>';
+                        $table .= '<td align="center">' . ($pinj->catatan_verifikasi ?? '') . '</td>';
+                        $table .= '</tr>';
+                    }
+                }
+            }
+        } else {
+            $pinjaman = PinjamanAnggota::where('status', 'A')
+                ->whereDay('tgl_cair', date('d', strtotime($tgl)))
+                ->with([
+                    'target' => function ($query) use ($tgl) {
+                        $query->where([
+                            ['jatuh_tempo', $tgl],
+                            ['angsuran_ke', '!=', '0']
+                        ]);
+                    },
+                    'saldo' => function ($query) use ($tgl) {
+                        $query->where('tgl_transaksi', '<=', $tgl);
+                    },
+                    'anggota',
+                    'anggota.d'
+                ])
+                ->get();
+
+            foreach ($pinjaman as $pinj_anggota) {
+                if ($pinj_anggota->target) {
+                    $sum_pokok = 0;
+                    $sum_jasa  = 0;
+                    if ($pinj_anggota->saldo) {
+                        $sum_pokok = $pinj_anggota->saldo->sum_pokok;
+                        $sum_jasa  = $pinj_anggota->saldo->sum_jasa;
+                    }
+                    $nunggak_pokok    = $pinj_anggota->target->target_pokok - $sum_pokok;
+                    $nunggak_jasa     = $pinj_anggota->target->target_jasa  - $sum_jasa;
+                    $total_pokok_jasa = $nunggak_pokok + $nunggak_jasa;
+
+                    if ($nunggak_pokok > 0 || $nunggak_jasa > 0) {
+                        $jatuh_tempo++;
+                        $table .= '<tr>';
+                        $table .= '<td align="center">' . $no++ . '</td>';
+                        $table .= '<td align="center">' . $pinj_anggota->id . '</td>';
+                        $table .= '<td>' . $pinj_anggota->anggota->namadepan . '[' . $pinj_anggota->anggota->d->nama_desa . '] - ' . '</td>';
+                        $table .= '<td>' . Tanggal::tglIndo($pinj_anggota->tgl_cair) . '</td>';
+                        $table .= '<td align="right">' . number_format($nunggak_pokok) . '</td>';
+                        $table .= '<td align="right">' . number_format($nunggak_jasa) . '</td>';
+                        $table .= '<td align="right">' . number_format($total_pokok_jasa) . '</td>';
+                        $table .= '<td align="center">' . $pinj_anggota->catatan_verifikasi . '</td>';
+                        $table .= '</tr>';
+                    }
+                }
+            }
+        }
+
+        return response()->json([
+            'success'     => true,
+            'jatuh_tempo' => $jatuh_tempo,
+            'hari_ini'    => $table
+        ]);
+    }
+
+    public function nunggak(Request $request)
+    {
+        $tgl  = Tanggal::tglNasional($request->tgl);
+        $tipe = $request->get('tipe', 'individu');
+
+        $nunggak = '00';
+        $table   = '';
+        $no      = 1;
+
+        if ($tipe === 'kelompok') {
+            $pinjaman = PinjamanKelompok::where('status', 'A')
+                ->whereDay('tgl_cair', '<=', $tgl)
+                ->with([
+                    'target' => function ($query) use ($tgl) {
+                        $query->where([
+                            ['jatuh_tempo', '<=', $tgl],
+                            ['angsuran_ke', '!=', '0']
+                        ]);
+                    },
+                    'saldo' => function ($query) use ($tgl) {
+                        $query->where('tgl_transaksi', '<=', $tgl);
+                    },
+                    'kelompok',
+                    'kelompok.d',
+                ])
+                ->orderBy('tgl_cair', 'ASC')
+                ->orderBy('id', 'ASC')
+                ->get();
+
+            foreach ($pinjaman as $pinj) {
+                $sum_pokok   = 0;
+                $sum_jasa    = 0;
+                $target_pokok = 0;
+                $target_jasa  = 0;
+
+                if ($pinj->saldo) {
+                    $sum_pokok = $pinj->saldo->sum_pokok;
+                    $sum_jasa  = $pinj->saldo->sum_jasa;
+                }
+                if ($pinj->target) {
+                    $target_pokok = $pinj->target->target_pokok;
+                    $target_jasa  = $pinj->target->target_jasa;
                 }
 
-                $nunggak_pokok = $pinj_anggota->target->target_pokok - $sum_pokok;
-                $nunggak_jasa = $pinj_anggota->target->target_jasa - $sum_jasa;
-                $total_pokok_jasa = $nunggak_pokok + $nunggak_jasa;
+                $tunggakan_pokok = max(0, $target_pokok - $sum_pokok);
+                $tunggakan_jasa  = max(0, $target_jasa  - $sum_jasa);
+                $total           = $tunggakan_pokok + $tunggakan_jasa;
 
-                if ($nunggak_pokok > 0 || $nunggak_jasa > 0) {
-                    $jatuh_tempo++;
+                if ($tunggakan_pokok != 0 || $tunggakan_jasa != 0) {
+                    $nunggak++;
+                    $nama_desa = $pinj->kelompok->d->nama_desa ?? '-';
                     $table .= '<tr>';
                     $table .= '<td align="center">' . $no++ . '</td>';
-                    $table .= '<td align="center">' . $pinj_anggota->id . '</td>';
-                    $table .= '<td>' . $pinj_anggota->anggota->namadepan . '[' . $pinj_anggota->anggota->d->nama_desa . '] - ' . '</td>';
-                    $table .= '<td>' . Tanggal::tglIndo($pinj_anggota->tgl_cair) . '</td>';
-                    $table .= '<td align="right">' . number_format($nunggak_pokok) . '</td>';
-                    $table .= '<td align="right">' . number_format($nunggak_jasa) . '</td>';
-                    $table .= '<td align="right">' . number_format($total_pokok_jasa) . '</td>';
-                    $table .= '<td align="center">' . $pinj_anggota->catatan_verifikasi . '</td>';
+                    $table .= '<td align="center">' . Tanggal::tglIndo($pinj->tgl_cair) . '</td>';
+                    $table .= '<td>' . ($pinj->kelompok->nama_kelompok ?? '-') . ' (' . $pinj->id . ')</td>';
+                    $table .= '<td>' . $nama_desa . '</td>';
+                    $table .= '<td align="right">' . number_format($pinj->alokasi) . '</td>';
+                    $table .= '<td align="right">' . number_format($tunggakan_pokok) . '</td>';
+                    $table .= '<td align="right">' . number_format($tunggakan_jasa) . '</td>';
+                    $table .= '<td align="right">' . number_format($total) . '</td>';
+                    $table .= '<td align="center">' . ($pinj->catatan_verifikasi ?? '') . '</td>';
+                    $table .= '</tr>';
+                }
+            }
+        } else {
+            $pinjaman = PinjamanAnggota::where('status', 'A')
+                ->whereDay('tgl_cair', '<=', $tgl)
+                ->with([
+                    'target' => function ($query) use ($tgl) {
+                        $query->where([
+                            ['jatuh_tempo', '<=', $tgl],
+                            ['angsuran_ke', '!=', '0']
+                        ]);
+                    },
+                    'saldo' => function ($query) use ($tgl) {
+                        $query->where('tgl_transaksi', '<=', $tgl);
+                    },
+                    'anggota',
+                    'anggota.d'
+                ])
+                ->orderBy('tgl_cair', 'ASC')
+                ->orderBy('id', 'ASC')
+                ->get();
+
+            foreach ($pinjaman as $pinj_anggota) {
+                $real_pokok  = 0;
+                $real_jasa   = 0;
+                $sum_pokok   = 0;
+                $sum_jasa    = 0;
+                $saldo_pokok = $pinj_anggota->alokasi;
+                $saldo_jasa  = $pinj_anggota->pros_jasa == 0 ? 0 : $pinj_anggota->alokasi * ($pinj_anggota->pros_jasa / 100);
+
+                if ($pinj_anggota->saldo) {
+                    $real_pokok  = $pinj_anggota->saldo->realisasi_pokok;
+                    $real_jasa   = $pinj_anggota->saldo->realisasi_jasa;
+                    $sum_pokok   = $pinj_anggota->saldo->sum_pokok;
+                    $sum_jasa    = $pinj_anggota->saldo->sum_jasa;
+                    $saldo_pokok = $pinj_anggota->saldo->saldo_pokok;
+                    $saldo_jasa  = $pinj_anggota->saldo->saldo_jasa;
+                }
+
+                $target_pokok = 0;
+                $target_jasa  = 0;
+                if ($pinj_anggota->target) {
+                    $target_pokok = $pinj_anggota->target->target_pokok;
+                    $target_jasa  = $pinj_anggota->target->target_jasa;
+                }
+
+                $tunggakan_pokok = $target_pokok - $sum_pokok;
+                if ($tunggakan_pokok < 0) $tunggakan_pokok = 0;
+                $tunggakan_jasa = $target_jasa - $sum_jasa;
+                if ($tunggakan_jasa < 0) $tunggakan_jasa = 0;
+                $totaltunggakan_pokok_jasa = $tunggakan_pokok + $tunggakan_jasa;
+
+                if ($tunggakan_pokok != 0 || $tunggakan_jasa != 0) {
+                    $nunggak++;
+                    $table .= '<tr>';
+                    $table .= '<td align="center">' . $no++ . '</td>';
+                    $table .= '<td align="centar">' . Tanggal::tglIndo($pinj_anggota->tgl_cair) . '</td>';
+                    $table .= '<td align="centar">' . $pinj_anggota->anggota->namadepan . ' (' . $pinj_anggota->id . ')</td>';
+                    $table .= '<td align="centar">' . $pinj_anggota->anggota->d->nama_desa . '</td>';
+                    $table .= '<td align="right">' . number_format($pinj_anggota->alokasi) . '</td>';
+                    $table .= '<td align="right">' . number_format($tunggakan_pokok) . '</td>';
+                    $table .= '<td align="right">' . number_format($tunggakan_jasa) . '</td>';
+                    $table .= '<td align="right">' . number_format($totaltunggakan_pokok_jasa) . '</td>';
+                    $table .= '<td align="centar">' . $pinj_anggota->catatan_verifikasi . '</td>';
+                    $table .= '<td align="centar">';
+                    $table .= '<button type="button" class="btn btn-sm btn-info btn-cetak-tagihan me-1" data-id="' . $pinj_anggota->id . '"><i class="fas fa-file"></i></button>';
+                    $table .= '<button type="button" class="btn btn-sm btn-success btn-wa-nunggak" data-id="' . $pinj_anggota->id . '" data-hp="' . $pinj_anggota->anggota->hp . '"><i class="fab fa-whatsapp"></i></button>';
+                    $table .= '</td>';
                     $table .= '</tr>';
                 }
             }
@@ -478,89 +724,8 @@ class DashboardController extends Controller
 
         return response()->json([
             'success' => true,
-            'jatuh_tempo' => $jatuh_tempo,
-            'hari_ini' => $table
-        ]);
-    }
-
-    public function nunggak(Request $request)
-    {
-        $tgl = Tanggal::tglNasional($request->tgl);
-        $pinjaman = PinjamanAnggota::where('status', 'A')->whereDay('tgl_cair', '<=', $tgl)->with([
-            'target' => function ($query) use ($tgl) {
-                $query->where([
-                    ['jatuh_tempo', '<=', $tgl],
-                    ['angsuran_ke', '!=', '0']
-                ]);
-            },
-            'saldo' => function ($query) use ($tgl) {
-                $query->where('tgl_transaksi', '<=', $tgl);
-            },
-            'anggota',
-            'anggota.d'
-        ])->orderBy('tgl_cair', 'ASC')->orderBy('id', 'ASC')->get();
-
-        $nunggak = "00";
-        $table = '';
-        $no = 1;
-        foreach ($pinjaman as $pinj_anggota) {
-            $real_pokok = 0;
-            $real_jasa = 0;
-            $sum_pokok = 0;
-            $sum_jasa = 0;
-            $saldo_pokok = $pinj_anggota->alokasi;
-            $saldo_jasa = $pinj_anggota->pros_jasa == 0 ? 0 : $pinj_anggota->alokasi * ($pinj_anggota->pros_jasa / 100);
-            if ($pinj_anggota->saldo) {
-                $real_pokok = $pinj_anggota->saldo->realisasi_pokok;
-                $real_jasa = $pinj_anggota->saldo->realisasi_jasa;
-                $sum_pokok = $pinj_anggota->saldo->sum_pokok;
-                $sum_jasa = $pinj_anggota->saldo->sum_jasa;
-                $saldo_pokok = $pinj_anggota->saldo->saldo_pokok;
-                $saldo_jasa = $pinj_anggota->saldo->saldo_jasa;
-            }
-
-            $target_pokok = 0;
-            $target_jasa = 0;
-            if ($pinj_anggota->target) {
-                $target_pokok = $pinj_anggota->target->target_pokok;
-                $target_jasa = $pinj_anggota->target->target_jasa;
-            }
-
-            $tunggakan_pokok = $target_pokok - $sum_pokok;
-            if ($tunggakan_pokok < 0) {
-                $tunggakan_pokok = 0;
-            }
-            $tunggakan_jasa = $target_jasa - $sum_jasa;
-            if ($tunggakan_jasa < 0) {
-                $tunggakan_jasa = 0;
-            }
-            $totaltunggakan_pokok_jasa = $tunggakan_pokok + $tunggakan_jasa;
-
-            if ($tunggakan_pokok != 0 || $tunggakan_jasa != 0) {
-                $nunggak++;
-                $table .= '<tr>';
-
-                $table .= '<td align="center">' . $no++ . '</td>';
-                $table .= '<td align="centar">' . Tanggal::tglIndo($pinj_anggota->tgl_cair) . '</td>';
-                $table .= '<td align="centar">' . $pinj_anggota->anggota->namadepan . ' (' . $pinj_anggota->id . ')</td>';
-                $table .= '<td align="centar">' . $pinj_anggota->anggota->d->nama_desa . '</td>';
-                $table .= '<td align="right">' . number_format($pinj_anggota->alokasi) . '</td>';
-                $table .= '<td align="right">' . number_format($tunggakan_pokok) . '</td>';
-                $table .= '<td align="right">' . number_format($tunggakan_jasa) . '</td>';
-                $table .= '<td align="right">' . number_format($totaltunggakan_pokok_jasa) . '</td>';
-                $table .= '<td align="centar">' . $pinj_anggota->catatan_verifikasi . '</td>';
-                $table .= '<td align="centar">';
-                $table .= '<button type="button" class="btn btn-sm btn-info btn-cetak-tagihan me-1" data-id="' . $pinj_anggota->id . '"><i class="fas fa-file"></i></button>';
-                $table .= '<button type="button" class="btn btn-sm btn-success btn-wa-nunggak" data-id="' . $pinj_anggota->id . '" data-hp="' . $pinj_anggota->anggota->hp . '"><i class="fab fa-whatsapp"></i></button>';
-                $table .= '</td>';
-                $table .= '</tr>';
-            }
-        }
-
-        return response()->json([
-            'success' => true,
             'nunggak' => $nunggak,
-            'table' => $table
+            'table'   => $table
         ]);
     }
 

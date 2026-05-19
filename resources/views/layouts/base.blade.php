@@ -101,7 +101,7 @@
         @endphp
 
         
-        <nav class="navbar navbar-main navbar-expand-lg px-0 ms-0 me-4 shadow-none border-radius-xl" id="navbarBlur"
+        <nav class="navbar navbar-main navbar-expand-lg px-0 mx-2 mx-md-3 mx-lg-4 shadow-none border-radius-xl" id="navbarBlur"
             data-scroll="false" style="z-index: 1050; position: relative;">
             <div class="container-fluid py-1 px-3 align-items-center d-flex flex-wrap">
 
@@ -277,7 +277,7 @@
             </div>
         </div>
 
-        <div class="container-fluid py-0 ps-0 pe-4">
+        <div class="container-fluid py-0 px-2 px-md-3 px-lg-4">
             @yield('content')
         </div>
 
