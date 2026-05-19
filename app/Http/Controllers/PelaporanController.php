@@ -296,30 +296,60 @@ class PelaporanController extends Controller
         if ($file == 3) {
             $laporan = explode('_', $request->sub_laporan);
             $file = $laporan[0];
-
             $data['kode_akun'] = $laporan[1];
             $data['laporan'] = 'buku_besar ' . $laporan[1];
-            return $this->$file($data);
+            $result = $this->$file($data);
         } elseif ($file == 20 || $file == 21) {
             $file = $request->sub_laporan;
-            return $this->$file($data);
+            $result = $this->$file($data);
         } elseif ($file == 5) {
             $file = $request->sub_laporan;
             $data['laporan'] = $file;
-            return $this->$file($data);
+            $result = $this->$file($data);
         } elseif ($file == 14) {
             $laporan = explode('_', $request->sub_laporan);
             $file = $laporan[0];
-
             $data['sub'] = $laporan[1];
             $data['laporan'] = 'E - Budgeting ';
-            return $this->$file($data);
+            $result = $this->$file($data);
         } elseif ($file == 'tutup_buku') {
-            $file = $request->sub_laporan;;
-            return $this->$file($data);
+            $file = $request->sub_laporan;
+            $result = $this->$file($data);
         } else {
-            return $this->$file($data);
+            $result = $this->$file($data);
         }
+
+        if ($data['type'] == 'pdf') {
+            return $result;
+        }
+
+        if (is_string($result)) {
+            $html = preg_replace('/<meta[^>]+>/i', '', $result);
+            $html = preg_replace('/<style[^>]*>.*?<\/style>/is', '', $html);
+
+            $useErrors = libxml_use_internal_errors(true);
+
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Html();
+            $spreadsheet = $reader->loadFromString($html);
+
+            libxml_clear_errors();
+            libxml_use_internal_errors($useErrors);
+
+            $filename = ($request->laporan ?? 'laporan')
+                . '_' . $data['tahun']
+                . ($data['bulanan'] ? '_' . $data['bulan'] : '')
+                . '.xlsx';
+
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="' . $filename . '"');
+            header('Cache-Control: max-age=0');
+
+            $writer->save('php://output');
+            exit;
+        }
+        return $result;
     }
 
     private function cover(array $data)
@@ -346,6 +376,7 @@ class PelaporanController extends Controller
             return $view;
         }
     }
+
     private function CV(array $data)
     {
         $thn = $data['tahun'];

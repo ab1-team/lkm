@@ -223,7 +223,7 @@
         $(document).on('click', '#Preview', async function(e) {
             e.preventDefault()
 
-            $(this).parent('form').find('#type').val('pdf')
+            $(this).closest('form').find('#type').val('pdf') // FIX: parent() → closest()
             var file = $('select#laporan').val()
             if (file == 'calk') {
                 await $('textarea#sub_laporan').val(quill.container.firstChild.innerHTML)
@@ -238,7 +238,7 @@
         $(document).on('click', '#Excel', async function(e) {
             e.preventDefault()
 
-            $(this).parent('form').find('#type').val('excel')
+            $(this).closest('form').find('#type').val('excel') // FIX: parent() → closest()
             var file = $('select#laporan').val()
             if (file == 'calk') {
                 await $('textarea#sub_laporan').val(quill.container.firstChild.innerHTML)
