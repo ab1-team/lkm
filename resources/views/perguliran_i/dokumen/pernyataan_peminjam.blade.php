@@ -70,7 +70,44 @@
                 Saya selaku Nasabah {{ $kec->nama_lembaga_sort }} menyatakan benar-benar telah meminjam uang
                 sebesar <br> Rp. _____________________,
                 dengan jaminan berupa barang sebagai berikut :
+                    @php
+                        $jaminan = json_decode($pinkel->jaminan, true) ?? $pinkel->jaminan;
+                    @endphp
+                    
                         <ul style="list-style: disc;">
+                                <li>
+                    <table border="0" width="100%" cellspacing="0" cellpadding="5" style="font-size: 12px; border-collapse: collapse;">
+                        @if (is_array($jaminan))
+                            @foreach ($jaminan as $key => $value)
+                                <tr>
+                                    <td height="12" width="80">{{ ucwords(str_replace('_', ' ', $key)) }}</td>
+                                    <td width="10" align="center">:</td>
+                                    <td>
+                                        @if (is_numeric($value))
+                                            Rp {{ number_format($value, 0, ',', '.') }}
+                                        @else
+                                            {{ $value }}
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td height="12" width="80">Nama barang</td>
+                                <td width="10" align="center">:</td>
+                                <td>
+                                    <b>{{ $jaminan }}</b>
+                                </td>
+                            </tr>
+                                                            <tr>
+                                                                <td height="12" width="80">Nilai Jual</td>
+                                                                <td width="10" align="center">:</td>
+                                                                <td>
+                                                                    <b>Rp. _______________________</b>
+                                                                </td>
+                                                            </tr>
+                        @endif
+                    </table>
                             @for ($i = 0; $i < 3; $i++)
                                 <li>
                                     <div style="display:table; width:100%; font-size:10pt;">

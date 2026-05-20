@@ -21,7 +21,7 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    private const ID_KEC = 109;
+    private const ID_KEC = 220;
 
     public function index()
     {
