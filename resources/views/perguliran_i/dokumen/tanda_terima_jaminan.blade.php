@@ -194,29 +194,31 @@
 </table>
 <table width="97%" border="0" align="center" cellpadding="3" cellspacing="0">
     <tr>
-        <td width="32%" height="36" colspan="1" class="style26">
-            <div align="center" class="style9">
-                <p> <br></p>
-            </div>
-        </td>
-        <td class="style26">
+        <td width="50%" height="36" class="style26">
             <div align="center" class="style9">
                 <p>Yang menerima</p>
             </div>
         </td>
+        <td width="50%" class="style26">
+            <div align="center" class="style9">
+                <p>Peminjam</p>
+            </div>
+        </td>
     </tr>
     <tr>        
-        <td width="7"align="center" colspan="-1" class="style9">
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p> <br></p>
-        </td>
-        <td width="7"align="center" class="style9">
+        <td align="center" class="style9">
             <p>&nbsp;</p>
             <p>&nbsp;</p>
             <p>
               {{ $pinkel->user->namadepan ?? '' }}
               {{ $pinkel->user->namabelakang ?? '' }}<br>                                
+            </p>
+        </td>
+        <td align="center" class="style9">
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>
+              {{ $pinkel->anggota->namadepan }}<br>                                
             </p>
         </td>
     </tr>
