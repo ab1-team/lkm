@@ -70,8 +70,7 @@
     <div style="width:100%; font-size:10pt; display:block; break-inside:auto; page-break-inside:auto;">
         <ol>
             <li>
-                Saya selaku Nasabah {{ $kec->nama_lembaga_sort }} menyatakan benar-benar telah meminjam uang
-                sebesar <br> Rp. _____________________,
+                Saya selaku Nasabah {{ $kec->nama_lembaga_sort }} menyatakan benar-benar telah meminjam uang sebesar Rp. {{ rupiah($pinkel->status == 'P' ? $pinkel->proposal : $pinkel->verifikasi) }},
                 dengan jaminan berupa barang sebagai berikut :
                     @php
                         $jaminan = json_decode($pinkel->jaminan, true) ?? $pinkel->jaminan;
