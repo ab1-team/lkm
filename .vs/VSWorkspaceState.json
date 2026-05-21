@@ -4,12 +4,11 @@
     "\\app",
     "\\app\\Http",
     "\\app\\Http\\Controllers",
-    "\\app\\Http\\Controllers\\Rekap",
     "\\resources",
     "\\resources\\views",
-    "\\resources\\views\\rekap",
-    "\\resources\\views\\rekap\\auth"
+    "\\resources\\views\\perguliran_i",
+    "\\resources\\views\\perguliran_i\\dokumen"
   ],
-  "SelectedNode": "\\app\\Http\\Controllers\\Rekap\\AuthController.php",
+  "SelectedNode": "\\app\\Http\\Controllers\\SimpananController.php",
   "PreviewInSolutionExplorer": false
 }

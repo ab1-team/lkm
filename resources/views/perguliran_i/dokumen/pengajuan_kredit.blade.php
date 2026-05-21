@@ -73,7 +73,7 @@
         <td width="30">Perihal</td>
         <td width="5" align="right">:</td>
         <td width="500">
-            <b>Pengajuan Kredit</b>
+            <b>Pengajuan Kredit .</b>
         </td>
     </tr>
 </table>
@@ -171,7 +171,9 @@
         </div>
         <ol>
             <li>Fotokopi KTP dan KK;</li>
+                @if(session('lokasi') != 530)
             <li>Surat Rekomendasi dari Kepala Desa/Lurah;</li>
+                @endif
             <li>Surat Kesanggupan Penyerahan Jaminan;</li>
             <li>Surat Pernyataan Piutang;</li>
             <li>Tabel Rencana Angsuran;</li>
