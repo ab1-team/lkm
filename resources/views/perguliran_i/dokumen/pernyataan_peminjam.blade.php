@@ -1,6 +1,7 @@
 @php
     use App\Utils\Tanggal;
     function rupiah($angka) {
+        $angka = is_numeric($angka) ? $angka : 0;
         return 'Rp ' . number_format($angka, 0, ',', '.');
     }
 @endphp
