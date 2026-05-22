@@ -2426,6 +2426,8 @@ class PinjamanIndividuController extends Controller
             ->where(function ($query) {
                 if (Session::get('lokasi') == '351') {
                     $query->where('jabatan', '3');
+                } elseif (Session::get('lokasi') == '362') {
+                    $query->where('jabatan', '4');
                 } else {
                     $query->where('jabatan', '1');
                 }
@@ -2503,6 +2505,8 @@ class PinjamanIndividuController extends Controller
             ->where(function ($query) {
                 if (Session::get('lokasi') == '351') {
                     $query->where('jabatan', '3');
+                } elseif (Session::get('lokasi') == '362') {
+                    $query->where('jabatan', '4');
                 } else {
                     $query->where('jabatan', '1');
                 }

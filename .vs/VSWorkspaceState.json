@@ -1,14 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\app",
-    "\\app\\Http",
-    "\\app\\Http\\Controllers",
     "\\resources",
     "\\resources\\views",
-    "\\resources\\views\\perguliran_i",
-    "\\resources\\views\\perguliran_i\\dokumen"
+    "\\resources\\views\\layouts"
   ],
-  "SelectedNode": "\\app\\Http\\Controllers\\SimpananController.php",
+  "SelectedNode": "\\resources\\views\\layouts\\navbar.blade.php",
   "PreviewInSolutionExplorer": false
 }
