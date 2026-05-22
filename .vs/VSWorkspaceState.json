@@ -1,10 +1,13 @@
 {
   "ExpandedNodes": [
     "",
+    "\\app",
+    "\\app\\Http",
     "\\resources",
     "\\resources\\views",
-    "\\resources\\views\\layouts"
+    "\\resources\\views\\perguliran_i",
+    "\\resources\\views\\perguliran_i\\dokumen"
   ],
-  "SelectedNode": "\\resources\\views\\layouts\\navbar.blade.php",
+  "SelectedNode": "\\resources\\views\\perguliran_i\\dokumen\\pernyataan_peminjam.blade.php",
   "PreviewInSolutionExplorer": false
 }
