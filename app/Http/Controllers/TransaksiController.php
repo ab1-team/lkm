@@ -1693,13 +1693,18 @@ class TransaksiController extends Controller
 
     public function formAngsuran($id_pinkel)
     {
+        $pinkel_raw = PinjamanKelompok::where('id', $id_pinkel)->first();
+        $tgl_target = in_array($pinkel_raw->sistem_angsuran, [12, 25])
+            ? date('Y-m-d')
+            : date('Y-m-t');
+
         $pinkel = PinjamanKelompok::where('id', $id_pinkel)->with('kelompok')->withSum([
-            'rencana' => function ($query) {
-                $query->where('jatuh_tempo', '<=', date('Y-m-t'));
+            'rencana' => function ($query) use ($tgl_target) {
+                $query->where('jatuh_tempo', '<=', $tgl_target);
             }
         ], 'wajib_pokok')->withSum([
-            'rencana' => function ($query) {
-                $query->where('jatuh_tempo', '<=', date('Y-m-t'));
+            'rencana' => function ($query) use ($tgl_target) {
+                $query->where('jatuh_tempo', '<=', $tgl_target);
             }
         ], 'wajib_jasa')->firstOrFail();
         $real = RealAngsuran::where([
