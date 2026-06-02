@@ -503,7 +503,7 @@ class PinjamanIndividuController extends Controller
         }
 
         $pinj_aktif = '';
-        if ($perguliran_i->status == 'W') {
+        if ($perguliran_i->status == 'W' AND $kec->hak_kredit == 1) {
             $pinj_i_aktif = PinjamanIndividu::where([
                 ['nia', $perguliran_i->nia],
                 ['status', 'A'],
