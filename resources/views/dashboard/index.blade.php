@@ -865,13 +865,14 @@
             }
             // Ensure modal can be interacted with correctly
             const modalElement = document.getElementById('notificationPopup');
-            modalElement.addEventListener('hidden.bs.modal', function() {
-                // Ensure the backdrop is removed when modal is closed
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                    backdrop.remove();
-                }
-            });
+            if (modalElement) {
+                modalElement.addEventListener('hidden.bs.modal', function() {
+                    const backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) {
+                        backdrop.remove();
+                    }
+                });
+            }
         });
     </script>
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Middleware;
 
@@ -20,18 +20,16 @@ class Aktif
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $today = date('Y-m-d');
         $invoice = AdminInvoice::where([
             ['status', 'UNPAID'],
             ['lokasi', Session::get('lokasi')]
-        ])->where('tgl_lunas', '<=', $today)->first();
+        ])->first();
         Session::put('invoice', $invoice);
 
         if ($invoice) {
-            if ($request->is('dashboard') || $request->is('pengaturan/*') || $request->is('pelaporan/*')) {
+            if ($request->is('dashboard')) {
                 return $next($request);
             } else {
-                Session::flash('warning', 'Anda harus menyelesaikan invoice yang belum terbayar terlebih dahulu');
                 return redirect('/dashboard');
             }
         }

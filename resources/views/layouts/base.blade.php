@@ -437,13 +437,6 @@
     <script>
 
         document.addEventListener('DOMContentLoaded', function() {
-            if (
-                !window.location.href.includes('/dashboard') &&
-                {!! json_encode(Session::get('invoice') !== null) !!}
-            ) {
-                document.getElementById('formLogout').submit();
-            }
-
             var mobileSidenavToggle = document.getElementById('mobileSidenavToggle');
             var sidenavMain = document.getElementById('sidenav-main');
 
