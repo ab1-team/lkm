@@ -3,10 +3,14 @@
     "",
     "\\app",
     "\\app\\Http",
+    "\\app\\Http\\Controllers",
     "\\resources",
     "\\resources\\views",
-    "\\resources\\views\\perguliran_i",
-    "\\resources\\views\\perguliran_i\\dokumen"
+    "\\resources\\views\\layouts",
+    "\\resources\\views\\transaksi",
+    "\\resources\\views\\transaksi\\jurnal_angsuran",
+    "\\resources\\views\\transaksi\\jurnal_angsuran\\partials"
   ],
+  "SelectedNode": "\\app\\Http\\Controllers\\DashboardController.php",
   "PreviewInSolutionExplorer": false
 }

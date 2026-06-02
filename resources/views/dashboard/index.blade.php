@@ -222,6 +222,7 @@
 
 @section('modal')
     <!-- Popup Modal -->
+    @if ($jumlah_unpaid > 0)
     <div class="modal fade" id="notificationPopup" tabindex="-1" aria-labelledby="notificationPopupLabel"
         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="true">
         <div class="modal-dialog">
@@ -251,6 +252,7 @@
         </div>
     </div>
 
+    @endif
     {{-- Modal Jatuh Dempo --}}
     <div class="modal fade" id="jatuhTempo" aria-labelledby="jatuhTempoLabel" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
