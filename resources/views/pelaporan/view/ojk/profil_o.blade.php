@@ -361,7 +361,7 @@ $keuangan = new Keuangan();
         <td width="70" align="center"></td>
         <td width="50" align="center"></td>
         <td width="60" align="center">
-             <strong>{{ $dir->j->nama_jabatan }}</strong>
+             <strong>{{ session('lokasi') == '362' ? 'Direktur Utama' : $dir->j->nama_jabatan }}</strong>
         </td>
         
     </tr> 
