@@ -1490,7 +1490,7 @@ class PinjamanKelompokController extends Controller
             ['sejak', '<=', date('Y-m-t', strtotime($data['tahun'].'-'.$data['bulan'].'-01'))],
         ])->first();
 
-        $data['logo'] = $this->supabaseToBase64($kec->logo);
+        $data['logo'] = $kec->logo;
         $data['nama_lembaga'] = $kec->nama_lembaga_sort;
         $data['nama_kecamatan'] = $kec->sebutan_kec.' '.$kec->nama_kec;
 
@@ -1611,8 +1611,7 @@ class PinjamanKelompokController extends Controller
             'kelompok.d.sebutan_desa',
         ])->withCount('pinjaman_anggota')->first();
 
-        $data['logo'] = $this->supabaseToBase64(env('SUPABASE_PUBLIC_URL').'/logo_kab/'.$data['kab']->id.'.jpg');
-
+        $data['logo'] = $kab->id;
         $data['keuangan'] = $keuangan;
         $data['judul'] = 'Surat Rekomendasi Kredit ('.$data['pinkel']->kelompok->nama_kelompok.' - Loan ID. '.$data['pinkel']->id.')';
         $view = view('perguliran.dokumen.rekomendasi_kredit', $data)->render();

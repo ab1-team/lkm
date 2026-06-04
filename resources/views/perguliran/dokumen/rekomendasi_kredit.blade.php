@@ -87,7 +87,7 @@
             style="font-size: 11px; position: relative; top: -20px;">
             <tr class="b">
                 <td align="center">
-                    <img src="{{ $logo }}" width="70" alt="{{ $logo }}" style="margin-bottom: 8px;">
+                    <img src="../storage/app/public/logo_kab/{{ $logo }}.png" width="70" alt="{{ $logo }}.png" style="margin-bottom: 8px;">
                 </td>
                 <td align="center">
                     <div style="font-size: 18px;">
