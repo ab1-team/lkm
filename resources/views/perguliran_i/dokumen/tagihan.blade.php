@@ -144,33 +144,54 @@
                     diterbitkannya Surat Tagihan ini masih tercatat memiliki tunggakan sebagai berikut ;
                 </div>
 
-                <table>
-                    <tr>
-                        <td width="10">1.</td>
-                        <td width="140">Tunggakan Pokok</td>
-                        <td width="5">:</td>
-                        <td>
-                            <b>Rp. {{ number_format($tunggakan_pokok) }}</b>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2.</td>
-                        <td>Tunggakan Jasa</td>
-                        <td>:</td>
-                        <td>
-                            <b>Rp. {{ number_format($tunggakan_jasa) }}</b>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3.</td>
-                        <td><b>Total Tunggakan (Pokok+jasa)</b></td>
-                        <td>:</td>
-                        <td>
-                            <b>Rp. {{ number_format($tunggakan_pokok + $tunggakan_jasa) }}</b>
-                        </td>
-                    </tr>
-                </table>
-
+                    <table>
+                        <tr>
+                            <td width="10">1.</td>
+                            <td width="140">Tunggakan Pokok</td>
+                            <td width="5">:</td>
+                            <td>
+                                <b>Rp. {{ number_format($tunggakan_pokok) }}</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2.</td>
+                            <td>Tunggakan Jasa</td>
+                            <td>:</td>
+                            <td>
+                                <b>Rp. {{ number_format($tunggakan_jasa) }}</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3.</td>
+                            <td><b>Total Tunggakan (Pokok+Jasa)</b></td>
+                            <td>:</td>
+                            <td>
+                                <b>Rp. {{ number_format($tunggakan_pokok + $tunggakan_jasa) }}</b>
+                            </td>
+                        </tr>
+                        @if(session('lokasi') == 220)
+                            @php
+                                $denda = ceil(0.02 * ($tunggakan_pokok + $tunggakan_jasa));
+                                $total_dengan_denda = $tunggakan_pokok + $tunggakan_jasa + $denda;
+                            @endphp
+                            <tr>
+                                <td>4.</td>
+                                <td>Denda (2% × Total Tunggakan)</td>
+                                <td>:</td>
+                                <td>
+                                    <b>Rp. {{ number_format($denda) }}</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>5.</td>
+                                <td><b>Total (Tunggakan + Denda)</b></td>
+                                <td>:</td>
+                                <td>
+                                    <b>Rp. {{ number_format($total_dengan_denda) }}</b>
+                                </td>
+                            </tr>
+                        @endif
+                    </table>
                 <p style="text-align: justify;">
                     Demikian surat ini kami sampaikan, apabila terjadi perbedaan hasil perhitungan angsuran/ tunggakan
                     mohon untuk melakukan klarifikasi dengan {{ $kec->nama_lembaga_sort }} dan terima kasih untuk
