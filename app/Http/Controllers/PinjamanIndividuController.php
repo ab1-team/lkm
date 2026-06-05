@@ -2898,9 +2898,14 @@ class PinjamanIndividuController extends Controller
 
         $data['bend'] = User::where([
             ['level', '1'],
-            ['jabatan', '3'],
             ['lokasi', Session::get('lokasi')],
-        ])->first();
+        ])->where(function ($query) {
+            if (Session::get('lokasi') == '362') {
+                $query->where('jabatan', '4');
+            } else {
+                $query->where('jabatan', '3');
+            }
+        })->first();
 
         $data['bp'] = User::where([
             ['level', '3'],
