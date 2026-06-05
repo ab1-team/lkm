@@ -151,7 +151,11 @@
                 <br>
                 : {{ Tanggal::tglLatin($real->tgl_transaksi) }}
             </td>
+            @if(isset($trx) && ($trx->rekening_debit == '1.1.01.01' || $trx->rekening_debit == '1.1.01.02'))
             <th width="14%" class="style26">BUKTI ANGSURAN</th>
+            @else
+            <th width="14%" class="style26">BUKTI TRANSFER ANGSURAN</th>
+            @endif
         </tr>
 
         <tr>
