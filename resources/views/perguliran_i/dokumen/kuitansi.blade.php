@@ -165,13 +165,13 @@
     </tr>
     <tr>
         <td align="center" colspan="3">
-            <b>{{ $dir->namadepan }} {{ $dir->namabelakang }}</b>
+            <b>{{ $dir->namadepan ?? '' }} {{ $dir->namabelakang ?? '' }}</b>
         </td>
         <td align="center" colspan="3">
-            <b>{{ $bend->namadepan }} {{ $bend->namabelakang }}</b>
+            <b>{{ $bend->namadepan ?? '' }} {{ $bend->namabelakang ?? '' }}</b>
         </td>
         <td align="center" colspan="3">
-            <b>{{ $pinkel->anggota->namadepan }}</b>
+            <b>{{ $pinkel->anggota->namadepan ?? '' }}</b>
         </td>
     </tr>
     @endif

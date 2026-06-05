@@ -21,7 +21,7 @@
     $jaminan  = json_decode($pinkel->jaminan, true);
 
     function rupiah($angka) {
-        return 'Rp ' . number_format($angka, 0, ',', '.');
+        return 'Rp ' . number_format((float)($angka ?? 0), 0, ',', '.');
     }
 @endphp
 
