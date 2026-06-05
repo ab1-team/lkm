@@ -79,6 +79,22 @@
         <td height="20"><span class="style9">:</span><span class="style27"> {{ $simpanan->anggota->hp }}</span></td>
     </tr>
 </table>
+@php
+    // Calculate opening balance
+    $firstTransactionDate = $transaksi->first()?->tgl_transaksi;
+    $saldoSebelum = 0;
+    
+    if($firstTransactionDate) {
+        $saldoSebelum = DB::table('real_simpanan_' . session('lokasi'))
+            ->where('cif', $simpanan->id)
+            ->where('tgl_transaksi', '<', $firstTransactionDate)
+            ->orderBy('tgl_transaksi', 'desc')
+            ->orderBy('id', 'desc')
+            ->value('sum') ?? 0;
+    }
+    
+    $finalSaldo = $saldosamping = $saldoSebelum;
+@endphp
 <table width="96%" border="0" align="center" cellpadding="3" cellspacing="0">
     <tr>
         <th width="4%" height="30" class="style9">NO</th>
@@ -90,12 +106,18 @@
         <th width="10%" class="style9">SALDO</th>
         <th width="2%" class="style9">P</th>
     </tr>
-    @php $no = 0; $saldosamping = 0; @endphp
+    <tr>
+        <td colspan="6" class="style9" align="center"><b>Saldo Sebelum</b></td>
+        <td class="style9" align="right"><b>{{ number_format($saldoSebelum, 0, ',', '.') }}</b></td>
+        <td class="style9">&nbsp;</td>
+    </tr>
+    @php $no = 0; @endphp
     @foreach($transaksi as $row2)
     @php
         $no++;
         $saldosamping += $row2->realSimpanan->real_k;
         $saldosamping -= $row2->realSimpanan->real_d;
+        $finalSaldo = $saldosamping;
     @endphp
     <tr>
         <td width="4%" height="30" class="style9">{{ $no }}</td>
@@ -108,6 +130,11 @@
         <td width="2%" class="style9 align-center">{{ $row2->user->ins }}</td>
     </tr>
     @endforeach
+    <tr>
+        <td colspan="6" class="style9" align="center"><b>TOTAL SALDO</b></td>
+        <td class="style9" align="right"><b>{{ number_format($finalSaldo, 0, ',', '.') }}</b></td>
+        <td class="style9">&nbsp;</td>
+    </tr>
     <br>
 </table>
 </body>
