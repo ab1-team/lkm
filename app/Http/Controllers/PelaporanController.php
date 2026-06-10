@@ -1712,9 +1712,9 @@ class PelaporanController extends Controller
                 });
             },
         ])->orderBy('kode_akun', 'ASC')->get();
+dd($data);
 
         $view = view('pelaporan.view.neraca', $data)->render();
-
         if ($data['type'] == 'pdf') {
             $paperSize = Session::get('lokasi') == 109 ? [0, 0, 595.28, 935.43] : 'A4';
 
