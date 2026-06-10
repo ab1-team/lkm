@@ -2133,7 +2133,7 @@ class PinjamanIndividuController extends Controller
         })->with(['j'])->first();
 
         $data['keuangan'] = $keuangan;
-        $data['ttd'] = Pinjaman::keyword($data['kec']->ttd->tanda_tangan_spk, $data, true);
+        $data['ttd'] = Pinjaman::keyword($data['kec']->ttdSpk->tanda_tangan_pelaporan, $data, true);
 
         $data['judul'] = 'Surat Perjanjian Kredit (Umum) ('.$data['pinkel']->anggota->namadepan.' - Loan ID. '.$data['pinkel']->id.')';
         if (Session::get('lokasi') == '15' || Session::get('lokasi') == '1') {
@@ -2184,7 +2184,7 @@ class PinjamanIndividuController extends Controller
         ])->first();
 
         $data['keuangan'] = $keuangan;
-        $data['ttd'] = Pinjaman::keyword($data['kec']->ttd->tanda_tangan_spk, $data, true);
+        $data['ttd'] = Pinjaman::keyword($data['kec']->ttdSpk->tanda_tangan_pelaporan, $data, true);
 
         $data['judul'] = 'Surat Kuasa Menjual ('.$data['pinkel']->anggota->namadepan.' - Loan ID. '.$data['pinkel']->id.')';
         $view = view('perguliran_i.dokumen.sk_menjual', $data)->render();
@@ -2224,7 +2224,7 @@ class PinjamanIndividuController extends Controller
             })->with(['j'])->first();
 
         $data['keuangan'] = $keuangan;
-        $data['ttd'] = Pinjaman::keyword($data['kec']->ttd->tanda_tangan_spk, $data, true);
+        $data['ttd'] = Pinjaman::keyword($data['kec']->ttdSpk->tanda_tangan_pelaporan, $data, true);
 
         $data['judul'] = 'Surat Perjanjian Kredit (Umum) ('.$data['pinkel']->anggota->namadepan.' - Loan ID. '.$data['pinkel']->id.')';
         $view = view('perguliran_i.dokumen.perjanjian_kredit', $data)->render();
@@ -2264,7 +2264,7 @@ class PinjamanIndividuController extends Controller
             })->with(['j'])->first();
 
         $data['keuangan'] = $keuangan;
-        $data['ttd'] = Pinjaman::keyword($data['kec']->ttd->tanda_tangan_spk, $data, true);
+        $data['ttd'] = Pinjaman::keyword($data['kec']->ttdSpk->tanda_tangan_pelaporan, $data, true);
 
         $data['judul'] = 'Surat Perjanjian Kredit (Barang) ('.$data['pinkel']->anggota->namadepan.' - Loan ID. '.$data['pinkel']->id.')';
         $view = view('perguliran_i.dokumen.spk_kredit_barang', $data)->render();
@@ -2308,7 +2308,7 @@ class PinjamanIndividuController extends Controller
             })->with(['j'])->first();
 
         $data['keuangan'] = $keuangan;
-        $data['ttd'] = Pinjaman::keyword($data['kec']->ttd->tanda_tangan_spk, $data, true);
+        $data['ttd'] = Pinjaman::keyword($data['kec']->ttdSpk->tanda_tangan_pelaporan, $data, true);
 
         $data['judul'] = 'Surat Perjanjian Utang ('.$data['pinkel']->anggota->namadepan.' - Loan ID. '.$data['pinkel']->id.')';
         $view = view('perguliran_i.dokumen.sph', $data)->render();
@@ -2348,7 +2348,7 @@ class PinjamanIndividuController extends Controller
             })->with(['j'])->first();
 
         $data['keuangan'] = $keuangan;
-        $data['ttd'] = Pinjaman::keyword($data['kec']->ttd->tanda_tangan_spk, $data, true);
+        $data['ttd'] = Pinjaman::keyword($data['kec']->ttdSpk->tanda_tangan_pelaporan, $data, true);
 
         $data['judul'] = 'analisis keputusan kredit ('.$data['pinkel']->anggota->namadepan.' - Loan ID. '.$data['pinkel']->id.')';
         $view = view('perguliran_i.dokumen.analisis_keputusan_kredit', $data)->render();
@@ -2392,7 +2392,7 @@ class PinjamanIndividuController extends Controller
             })->with(['j'])->first();
 
         $data['keuangan'] = $keuangan;
-        $data['ttd'] = Pinjaman::keyword($data['kec']->ttd->tanda_tangan_spk, $data, true);
+        $data['ttd'] = Pinjaman::keyword($data['kec']->ttdSpk->tanda_tangan_pelaporan, $data, true);
 
         $data['judul'] = 'Surat pemberitahuan ('.$data['pinkel']->anggota->namadepan.' - Loan ID. '.$data['pinkel']->id.')';
         $view = view('perguliran_i.dokumen.surat_pemberitahuan', $data)->render();
@@ -2432,7 +2432,7 @@ class PinjamanIndividuController extends Controller
             })->with(['j'])->first();
 
         $data['keuangan'] = $keuangan;
-        $data['ttd'] = Pinjaman::keyword($data['kec']->ttd->tanda_tangan_spk, $data, true);
+        $data['ttd'] = Pinjaman::keyword($data['kec']->ttdSpk->tanda_tangan_pelaporan, $data, true);
 
         $data['judul'] = 'pengikat diri sebagai penjamin ('.$data['pinkel']->anggota->namadepan.' - Loan ID. '.$data['pinkel']->id.')';
         $view = view('perguliran_i.dokumen.pengikat_diri_sebagai_penjamin', $data)->render();
@@ -2469,7 +2469,7 @@ class PinjamanIndividuController extends Controller
             })->with(['j'])->first();
 
         $data['keuangan'] = $keuangan;
-        $data['ttd'] = Pinjaman::keyword($data['kec']->ttd->tanda_tangan_spk, $data, true);
+        $data['ttd'] = Pinjaman::keyword($data['kec']->ttdSpk->tanda_tangan_pelaporan, $data, true);
 
         $data['judul'] = 'Surat Kelayakan ('.$data['pinkel']->anggota->namadepan.' - Loan ID. '.$data['pinkel']->id.')';
         $view = view('perguliran_i.dokumen.surat_kelayakan', $data)->render();
@@ -2511,7 +2511,7 @@ class PinjamanIndividuController extends Controller
         $data['keuangan'] = $keuangan;
 
         $data['keuangan'] = $keuangan;
-        $data['ttd'] = Pinjaman::keyword($data['kec']->ttd->tanda_tangan_spk, $data, true);
+        $data['ttd'] = Pinjaman::keyword($data['kec']->ttdSpk->tanda_tangan_pelaporan, $data, true);
 
         $data['judul'] = 'surat pernyataan suami ('.$data['pinkel']->anggota->namadepan.' - Loan ID. '.$data['pinkel']->id.')';
         $view = view('perguliran_i.dokumen.surat_pernyataan_suami', $data)->render();

@@ -1,6 +1,8 @@
 @php
-    use App\Models\TandaTanganLaporan;
-    $ttd = TandaTanganLaporan::where([['lokasi', Session::get('lokasi')]])->first();
+    use App\Models\TandaTanganDokumen;
+    $ttd = TandaTanganDokumen::where('lokasi', Session::get('lokasi'))
+                              ->where('jenis', 'laporan')
+                              ->first();
     $tanggal = false;
     if ($ttd) {
         $str = strpos($ttd->tanda_tangan_pelaporan, '{tanggal}');
