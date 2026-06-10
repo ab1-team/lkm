@@ -1712,7 +1712,6 @@ class PelaporanController extends Controller
                 });
             },
         ])->orderBy('kode_akun', 'ASC')->get();
-dd($data);
 
         $view = view('pelaporan.view.neraca', $data)->render();
         if ($data['type'] == 'pdf') {

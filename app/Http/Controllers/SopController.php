@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AdminInvoice;
 use App\Models\AkunLevel1;
 use App\Models\Kecamatan;
-use App\Models\TandaTanganLaporan;
+use App\Models\TandaTanganDokumen;
 use App\Models\User;
 use App\Models\Whatsapp;
 use App\Utils\Pinjaman;
@@ -454,7 +454,7 @@ class SopController extends Controller
     {
         $title = "Pengaturan Tanda Tangan Pelaporan";
         $kec = Kecamatan::where('id', Session::get('lokasi'))->with('ttd')->first();
-        $ttd = TandaTanganLaporan::where([['lokasi', Session::get('lokasi')]])->first();
+        $ttd = TandaTanganDokumen::where([['lokasi', Session::get('lokasi')]])->first();
 
         $tanggal = false;
         if ($ttd) {
@@ -494,7 +494,7 @@ class SopController extends Controller
         $data['tanda_tangan'] = str_replace('colgroup', 'tr', $data['tanda_tangan']);
         $data['tanda_tangan'] = preg_replace('/<col([^>]*)>/', '<td$1>&nbsp;</td>', $data['tanda_tangan']);
 
-        $ttd = TandaTanganLaporan::where('lokasi', Session::get('lokasi'))->count();
+        $ttd = TandaTanganDokumen::where('lokasi', Session::get('lokasi'))->count();
         if ($ttd <= 0) {
             $insert = [
                 'lokasi' => Session::get('lokasi')
@@ -508,10 +508,10 @@ class SopController extends Controller
                 $insert['tanda_tangan_spk'] = json_encode($data['tanda_tangan']);
             }
 
-            $tanda_tangan = TandaTanganLaporan::create($insert);
+            $tanda_tangan = TandaTanganDokumen::create($insert);
         } else {
             // dd($data['tanda_tangan']);
-            $tanda_tangan = TandaTanganLaporan::where('lokasi', Session::get('lokasi'))->update([
+            $tanda_tangan = TandaTanganDokumen::where('lokasi', Session::get('lokasi'))->update([
                 $data['field'] => json_encode($data['tanda_tangan'])
             ]);
         }

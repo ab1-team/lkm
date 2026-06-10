@@ -20,6 +20,6 @@ class Usaha extends Model
 
     public function ttd()
     {
-        return $this->belongsTo(TandaTanganLaporan::class, 'id', 'lokasi');
+        return $this->belongsTo(TandaTanganDokumen::class, 'id', 'lokasi');
     }
 }
