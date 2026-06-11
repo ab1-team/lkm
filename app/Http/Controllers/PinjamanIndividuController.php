@@ -2017,6 +2017,11 @@ class PinjamanIndividuController extends Controller
 
         $data['transaksi'] = Transaksi::where('id_pinj_i', $id)->orderBy('tgl_transaksi', 'ASC')->with('user')->orderBy('idtp', 'ASC')->get();
 
+        $data['rencana'] = RencanaAngsuranI::where('loan_id', $id)
+            ->where('angsuran_ke', '!=', '0')
+            ->orderBy('angsuran_ke', 'ASC')
+            ->get();
+
         $data['judul'] = 'Rekening Koran ('.$data['pinkel']->anggota->namadepan.' - Loan ID. '.$data['pinkel']->id.')';
         $view = view('perguliran_i.dokumen.rekening_koran', $data)->render();
 

@@ -2030,6 +2030,11 @@ class PinjamanKelompokController extends Controller
 
         $data['transaksi'] = Transaksi::where('id_pinj', $id)->orderBy('tgl_transaksi', 'ASC')->with('user')->orderBy('idtp', 'ASC')->get();
 
+        $data['rencana'] = RencanaAngsuran::where('loan_id', $id)
+            ->where('angsuran_ke', '!=', '0')
+            ->orderBy('angsuran_ke', 'ASC')
+            ->get();
+
         $data['judul'] = 'Rekening Koran ('.$data['pinkel']->kelompok->nama_kelompok.' - Loan ID. '.$data['pinkel']->id.')';
         $view = view('perguliran.dokumen.rekening_koran', $data)->render();
 
