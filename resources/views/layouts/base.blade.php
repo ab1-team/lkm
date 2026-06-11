@@ -87,7 +87,7 @@
 
     @include('layouts.sidebar')
 
-    
+
     <div class="navbar d-none">
         <div class="navbar-collapse"></div>
     </div>
@@ -100,12 +100,12 @@
             $showKelompok = $navPath == 'transaksi/jurnal_angsuran';
         @endphp
 
-        
+
         <nav class="navbar navbar-main navbar-expand-lg px-0 mx-2 mx-md-3 mx-lg-4 shadow-none border-radius-xl" id="navbarBlur"
             data-scroll="false" style="z-index: 1050; position: relative;">
             <div class="container-fluid py-1 px-3 align-items-center d-flex flex-wrap">
 
-                
+
                 <div class="me-3 d-flex align-items-center">
                     <button type="button" class="btn btn-sm p-2 shadow-none border-0" id="mobileSidenavToggle"
                         aria-label="Toggle sidebar" title="Menu" style="background: transparent; line-height: 1;">
@@ -113,7 +113,7 @@
                     </button>
                 </div>
 
-                
+
                 <div class="d-flex flex-column justify-content-center me-auto {{ $showIndividu || $showKelompok ? 'order-last w-100 mt-2' : '' }}"
                     style="flex-shrink: 0;">
                     <h6 class="font-weight-bolder text-white mb-0">
@@ -131,7 +131,7 @@
                 </div>
 
                 <div class="collapse navbar-collapse me-md-0 me-sm-4 align-items-center flex-grow-1" id="navbar">
-                    
+
                     @if ($showIndividu || $showKelompok)
                         <div class="navbar-search-full me-3">
                             <div class="input-group shadow-none">
@@ -151,10 +151,10 @@
 
                     <div class="ms-md-auto"></div>
 
-                    
+
                     <ul class="navbar-nav justify-content-end align-items-center">
 
-                        
+
                         <li class="nav-item dropdown d-flex align-items-center ps-2">
                             <a href="javascript:;"
                                 class="nav-link text-white font-weight-bold px-0 d-flex align-items-center gap-2"
@@ -233,7 +233,7 @@
                             </ul>
                         </li>
 
-                        
+
                         <li class="nav-item px-3 d-flex align-items-center">
                             <a href="/pengaturan/sop" class="nav-link text-white p-0">
                                 <i class="fa fa-cog cursor-pointer"></i>
@@ -243,9 +243,9 @@
                 </div>
             </div>
         </nav>
-        
 
-        
+
+
         <form action="/pelaporan/preview" method="post" id="FormLaporanSisipan" target="_blank"
             style="display: none;">
             @csrf
@@ -370,14 +370,14 @@
         </div>
     </div>
 
-    
+
     <form action="/logout" method="post" id="formLogout" style="display: none;">
         @csrf
     </form>
 
     @yield('modal')
 
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -387,7 +387,7 @@
     <script src="{{ asset('assets/argon/js/plugins/smooth-scrollbar.min.js') }}"></script>
     <script src="{{ asset('assets/argon/js/plugins/chartjs.min.js') }}"></script>
 
-    
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.js"></script>
@@ -400,40 +400,40 @@
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <script src="//cdn.quilljs.com/1.3.7/quill.min.js"></script>
 
-    
+
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-maskmoney/3.0.2/jquery.maskMoney.min.js"
         integrity="sha512-Rdk63VC+1UYzGSgd3u2iadi0joUrcwX0IWp2rTh6KXFoAmgOjRS99Vynz1lJPT8dLjvo6JZOqpAHJyfCEZ5KoA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
         integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    
+
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
 
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
 
-    
+
     <script src="/assets/js/plugins/flatpickr.min.js"></script>
 
-    
-    
+
+
 
     @yield('script')
-    
+
     <script>
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -566,23 +566,25 @@
                 }, function(result) {
                     process(result.map(item => ({
                         id: item.id,
-                        name: `${item.namadepan} [${item.domisi}, ${item.nama_desa}] - ${item.id} [${item.nik}]`,
+                        loan_id: item.loan_id,
+                        loan_id_display: item.loan_id_display,
+                        name: `${item.namadepan} [${item.domisi}, ${item.nama_desa}] - Loan ID: ${item.loan_id_display} [${item.nik}]`,
                         value: item.id
                     })));
                 });
             },
             afterSelect: function(item) {
                 if (window.location.pathname.includes('jurnal_angsuran_individu')) {
-                    $.get('/transaksi/form_angsuran_individu/' + item.id, function(result) {
+                    $.get('/transaksi/form_angsuran_individu/' + item.loan_id, function(result) {
                         var ch_pokok = document.getElementById('chartP').getContext('2d');
                         var ch_jasa = document.getElementById('chartJ').getContext('2d');
                         angsuran(true, result);
                         makeChart('pokok', ch_pokok, result.sisa_pokok, result.sum_pokok);
                         makeChart('jasa', ch_jasa, result.sisa_jasa, result.sum_jasa);
-                        $('#loan-id').html(item.id);
+                        $('#loan-id').html(item.loan_id_display);
                     });
                 } else {
-                    window.location.href = '/transaksi/jurnal_angsuran_individu?pinkel=' + item.id;
+                    window.location.href = '/transaksi/jurnal_angsuran_individu?pinkel=' + item.loan_id;
                 }
             }
         });
@@ -793,28 +795,28 @@
         }
     </script>
 
-    
+
     @if (session('pesan'))
         <script>
             Toastr('success', "{{ session('pesan') }}")
         </script>
     @endif
 
-    
+
     <script>
         document.querySelectorAll('.copyright-year').forEach(el => {
             el.textContent = new Date().getFullYear();
         });
     </script>
 
-    
+
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 
-    
+
     <script src="{{ asset('assets/argon/js/argon-dashboard.min.js') }}?v=2.1.0"></script>
 
-    
-    
+
+
     <script>
         $(document).ready(function() {
             var $lastClickedBtn = null;

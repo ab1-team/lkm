@@ -413,17 +413,34 @@ class PinjamanAnggotaController extends Controller
     {
         $param = request()->get('query');
         if (strlen($param) >= '0') {
-            $anggota = Anggota::leftJoin('desa', 'desa.kd_desa', '=', 'anggota_' . Session::get('lokasi') . '.desa')
-                ->leftJoin('pinjaman_anggota_' . Session::get('lokasi') . ' as pk', 'pk.nia', '=', 'anggota_' . Session::get('lokasi') . '.id')
-                ->where(function ($query) use ($param) {
-                    $query->where('anggota_' . Session::get('lokasi') . '.namadepan', 'like', '%' . $param . '%')
-                        ->orwhere('anggota_' . Session::get('lokasi') . '.nik', 'like', '%' . $param . '%');
+            $lok = Session::get('lokasi');
+            $anggotaTable = 'anggota_' . $lok;
+
+            $anggota = Anggota::select(
+                $anggotaTable . '.*',
+                'desa.nama_desa',
+                \DB::raw('pk.id as loan_id'),
+                \DB::raw('pk.id_pinkel as id_pinkel')
+            )
+                ->leftJoin('desa', 'desa.kd_desa', '=', $anggotaTable . '.desa')
+                ->leftJoin('pinjaman_anggota_' . $lok . ' as pk', 'pk.nia', '=', $anggotaTable . '.id')
+                ->where(function ($query) use ($param, $anggotaTable) {
+                    $query->where($anggotaTable . '.namadepan', 'like', '%' . $param . '%')
+                        ->orwhere($anggotaTable . '.nik', 'like', '%' . $param . '%')
+                        ->orwhere('pk.id', 'like', '%' . $param . '%');
                 })
                 ->where([
                     ['pk.status', 'A'],
                     ['pk.jenis_pinjaman', '!=', 'K']
                 ])
                 ->get();
+
+            $anggota = $anggota->map(function ($item) {
+                $loan = $item->loan_id ?? '';
+                $item->loan_id = $loan;
+                $item->loan_id_display = $loan;
+                return $item;
+            });
 
             return response()->json($anggota);
         }
