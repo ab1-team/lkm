@@ -265,6 +265,9 @@
                     </button>
                 @endif
             @endif
+            <button type="button" id="GenerateAngsuran" class="btn bg-gradient-warning text-white mb-0 shadow-sm font-weight-bold me-2">
+                <i class="fa fa-cogs me-1"></i> GENERATE ANGSURAN
+            </button>
             <a href="/perguliran_i?status={{ $perguliran_i->status }}" class="btn bg-gradient-secondary text-white mb-0 shadow-sm font-weight-bold">
                 <i class="fa fa-reply-all me-1"></i> KEMBALI
             </a>
@@ -905,7 +908,7 @@
                 }
             })
         })
-        
+
         $(document).on('click', '#tdklayak', function() {
             Swal.fire({
                 title: 'Peringatan',
@@ -1032,6 +1035,34 @@
                                     })
                             }
                         }
+                    })
+                }
+            })
+        })
+
+        $(document).on('click', '#GenerateAngsuran', function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Generate Angsuran',
+                text: 'Anda yakin ingin men-generate angsuran untuk pinjaman ini?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Generate',
+                cancelButtonText: 'Batal',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.get('/perguliran_i/generate/{{ $perguliran_i->id }}?save=true&status={{ $perguliran_i->status }}', function(result) {
+                        if (result.success) {
+                            Swal.fire('Berhasil', 'Rencana angsuran berhasil digenerate.', 'success')
+                                .then(() => {
+                                    window.location.reload();
+                                })
+                        } else {
+                            Swal.fire('Gagal', result.msg || 'Terjadi kesalahan saat generate angsuran.', 'error')
+                        }
+                    }).fail(function() {
+                        Swal.fire('Gagal', 'Tidak dapat menghubungi server.', 'error')
                     })
                 }
             })

@@ -3325,7 +3325,7 @@ class PinjamanIndividuController extends Controller
 
         $ra['alokasi'] = $alokasi;
 
-        if (request()->get('save') || $save) {
+        if (request()->has('save') || $save) {
             $insert_ra = [];
 
             RencanaAngsuranI::where('loan_id', $id_pinj)->delete();
@@ -3601,7 +3601,7 @@ class PinjamanIndividuController extends Controller
                 'id_user' => auth()->user()->id,
             ]);
         }
-        if (request()->get('save')) {
+        if (request()->has('save')) {
         } else {
             $target_pokok = 0;
             $target_jasa = 0;

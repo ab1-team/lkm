@@ -59,7 +59,7 @@ class PinjamanKelompokController extends Controller
 
                     $jasa = number_format($pros / $jangka, 2);
                     $waktu = ($row->sistem_angsuran == 12 || $row->sistem_angsuran == 25) ? 'mgg' : 'bln';
-    
+
                     return $jasa.'% / '.$jangka.' '.$waktu;
                 })
                 ->editColumn('nama_kelompok', function ($row) {
@@ -101,7 +101,7 @@ class PinjamanKelompokController extends Controller
 
                     $jasa = number_format($pros / $jangka, 2);
                     $waktu = ($row->sistem_angsuran == 12 || $row->sistem_angsuran == 25) ? 'mgg' : 'bln';
-    
+
                     return $jasa.'% / '.$jangka.' '.$waktu;
                 })
                 ->editColumn('nama_kelompok', function ($row) {
@@ -143,7 +143,7 @@ class PinjamanKelompokController extends Controller
 
                     $jasa = number_format($pros / $jangka, 2);
                     $waktu = ($row->sistem_angsuran == 12 || $row->sistem_angsuran == 25) ? 'mgg' : 'bln';
-    
+
                     return $jasa.'% / '.$jangka.' '.$waktu;
                 })
                 ->editColumn('nama_kelompok', function ($row) {
@@ -185,7 +185,7 @@ class PinjamanKelompokController extends Controller
 
                     $jasa = number_format($pros / $jangka, 2);
                     $waktu = ($row->sistem_angsuran == 12 || $row->sistem_angsuran == 25) ? 'mgg' : 'bln';
-    
+
                     return $jasa.'% / '.$jangka.' '.$waktu;
                 })
                 ->editColumn('nama_kelompok', function ($row) {
@@ -229,7 +229,7 @@ class PinjamanKelompokController extends Controller
 
                     $jasa = number_format($pros / $jangka, 2);
                     $waktu = ($row->sistem_angsuran == 12 || $row->sistem_angsuran == 25) ? 'mgg' : 'bln';
-    
+
                     return $jasa.'% / '.$jangka.' '.$waktu;
                 })
                 ->editColumn('nama_kelompok', function ($row) {
@@ -2903,7 +2903,7 @@ class PinjamanKelompokController extends Controller
 
         if ($jenis_jasa == '3') {
             $bunga_per_bulan = ($pros_jasa / 100) / $jangka;
-            
+
             $angsuran_total = Keuangan::pembulatan(
                 ($alokasi * $bunga_per_bulan) / (1 - pow(1 + $bunga_per_bulan, -$jangka)),
                 (string) $kec->pembulatan
@@ -2955,7 +2955,7 @@ class PinjamanKelompokController extends Controller
             if ($sistem_angsuran_pokok == 12 || $sistem_angsuran_pokok == 25) {
                 $interval_hari = ($sistem_angsuran_pokok == 25) ? 14 : 7;
                 $tambah = $x * $interval_hari;
-                
+
                 $jatuh = Carbon::parse($tgl_cair)->addDays($tambah);
                 $jatuh_tempo = $jatuh->toDateString();
             } else {
@@ -3072,7 +3072,7 @@ class PinjamanKelompokController extends Controller
             $data_idtp[] = $trx->idtp;
         }
 
-        if (request()->get('save')) {
+        if (request()->has('save')) {
             RencanaAngsuran::where('loan_id', $id_pinj)->delete();
             RealAngsuran::where('loan_id', $id_pinj)->delete();
 
@@ -3166,7 +3166,7 @@ class PinjamanKelompokController extends Controller
 
         $sistem_pokok = $pinkel->sis_pokok->sistem;
         $sistem_jasa = $pinkel->sis_jasa->sistem;
-        
+
         if ($sa_pokok == 11) {
             $tempo_pokok = ($jangka) - 24 / $sistem_pokok;
         } elseif ($sa_pokok == 14) {
@@ -3296,7 +3296,7 @@ class PinjamanKelompokController extends Controller
 
         $ra['alokasi'] = $alokasi;
 
-        if (request()->get('save')) {
+        if (request()->has('save')) {
             $insert_ra = [];
 
             RencanaAngsuran::where('loan_id', $id_pinj)->delete();
@@ -3751,7 +3751,7 @@ class PinjamanKelompokController extends Controller
                 'id_user' => auth()->user()->id,
             ]);
         }
-        if (request()->get('save')) {
+        if (request()->has('save')) {
         } else {
             $target_pokok = 0;
             $target_jasa = 0;
@@ -3862,7 +3862,7 @@ class PinjamanKelompokController extends Controller
                 }
 
                 $rencana[strtotime($ra->jatuh_tempo)] = $ra;
-                echo "INSERT INTO `rencana_angsuran_$lokasi`(`loan_id`, `angsuran_ke`, `jatuh_tempo`, `wajib_pokok`, `wajib_jasa`, `target_pokok`, `target_jasa`, `lu`, `id_user`) 
+                echo "INSERT INTO `rencana_angsuran_$lokasi`(`loan_id`, `angsuran_ke`, `jatuh_tempo`, `wajib_pokok`, `wajib_jasa`, `target_pokok`, `target_jasa`, `lu`, `id_user`)
                     VALUES ('$pinj->id','$ra->angsuran_ke','$ra->jatuh_tempo','$wajib_pokok','$wajib_jasa','$target_pokok','$target_jasa','$ra->lu','$ra->id_user');<br>";
             }
 
@@ -3893,7 +3893,7 @@ class PinjamanKelompokController extends Controller
                     $tunggakan_jasa = 0;
                 }
 
-                echo "INSERT INTO `real_angsuran_$lokasi`(`id`, `loan_id`, `tgl_transaksi`, `realisasi_pokok`, `realisasi_jasa`, `sum_pokok`, `sum_jasa`, `saldo_pokok`, `saldo_jasa`, `tunggakan_pokok`, `tunggakan_jasa`, `lu`, `id_user`) 
+                echo "INSERT INTO `real_angsuran_$lokasi`(`id`, `loan_id`, `tgl_transaksi`, `realisasi_pokok`, `realisasi_jasa`, `sum_pokok`, `sum_jasa`, `saldo_pokok`, `saldo_jasa`, `tunggakan_pokok`, `tunggakan_jasa`, `lu`, `id_user`)
                         VALUES ('$real->id','$real->loan_id','$real->tgl_transaksi','$real->realisasi_pokok','$real->realisasi_jasa','$real->sum_pokok','$real->sum_jasa','$real->saldo_pokok','$real->saldo_jasa','$tunggakan_pokok','$tunggakan_jasa','$real->lu','$real->id_user');<br>";
             }
 
@@ -3909,15 +3909,15 @@ class PinjamanKelompokController extends Controller
     private function supabaseToBase64($url)
     {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            $supabaseUrl = env('SUPABASE_URL'); 
-            $bucket = env('SUPABASE_BUCKET', 'uploads'); 
-        
+            $supabaseUrl = env('SUPABASE_URL');
+            $bucket = env('SUPABASE_BUCKET', 'uploads');
+
             $url = "{$supabaseUrl}/storage/v1/object/public/{$bucket}/{$url}";
         }
 
         try {
             $response = Http::timeout(10)->get($url);
-        
+
             if (!$response->successful()) {
                 \Log::warning("Failed to fetch image", ['url' => $url]);
                 return null;
@@ -3933,10 +3933,10 @@ class PinjamanKelompokController extends Controller
             ][$extension] ?? 'application/octet-stream';
 
             return "data:$mime;base64,".base64_encode($binary);
-        
+
         } catch (\Exception $e) {
             \Log::error("Error in supabaseToBase64", [
-                'url' => $url, 
+                'url' => $url,
                 'error' => $e->getMessage()
             ]);
             return null;
