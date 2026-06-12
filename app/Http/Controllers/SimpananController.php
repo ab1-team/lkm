@@ -74,7 +74,7 @@ class SimpananController extends Controller
         $title = 'Daftar Simpanan';
         return view('simpanan.index')->with(compact('title'));
     }
-    
+
     public function getTransaksi() {
         $bulan = request()->input('bulan');
         $tahun = request()->input('tahun');
@@ -90,7 +90,7 @@ class SimpananController extends Controller
             $transaksiQuery->whereMonth('tgl_transaksi', $bulan);
         }
 
-        $transaksi = $transaksiQuery->with('realSimpanan')->orderBy('tgl_transaksi', 'asc')->get();
+        $transaksi = $transaksiQuery->with('realSimpanan')->orderBy('tgl_transaksi', 'asc')->orderBy('id', 'asc')->get();
 
         $transaksi->each(function ($item) {
             $item->ins = User::where('id', $item->id_user)->value('ins');
@@ -98,10 +98,10 @@ class SimpananController extends Controller
 
         $bulankop = $bulan;
         $tahunkop = $tahun;
-        
+
     $startDate = \Carbon\Carbon::createFromDate(
-        $tahunkop, 
-        $bulankop == 0 ? 1 : $bulankop, 
+        $tahunkop,
+        $bulankop == 0 ? 1 : $bulankop,
         1
     )->startOfMonth();
 
@@ -150,9 +150,9 @@ class SimpananController extends Controller
         })
         ->orderBy('rek_simp', 'ASC')
         ->get();
-            
+
         $js_dipilih = $js->first()->id;
-        
+
         return view('simpanan.partials.register')->with(compact('anggota', 'kec', 'sistem_angsuran', 'js', 'js_dipilih'));
     }
 
@@ -169,7 +169,7 @@ class SimpananController extends Controller
         $hubungan_dipilih = 0;
 
         if ($kec && $anggota) {
-            
+
             $hubungan_dipilih = $kec->hubungan;
             $kec_id = str_pad($kec->id, 3, '0', STR_PAD_LEFT);
             $anggota_id = str_pad($anggota->id, 3, '0', STR_PAD_LEFT);
@@ -220,7 +220,7 @@ class SimpananController extends Controller
         $title = 'Cetak KOP buku ' . $simpanan->anggota->namadepan;
         return view('simpanan.partials.cetak_kop')->with(compact('title', 'simpanan'));
     }
-    
+
     public function cetakFormulir(Simpanan $simpanan = null)
     {
         if ($simpanan && $simpanan->id) {
@@ -230,7 +230,7 @@ class SimpananController extends Controller
             $simpanan = null;
             $title = 'Formulir Simpanan Nasabah';
         }
-    
+
         return view('simpanan.partials.cetak_formulir')->with(compact('title', 'simpanan'));
     }
 
@@ -265,7 +265,7 @@ class SimpananController extends Controller
         $simpanan = $simpanan->where('id', $simpanan->id)->with(['anggota', 'js'])->first();
 
         $query = Transaksi::where('id_simp', $simpanan->id);
-    
+
         if ($thn != 0 && $bln != 0) {
             $query->whereYear('tgl_transaksi', $thn)
                   ->whereMonth('tgl_transaksi', $bln);
@@ -276,7 +276,7 @@ class SimpananController extends Controller
         } elseif ($thn == 0) {
             $periode = 'Semua Periode';
         }
-    
+
         $transaksi = $query->with('realSimpanan', 'user')
                            ->orderBy('tgl_transaksi', 'asc')
                            ->get();
@@ -291,15 +291,15 @@ class SimpananController extends Controller
         $transaksi = Transaksi::where('idt', $idt)->first();
         $user = auth()->user();
         $userTransaksi = User::find($transaksi->id_user);
-    
+
         // Logika untuk menentukan user yang ditampilkan
-        $userDisplay = ($user->id == $userTransaksi->id) 
-            ? $user->ins 
+        $userDisplay = ($user->id == $userTransaksi->id)
+            ? $user->ins
             : $user->ins . ' / ' . $userTransaksi->ins;
 
         $user = $userDisplay;
         // Menentukan kode berdasarkan jenis rekening
-    
+
         $kode=substr($transaksi->id_simp, 0, 1);
 
             $title = 'Cetak Pada Kwitansi '.$transaksi->id_simp;
@@ -329,10 +329,10 @@ class SimpananController extends Controller
 
         $user = auth()->user();
         $userTransaksi = User::find($transaksi->id_user);
-    
+
         // Logika untuk menentukan user yang ditampilkan
-        $userDisplay = ($user->id == $userTransaksi->id) 
-            ? $user->ins 
+        $userDisplay = ($user->id == $userTransaksi->id)
+            ? $user->ins
             : $user->ins . ' / ' . $userTransaksi->ins;
         $user = $userDisplay;
         $kode=substr($transaksi->id_simp, 0, 1);
@@ -453,16 +453,16 @@ class SimpananController extends Controller
 
             if (strtotime($tglTransaksiFormatted) < strtotime($simpanan->tgl_buka)) {
                 return response()->json([
-                    'success' => false, 
-                    'message' => 'Tanggal transaksi tidak boleh lebih kecil dari tanggal buka simpanan (' . 
+                    'success' => false,
+                    'message' => 'Tanggal transaksi tidak boleh lebih kecil dari tanggal buka simpanan (' .
                                 date('d/m/Y', strtotime($simpanan->tgl_buka)) . ')'
                 ], 422);
             }
         }
 
-        
+
         $jenisSimpanan = JenisSimpanan::where('id', $simpanan->jenis_simpanan)->first();
-        
+
         $transaksi = new Transaksi();
         $transaksi->tgl_transaksi = Tanggal::tglNasional($tglTransaksi);
         $transaksi->rekening_debit = $jenisMutasi == '1' ? $jenisSimpanan->rek_kas : $jenisSimpanan->rek_simp;
@@ -476,14 +476,14 @@ class SimpananController extends Controller
         $transaksi->jumlah = str_replace(',', '', str_replace('.00', '', $jumlah));
         $transaksi->urutan = 0;
         $transaksi->id_user = auth()->user()->id;
-        
+
         $kode = ($jenisMutasi == 1) ? 2 : 3;
         $real = RealSimpanan::where('cif', $cif)->latest('tgl_transaksi')->latest('lu')->orderBy('id', 'desc')->first();
         $jumlahBersih = str_replace(',', '', str_replace('.00', '', $jumlah));
 
         $sumSebelumnya = $real ? $real->sum : 0;
-        $sumBaru = ($jenisMutasi == 1) 
-            ? $sumSebelumnya + $jumlahBersih 
+        $sumBaru = ($jenisMutasi == 1)
+            ? $sumSebelumnya + $jumlahBersih
             : $sumSebelumnya - $jumlahBersih;
 
         if ($transaksi->save()) {
@@ -510,7 +510,7 @@ class SimpananController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nomor_rekening' => 'required', 
+            'nomor_rekening' => 'required',
             'jenis_simpanan' => 'required',
             'nia' => 'required',
             'setoran_awal' => 'required|numeric',
@@ -571,7 +571,7 @@ class SimpananController extends Controller
             'id_user' => auth()->user()->id,
         ]);
         $maxIdt = Transaksi::max('idt');
-        
+
         //admin register
         $jumlahAdmin = str_replace(',', '', str_replace('.00', '', $request->admin_register));
 
@@ -617,7 +617,7 @@ class SimpananController extends Controller
         $title = 'Perhitungan Bunga & Biaya';
         return view('simpanan.bunga')->with(compact('title', 'id_angg'));
     }
-    
+
     public function infoBunga() {
         $bulan = request()->input('bulan');
         $tahun = request()->input('tahun');
@@ -1069,10 +1069,10 @@ class SimpananController extends Controller
 
     public function simpanTransaksiBunga(Request $request)
     {
-        $tglTransaksi = now(); 
+        $tglTransaksi = now();
         $cifInput = $request->cif; // Bisa kosong atau berisi daftar CIF (misal: "2,3,12,34")
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
-    
+
         if (empty($cifInput)) {
             $simpananList = Simpanan::where('status', 'A')
                                     ->with('anggota')
@@ -1090,15 +1090,15 @@ class SimpananController extends Controller
             $nomorRekening = $simpanan->no_rekening;
             $namaDebitur = $simpanan->anggota->namadepan;
             $simpanan = Simpanan::where('id', $cif)->first();
-            
+
             // Validasi: Skip jika tanggal transaksi kurang dari tanggal buka simpanan
             if (strtotime(date('Y-m-d', strtotime($tglTransaksi))) < strtotime($simpanan->tgl_buka)) {
                 continue; // Skip simpanan ini
             }
-            
+
             $jenisSimpanan = JenisSimpanan::where('id', $simpanan->jenis_simpanan)->first();
 
-            
+
             $real = RealSimpanan::where('cif', $cif)->latest('tgl_transaksi')->first();
             $sumSebelumnya = $real ? $real->sum : 0;
             if($sumSebelumnya>=$kec->min_bunga){
@@ -1121,10 +1121,10 @@ class SimpananController extends Controller
             $transaksi->jumlah = str_replace(',', '', str_replace('.00', '', $jumlah));
             $transaksi->urutan = 0;
             $transaksi->id_user = auth()->user()->id;
-        
+
             $maxIdt = Transaksi::where('id_simp', $cif)->max('idt');
-            $sumBaru = ($jenisMutasi == 1) 
-                ? $sumSebelumnya + $jumlahBersih 
+            $sumBaru = ($jenisMutasi == 1)
+                ? $sumSebelumnya + $jumlahBersih
                 : $sumSebelumnya - $jumlahBersih;
 
                 $jm = ($jenisMutasi == 1) ? 2 : 3;
