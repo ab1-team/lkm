@@ -409,27 +409,37 @@ class PinjamanAnggotaController extends Controller
         ]);
     }
 
-    public function cariAnggota()
-    {
-        $param = request()->get('query');
-        if (strlen($param) >= '0') {
-            $anggota = Anggota::leftJoin('desa', 'desa.kd_desa', '=', 'anggota_' . Session::get('lokasi') . '.desa')
-                ->leftJoin('pinjaman_anggota_' . Session::get('lokasi') . ' as pk', 'pk.nia', '=', 'anggota_' . Session::get('lokasi') . '.id')
-                ->where(function ($query) use ($param) {
-                    $query->where('anggota_' . Session::get('lokasi') . '.namadepan', 'like', '%' . $param . '%')
-                        ->orwhere('anggota_' . Session::get('lokasi') . '.nik', 'like', '%' . $param . '%');
-                })
-                ->where([
-                    ['pk.status', 'A'],
-                    ['pk.jenis_pinjaman', '!=', 'K']
-                ])
-                ->get();
+public function cariAnggota()
+{
+    $param = request()->get('query');
+    if (strlen($param) >= '0') {
+        $lok = Session::get('lokasi');
+        $anggota = Anggota::leftJoin('desa', 'desa.kd_desa', '=', 'anggota_' . $lok . '.desa')
+            ->leftJoin('pinjaman_anggota_' . $lok . ' as pk', 'pk.nia', '=', 'anggota_' . $lok . '.id')
+            ->where(function ($query) use ($param, $lok) {
+                $query->where('anggota_' . $lok . '.namadepan', 'like', '%' . $param . '%')
+                    ->orwhere('anggota_' . $lok . '.nik', 'like', '%' . $param . '%');
+            })
+            ->where([
+                ['pk.status', 'A'],
+                ['pk.jenis_pinjaman', '!=', 'K']
+            ])
+            ->select(
+                'anggota_' . $lok . '.id',
+                'anggota_' . $lok . '.namadepan',
+                'anggota_' . $lok . '.nik',
+                'anggota_' . $lok . '.domisi',
+                'desa.nama_desa',
+                'pk.id as loan_id',
+                'pk.id as loan_id_display'
+            )
+            ->get();
 
-            return response()->json($anggota);
-        }
-
-        return response()->json($param);
+        return response()->json($anggota);
     }
+
+    return response()->json($param);
+}
 
     public function lunaskan(Request $request, PinjamanAnggota $pinjaman)
     {

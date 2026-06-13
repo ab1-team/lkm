@@ -559,35 +559,47 @@
             return window.open(link);
         }
 
-        $('#cariAnggota').typeahead({
-            source: function(query, process) {
-                return $.get('/perguliran/cari_anggota', {
-                    query
-                }, function(result) {
-                    process(result.map(item => ({
-                        id: item.id,
-                        loan_id: item.loan_id,
-                        loan_id_display: item.loan_id_display,
-                        name: `${item.namadepan} [${item.domisi}, ${item.nama_desa}] - Loan ID: ${item.loan_id_display} [${item.nik}]`,
-                        value: item.id
-                    })));
-                });
-            },
-            afterSelect: function(item) {
-                if (window.location.pathname.includes('jurnal_angsuran_individu')) {
-                    $.get('/transaksi/form_angsuran_individu/' + item.loan_id, function(result) {
-                        var ch_pokok = document.getElementById('chartP').getContext('2d');
-                        var ch_jasa = document.getElementById('chartJ').getContext('2d');
-                        angsuran(true, result);
-                        makeChart('pokok', ch_pokok, result.sisa_pokok, result.sum_pokok);
-                        makeChart('jasa', ch_jasa, result.sisa_jasa, result.sum_jasa);
-                        $('#loan-id').html(item.loan_id_display);
-                    });
-                } else {
-                    window.location.href = '/transaksi/jurnal_angsuran_individu?pinkel=' + item.loan_id;
-                }
-            }
+$('#cariAnggota').typeahead({
+    source: function(query, process) {
+        return $.get('/perguliran/cari_anggota', {
+            query
+        }, function(result) {
+            process(result.map(item => ({
+                id: item.id,
+                loan_id: item.loan_id,
+                loan_id_display: item.loan_id_display,
+                name: `${item.namadepan} [${item.domisi}, ${item.nama_desa}] - Loan ID: ${item.loan_id_display} [${item.nik}]`,
+                value: item.id
+            })));
         });
+    },
+    afterSelect: function(item) {
+        if (window.location.pathname.includes('jurnal_angsuran_individu')) {
+            $.get('/transaksi/form_angsuran_individu/' + item.loan_id, function(result) {
+                if (!result || !result.pinkel) {
+                    Swal.fire('Error', 'Data anggota tidak ditemukan.', 'warning');
+                    return;
+                }
+
+                var ch_pokok = document.getElementById('chartP').getContext('2d');
+                var ch_jasa  = document.getElementById('chartJ').getContext('2d');
+
+                if (typeof chr_pokok !== 'undefined' && chr_pokok) chr_pokok.destroy();
+                if (typeof chr_jasa  !== 'undefined' && chr_jasa)  chr_jasa.destroy();
+
+                angsuran(false, result);
+                makeChart('pokok', ch_pokok, result.sisa_pokok, result.sum_pokok);
+                makeChart('jasa',  ch_jasa,  result.sisa_jasa,  result.sum_jasa);
+
+                $('#loan-id').html(item.loan_id_display);
+            }).fail(function() {
+                Swal.fire('Error', 'Gagal mengambil data angsuran.', 'warning');
+            });
+        } else {
+            window.location.href = '/transaksi/jurnal_angsuran_individu?pinkel=' + item.loan_id;
+        }
+    }
+});
 
         $('#cariKelompok').typeahead({
             source: function(query, process) {
