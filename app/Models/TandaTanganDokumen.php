@@ -24,10 +24,19 @@ class TandaTanganDokumen extends Model
         return [
             'laporan'              => 'Laporan Periodik',
             'spk'                  => 'SPK & Dokumen Pencairan',
-            'tanda_terima_jaminan' => 'Tanda Terima Jaminan',
-            'pengambilan_jaminan'  => 'Pengambilan Jaminan',
-            'terima_jaminan'       => 'Terima Jaminan',
         ];
+    }
+
+    public static function daftarJenisDokumenPinjaman($lokasi = null): array
+    {
+        $lokasi = $lokasi ?? session('lokasi');
+        $q = DokumenPinjaman::whereNotNull('file')
+                            ->where('file', '!=', '')
+                            ->orderBy('id');
+        if (!is_null($lokasi)) {
+            $q->visibleAt($lokasi);
+        }
+        return $q->pluck('title', 'file')->all();
     }
 
     // Accessor untuk kompatibilitas dengan tanda_tangan_laporan table

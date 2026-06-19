@@ -194,8 +194,9 @@ Route::get('/dashboard/pemanfaat', [DashboardController::class, 'pemanfaat'])->m
 Route::get('/pengaturan/sop', [SopController::class, 'index'])->middleware('auth', 'is_aktif');
 Route::get('/pengaturan/coa', [SopController::class, 'coa'])->middleware('auth', 'is_aktif');
 Route::get('/pengaturan/users', [SopController::class, 'users'])->middleware('auth', 'is_aktif');
-Route::get('/pengaturan/ttd_pelaporan', [SopController::class, 'ttdPelaporan'])->middleware('auth', 'is_aktif');
-Route::get('/pengaturan/ttd_spk', [SopController::class, 'ttdSpk'])->middleware('auth', 'is_aktif');
+Route::get('/ttd-dokumen', [SopController::class, 'ttdDokumen'])->middleware('auth', 'is_aktif');
+Route::get('/ttd-dokumen/data', [SopController::class, 'ttdDokumenData'])->middleware('auth', 'is_aktif');
+Route::delete('/ttd-dokumen', [SopController::class, 'resetTtdDokumen'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/pesan_whatsapp/{kec}', [SopController::class, 'pesanWhatsapp'])->middleware('auth', 'is_aktif');
 
 Route::put('/pengaturan/lembaga/{kec}', [SopController::class, 'lembaga'])->middleware('auth', 'is_aktif');

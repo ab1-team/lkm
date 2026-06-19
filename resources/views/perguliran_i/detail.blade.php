@@ -4,6 +4,7 @@
         ->orWhere('web_alternatif', explode('//', URL::to('/'))[1])
         ->first();
     use App\Utils\Tanggal;
+    use App\Models\DokumenPinjaman;
     $waktu = date('H:i');
     $tempat = '';
 
@@ -15,192 +16,34 @@
     if ($saldo_pokok < 0) {
         $saldo_pokok = 0;
     }
-    $dokumen_proposal = [
-        ['title' => 'Cover', 'file' => 'coverProposal', 'withExcel' => false],
-        [
-            'title' => 'Check List',
-            'file' => 'cek_list',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Surat Permohonan Pinjaman',
-            'file' => 'suratPengajuanPinjaman',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Surat Rekomendasi Kredit',
-            'file' => 'suratRekomendasi',
-            'withExcel' => false,
-        ],
 
-        [
-            'title' => 'Surat Pernyataan Peminjam',
-            'file' => 'pernyataanPeminjam',
-            'withExcel' => false,
-        ],
+    $lokasiSekarang = session('lokasi');
 
-        [
-            'title' => 'Form Verifikasi',
-            'file' => 'formVerifikasi',
-            'withExcel' => false,
-        ],
+    $dokumen_proposal = DokumenPinjaman::whereNotNull('file')
+        ->where('file', '!=', '')
+        ->where(function ($q) use ($lokasiSekarang) {
+            $q->where('lokasi', 0)->orWhere('lokasi', $lokasiSekarang);
+        })
+        ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(jenis_dokumen, '$.\"individu\"')) = ?", ['proposal'])
+        ->orderBy('id')
+        ->get()
+        ->map(function ($d) {
+            return ['title' => $d->title, 'file' => $d->file, 'withExcel' => (bool) $d->excel];
+        })
+        ->all();
 
-        [
-            'title' => 'Rencana Angsuran',
-            'file' => 'rencanaAngsuran',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Surat Kuasa Khusus',
-            'file' => 'SuratPersetujuanKuasa',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Kesanggupan Penyerahan Jaminan',
-            'file' => 'tandaTerimaJaminan',
-            'withExcel' => false,
-        ],
-
-        [
-            'title' => 'Permohonan Kredit Barang',
-            'file' => 'PermohonanKreditBarang',
-            'withExcel' => false,
-        ],
-
-        [
-            'title' => 'Surat Pernyataan Penjamin',
-            'file' => 'suratpernyataansuami',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Pernyataan Agunan Pihak Ketiga',
-            'file' => 'agungan',
-            'withExcel' => false,
-        ],
-    ];
-
-    if ($kecamatan && ($kecamatan->id == 1 || $kecamatan->id == 279)) {
-        // Jika ID kecamatan adalah 1 atau 10
-        $dokumen_proposal[] = [
-            'title' => 'Surat Persetujuan Penjamin',
-            'file' => 'SuratPernyataan',
-            'withExcel' => false,
-        ];
-    }
-
-    $dokumen_pencairan = [
-        [
-            'title' => 'Cover',
-            'file' => 'coverPencairan',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Surat Perjanjian Kredit (Umum)',
-            'file' => 'spk',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Surat Perjanjian Kredit (Barang)',
-            'file' => 'spkkreditbarang',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Surat Perjanjian Utang',
-            'file' => 'sph',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Rencana Angsuran',
-            'file' => 'rencanaAngsuran',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Berita Acara Pencairan',
-            'file' => 'BaPencairan',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Kuitansi',
-            'file' => 'kuitansi',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Kartu Angsuran',
-            'file' => 'kartuAngsuran',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Analisis keputusan kredit',
-            'file' => 'analisiskeputusankredit',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'SP2K',
-            'file' => 'suratpemberitahuan',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'pengikat diri sebagai penjamin',
-            'file' => 'pengikatdirisebagaipenjamin',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Surat Tagihan',
-            'file' => 'suratTagihan',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Surat Kelayakan',
-            'file' => 'suratKelayakan',
-            'withExcel' => false,
-        ],
-        // [
-        // 'title' => 'Daftar Hadir Pencairan',
-        // 'file' => 'daftarHadirPencairan',
-        // 'withExcel' => false,
-        // ],
-        [
-            'title' => 'Pemberitahuan Ke Desa',
-            'file' => 'pemberitahuanDesa',
-            'withExcel' => false,
-        ],
-
-        [
-            'title' => 'Surat Ahli Waris',
-            'file' => 'suratAhliWaris',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Form Verifikasi',
-            'file' => 'formVerifikasi',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Terima Jaminan',
-            'file' => 'terima_jaminan',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'Pengambilan Jaminan',
-            'file' => 'pengambilan_jaminan',
-            'withExcel' => false,
-        ],
-    ];
-
-    if ($kecamatan && ($kecamatan->id == 1 || $kecamatan->id == 98)) {
-        // Jika ID kecamatan adalah 1 atau 10
-        $dokumen_pencairan[] = [
-            'title' => 'Surat Kuasa Menjual',
-            'file' => 'suratkuasamenjual',
-            'withExcel' => false,
-        ];
-
-        $dokumen_pencairan[] = [
-            'title' => 'Perjanjian Kredit',
-            'file' => 'perjanjiankredit',
-            'withExcel' => false,
-        ];
-    }
+    $dokumen_pencairan = DokumenPinjaman::whereNotNull('file')
+        ->where('file', '!=', '')
+        ->where(function ($q) use ($lokasiSekarang) {
+            $q->where('lokasi', 0)->orWhere('lokasi', $lokasiSekarang);
+        })
+        ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(jenis_dokumen, '$.\"individu\"')) = ?", ['pencairan'])
+        ->orderBy('id')
+        ->get()
+        ->map(function ($d) {
+            return ['title' => $d->title, 'file' => $d->file, 'withExcel' => (bool) $d->excel];
+        })
+        ->all();
 
     $jenis_jaminan =
         strlen($perguliran_i->jaminan) > 6 ? json_decode($perguliran_i->jaminan, true)['jenis_jaminan'] : '0';
