@@ -70,5 +70,6 @@ class Kernel extends HttpKernel
         'kab' => \App\Http\Middleware\KabMiddleware::class,
         'rekap' => \App\Http\Middleware\RekapMiddleware::class,
         'is_aktif' => \App\Http\Middleware\Aktif::class,
+        'holding.license' => \App\Http\Middleware\HoldingLicense::class,
     ];
 }
