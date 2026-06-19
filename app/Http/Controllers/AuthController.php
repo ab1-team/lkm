@@ -21,7 +21,7 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    private const ID_KEC = 95;
+    private const ID_KEC = 1;
 
     public function index()
     {
@@ -172,7 +172,9 @@ class AuthController extends Controller
                 $MenuTombol = MenuTombol::whereNotIn('id', $AksesTombol)->pluck('akses')->toArray();
 
                 $angsuran = ! in_array('19', $hak_akses) && ! in_array('21', $hak_akses);
-                $inv = $this->generateInvoice($kec);
+                // DISABLED: Invoice creation on login
+                // $inv = $this->generateInvoice($kec);
+                $inv = ['invoice' => false, 'msg' => '', 'dir' => ''];
 
                 $unpaidInvoice = AdminInvoice::where([
                     ['lokasi', $lokasi],
@@ -198,9 +200,10 @@ class AuthController extends Controller
 
                 return redirect('/dashboard')->with([
                     'pesan' => 'Selamat Datang '.$user->namadepan.' '.$user->namabelakang,
-                    'invoice' => $inv['invoice'],
-                    'msg' => $inv['msg'],
-                    'hp_dir' => $inv['dir'],
+                    // DISABLED: Invoice data on login
+                    // 'invoice' => $inv['invoice'],
+                    // 'msg' => $inv['msg'],
+                    // 'hp_dir' => $inv['dir'],
                 ]);
             }
         }

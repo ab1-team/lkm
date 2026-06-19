@@ -20,16 +20,18 @@ class Aktif
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $today = date('Y-m-d');
         $invoice = AdminInvoice::where([
             ['status', 'UNPAID'],
             ['lokasi', Session::get('lokasi')]
-        ])->first();
+        ])->where('tgl_lunas', '<=', $today)->first();
         Session::put('invoice', $invoice);
 
         if ($invoice) {
-            if ($request->is('dashboard')) {
+            if ($request->is('dashboard') || $request->is('pengaturan/*') || $request->is('pelaporan/*')) {
                 return $next($request);
             } else {
+                Session::flash('warning', 'Anda harus menyelesaikan invoice yang belum terbayar terlebih dahulu');
                 return redirect('/dashboard');
             }
         }

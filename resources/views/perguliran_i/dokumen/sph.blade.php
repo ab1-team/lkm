@@ -154,12 +154,12 @@
                         Nomor Sertifikat: {{ $jaminan['nomor_sertifikat'] ?? 0 }},
                         Nama jaminan: {{ $jaminan['nama_pemilik'] ?? 0 }},
                         Alamat : {{ $jaminan['alamat'] ?? 0 }} Luas: {{ $jaminan['luas'] ?? 0 }} (m²),
-                        Nilai Jual Tanah: {{ number_format($jaminan['nilai_jual_tanah'] ?? 0) }},
+                        Nilai Jual Tanah: {{ number_format((float)($jaminan['nilai_jual_tanah'] ?? 0)) }},
                     @elseif ($jaminan['jenis_jaminan'] == '2')
                         Nomor: {{ $jaminan['nomor'] ?? 0 }},
                         Nama jaminan: {{ $jaminan['jenis_kendaraan'] ?? 0 }},
                         Nopol: {{ $jaminan['nopol'] ?? 0 }},
-                        Nilai Jual Kendaraan: {{ number_format($jaminan['nilai_jual_kendaraan'] ?? 0) }},
+                        Nilai Jual Kendaraan: {{ number_format((float)($jaminan['nilai_jual_kendaraan'] ?? 0)) }},
                     @elseif ($jaminan['jenis_jaminan'] == '3')
                         Nomor: {{ $jaminan['nomor'] ?? 0 }},
                         Nama Pegawai: {{ $jaminan['nama_pegawai'] ?? 0 }},
@@ -167,12 +167,12 @@
                     @elseif ($jaminan['jenis_jaminan'] == '4')
                         Nomor Jaminan: {{ $jaminan['nama_jaminan'] ?? 0 }},
                         Keterangan: {{ $jaminan['keterangan'] ?? 0 }},
-                        Nilai Jaminan: {{ number_format($jaminan['nilai_jaminan'] ?? 0) }},
+                        Nilai Jaminan: {{ number_format((float)($jaminan['nilai_jaminan'] ?? 0)) }},
                     @else
                         Nomor Sertifikat: {{ $jaminan['nomor_sertifikat'] ?? 0 }},
                         Nama jaminan: {{ $jaminan['nama_pemilik'] ?? 0 }},
                         Alamat : {{ $jaminan['alamat'] ?? 0 }} Luas: {{ $jaminan['luas'] ?? 0 }} (m²),
-                        Nilai Jual Tanah: {{ number_format($jaminan['nilai_jual_tanah'] ?? 0) }},
+                        Nilai Jual Tanah: {{ number_format((float)($jaminan['nilai_jual_tanah'] ?? 0)) }},
                     @endif
                     atas Nama {{ $pinkel->anggota->namadepan }} Yang nilainya dianggap sama dengan uang pinjaman dari Pihak
                     Kedua.

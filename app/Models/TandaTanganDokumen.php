@@ -29,4 +29,15 @@ class TandaTanganDokumen extends Model
             'terima_jaminan'       => 'Terima Jaminan',
         ];
     }
+
+    // Accessor untuk kompatibilitas dengan tanda_tangan_laporan table
+    public function getTandaTanganPelaporanAttribute()
+    {
+        return $this->tanda_tangan;
+    }
+
+    public function getTandaTanganSpkAttribute()
+    {
+        return $this->tanda_tangan;
+    }
 }

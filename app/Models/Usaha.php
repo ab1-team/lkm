@@ -20,6 +20,13 @@ class Usaha extends Model
 
     public function ttd()
     {
-        return $this->belongsTo(TandaTanganLaporan::class, 'id', 'lokasi');
+        return $this->hasOne(TandaTanganDokumen::class, 'lokasi', 'id')
+                    ->where('jenis', 'laporan');
+    }
+
+    public function ttdSpk()
+    {
+        return $this->hasOne(TandaTanganDokumen::class, 'lokasi', 'id')
+                    ->where('jenis', 'spk');
     }
 }

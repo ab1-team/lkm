@@ -222,6 +222,7 @@
 
 @section('modal')
     <!-- Popup Modal -->
+    @if ($jumlah_unpaid > 0)
     <div class="modal fade" id="notificationPopup" tabindex="-1" aria-labelledby="notificationPopupLabel"
         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="true">
         <div class="modal-dialog">
@@ -251,6 +252,7 @@
         </div>
     </div>
 
+    @endif
     {{-- Modal Jatuh Dempo --}}
     <div class="modal fade" id="jatuhTempo" aria-labelledby="jatuhTempoLabel" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
@@ -863,13 +865,14 @@
             }
             // Ensure modal can be interacted with correctly
             const modalElement = document.getElementById('notificationPopup');
-            modalElement.addEventListener('hidden.bs.modal', function() {
-                // Ensure the backdrop is removed when modal is closed
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                    backdrop.remove();
-                }
-            });
+            if (modalElement) {
+                modalElement.addEventListener('hidden.bs.modal', function() {
+                    const backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) {
+                        backdrop.remove();
+                    }
+                });
+            }
         });
     </script>
 

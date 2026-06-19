@@ -142,7 +142,7 @@
                     Nomor Sertifikat: {{ $jaminan['nomor_sertifikat'] ?? 0 }},
                     Nama jaminan: {{ $jaminan['nama_pemilik'] ?? 0 }},
                     Alamat : {{ $jaminan['alamat'] ?? 0 }} Luas: {{ $jaminan['luas'] ?? 0 }} (m²),
-                    Nilai Jual Tanah: {{ number_format($jaminan['nilai_jual_tanah'] ?? 0) }},
+                    Nilai Jual Tanah: {{ number_format((float)($jaminan['nilai_jual_tanah'] ?? 0)) }},
                 @elseif ($jaminan['jenis_jaminan'] == '2')
                     Nomor: {{ $jaminan['nomor'] ?? 0 }},
                     Nama jaminan: {{ $jaminan['jenis_kendaraan'] ?? 0 }},
@@ -160,7 +160,7 @@
                     Nomor Sertifikat: {{ $jaminan['nomor_sertifikat'] ?? 0 }},
                     Nama jaminan: {{ $jaminan['nama_pemilik'] ?? 0 }},
                     Alamat : {{ $jaminan['alamat'] ?? 0 }} Luas: {{ $jaminan['luas'] ?? 0 }} (m²),
-                    Nilai Jual Tanah: {{ number_format($jaminan['nilai_jual_tanah'] ?? 0) }},
+                    Nilai Jual Tanah: {{ number_format((float)($jaminan['nilai_jual_tanah'] ?? 0)) }},
                 @endif
             </td>
         </tr>

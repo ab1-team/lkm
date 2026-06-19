@@ -3,7 +3,7 @@
     $jumlah_angsuran = 0;
 
     $alokasi = $pinkel->alokasi;
-    $alokasi_jasa = ($alokasi * $pinkel->pros_jasa) / 100;
+    $alokasi_jasa = isset($rencana) ? $rencana->sum('wajib_jasa') : 0;
     $t_pokok = 0;
     $t_jasa = 0;
     $t_denda = 0;

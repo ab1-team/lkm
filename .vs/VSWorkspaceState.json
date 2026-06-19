@@ -4,12 +4,13 @@
     "\\app",
     "\\app\\Http",
     "\\app\\Http\\Controllers",
-    "\\app\\Http\\Controllers\\Rekap",
     "\\resources",
     "\\resources\\views",
-    "\\resources\\views\\rekap",
-    "\\resources\\views\\rekap\\auth"
+    "\\resources\\views\\layouts",
+    "\\resources\\views\\transaksi",
+    "\\resources\\views\\transaksi\\jurnal_angsuran",
+    "\\resources\\views\\transaksi\\jurnal_angsuran\\partials"
   ],
-  "SelectedNode": "\\app\\Http\\Controllers\\Rekap\\AuthController.php",
+  "SelectedNode": "\\app\\Http\\Controllers\\DashboardController.php",
   "PreviewInSolutionExplorer": false
 }

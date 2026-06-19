@@ -186,7 +186,7 @@
                 if (is_array($jaminan) && isset($jaminan['jenis_jaminan'])) {
                     if ($jaminan['jenis_jaminan'] == '1') {
                         $agunan = "Tanah";
-                        $nilai_agunan = isset($jaminan['nilai_jual_tanah']) ? 'Rp ' . number_format($jaminan['nilai_jual_tanah'], 0, ',', '.') : '-';
+                        $nilai_agunan = isset($jaminan['nilai_jual_tanah']) ? 'Rp ' . number_format((float)$jaminan['nilai_jual_tanah'], 0, ',', '.') : '-';
                     }
                     elseif ($jaminan['jenis_jaminan'] == '2') {
                         $agunan = "Kendaraan";
@@ -202,7 +202,7 @@
                     }
                     else {
                         $agunan = "Tanah";
-                        $nilai_agunan = isset($jaminan['nilai_jual_tanah']) ? 'Rp ' . number_format($jaminan['nilai_jual_tanah'], 0, ',', '.') : '-';
+                        $nilai_agunan = isset($jaminan['nilai_jual_tanah']) ? 'Rp ' . number_format((float)$jaminan['nilai_jual_tanah'], 0, ',', '.') : '-';
                     }
                 } else {
                     // Default values if JSON decode fails

@@ -19,26 +19,22 @@ class RedirectIfAuthenticated
     {
         $guards = empty($guards) ? [null] : $guards;
 
-        if (auth()->guard('master')->check()) {
-            if (auth()->guard('master')->user()->akses == 'master') {
-                return redirect('/master/dashboard');
-            }
-        }
-
-        if (auth()->guard('kab')->check()) {
-            return redirect('/kab/dashboard');
-        }
-		
-        if (auth()->guard('rekap')->check()) {
-            return redirect('/rekap/dashboard');
-        }
-
-        if (auth()->guard('web')->check()) {
-            return redirect('/dashboard');
-        }
-
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                if ($guard === 'master' || is_null($guard)) {
+                    if (auth()->guard('master')->check()) {
+                        if (auth()->guard('master')->user()->akses == 'master') {
+                            return redirect('/master/dashboard');
+                        }
+                    }
+                } elseif ($guard === 'kab') {
+                    return redirect('/kab/dashboard');
+                } elseif ($guard === 'rekap') {
+                    return redirect('/rekap/dashboard');
+                } elseif ($guard === 'web') {
+                    return redirect('/dashboard');
+                }
+
                 return redirect('/dashboard');
             }
         }

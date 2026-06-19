@@ -32,8 +32,8 @@
                     
                                     <input type="hidden" name="field" id="field" value="tanda_tangan_spk">
                                     <textarea class="tiny-mce-editor" name="tanda_tangan" id="tanda_tangan" rows="20">
-                                        @if ($kec->ttd)
-                                        {!! json_decode($kec->ttd->tanda_tangan_spk, true) !!}
+                                        @if ($kec->ttdSpk)
+                                        {!! json_decode($kec->ttdSpk->tanda_tangan_pelaporan, true) !!}
                                         @else
                                         <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
                                             <tr>
