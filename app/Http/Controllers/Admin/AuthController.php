@@ -31,7 +31,7 @@ class AuthController extends Controller
 
             session(['admin' => $user->nama_lengkap]);
 
-            return redirect()->intended('/master')
+            return redirect()->intended('/master/dashboard')
                 ->with('pesan', 'Selamat Datang ' . $user->nama_lengkap);
         }
 
