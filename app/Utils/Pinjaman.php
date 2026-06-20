@@ -23,75 +23,92 @@ class Pinjaman
                 [
                     'key' => '{kepala_lembaga}',
                     'des' => 'Menampilkan Sebutan Kepala Lembaga',
+                    'group' => 'lembaga',
                 ],
                 [
                     'key' => '{kabag_administrasi}',
                     'des' => 'Menampilkan Sebutan Kabag Administrasi',
+                    'group' => 'lembaga',
                 ],
                 [
                     'key' => '{kabag_keuangan}',
                     'des' => 'Menampilkan Sebutan Kabag Keuangan',
+                    'group' => 'lembaga',
                 ],
                 [
                     'key' => '{verifikator}',
                     'des' => 'Menampilkan Nama Sebutan Verifikator',
+                    'group' => 'lembaga',
                 ],
                 [
                     'key' => '{pengawas}',
                     'des' => 'Menampilkan Nama Sebutan Pengawas',
+                    'group' => 'lembaga',
                 ],
                 [
                     'key' => '{ketua}',
                     'des' => 'Menampilkan Nama Ketua Kelompok',
+                    'group' => 'lembaga',
                 ],
                 [
                     'key' => '{sekretaris}',
                     'des' => 'Menampilkan Nama Sekretaris Kelompok',
+                    'group' => 'lembaga',
                 ],
                 [
                     'key' => '{bendahara}',
                     'des' => 'Menampilkan Nama Bendahara Kelompok',
+                    'group' => 'lembaga',
                 ],
                 [
                     'key' => '{kades}',
                     'des' => 'Menampilkan Nama Kepala Desa/Lurah',
+                    'group' => 'non_lembaga',
                 ],
                 [
                     'key' => '{pangkat}',
                     'des' => 'Menampilkan Pangkat Kepala Desa/Lurah',
+                    'group' => 'non_lembaga',
                 ],
                 [
                     'key' => '{nip}',
                     'des' => 'Menampilkan Nip Kepala Desa/Lurah',
+                    'group' => 'non_lembaga',
                 ],
                 [
                     'key' => '{sekdes}',
                     'des' => 'Menampilkan Nama Sekdes',
+                    'group' => 'non_lembaga',
                 ],
                 [
                     'key' => '{ked}',
                     'des' => 'Menampilkan Nama Kader Ekonomi Desa',
+                    'group' => 'non_lembaga',
                 ],
                 [
                     'key' => '{desa}',
                     'des' => 'Menampilkan Nama Desa',
+                    'group' => 'non_lembaga',
                 ],
                 [
                     'key' => '{sebutan_kades}',
                     'des' => 'Menampilkan Sebutan Kepala Desa/Lurah',
+                    'group' => 'non_lembaga',
                 ],
                 [
                     'key' => '{penjamin}',
                     'des' => 'Menampilkan Nama penjamin',
+                    'group' => 'non_lembaga',
                 ],
                 [
                     'key' => '{peminjam}',
                     'des' => 'Menampilkan Nama Peminjam',
+                    'group' => 'non_lembaga',
                 ],
-
                 [
                     'key' => '{hubungan}',
                     'des' => 'Menampilkan Nama Hubungan Keluarga',
+                    'group' => 'non_lembaga',
                 ],
             ];
         } else {

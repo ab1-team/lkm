@@ -101,31 +101,65 @@
 
 @section('modal')
     <div class="modal fade" id="kataKunci" tabindex="-1" aria-labelledby="kataKunciLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="kataKunciLabel">Kata Kunci</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <table class="table table-striped midle">
-                        <thead class="bg-dark text-white">
-                            <tr>
-                                <th width="10">No</th>
-                                <th width="100">Kata Kunci</th>
-                                <th>Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($keyword as $k)
-                                <tr>
-                                    <td align="center">{{ $loop->iteration }}</td>
-                                    <td>{{ $k['key'] }}</td>
-                                    <td>{{ $k['des'] }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <div class="modal-body p-4">
+                    @php
+                        $keywordLembaga = array_values(array_filter($keyword, fn ($k) => ($k['group'] ?? 'non_lembaga') === 'lembaga'));
+                        $keywordNonLembaga = array_values(array_filter($keyword, fn ($k) => ($k['group'] ?? 'non_lembaga') === 'non_lembaga'));
+                    @endphp
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-2">Berhubungan dengan Lembaga</h6>
+                            <table class="table table-striped midle">
+                                <thead class="bg-dark text-white">
+                                    <tr>
+                                        <th width="10">No</th>
+                                        <th width="140">Kata Kunci</th>
+                                        <th>Keterangan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($keywordLembaga as $k)
+                                        <tr>
+                                            <td align="center">{{ $loop->iteration }}</td>
+                                            <td>{{ $k['key'] }}</td>
+                                            <td>{{ $k['des'] }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr><td colspan="3" align="center">Tidak ada kata kunci.</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-2">Diluar Lembaga</h6>
+                            <table class="table table-striped midle">
+                                <thead class="bg-dark text-white">
+                                    <tr>
+                                        <th width="10">No</th>
+                                        <th width="140">Kata Kunci</th>
+                                        <th>Keterangan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($keywordNonLembaga as $k)
+                                        <tr>
+                                            <td align="center">{{ $loop->iteration }}</td>
+                                            <td>{{ $k['key'] }}</td>
+                                            <td>{{ $k['des'] }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr><td colspan="3" align="center">Tidak ada kata kunci.</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">Tutup</button>
