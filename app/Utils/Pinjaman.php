@@ -2,6 +2,7 @@
 
 namespace App\Utils;
 
+use App\Models\User;
 use DateTime;
 use DateTimeZone;
 
@@ -58,6 +59,26 @@ class Pinjaman
                 [
                     'key' => '{bendahara}',
                     'des' => 'Menampilkan Nama Bendahara Kelompok',
+                    'group' => 'lembaga',
+                ],
+                [
+                    'key' => '{nama_jabatan1}',
+                    'des' => 'Menampilkan Nama Pejabat Lembaga Jabatan 1',
+                    'group' => 'lembaga',
+                ],
+                [
+                    'key' => '{nama_jabatan2}',
+                    'des' => 'Menampilkan Nama Pejabat Lembaga Jabatan 2',
+                    'group' => 'lembaga',
+                ],
+                [
+                    'key' => '{nama_jabatan3}',
+                    'des' => 'Menampilkan Nama Pejabat Lembaga Jabatan 3',
+                    'group' => 'lembaga',
+                ],
+                [
+                    'key' => '{nama_jabatan4}',
+                    'des' => 'Menampilkan Nama Pejabat Lembaga Jabatan 4',
                     'group' => 'lembaga',
                 ],
                 [
@@ -132,6 +153,10 @@ class Pinjaman
                 '{ketua}' => (!$individu) ? $pinkel->kelompok->ketua : $pinkel->anggota->namadepan,
                 '{sekretaris}' => (!$individu) ? $pinkel->kelompok->sekretaris : '',
                 '{bendahara}' => (!$individu) ? $pinkel->kelompok->bendahara : '',
+                '{nama_jabatan1}' => self::namaPejabatLembaga($kec, 1),
+                '{nama_jabatan2}' => self::namaPejabatLembaga($kec, 2),
+                '{nama_jabatan3}' => self::namaPejabatLembaga($kec, 3),
+                '{nama_jabatan4}' => self::namaPejabatLembaga($kec, 4),
                 '{kades}' => $desa->kades,
                 '{nip}' => $desa->nip,
                 '{sekdes}' => $desa->sekdes,
@@ -147,6 +172,18 @@ class Pinjaman
 
             return $ttd;
         }
+    }
+
+    private static function namaPejabatLembaga($kec, $jabatan)
+    {
+        $u = User::where('lokasi', $kec->id)
+            ->where('level', 1)
+            ->where('jabatan', $jabatan)
+            ->first();
+        if (!$u) {
+            return '';
+        }
+        return trim(($u->namadepan ?? '') . ' ' . ($u->namabelakang ?? ''));
     }
 
     public static function spk($text = false, $data = [])

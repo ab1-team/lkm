@@ -74,7 +74,7 @@ class PinjamanIndividuController extends Controller
                     return '<div>'.$namadepan.' <small class="float-end badge bg-'.$status.'">Loan ID.'.$row->id.'</small></div>';
                 })
                 ->editColumn('tgl_proposal', function ($row) {
-                    return Tanggal::tglIndo($row->tgl_proposal);
+                    return '<span data-sort="'.$row->tgl_proposal.'">'.Tanggal::tglIndo($row->tgl_proposal).'</span>';
                 })
                 ->editColumn('proposal', function ($row) {
                     return number_format($row->proposal);
@@ -84,7 +84,7 @@ class PinjamanIndividuController extends Controller
                     $desa = ($row->anggota && $row->anggota->d) ? $row->anggota->d->nama_desa : '';
                     return $alamat.' '.$desa;
                 })
-                ->rawColumns(['namadepan'])
+                ->rawColumns(['namadepan', 'tgl_proposal'])
                 ->make(true);
         }
     }
@@ -117,7 +117,7 @@ class PinjamanIndividuController extends Controller
                     return '<div>'.$namadepan.' <small class="float-end badge bg-'.$status.'">Loan ID.'.$row->id.'</small></div>';
                 })
                 ->editColumn('tgl_verifikasi', function ($row) {
-                    return Tanggal::tglIndo($row->tgl_verifikasi);
+                    return '<span data-sort="'.$row->tgl_verifikasi.'">'.Tanggal::tglIndo($row->tgl_verifikasi).'</span>';
                 })
                 ->editColumn('verifikasi', function ($row) {
                     return number_format($row->verifikasi);
@@ -127,7 +127,7 @@ class PinjamanIndividuController extends Controller
                     $desa = ($row->anggota && $row->anggota->d) ? $row->anggota->d->nama_desa : '';
                     return $alamat.' '.$desa;
                 })
-                ->rawColumns(['namadepan'])
+                ->rawColumns(['namadepan', 'tgl_verifikasi'])
                 ->make(true);
         }
     }
@@ -160,7 +160,7 @@ class PinjamanIndividuController extends Controller
                     return '<div>'.$namadepan.' <small class="float-end badge bg-'.$status.'">Loan ID.'.$row->id.'</small></div>';
                 })
                 ->editColumn('tgl_tunggu', function ($row) {
-                    return Tanggal::tglIndo($row->tgl_tunggu);
+                    return '<span data-sort="'.$row->tgl_tunggu.'">'.Tanggal::tglIndo($row->tgl_tunggu).'</span>';
                 })
                 ->editColumn('alokasi', function ($row) {
                     return number_format($row->alokasi);
@@ -170,7 +170,7 @@ class PinjamanIndividuController extends Controller
                     $desa = ($row->anggota && $row->anggota->d) ? $row->anggota->d->nama_desa : '';
                     return $alamat.' '.$desa;
                 })
-                ->rawColumns(['namadepan'])
+                ->rawColumns(['namadepan', 'tgl_tunggu'])
                 ->make(true);
         }
     }
@@ -203,7 +203,7 @@ class PinjamanIndividuController extends Controller
                     return '<div>'.$namadepan.' <small class="float-end badge bg-'.$status.'">Loan ID.'.$row->id.'</small></div>';
                 })
                 ->editColumn('tgl_cair', function ($row) {
-                    return Tanggal::tglIndo($row->tgl_cair);
+                    return '<span data-sort="'.$row->tgl_cair.'">'.Tanggal::tglIndo($row->tgl_cair).'</span>';
                 })
                 ->editColumn('alokasi', function ($row) {
                     return number_format($row->alokasi);
@@ -213,7 +213,7 @@ class PinjamanIndividuController extends Controller
                     $desa = ($row->anggota && $row->anggota->d) ? $row->anggota->d->nama_desa : '';
                     return $alamat.' '.$desa;
                 })
-                ->rawColumns(['namadepan'])
+                ->rawColumns(['namadepan', 'tgl_cair'])
                 ->make(true);
         }
     }
@@ -248,12 +248,12 @@ class PinjamanIndividuController extends Controller
                     return '<div>'.$namadepan.' <small class="float-end badge bg-'.$status.'">Loan ID.'.$row->id.'</small></div>';
                 })
                 ->editColumn('tgl_cair', function ($row) {
-                    return Tanggal::tglIndo($row->tgl_cair);
+                    return '<span data-sort="'.$row->tgl_cair.'">'.Tanggal::tglIndo($row->tgl_cair).'</span>';
                 })
                 ->editColumn('alokasi', function ($row) {
                     return number_format($row->alokasi);
                 })
-                ->rawColumns(['namadepan'])
+                ->rawColumns(['namadepan', 'tgl_cair'])
                 ->make(true);
         }
     }

@@ -284,7 +284,7 @@
             name: 'jasa',
             orderable: false,
             searchable: false
-        }])
+        }], [3])
 
         var tbVerified = CreateTable('#TbVerified', '/perguliran_i/verified', [{
             data: 'namadepan',
@@ -303,7 +303,7 @@
             name: 'jasa',
             orderable: false,
             searchable: false
-        }])
+        }], [2])
 
         var tbWaiting = CreateTable('#TbWaiting', '/perguliran_i/waiting', [{
             data: 'namadepan',
@@ -322,7 +322,7 @@
             name: 'jasa',
             orderable: false,
             searchable: false
-        }])
+        }], [2])
 
         var tbAktif = CreateTable('#TbAktif', '/perguliran_i/aktif', [{
             data: 'namadepan',
@@ -341,7 +341,7 @@
             name: 'jasa',
             orderable: false,
             searchable: false
-        }])
+        }], [2])
 
         var tbLunas = CreateTable('#TbLunas', '/perguliran_i/lunas', [{
             data: 'namadepan',
@@ -360,9 +360,19 @@
             name: 'jasa',
             orderable: false,
             searchable: false
-        }])
+        }], [2])
 
-        function CreateTable(tabel, url, column) {
+        function CreateTable(tabel, url, column, dateColumns) {
+            var columnDefs = [];
+            if (dateColumns && dateColumns.length > 0) {
+                dateColumns.forEach(function(idx) {
+                    columnDefs.push({
+                        targets: idx,
+                        type: 'date'
+                    });
+                });
+            }
+
             var table = $(tabel).DataTable({
                 language: {
                     paginate: {
@@ -374,6 +384,7 @@
                 serverSide: true,
                 ajax: url,
                 columns: column,
+                columnDefs: columnDefs,
                 order: [
                     [1, 'desc']
                 ]
