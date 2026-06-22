@@ -165,6 +165,22 @@
     </form>
 </div>
 
+<div class="main-card mb-3 card">
+    <form action="/perguliran_i/dokumen?status=W" target="_blank" method="post">
+        @csrf
+        <input type="hidden" name="id" value="{{ $perguliran_i->id }}">
+        <div class="card-body d-flex justify-content-between">
+            <a href="/perguliran_i/dokumen/kartu_angsuran/{{ $perguliran_i->id }}" target="_blank" class="btn btn-outline-info flex-grow-1 me-2">
+                <b style="color: rgb(2, 102, 251);">Kartu Angsuran</b>
+            </a>
+            <button type="submit" data-bs-toggle="modal" name="report" value="rencanaAngsuran#pdf"
+                class="btn btn-outline-info flex-grow-1 me-2">
+                <b style="color: rgb(2, 102, 251)">Rencana Angsuran</b>
+            </button>
+        </div>
+    </form>
+</div>
+
 <form action="/perguliran_i/{{ $perguliran_i->id }}" method="post" id="FormInput">
     @csrf
     @method('PUT')
