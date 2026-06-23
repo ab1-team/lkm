@@ -754,16 +754,43 @@ class SopController extends Controller
 
         try {
             $kec = Kecamatan::where('id', $id)->first();
-            Whatsapp::updateOrCreate(
-                ['lokasi' => $id],
-                [
+            
+            $token = "LKM-" . str_replace('.', '', $kec->kd_kec) . '-' . str_pad($kec->id, 4, '0', STR_PAD_LEFT);
+            
+            $existing = Whatsapp::where('lokasi', '!=', $id)
+                ->where('device_id', $device_id)
+                ->first();
+            if ($existing) {
+                return response()->json([
+                    'success' => false, 
+                    'msg' => "Device sudah terdaftar di lokasi {$existing->lokasi}. Scan ulang dengan device berbeda."
+                ], 422);
+            }
+            
+            $existingSame = Whatsapp::where('lokasi', $id)
+                ->where('device_id', $device_id)
+                ->first();
+            
+            if ($existingSame) {
+                $existingSame->update([
+                    'device_key' => $device_key,
+                    'status' => 'connected',
+                ]);
+            } else {
+                $existingByLokasi = Whatsapp::where('lokasi', $id)->first();
+                if ($existingByLokasi) {
+                    $existingByLokasi->delete();
+                }
+                
+                Whatsapp::create([
+                    'lokasi' => $id,
                     'nama' => $kec->nama_lembaga_sort ?? 'LKM',
-                    'token' => "LKM-" . str_replace('.', '', $kec->kd_kec) . '-' . str_pad($kec->id, 4, '0', STR_PAD_LEFT),
+                    'token' => $token,
                     'device_id' => $device_id,
                     'device_key' => $device_key,
                     'status' => 'connected',
-                ]
-            );
+                ]);
+            }
 
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
