@@ -2442,7 +2442,7 @@ class TransaksiController extends Controller
         $keuangan = new Keuangan;
 
         $kec = Kecamatan::where('id', Session::get('lokasi'))->with('kabupaten')->first();
-        $trx = Transaksi::where('idt', $id)->with('rek_debit')->with('rek_kredit')->first();
+        $trx = Transaksi::where('idt', $id)->with('rek_debit', 'rek_kredit', 'tr_idtp', 'tr_idtp.rek_kredit')->withSum('tr_idtp', 'jumlah')->first();
         $user = User::where('id', $trx->id_user)->first();
 
         $dir = User::where([

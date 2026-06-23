@@ -7,6 +7,40 @@
             font-weight: bold;
         }
 
+        /* Checkbox styling */
+        .form-check-input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            border: 2px solid #6c757d;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .form-check-input[type="checkbox"]:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .form-check-input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .form-check-input[type="checkbox"]:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        .form-check-input[type="checkbox"]:hover {
+            border-color: #0d6efd;
+        }
+
         /* Harmonize text inputs to uniform 40px height */
         .form-control {
             height: 40px !important;
@@ -267,9 +301,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="BtnCetakBuktiTransaksi" class="btn btn-sm btn-info">
-                        Cetak Bukti Transaksi
+                        <i class="fas fa-print me-1"></i> Cetak Bukti Transaksi
                     </button>
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Tutup
+                    </button>
                 </div>
             </div>
         </div>
@@ -290,9 +326,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="BtnCetak" class="btn btn-sm btn-info">
-                        Print
+                        <i class="fas fa-print me-1"></i> Print
                     </button>
-                    <button type="button" id="BtnCetakBuktiTransaksi" class="btn btn-danger btn-sm">Tutup</button>
+                    <button type="button" id="BtnTutupCetak" class="btn btn-danger btn-sm" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Tutup
+                    </button>
                 </div>
             </div>
         </div>
@@ -667,7 +705,18 @@
         $(document).on('click', '#BtnCetak', function(e) {
             e.preventDefault()
 
-            $('#FormCetakDokumenTransaksi').submit()
+            var form = $('#FormCetakDokumenTransaksi')
+            if (form.length) {
+                // Check if at least one checkbox is checked
+                var checked = form.find('input[name="cetak[]"]:checked')
+                if (checked.length === 0) {
+                    Swal.fire('Peringatan', 'Pilih minimal satu transaksi untuk dicetak', 'warning')
+                    return
+                }
+                form.submit()
+            } else {
+                Swal.fire('Error', 'Form cetak tidak ditemukan', 'error')
+            }
         })
 
         function initializeBootstrapTooltip() {

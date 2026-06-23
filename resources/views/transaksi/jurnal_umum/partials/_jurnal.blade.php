@@ -22,9 +22,9 @@
     <table border="0" width="100%" cellspacing="0" cellpadding="0" class="table table-striped midle">
         <thead class="bg-dark text-white">
             <tr>
-                <td align="center" width="40">
-                    <div class="form-check text-center ps-0 mb-0">
-                        <input class="form-check-input" type="checkbox" value="true" id="checked" name="checked">
+                <td align="center" width="50">
+                    <div class="form-check d-flex justify-content-center align-items-center mb-0">
+                        <input class="form-check-input" type="checkbox" value="true" id="checked" name="checked" style="width: 18px; height: 18px; cursor: pointer;" title="Pilih Semua">
                     </div>
                 </td>
                 <td height="40" align="center" width="40">No</td>
@@ -139,9 +139,9 @@
 
                 <tr>
                     <td align="center">
-                        <div class="form-check text-center ps-0 mb-0">
+                        <div class="form-check d-flex justify-content-center align-items-center mb-0">
                             <input class="form-check-input" type="checkbox" value="{{ $trx->idt }}"
-                                id="{{ $trx->idt }}" name="cetak[]" data-input="checked">
+                                id="chk_{{ $trx->idt }}" name="cetak[]" data-input="checked" style="width: 18px; height: 18px; cursor: pointer;">
                         </div>
                     </td>
                     <td align="center">{{ $loop->iteration }}.</td>
@@ -201,10 +201,13 @@
 
 <script>
     $(document).on('click', '#checked', function() {
-        if ($(this)[0].checked == true) {
-            $('[data-input=checked]').prop('checked', true)
-        } else {
-            $('[data-input=checked]').prop('checked', false)
-        }
+        var isChecked = $(this).prop('checked')
+        $('[data-input="checked"]').prop('checked', isChecked).trigger('change')
+    })
+
+    $(document).on('change', '[data-input="checked"]', function() {
+        var totalCheckboxes = $('[data-input="checked"]').length
+        var checkedCheckboxes = $('[data-input="checked"]:checked').length
+        $('#checked').prop('checked', totalCheckboxes === checkedCheckboxes && totalCheckboxes > 0)
     })
 </script>

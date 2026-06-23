@@ -182,13 +182,49 @@
                             Debit {{ ucwords($trx->rekening_debit . ' - ' . $trx->rek_debit->nama_akun) }}
                         </td>
                     </tr>
-                    <tr>
-                        <td width="30%">&nbsp;</td>
-                        <td width="2%">&nbsp;</td>
-                        <td colspan="3" class="keterangan">
-                            Kredit {{ ucwords($trx->rekening_kredit . ' - ' . $trx->rek_kredit->nama_akun) }}
-                        </td>
-                    </tr>
+
+                    @if ($trx->tr_idtp && $trx->tr_idtp->count() > 0)
+                        @php
+                            $count = 3;
+                        @endphp
+
+                        @foreach ($trx->tr_idtp as $tr)
+                            @php
+                                $count--;
+                            @endphp
+                            <tr>
+                                <td width="30%">&nbsp;</td>
+                                <td width="2%">&nbsp;</td>
+                                <td colspan="3" class="keterangan">
+                                    Kredit {{ ucwords($tr->rekening_kredit . ' - ' . $tr->rek_kredit->nama_akun) }}
+                                </td>
+                            </tr>
+                        @endforeach
+
+                        @for ($i = 0; $i < $count; $i++)
+                            <tr>
+                                <td width="30%">&nbsp;</td>
+                                <td width="2%">&nbsp;</td>
+                                <td colspan="3">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                        @endfor
+                    @else
+                        <tr>
+                            <td width="30%">&nbsp;</td>
+                            <td width="2%">&nbsp;</td>
+                            <td colspan="3" class="keterangan">
+                                Kredit {{ ucwords($trx->rekening_kredit . ' - ' . $trx->rek_kredit->nama_akun) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5">&nbsp;</td>
+                        </tr>
+                    @endif
                 </table>
 
                 <table width="100%" class="fs-12" style="margin-top: 12px;">
