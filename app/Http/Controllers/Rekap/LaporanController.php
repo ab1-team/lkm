@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Kabupaten;
+namespace App\Http\Controllers\Rekap;
 
 use App\Http\Controllers\Controller;
 use App\Models\AkunLevel1;

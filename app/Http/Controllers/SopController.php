@@ -6,6 +6,7 @@ use App\Models\AdminInvoice;
 use App\Models\AkunLevel1;
 use App\Models\Kecamatan;
 use App\Models\TandaTanganDokumen;
+use App\Models\DokumenPinjaman;
 use App\Models\User;
 use App\Models\Whatsapp;
 use App\Utils\Pinjaman;
@@ -450,47 +451,127 @@ class SopController extends Controller
         ]);
     }
 
-    public function ttdPelaporan()
+    public function ttdDokumen(Request $request)
     {
-        $title = "Pengaturan Tanda Tangan Pelaporan";
-        $kec = Kecamatan::where('id', Session::get('lokasi'))->with('ttd')->first();
-        $ttd = TandaTanganDokumen::where([['lokasi', Session::get('lokasi')]])->first();
+        $title = "Pengaturan Tanda Tangan Dokumen";
+        $lokasi = Session::get('lokasi');
+
+        $statis = TandaTanganDokumen::daftarJenis();
+        $pinjaman = TandaTanganDokumen::daftarJenisDokumenPinjaman();
+
+        $daftarJenis = array_merge($statis, $pinjaman);
+
+        if (empty($daftarJenis)) {
+            $jenis = null;
+        } else {
+            $jenis = $request->get('jenis');
+            if (!$jenis || !array_key_exists($jenis, $daftarJenis)) {
+                $jenis = array_key_first($daftarJenis);
+            }
+        }
+
+        $kec = Kecamatan::where('id', $lokasi)->first();
+        $ttd = $jenis
+            ? TandaTanganDokumen::where('lokasi', $lokasi)->where('jenis', $jenis)->first()
+            : null;
 
         $tanggal = false;
         if ($ttd) {
-            $str = strpos($ttd->tanda_tangan_pelaporan, '{tanggal}');
-
+            $str = strpos((string) $ttd->tanda_tangan, '{tanggal}');
             if ($str !== false) {
                 $tanggal = true;
             }
         }
 
-        return view('sop.partials.ttd_pelaporan')->with(compact('title', 'kec', 'tanggal'));
+        $keyword = Pinjaman::keyword();
+        $kec->load(['ttd', 'ttdSpk']);
+
+        return view('sop.partials.ttd_dokumen')->with(compact('title', 'kec', 'ttd', 'tanggal', 'jenis', 'daftarJenis', 'keyword', 'statis', 'pinjaman'));
     }
 
-    public function ttdSpk()
+    public function resetTtdDokumen(Request $request)
     {
-        $title = "Pengaturan Tanda Tangan SPK";
-        $kec = Kecamatan::where('id', Session::get('lokasi'))->with('ttd')->first();
-        $keyword = Pinjaman::keyword();
+        $jenis = $request->get('jenis');
+        $lokasi = Session::get('lokasi');
 
-        return view('sop.partials.ttd_spk')->with(compact('title', 'kec', 'keyword'));
+        $allowed = array_merge(
+            array_keys(TandaTanganDokumen::daftarJenis()),
+            array_keys(TandaTanganDokumen::daftarJenisDokumenPinjaman())
+        );
+
+        if (!$jenis || !in_array($jenis, $allowed, true)) {
+            return response()->json(['success' => false, 'msg' => 'Jenis dokumen tidak valid'], 422);
+        }
+
+        $deleted = TandaTanganDokumen::where('lokasi', $lokasi)
+                                     ->where('jenis', $jenis)
+                                     ->delete();
+
+        return response()->json([
+            'success' => true,
+            'msg' => $deleted
+                ? 'Tanda Tangan ' . ucwords(str_replace('_', ' ', $jenis)) . ' berhasil direset'
+                : 'Tidak ada tanda tangan untuk jenis ' . ucwords(str_replace('_', ' ', $jenis)),
+        ]);
+    }
+
+    public function ttdDokumenData(Request $request)
+    {
+        $jenis = $request->get('jenis', 'laporan');
+
+        $allowed = array_merge(
+            array_keys(TandaTanganDokumen::daftarJenis()),
+            array_keys(TandaTanganDokumen::daftarJenisDokumenPinjaman())
+        );
+
+        if (!in_array($jenis, $allowed, true)) {
+            return response()->json(['success' => false, 'msg' => 'Jenis dokumen tidak valid'], 422);
+        }
+
+        $ttd = TandaTanganDokumen::where('lokasi', Session::get('lokasi'))
+                                 ->where('jenis', $jenis)
+                                 ->first();
+
+        $tanggal = false;
+        if ($ttd) {
+            $str = strpos((string) $ttd->tanda_tangan, '{tanggal}');
+            if ($str !== false) {
+                $tanggal = true;
+            }
+        }
+
+        return response()->json([
+            'success'     => true,
+            'jenis'       => $jenis,
+            'tanda_tangan' => $ttd ? json_decode($ttd->tanda_tangan, true) : '',
+            'tanggal'     => $tanggal,
+        ]);
     }
 
     public function simpanTtdPelaporan(Request $request)
     {
         $data = $request->only([
             'field',
+            'jenis',
             'tanda_tangan'
         ]);
 
-        if ($data['field'] == 'tanda_tangan_pelaporan') {
-            $data['tanda_tangan'] = preg_replace('/<table[^>]*>/', '<table class="p0" border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">', $data['tanda_tangan'], 1);
-            $jenis = 'laporan';
-        } else {
-            $data['tanda_tangan'] = preg_replace('/<table[^>]*>/', '<table class="p0" border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 12px;">', $data['tanda_tangan'], 1);
-            $jenis = 'spk';
+        $allowed = array_merge(
+            array_keys(TandaTanganDokumen::daftarJenis()),
+            array_keys(TandaTanganDokumen::daftarJenisDokumenPinjaman())
+        );
+
+        $jenis = $data['jenis'] ?? null;
+        if (!$jenis || !in_array($jenis, $allowed, true)) {
+            if ($data['field'] == 'tanda_tangan_pelaporan') {
+                $jenis = 'laporan';
+            } else {
+                $jenis = 'spk';
+            }
         }
+
+        $fontSize = ($jenis === 'laporan') ? '11px' : '12px';
+        $data['tanda_tangan'] = preg_replace('/<table[^>]*>/', '<table class="p0" border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: ' . $fontSize . ';">', $data['tanda_tangan'], 1);
         $data['tanda_tangan'] = preg_replace('/height:\s*[^;]+;?/', '', $data['tanda_tangan']);
 
         $data['tanda_tangan'] = str_replace('colgroup', 'tr', $data['tanda_tangan']);
@@ -517,7 +598,7 @@ class SopController extends Controller
 
         return response()->json([
             'success' => true,
-            'msg' => ucwords(str_replace('_', ' ', $data['field'])) . ' Berhasil diperbarui'
+            'msg' => 'Tanda Tangan ' . ucwords(str_replace('_', ' ', $jenis)) . ' Berhasil diperbarui'
         ]);
     }
 
