@@ -26,12 +26,14 @@
 
         .box {
             width: 14cm;
-            height: 9cm;
+            min-height: 9cm;
             border: 2px solid #000;
             padding-top: 16px;
             padding-bottom: 12px;
             padding-right: 22px;
             padding-left: 12px;
+            display: flex;
+            flex-direction: column;
         }
 
         .box-header {
@@ -97,6 +99,27 @@
             padding-top: 0px;
             padding-left: 24px;
             padding-right: 24px;
+        }
+
+        .ttd-table {
+            margin-top: auto;
+            padding-top: 20px;
+        }
+
+        .ttd-table td {
+            vertical-align: top;
+            text-align: center;
+            width: 33.33%;
+        }
+
+        .ttd-space {
+            height: 50px;
+        }
+
+        .ttd-name {
+            border-top: 1px solid rgba(0, 0, 0, 0.4);
+            padding-top: 4px;
+            font-weight: bold;
         }
 
         .keterangan {
@@ -218,31 +241,26 @@
                     @endfor
                 </table>
 
-                <table width="100%" class="fs-12">
+                <table width="100%" class="ttd-table">
                     <tr>
-                        <td align="center">Disetujui,</td>
-                        <td align="center">Diverifikasi,</td>
-                        <td align="center">Disiapkan Oleh :</td>
+                        <td>Disetujui,</td>
+                        <td>Diverifikasi,</td>
+                        <td>Disiapkan Oleh :</td>
                     </tr>
                     <tr>
-                        <td align="center"><?php echo $kec->sebutan_level_1; ?></td>
-                        <td align="center"><?php echo $kec->sebutan_level_3; ?></td>
-                        <td align="center">&nbsp;</td>
+                        <td><?php echo $kec->sebutan_level_1; ?></td>
+                        <td><?php echo $kec->sebutan_level_3; ?></td>
+                        <td>&nbsp;</td>
                     </tr>
                     <tr>
-                        <td align="center">&nbsp;</td>
-                        <td align="center">&nbsp;</td>
-                        <td align="center">&nbsp;</td>
+                        <td class="ttd-space">&nbsp;</td>
+                        <td class="ttd-space">&nbsp;</td>
+                        <td class="ttd-space">&nbsp;</td>
                     </tr>
                     <tr>
-                        <td align="center">&nbsp;</td>
-                        <td align="center">&nbsp;</td>
-                        <td align="center">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td align="center">{{ $dir->namadepan . ' ' . $dir->namabelakang }}</td>
-                        <td align="center">{{ $sekr->namadepan . ' ' . $sekr->namabelakang }}</td>
-                        <td align="center"><?php echo $kec->disiapkan; ?></td>
+                        <td class="ttd-name">{{ $dir->namadepan . ' ' . $dir->namabelakang }}</td>
+                        <td class="ttd-name">{{ $sekr->namadepan . ' ' . $sekr->namabelakang }}</td>
+                        <td class="ttd-name"><?php echo $kec->disiapkan; ?></td>
                     </tr>
                 </table>
             </div>

@@ -19,7 +19,7 @@
 
         .box {
             width: 14cm;
-            height: 9cm;
+            min-height: 9cm;
             border: 2px solid #000;
             padding-top: 16px;
             padding-bottom: 12px;
