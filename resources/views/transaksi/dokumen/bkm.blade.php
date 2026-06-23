@@ -165,14 +165,22 @@
                         <td width="30%">Keterangan</td>
                         <td width="2%">:</td>
                         <td colspan="3" class="keterangan">
-                            {{ ucwords($trx->keterangan_transaksi) }}
+                            @if ($trx->tr_idtp && $trx->tr_idtp->count() > 0)
+                                {{ ucwords('Angsuran Pokok dan Jasa') }}
+                            @else
+                                {{ ucwords($trx->keterangan_transaksi) }}
+                            @endif
                         </td>
                     </tr>
                     <tr>
                         <td width="30%">Jumlah</td>
                         <td width="2%">:</td>
                         <td colspan="3" class="keterangan">
-                            Rp. {{ number_format($trx->jumlah, 2) }}
+                            @if ($trx->tr_idtp && $trx->tr_idtp->count() > 0)
+                                Rp. {{ number_format($trx->tr_idtp_sum_jumlah) }}
+                            @else
+                                Rp. {{ number_format($trx->jumlah, 2) }}
+                            @endif
                         </td>
                     </tr>
                     <tr>
