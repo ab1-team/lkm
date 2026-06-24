@@ -219,12 +219,19 @@
                                     $trx->rekening_debit != '1.1.03.03'
                                 ))
                             @php
-                                $count = 3;
+                                $maxKredit = 5;
+                                $count = $maxKredit;
+                                $totalTr = $trx->tr_idtp->count();
+                                $shown = 0;
                             @endphp
 
                             @foreach ($trx->tr_idtp as $tr)
+                                @if ($shown >= $maxKredit)
+                                    @continue
+                                @endif
                                 @php
                                     $count--;
+                                    $shown++;
                                     $data_idt[] = $tr->idt;
                                 @endphp
                                 <tr>
@@ -235,6 +242,16 @@
                                     </td>
                                 </tr>
                             @endforeach
+
+                            @if ($totalTr > $maxKredit)
+                                <tr>
+                                    <td width="30%">&nbsp;</td>
+                                    <td width="2%">&nbsp;</td>
+                                    <td colspan="3" class="keterangan">
+                                        <em>+ {{ $totalTr - $maxKredit }} baris kredit lainnya</em>
+                                    </td>
+                                </tr>
+                            @endif
 
                             @for ($i = 0; $i < $count; $i++)
                                 <tr>
