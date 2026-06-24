@@ -177,7 +177,13 @@
                         <td width="2%">:</td>
                         <td colspan="3" class="keterangan">
                             @if ($trx->tr_idtp && $trx->tr_idtp->count() > 0)
-                                Rp. {{ number_format($trx->tr_idtp_sum_jumlah) }}
+                                @php
+                                    $akunFilterJumlah = ['4.1.06.04', '4.1.03.04', '2.1.04.01'];
+                                    $sumFiltered = $trx->tr_idtp->filter(function ($tr) use ($akunFilterJumlah) {
+                                        return in_array($tr->rekening_kredit, $akunFilterJumlah);
+                                    })->sum('jumlah');
+                                @endphp
+                                Rp. {{ number_format($sumFiltered) }}
                             @else
                                 Rp. {{ number_format($trx->jumlah, 2) }}
                             @endif
@@ -193,13 +199,20 @@
 
                     @if ($trx->tr_idtp && $trx->tr_idtp->count() > 0)
                         @php
+                            $akunFilter = ['4.1.06.04', '4.1.03.04', '2.1.04.01'];
+                        @endphp
+
+                        @php
+                            $trFiltered = $trx->tr_idtp->filter(function ($tr) use ($akunFilter) {
+                                return in_array($tr->rekening_kredit, $akunFilter);
+                            });
                             $maxKredit = 5;
                             $count = $maxKredit;
-                            $totalTr = $trx->tr_idtp->count();
+                            $totalTr = $trFiltered->count();
                             $shown = 0;
                         @endphp
 
-                        @foreach ($trx->tr_idtp as $tr)
+                        @foreach ($trFiltered as $tr)
                             @if ($shown >= $maxKredit)
                                 @continue
                             @endif
