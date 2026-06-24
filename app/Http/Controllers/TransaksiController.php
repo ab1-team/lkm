@@ -2443,6 +2443,14 @@ class TransaksiController extends Controller
 
         $kec = Kecamatan::where('id', Session::get('lokasi'))->with('kabupaten')->first();
         $trx = Transaksi::where('idt', $id)->with('rek_debit', 'rek_kredit', 'tr_idtp', 'tr_idtp.rek_kredit')->withSum('tr_idtp', 'jumlah')->first();
+
+        if ($trx && (int) $trx->idtp === 0) {
+            $trx->setRelation('tr_idtp', collect());
+            $trx->tr_idtp_sum_jumlah = 0;
+        } elseif ($trx) {
+            $trx->setRelation('tr_idtp', $trx->tr_idtp->where('idt', '!=', $trx->idt)->values());
+            $trx->tr_idtp_sum_jumlah = $trx->tr_idtp->sum('jumlah');
+        }
         $user = User::where('id', $trx->id_user)->first();
 
         $dir = User::where([
@@ -2495,6 +2503,14 @@ class TransaksiController extends Controller
 
         $kec = Kecamatan::where('id', Session::get('lokasi'))->with('kabupaten')->first();
         $trx = Transaksi::where('idt', $id)->with('rek_debit', 'tr_idtp', 'tr_idtp.rek_kredit')->withSum('tr_idtp', 'jumlah')->first();
+
+        if ($trx && (int) $trx->idtp === 0) {
+            $trx->setRelation('tr_idtp', collect());
+            $trx->tr_idtp_sum_jumlah = 0;
+        } elseif ($trx) {
+            $trx->setRelation('tr_idtp', $trx->tr_idtp->where('idt', '!=', $trx->idt)->values());
+            $trx->tr_idtp_sum_jumlah = $trx->tr_idtp->sum('jumlah');
+        }
         $user = User::where('id', $trx->id_user)->first();
 
         $dir = User::where([
@@ -2522,6 +2538,16 @@ class TransaksiController extends Controller
 
         $data['kec'] = Kecamatan::where('id', Session::get('lokasi'))->with('kabupaten')->first();
         $data['transaksi'] = Transaksi::whereIn('idt', $idt)->with('rek_debit', 'rek_kredit', 'tr_idtp', 'tr_idtp.rek_kredit')->withSum('tr_idtp', 'jumlah')->get();
+
+        foreach ($data['transaksi'] as $trx) {
+            if ((int) $trx->idtp === 0) {
+                $trx->setRelation('tr_idtp', collect());
+                $trx->tr_idtp_sum_jumlah = 0;
+            } else {
+                $trx->setRelation('tr_idtp', $trx->tr_idtp->where('idt', '!=', $trx->idt)->values());
+                $trx->tr_idtp_sum_jumlah = $trx->tr_idtp->sum('jumlah');
+            }
+        }
 
         $data['dir'] = User::where([
             ['level', '1'],
@@ -2551,6 +2577,16 @@ class TransaksiController extends Controller
 
         $data['kec'] = Kecamatan::where('id', Session::get('lokasi'))->with('kabupaten')->first();
         $data['transaksi'] = Transaksi::whereIn('idt', $idt)->with('rek_debit', 'rek_kredit', 'tr_idtp', 'tr_idtp.rek_kredit')->withSum('tr_idtp', 'jumlah')->get();
+
+        foreach ($data['transaksi'] as $trx) {
+            if ((int) $trx->idtp === 0) {
+                $trx->setRelation('tr_idtp', collect());
+                $trx->tr_idtp_sum_jumlah = 0;
+            } else {
+                $trx->setRelation('tr_idtp', $trx->tr_idtp->where('idt', '!=', $trx->idt)->values());
+                $trx->tr_idtp_sum_jumlah = $trx->tr_idtp->sum('jumlah');
+            }
+        }
 
         $data['dir'] = User::where([
             ['level', '1'],
