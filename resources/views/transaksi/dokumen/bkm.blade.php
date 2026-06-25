@@ -165,7 +165,7 @@
                         <td width="30%">Keterangan</td>
                         <td width="2%">:</td>
                         <td colspan="3" class="keterangan">
-                            @if ($trx->tr_idtp && $trx->tr_idtp->count() > 0)
+                            @if ($trx->tr_idtp && $trx->tr_idtp->count() > 0 && (int) $trx->idtp !== 0)
                                 {{ ucwords('Angsuran Pokok dan Jasa') }}
                             @else
                                 {{ ucwords($trx->keterangan_transaksi) }}
@@ -176,16 +176,19 @@
                         <td width="30%">Jumlah</td>
                         <td width="2%">:</td>
                         <td colspan="3" class="keterangan">
-                            @if ($trx->tr_idtp && $trx->tr_idtp->count() > 0)
+                            @if ($trx->tr_idtp && $trx->tr_idtp->count() > 0 && (int) $trx->idtp !== 0)
                                 @php
                                     $akunFilterJumlah = ['4.1.06.04', '4.1.03.04', '2.1.04.01'];
                                     $sumFiltered = $trx->tr_idtp->filter(function ($tr) use ($akunFilterJumlah) {
                                         return in_array($tr->rekening_kredit, $akunFilterJumlah);
                                     })->sum('jumlah');
+                                    if ($sumFiltered <= 0) {
+                                        $sumFiltered = $trx->jumlah ?? 0;
+                                    }
                                 @endphp
-                                Rp. {{ number_format($sumFiltered) }}
+                                Rp. {{ number_format((float) $sumFiltered, 2) }}
                             @else
-                                Rp. {{ number_format($trx->jumlah, 2) }}
+                                Rp. {{ number_format((float) ($trx->jumlah ?? 0), 2) }}
                             @endif
                         </td>
                     </tr>
@@ -197,10 +200,7 @@
                         </td>
                     </tr>
 
-                    @if ($trx->tr_idtp && $trx->tr_idtp->count() > 0)
-                        @php
-                            $akunFilter = ['4.1.06.04', '4.1.03.04', '2.1.04.01'];
-                        @endphp
+                    @if ($trx->tr_idtp && $trx->tr_idtp->count() > 0 && (int) $trx->idtp !== 0)
 
                         @php
                             $trFiltered = $trx->tr_idtp->filter(function ($tr) use ($akunFilter) {

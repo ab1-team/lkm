@@ -2451,6 +2451,11 @@ class TransaksiController extends Controller
             $trx->setRelation('tr_idtp', $trx->tr_idtp->where('idt', '!=', $trx->idt)->values());
             $trx->tr_idtp_sum_jumlah = $trx->tr_idtp->sum('jumlah');
         }
+
+        if ($trx) {
+            $trx->jumlah = (float) ($trx->jumlah ?? 0);
+        }
+
         $user = User::where('id', $trx->id_user)->first();
 
         $dir = User::where([
