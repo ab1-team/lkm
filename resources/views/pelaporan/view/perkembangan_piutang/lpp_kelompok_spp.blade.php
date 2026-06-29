@@ -16,9 +16,7 @@
 
     @foreach ($jenis_pp as $jpp)
         @php
-            if ($jpp->pinjaman_kelompok->isEmpty()) {
-                continue;
-            }
+            $is_empty = $jpp->pinjaman_kelompok->isEmpty();
         @endphp
 
         @php
@@ -37,6 +35,22 @@
             $t_tunggakan_pokok = 0;
             $t_tunggakan_jasa = 0;
             $nomor = 1;
+            $section = 0;
+            $nama_desa = '';
+            $j_alokasi = 0;
+            $j_target_pokok = 0;
+            $j_target_jasa = 0;
+            $j_real_bl_pokok = 0;
+            $j_real_bl_jasa = 0;
+            $j_real_pokok = 0;
+            $j_real_jasa = 0;
+            $j_real_bi_pokok = 0;
+            $j_real_bi_jasa = 0;
+            $j_saldo_pokok = 0;
+            $j_saldo_jasa = 0;
+            $j_tunggakan_pokok = 0;
+            $j_tunggakan_jasa = 0;
+            $j_pross = 1;
         @endphp
 
         @if ($page_break)
@@ -93,7 +107,7 @@
                 <th class="t l b r" width="6%">Jasa</th>
             </tr>
 
-            @foreach ($jpp->pinjaman_kelompok as $pinkel)
+            @forelse ($jpp->pinjaman_kelompok as $pinkel)
                 @php
                     $kd_desa[] = $pinkel->kd_desa;
                     $desa = $pinkel->kd_desa;
@@ -285,7 +299,13 @@
                     $j_tunggakan_pokok += $tunggakan_pokok;
                     $j_tunggakan_jasa += $tunggakan_jasa;
                 @endphp
-            @endforeach
+            @empty
+                <tr>
+                    <td class="t l b r" colspan="17" align="center" style="padding: 8px 0;">
+                        <em>Tidak ada data pinjaman kelompok untuk {{ $jpp->nama_jpp }}</em>
+                    </td>
+                </tr>
+            @endforelse
 
             @php
                 $t_alokasi += $j_alokasi;

@@ -5149,6 +5149,13 @@ class PelaporanController extends Controller
                     $tb_kel = 'kelompok_' . $data['kec']->id;
                     $data['tb_pinkel'] = $tb_pinkel;
 
+                    // Pre-compute jenis_pp mana saja yang punya pinkel sistem mingguan (12/25) di lokasi ini
+                    $mingguan_jpp_ids = \DB::table($tb_pinkel)
+                        ->whereIn('sistem_angsuran', ['12', '25'])
+                        ->distinct()
+                        ->pluck('jenis_pp')
+                        ->toArray();
+
                     $query->select($tb_pinkel . '.*', $tb_kel . '.nama_kelompok', $tb_kel . '.ketua', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
                         ->join($tb_kel, $tb_kel . '.id', '=', $tb_pinkel . '.id_kel')
                         ->join('desa', $tb_kel . '.desa', '=', 'desa.kd_desa')
@@ -5159,7 +5166,14 @@ class PelaporanController extends Controller
                         ->withSum(['real' => function ($q) use ($data) {
                             $q->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->whereNotIn($tb_pinkel . '.sistem_angsuran', ['12', '25'])
+                        ->where(function ($q) use ($tb_pinkel, $mingguan_jpp_ids) {
+                            if (!empty($mingguan_jpp_ids)) {
+                                $q->whereIn($tb_pinkel . '.jenis_pp', $mingguan_jpp_ids)
+                                    ->orWhereNotIn($tb_pinkel . '.sistem_angsuran', ['12', '25']);
+                            } else {
+                                $q->whereNotIn($tb_pinkel . '.sistem_angsuran', ['12', '25']);
+                            }
+                        })
                         ->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinkel'] . '.status', 'A'],
