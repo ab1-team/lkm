@@ -324,44 +324,16 @@ class PelaporanController extends Controller
         }
 
         if (is_string($result)) {
+            $html = $result;
             try {
-                $html = $result;
+                // Gunakan ExcelExporter untuk konversi HTML ke native Excel
+                $exporter = new \App\Utils\ExcelExporter();
+                $exporter->fromHtml($html);
                 
-                // Clean HTML - simple replacements only (no complex regex)
-                $html = preg_replace('/<meta[^>]+>/i', '', $html);
-                $html = preg_replace('/<style[^>]*>.*?<\/style>/is', '', $html);
-                $html = preg_replace('/<!--.*?-->/s', '', $html);
-                $html = str_replace(['<header>', '</header>', '<main>', '</main>', '<body>', '</body>', '<html>', '</html>', '<!DOCTYPE html>', '<html lang="en" translate="no">'], '', $html);
-                
-                // Convert border classes to inline styles
-                $html = str_replace('class="l"', 'style="border-left: 1px solid #000"', $html);
-                $html = str_replace('class="t"', 'style="border-top: 1px solid #000"', $html);
-                $html = str_replace('class="r"', 'style="border-right: 1px solid #000"', $html);
-                $html = str_replace('class="b"', 'style="border-bottom: 1px solid #000"', $html);
-                
-                // Remove cellspacing and cellpadding attributes
-                $html = preg_replace('/\s+cellspacing="[^"]*"/', '', $html);
-                $html = preg_replace('/\s+cellpadding="[^"]*"/', '', $html);
-                
-                // Remove class attributes
-                $html = preg_replace('/\s+class="[^"]*"/', '', $html);
-                
-                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Html();
-                $spreadsheet = $reader->loadFromString($html);
-                
-                // Auto-size columns
-                foreach ($spreadsheet->getAllSheets() as $sheet) {
-                    foreach ($sheet->getColumnIterator() as $column) {
-                        $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
-                    }
-                }
-
                 $filename = ($request->laporan ?? 'laporan')
                     . '_' . $data['tahun']
                     . ($data['bulanan'] ? '_' . $data['bulan'] : '')
                     . '.xlsx';
-
-                $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
 
                 if (ob_get_length()) ob_end_clean();
                 
@@ -369,10 +341,13 @@ class PelaporanController extends Controller
                 header('Content-Disposition: attachment;filename="' . $filename . '"');
                 header('Cache-Control: max-age=0');
 
-                $writer->save('php://output');
+                $exporter->output();
                 exit;
             } catch (\Exception $e) {
-                // Fallback: simple Excel download
+                // Log error untuk debug
+                \Log::error('Excel Export Error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+                
+                // Fallback
                 if (ob_get_length()) ob_end_clean();
                 
                 $filename = ($request->laporan ?? 'laporan') . '_' . $data['tahun'] . '.xls';

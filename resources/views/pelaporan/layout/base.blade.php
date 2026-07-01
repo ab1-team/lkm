@@ -1,8 +1,5 @@
 @php
-    if ($type == 'excel') {
-        header('Content-type: application/vnd-ms-excel');
-        header('Content-Disposition: attachment; filename=' . ucwords(str_replace('_', ' ', $laporan)) . ' (' . ucwords($tgl) . ').xls');
-    }
+    // Header Excel ditangani oleh controller, jangan kirim di sini
 @endphp
 
 <!DOCTYPE html>
