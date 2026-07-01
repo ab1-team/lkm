@@ -327,124 +327,34 @@ class PelaporanController extends Controller
             try {
                 $html = $result;
                 
-                // Remove meta tags
+                // Clean HTML - simple replacements only (no complex regex)
                 $html = preg_replace('/<meta[^>]+>/i', '', $html);
-                
-                // Remove style tags
                 $html = preg_replace('/<style[^>]*>.*?<\/style>/is', '', $html);
-                
-                // Remove comments
                 $html = preg_replace('/<!--.*?-->/s', '', $html);
+                $html = str_replace(['<header>', '</header>', '<main>', '</main>', '<body>', '</body>', '<html>', '</html>', '<!DOCTYPE html>', '<html lang="en" translate="no">'], '', $html);
                 
-                // Clean up unsupported tags
-                $html = str_replace(['<header>', '</header>', '<main>', '</main>', '<body>', '</body>'], '', $html);
-                $html = str_replace(['<html>', '</html>', '<!DOCTYPE html>', '<html lang="en" translate="no">'], '', $html);
+                // Convert border classes to inline styles
+                $html = str_replace('class="l"', 'style="border-left: 1px solid #000"', $html);
+                $html = str_replace('class="t"', 'style="border-top: 1px solid #000"', $html);
+                $html = str_replace('class="r"', 'style="border-right: 1px solid #000"', $html);
+                $html = str_replace('class="b"', 'style="border-bottom: 1px solid #000"', $html);
                 
-                // Convert CSS classes (.l, .t, .r, .b) ke inline styles
-                $html = preg_replace_callback('/<td([^>]*?)class="([ltrb\s]+)"([^>]*?)>/', function($m) {
-                    $borders = preg_split('/\s+/', trim($m[2]));
-                    $sides = ['l' => 'left', 't' => 'top', 'r' => 'right', 'b' => 'bottom'];
-                    $borderStyles = [];
-                    foreach ($borders as $b) {
-                        if (isset($sides[$b])) {
-                            $borderStyles[] = 'border-' . $sides[$b] . ': 1px solid #000';
-                        }
-                    }
-                    return '<td' . $m[1] . $m[3] . ' data-border="1" style="' . implode('; ', $borderStyles) . '">';
-                }, $html);
+                // Remove cellspacing and cellpadding attributes
+                $html = preg_replace('/\s+cellspacing="[^"]*"/', '', $html);
+                $html = preg_replace('/\s+cellpadding="[^"]*"/', '', $html);
                 
-                $html = preg_replace_callback('/<th([^>]*?)class="([ltrb\s]+)"([^>]*?)>/', function($m) {
-                    $borders = preg_split('/\s+/', trim($m[2]));
-                    $sides = ['l' => 'left', 't' => 'top', 'r' => 'right', 'b' => 'bottom'];
-                    $borderStyles = [];
-                    foreach ($borders as $b) {
-                        if (isset($sides[$b])) {
-                            $borderStyles[] = 'border-' . $sides[$b] . ': 1px solid #000';
-                        }
-                    }
-                    return '<th' . $m[1] . $m[3] . ' data-border="1" style="' . implode('; ', $borderStyles) . '">';
-                }, $html);
-                
-                // Convert HTML attributes ke inline CSS
-                
-                // 1. cellpadding → padding di setiap cell
-                $html = preg_replace_callback('/<table([^>]*?)cellpadding="(\d+)"([^>]*)>/', function($m) {
-                    $pad = $m[2] . 'px';
-                    $tag = '<table' . $m[1] . $m[3];
-                    if (strpos($tag, 'style=') === false) {
-                        return $tag . ' style="border-collapse: collapse;">';
-                    }
-                    return preg_replace('/style="/', 'style="border-collapse: collapse; ', $tag) . '>';
-                }, $html);
-                
-                // 2. cellspacing → border-collapse
-                $html = preg_replace('/cellspacing="0"/', '', $html);
-                
-                // 3. align → text-align
-                $html = preg_replace('/<td([^>]*?)align="(left|right|center)"([^>]*?)>/', function($m) {
-                    return '<td' . $m[1] . $m[3] . ' style="text-align: ' . $m[2] . ';">';
-                }, $html);
-                $html = preg_replace('/<th([^>]*?)align="(left|right|center)"([^>]*?)>/', function($m) {
-                    return '<th' . $m[1] . $m[3] . ' style="text-align: ' . $m[2] . ';">';
-                }, $html);
-                
-                // 4. width → width style
-                $html = preg_replace('/<td([^>]*?)width="(\d+%?)"([^>]*?)>/', function($m) {
-                    $unit = strpos($m[2], '%') !== false ? '' : 'px';
-                    return '<td' . $m[1] . $m[3] . ' style="width: ' . $m[2] . $unit . ';">';
-                }, $html);
-                $html = preg_replace('/<table([^>]*?)width="(\d+%?)"([^>]*?)>/', function($m) {
-                    $unit = strpos($m[2], '%') !== false ? '' : 'px';
-                    return '<table' . $m[1] . $m[3] . ' style="width: ' . $m[2] . $unit . '; border-collapse: collapse;">';
-                }, $html);
-                
-                // 5. height → height style
-                $html = preg_replace('/<td([^>]*?)height="(\d+)"([^>]*?)>/', function($m) {
-                    return '<td' . $m[1] . $m[3] . ' style="height: ' . $m[2] . 'px;">';
-                }, $html);
-                
-                // 6. colspan dan rowspan tetap dipertahankan (didukung PhpSpreadsheet)
-                
-                // Add table styling jika belum ada
-                $html = preg_replace('/<table(?![^>]*style)(?![^>]*border-collapse)/', '<table style="border-collapse: collapse;"', $html);
-                $html = preg_replace('/<table([^>]*?)style="((?!border-collapse)[^"]*)"/', '<table$1style="border-collapse: collapse; $2"', $html);
-                
-                // Default Excel style: border tipis abu-abu, padding kecil
-                $defaultTdStyle = 'border: 1px solid #D9D9D9; padding: 2px 4px; vertical-align: bottom;';
-                $defaultThStyle = 'border: 1px solid #D9D9D9; padding: 2px 4px; font-weight: bold; vertical-align: bottom;';
-                
-                // Tambah default ke td yang BELUM punya border eksplisit
-                $html = preg_replace('/<td(?![^>]*data-border)(?![^>]*style)/', '<td style="' . $defaultTdStyle . '"', $html);
-                $html = preg_replace('/<td(?![^>]*data-border)([^>]*?)style="((?!border)[^"]*)"/', '<td$1style="$2; ' . $defaultTdStyle . '"', $html);
-                
-                // Tambah default ke th yang BELUM punya border eksplisit
-                $html = preg_replace('/<th(?![^>]*data-border)(?![^>]*style)/', '<th style="' . $defaultThStyle . '"', $html);
-                $html = preg_replace('/<th(?![^>]*data-border)([^>]*?)style="((?!border)[^"]*)"/', '<th$1style="$2; ' . $defaultThStyle . '"', $html);
-                
-                // Hapus marker
-                $html = preg_replace('/\s+data-border="1"/', '', $html);
-                
-                // Remove any remaining class attributes
+                // Remove class attributes
                 $html = preg_replace('/\s+class="[^"]*"/', '', $html);
                 
-                // Remove empty style attributes
-                $html = preg_replace('/style="\s*"/', '', $html);
-                
-                $useErrors = libxml_use_internal_errors(true);
-
                 $reader = new \PhpOffice\PhpSpreadsheet\Reader\Html();
                 $spreadsheet = $reader->loadFromString($html);
                 
-                // Auto-size columns for better readability
+                // Auto-size columns
                 foreach ($spreadsheet->getAllSheets() as $sheet) {
                     foreach ($sheet->getColumnIterator() as $column) {
-                        $colIndex = $column->getColumnIndex();
-                        $sheet->getColumnDimension($colIndex)->setAutoSize(true);
+                        $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
                     }
                 }
-
-                libxml_clear_errors();
-                libxml_use_internal_errors($useErrors);
 
                 $filename = ($request->laporan ?? 'laporan')
                     . '_' . $data['tahun']
@@ -453,22 +363,22 @@ class PelaporanController extends Controller
 
                 $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
 
-                // Clear any previous output
                 if (ob_get_length()) ob_end_clean();
                 
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 header('Content-Disposition: attachment;filename="' . $filename . '"');
                 header('Cache-Control: max-age=0');
-                header('Content-Transfer-Encoding: binary');
 
                 $writer->save('php://output');
                 exit;
             } catch (\Exception $e) {
-                // Fallback: return HTML with Excel headers for basic download
+                // Fallback: simple Excel download
                 if (ob_get_length()) ob_end_clean();
                 
+                $filename = ($request->laporan ?? 'laporan') . '_' . $data['tahun'] . '.xls';
+                
                 header('Content-Type: application/vnd.ms-excel');
-                header('Content-Disposition: attachment;filename="' . ($request->laporan ?? 'laporan') . '_' . $data['tahun'] . '.xls"');
+                header('Content-Disposition: attachment;filename="' . $filename . '"');
                 
                 echo $html;
                 exit;
