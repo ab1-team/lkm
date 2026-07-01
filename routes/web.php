@@ -197,6 +197,8 @@ Route::get('/pengaturan/users', [SopController::class, 'users'])->middleware('au
 Route::get('/ttd-dokumen', [SopController::class, 'ttdDokumen'])->middleware('auth', 'is_aktif');
 Route::get('/ttd-dokumen/data', [SopController::class, 'ttdDokumenData'])->middleware('auth', 'is_aktif');
 Route::delete('/ttd-dokumen', [SopController::class, 'resetTtdDokumen'])->middleware('auth', 'is_aktif');
+Route::get('/pengaturan/ttd_pelaporan', fn () => redirect('/ttd-dokumen?jenis=laporan'))->middleware('auth', 'is_aktif');
+Route::get('/pengaturan/ttd_spk', fn () => redirect('/ttd-dokumen?jenis=spk'))->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/pesan_whatsapp/{kec}', [SopController::class, 'pesanWhatsapp'])->middleware('auth', 'is_aktif');
 
 Route::put('/pengaturan/lembaga/{kec}', [SopController::class, 'lembaga'])->middleware('auth', 'is_aktif');
