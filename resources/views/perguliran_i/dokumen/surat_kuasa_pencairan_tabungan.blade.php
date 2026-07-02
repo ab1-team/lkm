@@ -64,7 +64,7 @@
         </tr>
         <tr class="no-break">
             <td class="style9" style="white-space:nowrap;">No. Rekening Tabungan</td>
-            <td class="style27" style="padding-left:14px;text-indent:-14px;">: {{ $pinkel->anggota->simpanan->nomor_rekening ?? '-' }}</td>
+            <td class="style27" style="padding-left:14px;text-indent:-14px;">: {{ $nomor_rekening }}</td>
             <td class="style9">&nbsp;</td>
         </tr>
         <tr class="no-break">

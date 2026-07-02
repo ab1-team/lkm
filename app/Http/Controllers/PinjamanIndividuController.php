@@ -1942,8 +1942,13 @@ class PinjamanIndividuController extends Controller
     {
         $data['pinkel'] = PinjamanIndividu::where('id', $id)->with([
             'anggota',
-            'anggota.simpanan',
         ])->first();
+
+        try {
+            $data['nomor_rekening'] = $data['pinkel']->anggota->simpanan->nomor_rekening ?? '-';
+        } catch (\Exception $e) {
+            $data['nomor_rekening'] = '-';
+        }
 
         $data['kec'] = Kecamatan::where('id', Session::get('lokasi'))->first();
 
