@@ -141,7 +141,7 @@
                         <td class="border center">{{ $simpanan->id }}</td>
                         <td class="border center">{{ $simpanan->nik }}</td>
                         <td class="border center">{{ $jenis->nama_js }}</td>
-                        <td class="border right">{{ number_format($jumlah, 0, ',', '.') }}</td>
+                        <td class="border right">{{ number_format($jumlah, 0, '.', ',') }}</td>
                         <td class="border center">
                             {{ date('d-m-Y', strtotime($simpanan->tgl_buka)) }}
                         </td>
@@ -165,7 +165,7 @@
             <tr>
                 <td colspan="6" class="border center"><b>Jumlah</b></td>
                 <td class="border right">
-                    <b>{{ number_format($total, 0, ',', '.') }}</b>
+                    <b>{{ number_format($total, 0, '.', ',') }}</b>
                 </td>
                 <td colspan="5" class="border"></td>
             </tr>

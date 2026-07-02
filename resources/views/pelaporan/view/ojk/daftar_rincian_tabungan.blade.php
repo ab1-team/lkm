@@ -167,13 +167,13 @@ $empty = false;
         </td>
         <td class="left top" align="center">{{ $simp ? $simp->bunga : '0' }}</td>
         <td width="20%" class="left top" align="left">Per Bulan</td>
-        <td class="left top" align="center"style="border: 1px solid;">{{ number_format($sum_saldo, 2) }}</td>
+        <td class="left top" align="center"style="border: 1px solid;">{{ number_format($sum_saldo, 0, '.', ',') }}</td>
     </tr>
 @endforeach
 
 <tr class="style9">
     <th colspan="5" class="left bottom top" align="center" style="background:rgba(0,0,0, 0.3);">JUMLAH SALDO</th>
-    <th class="left right bottom top" align="center">{{ number_format($total_saldo, 2) }}</th>
+    <th class="left right bottom top" align="center">{{ number_format($total_saldo, 0, '.', ',') }}</th>
 </tr>
 
     <tr class="style9">

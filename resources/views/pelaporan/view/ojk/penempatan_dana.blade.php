@@ -130,7 +130,7 @@
                 <td class="left bottom">{{$nomor}}</td>
                 <td class="left bottom">{{$rek->kode_akun}}</td>
                 <td class="left bottom">{{$rek->nama_akun}}</td>
-                <td class="left bottom right">{{$saldo}}</td>
+                <td class="left bottom right">{{number_format($saldo, 0, '.', ',')}}</td>
             </tr>
         @endforeach
         
