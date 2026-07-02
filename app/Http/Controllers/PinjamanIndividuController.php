@@ -1938,6 +1938,39 @@ class PinjamanIndividuController extends Controller
         }
     }
 
+    public function SuratKuasaPencairanTabungan($id, $data)
+    {
+        $data['pinkel'] = PinjamanIndividu::where('id', $id)->with([
+            'anggota',
+            'anggota.simpanan',
+        ])->first();
+
+        $data['kec'] = Kecamatan::where('id', Session::get('lokasi'))->first();
+
+        $data['dir'] = User::where([
+            ['level', '1'],
+            ['lokasi', Session::get('lokasi')],
+        ])
+            ->where(function ($query) {
+                if (Session::get('lokasi') == '351') {
+                    $query->where('jabatan', '3');
+                } else {
+                    $query->where('jabatan', '1');
+                }
+            })->with(['j'])->first();
+
+        $data['judul'] = 'Surat Kuasa Pencairan Tabungan ('.$data['pinkel']->anggota->namadepan.' - Loan ID. '.$data['pinkel']->id.')';
+        $view = view('perguliran_i.dokumen.surat_kuasa_pencairan_tabungan', $data)->render();
+
+        if ($data['type'] == 'pdf') {
+            $pdf = PDF::loadHTML($view);
+
+            return $pdf->stream();
+        } else {
+            return $view;
+        }
+    }
+
     public function cek_list($id, $data)
     {
         $data['pinkel'] = PinjamanIndividu::where('id', $id)->with([
