@@ -139,8 +139,7 @@
                             <i class="fas fa-save text-white" style="font-size: 1.3rem;"></i>
                         </div>
                         <h5 class="font-weight-bolder text-dark mb-1" style="font-size: 1rem;">Simpan Saldo</h5>
-                        <p class="text-xs text-secondary px-2 mb-0">Menyimpan dan mengunci saldo transaksi untuk periode
-                            yang dipilih.</p>
+                        <p class="text-xs text-secondary px-2 mb-0">Sinkronisasi transaksi buku besar, jika saldo buku besar tidak sama dengan di CaLK/Laba Rugi.</p>
                     </div>
                 </div>
             </div>
