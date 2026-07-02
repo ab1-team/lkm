@@ -53,6 +53,24 @@ class ExcelExporter
     private function processNodes(\DOMElement $parent): void
     {
         foreach ($parent->childNodes as $node) {
+            // Handle DOMText langsung (contoh: teks di dalam <li> tanpa wrapper)
+            if ($node instanceof \DOMText) {
+                $text = trim($node->textContent);
+                if (!empty($text)) {
+                    $maxCols = $this->sheet->getHighestColumn() 
+                        ? \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->sheet->getHighestColumn()) 
+                        : 8;
+                    $this->sheet->setCellValueByColumnAndRow(1, $this->currentRow, $text);
+                    if ($maxCols > 1) {
+                        $endCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($maxCols);
+                        $this->sheet->mergeCells('A' . $this->currentRow . ':' . $endCol . $this->currentRow);
+                    }
+                    $this->sheet->getCellByColumnAndRow(1, $this->currentRow)->getStyle()->getFont()->setName('Arial')->setSize(11);
+                    $this->currentRow++;
+                }
+                continue;
+            }
+            
             if (!($node instanceof \DOMElement)) continue;
             
             $tagName = strtolower($node->tagName);
@@ -73,82 +91,106 @@ class ExcelExporter
                     $this->currentRow++;
                 }
             } elseif (in_array($tagName, ['div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'])) {
-                // Tulis div/p/heading sebagai baris teks
-                $text = trim($this->getInnerHTML($node));
-                if (!empty($text)) {
-                    // Hitung maxCols dari tabel sebelumnya
-                    $maxCols = $this->sheet->getHighestColumn() 
-                        ? \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->sheet->getHighestColumn()) 
-                        : 8;
-                    
-                    // Cek apakah right-aligned (seperti "Kode Akun")
-                    $isRightAlign = false;
-                    $styleAttr = $node->getAttribute('style');
-                    $alignAttr = $node->getAttribute('align');
-                    
-                    if ($alignAttr === 'right' 
-                        || stripos($styleAttr, 'text-align:right') !== false 
-                        || stripos($styleAttr, 'text-align: right') !== false
-                        || stripos($styleAttr, 'text-align : right') !== false) {
-                        $isRightAlign = true;
-                    }
-                    
-                    // Cek juga parent node untuk style
-                    if (!$isRightAlign && $node->parentNode instanceof \DOMElement) {
-                        $parentStyle = $node->parentNode->getAttribute('style');
-                        if (stripos($parentStyle, 'text-align:right') !== false 
-                            || stripos($parentStyle, 'text-align: right') !== false) {
+                // Cek apakah elemen ini mengandung tabel descendant
+                if ($this->hasDescendantTable($node)) {
+                    // Jika ada tabel, recurse ke children agar tabel ditemukan
+                    $this->processNodes($node);
+                } else {
+                    // Tulis div/p/heading sebagai baris teks
+                    $text = trim($this->getInnerHTML($node));
+                    if (!empty($text)) {
+                        // Hitung maxCols dari tabel sebelumnya
+                        $maxCols = $this->sheet->getHighestColumn() 
+                            ? \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->sheet->getHighestColumn()) 
+                            : 8;
+                        
+                        // Cek apakah right-aligned (seperti "Kode Akun")
+                        $isRightAlign = false;
+                        $styleAttr = $node->getAttribute('style');
+                        $alignAttr = $node->getAttribute('align');
+                        
+                        if ($alignAttr === 'right' 
+                            || stripos($styleAttr, 'text-align:right') !== false 
+                            || stripos($styleAttr, 'text-align: right') !== false
+                            || stripos($styleAttr, 'text-align : right') !== false) {
                             $isRightAlign = true;
                         }
-                    }
-                    
-                    if ($isRightAlign) {
-                        // Right-aligned: tulis di kolom terakhir, merge dari tengah
-                        $startCol = max(1, $maxCols - 3); // Mulai dari kolom ke-5 (dari 8)
-                        $this->sheet->setCellValueByColumnAndRow($startCol, $this->currentRow, $text);
-                        if ($maxCols > $startCol) {
-                            $startColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($startCol);
-                            $endColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($maxCols);
-                            $this->sheet->mergeCells($startColLetter . $this->currentRow . ':' . $endColLetter . $this->currentRow);
+                        
+                        // Cek juga parent node untuk style
+                        if (!$isRightAlign && $node->parentNode instanceof \DOMElement) {
+                            $parentStyle = $node->parentNode->getAttribute('style');
+                            if (stripos($parentStyle, 'text-align:right') !== false 
+                                || stripos($parentStyle, 'text-align: right') !== false) {
+                                $isRightAlign = true;
+                            }
                         }
-                        $this->sheet->getCellByColumnAndRow($startCol, $this->currentRow)->getStyle()->getAlignment()
-                            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
-                    } else {
-                        // Default: tulis di kolom A, merge full width
-                        $this->sheet->setCellValueByColumnAndRow(1, $this->currentRow, $text);
-                        if ($maxCols > 1) {
-                            $endCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($maxCols);
-                            $this->sheet->mergeCells('A' . $this->currentRow . ':' . $endCol . $this->currentRow);
+                        
+                        if ($isRightAlign) {
+                            // Right-aligned: tulis di kolom terakhir, merge dari tengah
+                            $startCol = max(1, $maxCols - 3); // Mulai dari kolom ke-5 (dari 8)
+                            $this->sheet->setCellValueByColumnAndRow($startCol, $this->currentRow, $text);
+                            if ($maxCols > $startCol) {
+                                $startColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($startCol);
+                                $endColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($maxCols);
+                                $this->sheet->mergeCells($startColLetter . $this->currentRow . ':' . $endColLetter . $this->currentRow);
+                            }
+                            $this->sheet->getCellByColumnAndRow($startCol, $this->currentRow)->getStyle()->getAlignment()
+                                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                        } else {
+                            // Default: tulis di kolom A, merge full width
+                            $this->sheet->setCellValueByColumnAndRow(1, $this->currentRow, $text);
+                            if ($maxCols > 1) {
+                                $endCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($maxCols);
+                                $this->sheet->mergeCells('A' . $this->currentRow . ':' . $endCol . $this->currentRow);
+                            }
                         }
+                        
+                        // Style font
+                        $font = $this->sheet->getCellByColumnAndRow($isRightAlign ? $startCol : 1, $this->currentRow)->getStyle()->getFont();
+                        $font->setName('Arial');
+                        
+                        if ($tagName === 'h1') {
+                            $font->setSize(18)->setBold(true);
+                        } elseif ($tagName === 'h2') {
+                            $font->setSize(16)->setBold(true);
+                        } elseif ($tagName === 'h3') {
+                            $font->setSize(14)->setBold(true);
+                        } elseif (strpos($this->getInnerHTML($node), '<b') !== false || strpos($this->getInnerHTML($node), '<strong') !== false) {
+                            $font->setSize(11)->setBold(true);
+                        } else {
+                            $font->setSize(11);
+                        }
+                        
+                        // Alignment center untuk heading
+                        if (in_array($tagName, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])) {
+                            $this->sheet->getCellByColumnAndRow(1, $this->currentRow)->getStyle()->getAlignment()
+                                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                        }
+                        
+                        $this->currentRow++;
                     }
-                    
-                    // Style font
-                    $font = $this->sheet->getCellByColumnAndRow($isRightAlign ? $startCol : 1, $this->currentRow)->getStyle()->getFont();
-                    $font->setName('Arial');
-                    
-                    if ($tagName === 'h1') {
-                        $font->setSize(18)->setBold(true);
-                    } elseif ($tagName === 'h2') {
-                        $font->setSize(16)->setBold(true);
-                    } elseif ($tagName === 'h3') {
-                        $font->setSize(14)->setBold(true);
-                    } elseif (strpos($this->getInnerHTML($node), '<b') !== false || strpos($this->getInnerHTML($node), '<strong') !== false) {
-                        $font->setSize(11)->setBold(true);
-                    } else {
-                        $font->setSize(11);
-                    }
-                    
-                    // Alignment center untuk heading
-                    if (in_array($tagName, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])) {
-                        $this->sheet->getCellByColumnAndRow(1, $this->currentRow)->getStyle()->getAlignment()
-                            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                    }
-                    
-                    $this->currentRow++;
                 }
+            } elseif (in_array($tagName, ['ol', 'ul', 'li'])) {
+                // Recurse ke children untuk list tags
+                // (list items bisa mengandung tabel, div, teks, dll)
+                $this->processNodes($node);
             }
             // Tag lain (span, header, main, body, dll) diabaikan
         }
+    }
+
+    /**
+     * Cek apakah elemen punya descendant <table>
+     */
+    private function hasDescendantTable(\DOMElement $node): bool
+    {
+        foreach ($node->childNodes as $child) {
+            if ($child instanceof \DOMElement) {
+                if (strtolower($child->tagName) === 'table') return true;
+                if ($this->hasDescendantTable($child)) return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -529,14 +571,18 @@ class ExcelExporter
                 
                 // Tulis ke cell
                 if ($dataType === DataType::TYPE_NUMERIC) {
-                    $numericValue = (float) str_replace(',', '', $value);
-                    $this->sheet->setCellValueByColumnAndRow($colIndex, $this->currentRow, $numericValue);
-                    // Format: angka bulat tanpa desimal, angka desimal dengan 2 desimal
-                    if ($numericValue == (int) $numericValue && strpos($value, '.') === false) {
-                        $this->sheet->getCellByColumnAndRow($colIndex, $this->currentRow)->getStyle()->getNumberFormat()->setFormatCode('#,##0');
-                    } else {
-                        $this->sheet->getCellByColumnAndRow($colIndex, $this->currentRow)->getStyle()->getNumberFormat()->setFormatCode('#,##0.00');
+                    $isNegative = false;
+                    $cleanValue = $value;
+                    if (preg_match('/^\((.+)\)$/', $value, $m)) {
+                        $isNegative = true;
+                        $cleanValue = $m[1];
                     }
+                    $numericValue = (float) str_replace(',', '', $cleanValue);
+                    if ($isNegative) {
+                        $numericValue = -$numericValue;
+                    }
+                    $this->sheet->setCellValueByColumnAndRow($colIndex, $this->currentRow, $numericValue);
+                    $this->sheet->getCellByColumnAndRow($colIndex, $this->currentRow)->getStyle()->getNumberFormat()->setFormatCode('#,##0.00');
                 } elseif ($dataType === DataType::TYPE_STRING) {
                     $this->sheet->setCellValueExplicitByColumnAndRow($colIndex, $this->currentRow, $value, DataType::TYPE_STRING);
                 } else {
@@ -673,6 +719,13 @@ class ExcelExporter
         
         // Cek apakah angka (format: 1,234,567.00 atau (1,234,567.00) atau 0)
         if (preg_match('/^\(?\d[\d,]*\.?\d*\)?$/', $value)) {
+            // Cek digit signifikan — float presisi max ~15 digit
+            $clean = str_replace([',', '(', ')'], '', $value);
+            $clean = ltrim($clean, '0') ?: '0';
+            $digits = str_replace('.', '', $clean);
+            if (strlen($digits) > 15) {
+                return DataType::TYPE_STRING;
+            }
             return DataType::TYPE_NUMERIC;
         }
         
