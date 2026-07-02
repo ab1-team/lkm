@@ -186,11 +186,11 @@
                 if (is_array($jaminan) && isset($jaminan['jenis_jaminan'])) {
                     if ($jaminan['jenis_jaminan'] == '1') {
                         $agunan = "Tanah";
-                        $nilai_agunan = isset($jaminan['nilai_jual_tanah']) ? 'Rp ' . number_format((float)$jaminan['nilai_jual_tanah'], 0, ',', '.') : '-';
+                        $nilai_agunan = isset($jaminan['nilai_jual_tanah']) ? 'Rp ' . number_format((float)$jaminan['nilai_jual_tanah'], 0, '.', ',') : '-';
                     }
                     elseif ($jaminan['jenis_jaminan'] == '2') {
                         $agunan = "Kendaraan";
-                        $nilai_agunan = isset($jaminan['nilai_jual_kendaraan']) ? 'Rp ' . number_format($jaminan['nilai_jual_kendaraan'], 0, ',', '.') : '-';
+                        $nilai_agunan = isset($jaminan['nilai_jual_kendaraan']) ? 'Rp ' . number_format($jaminan['nilai_jual_kendaraan'], 0, '.', ',') : '-';
                     }
                     elseif ($jaminan['jenis_jaminan'] == '3') {
                         $agunan = "Kepegawaian";
@@ -198,11 +198,11 @@
                     }
                     elseif ($jaminan['jenis_jaminan'] == '4') {
                         $agunan = $jaminan['nama_jaminan'] ?? '-';
-                        $nilai_agunan = isset($jaminan['nilai_jaminan']) ? 'Rp ' . number_format($jaminan['nilai_jaminan'], 0, ',', '.') : '-';
+                        $nilai_agunan = isset($jaminan['nilai_jaminan']) ? 'Rp ' . number_format($jaminan['nilai_jaminan'], 0, '.', ',') : '-';
                     }
                     else {
                         $agunan = "Tanah";
-                        $nilai_agunan = isset($jaminan['nilai_jual_tanah']) ? 'Rp ' . number_format((float)$jaminan['nilai_jual_tanah'], 0, ',', '.') : '-';
+                        $nilai_agunan = isset($jaminan['nilai_jual_tanah']) ? 'Rp ' . number_format((float)$jaminan['nilai_jual_tanah'], 0, '.', ',') : '-';
                     }
                 } else {
                     // Default values if JSON decode fails
