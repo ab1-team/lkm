@@ -12,6 +12,7 @@ use App\Models\Kecamatan;
 use App\Models\Keluarga;
 use App\Models\kode;
 use App\Models\PinjamanIndividu;
+use App\Models\PinjamanAnggota;
 use App\Models\Rekening;
 use App\Models\RealAngsuranI;
 use App\Models\RealSimpanan;
@@ -277,8 +278,14 @@ class SimpananController extends Controller
 
         $title = 'Surat Kuasa Simpanan Tabungan (' . $simpanan->anggota->namadepan . ' - CIF. ' . $simpanan->id . ')';
 
+        $pinkel = PinjamanAnggota::where('nia', $simpanan->anggota->id)
+            ->whereIn('status', ['W', 'A', 'L'])
+            ->orderBy('id', 'desc')
+            ->first();
+
         $viewData = [
             'simpanan' => $simpanan,
+            'pinkel' => $pinkel,
             'kec' => $kec,
             'dir' => $dir,
             'nama_kabupaten' => $nama_kabupaten,
