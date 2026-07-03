@@ -367,7 +367,7 @@
                 <td width="50" align="center"></td>
                 <td width="60" align="center">
                     <strong>
-                        {{ session('lokasi') == '362' && $dir->jabatan == 1 ? 'Direktur Utama' : $dir->j->nama_jabatan }}
+                        {{ session('lokasi') == '362' && $dir->jabatan == 1 && $dir->level == 1 ? 'Direktur Utama' : $dir->j->nama_jabatan }}
                     </strong>
                 </td>
             </tr>
