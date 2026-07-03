@@ -103,9 +103,8 @@
                     <li>
                         Menggunakan dana tersebut untuk pembayaran kewajiban Pemberi Kuasa yang meliputi:
                         <ul>
-                            <li>Pokok pinjaman;</li>
-                            <li>Bunga pinjaman;</li>
-                            <li>Denda keterlambatan (apabila ada);</li>
+                            <li>Pokok pinjaman sebesar Rp {{ number_format($simpanan->jumlah, 0, ',', '.') }};</li>
+                            <li>Bunga pinjaman sebesar {{ $simpanan->bunga }}%;</li>
                             <li>Biaya administrasi atau biaya lain yang menjadi kewajiban Pemberi Kuasa
                                 berdasarkan Perjanjian Kredit.</li>
                         </ul>
