@@ -3,47 +3,44 @@
 <div class="app-main__inner">       
     <div class="tab-pane fade show active" id="ProfilDebitur" role="tabpanel" aria-labelledby="ProfilDebitur">
         <div class="main-card mb-3 card">
-            <div class="g-0 row">
-                <div class="col-md-6">
-                    <div class="widget-content">
-                        <div class="widget-content-wrapper">
-                            <div class="widget-content-left">
-                                <div class="widget-heading">Nasabah {{ $nia->anggota->namadepan }} CIF. {{$nia->id}} 
-                                    ({{ $nia->js->nama_js }})</div>
-                                <div class="widget-subheading">
-                                    <span class="badge bg-info">{{ $nia->anggota->nia }}</span>
-                                    <span class="badge bg-info">{{ $nia->anggota->alamat_anggota }}</span>
-                                    <span class="badge bg-info">
-                                        {{ $nia->anggota->d->sebutan_desa->sebutan_desa }}
-                                        {{ $nia->anggota->d->nama_desa }}
-                                    </span>
-                                </div>
+            <div class="card-body p-3">
+                <div class="widget-content mb-2">
+                    <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                            <div class="widget-heading">Nasabah {{ $nia->anggota->namadepan }} CIF. {{$nia->id}} 
+                                ({{ $nia->js->nama_js }})</div>
+                            <div class="widget-subheading">
+                                <span class="badge bg-info">{{ $nia->anggota->nia }}</span>
+                                <span class="badge bg-info">{{ $nia->anggota->alamat_anggota }}</span>
+                                <span class="badge bg-info">
+                                    {{ $nia->anggota->d->sebutan_desa->sebutan_desa }}
+                                    {{ $nia->anggota->d->nama_desa }}
+                                </span>
                             </div>
+                        </div>
+                        <div class="widget-content-right">
+                            <button class="btn btn-secondary btn-sm" type="button" onclick="window.location.href='/simpanan'">
+                                <i class="fa fa-arrow-left"></i> Kembali
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="widget-content">
-                        <div class="widget-content-wrapper">
-                            <div class="card-body p-3">
-                                <button class="btn btn-info btn-sm float-end ms-2" type="button" onclick="window.location.href='/simpanan'">
-                                    <i class="fa fa-arrow-left"></i> Kembali
-                                </button>
-                                <button class="btn btn-warning btn-sm float-end ms-2" onclick="window.open('/cetak_kop/{{ $nia->id }}')" type="button">
-                                    <i class="fa fa-print"></i> Cetak KOP Buku
-                                </button>
-                                <button class="btn btn-success btn-sm float-end ms-2" onclick="window.open('/cetak_sertifikat/{{ $nia->id }}')" type="button">
-                                    <i class="fa fa-address-card"></i> Cetak Sertifikat Deposito
-                                </button>
-                                <button class="btn btn-primary btn-sm float-end ms-2" onclick="window.open('/cetak_formulir/{{ $nia->id }}')" type="button">
-                                    <i class="fa fa-pencil-square"></i> Cetak Form Pendaftaran
-                                </button>
-                                <button class="btn btn-danger btn-sm float-end ms-2" onclick="generateSimpanan({{ $nia->id }})" type="button">
-                                    <i class="fa fa-refresh"></i> Generate
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="d-flex flex-wrap gap-1 align-items-center">
+                    <button class="btn btn-danger btn-sm" onclick="generateSimpanan({{ $nia->id }})" type="button">
+                        <i class="fa fa-refresh"></i> Generate Simpanan
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="window.open('/cetak_formulir/{{ $nia->id }}')" type="button">
+                        <i class="fa fa-pencil-square"></i> Cetak Form Pendaftaran
+                    </button>
+                    <button class="btn btn-warning btn-sm" onclick="window.open('/cetak_kop/{{ $nia->id }}')" type="button">
+                        <i class="fa fa-print"></i> Cetak KOP Buku
+                    </button>
+                    <button class="btn btn-success btn-sm" onclick="window.open('/cetak_sertifikat/{{ $nia->id }}')" type="button">
+                        <i class="fa fa-address-card"></i> Cetak Sertifikat Deposito
+                    </button>
+                    <button class="btn btn-info btn-sm" onclick="window.open('/simpanan/surat-kuasa/{{ $nia->id }}')" type="button">
+                        <i class="fa fa-file-text"></i> Surat Kuasa Simpanan Tabungan
+                    </button>
                 </div>
             </div>
         </div>
