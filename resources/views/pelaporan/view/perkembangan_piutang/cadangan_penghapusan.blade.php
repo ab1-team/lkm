@@ -2,6 +2,48 @@
     use App\Utils\Tanggal;
     $section = 0;
     $nomor_jenis_pp = 0;
+
+    // Ambil data kolek dari database
+    $kolekData = $kec->kolek ? json_decode($kec->kolek, true) : [];
+
+    // Filter hanya kolek yang aktif (ada nama)
+    $activeKolek = array_filter($kolekData, function($k) {
+        return !empty($k['nama']);
+    });
+
+    // Fungsi untuk menentukan tingkat kolek (sama dengan kolek_desa)
+    function getTingkatKolekCadangan($kolek_bulan, $kolekData) {
+        if (empty($kolekData)) {
+            return 0;
+        }
+
+        for ($i = 0; $i < count($kolekData); $i++) {
+            $kolek = $kolekData[$i];
+
+            if (empty($kolek['nama'])) {
+                continue;
+            }
+
+            $durasi = floatval($kolek['durasi']);
+            $satuan = $kolek['satuan'];
+
+            if ($satuan == 'hari') {
+                $durasi = $durasi / 30;
+            }
+
+            if ($kolek_bulan < $durasi) {
+                return $i;
+            }
+        }
+
+        for ($i = count($kolekData) - 1; $i >= 0; $i--) {
+            if (!empty($kolekData[$i]['nama'])) {
+                return $i;
+            }
+        }
+
+        return 0;
+    }
 @endphp
 
 @extends('pelaporan.layout.base')
@@ -29,21 +71,16 @@
             $kolek_items = [];
             if (is_array($klk)) {
                 foreach ($klk as $index => $item) {
-                    // Hanya include jika nama tidak null
                     if (!empty($item['nama'])) {
                         $kolek_items[] = $item;
                     }
                 }
             }
             
-            // Jumlah kolom kolektibilitas yang aktif
             $jumlah_kolek = count($kolek_items);
             
-            // Inisialisasi total untuk setiap kolom kolek
-            $t_kolek_total = [];
-            for ($i = 1; $i <= $jumlah_kolek; $i++) {
-                $t_kolek_total[$i] = 0;
-            }
+            // Inisialisasi total untuk setiap kolom kolek (0-based index)
+            $t_kolek = array_fill(0, count($kolekData), 0);
         @endphp
 
         @if ($nomor_jenis_pp != 0)
@@ -81,8 +118,8 @@
                         $t_tunggakan_pokok += $j_tunggakan_pokok;
                         $t_tunggakan_jasa += $j_tunggakan_jasa;
                         
-                        for ($i = 1; $i <= $jumlah_kolek; $i++) {
-                            $t_kolek_total[$i] += ${"j_kolek{$i}"};
+                        foreach ($j_kolek as $idx => $val) {
+                            $t_kolek[$idx] += $val;
                         }
                     @endphp
                 @endif
@@ -92,11 +129,7 @@
                     $j_saldo = 0;
                     $j_tunggakan_pokok = 0;
                     $j_tunggakan_jasa = 0;
-                    
-                    for ($i = 1; $i <= $jumlah_kolek; $i++) {
-                        ${"j_kolek{$i}"} = 0;
-                    }
-                    
+                    $j_kolek = array_fill(0, count($kolekData), 0);
                     $section = $pinkel->kd_desa;
                     $nama_desa = $pinkel->sebutan_desa . ' ' . $pinkel->nama_desa;
                 @endphp
@@ -114,19 +147,21 @@
                     $saldo_jasa = $pinkel->saldo->saldo_jasa;
                 }
 
+                if ($saldo_jasa < 0) {
+                    $saldo_jasa = 0;
+                }
+
                 $target_pokok = 0;
                 $target_jasa = 0;
                 $wajib_pokok = 0;
                 $wajib_jasa = 0;
                 $angsuran_ke = 0;
-                $jatuh_tempo = 0;
                 if ($pinkel->target) {
                     $target_pokok = $pinkel->target->target_pokok;
                     $target_jasa = $pinkel->target->target_jasa;
                     $wajib_pokok = $pinkel->target->wajib_pokok;
                     $wajib_jasa = $pinkel->target->wajib_jasa;
                     $angsuran_ke = $pinkel->target->angsuran_ke;
-                    $jatuh_tempo = $pinkel->target->jatuh_tempo;
                 }
 
                 $tunggakan_pokok = $target_pokok - $sum_pokok;
@@ -140,17 +175,7 @@
 
                 $pross = $saldo_pokok == 0 ? 0 : $saldo_pokok / $pinkel->alokasi;
 
-                if ($pinkel->tgl_lunas <= $tgl_kondisi && $pinkel->status == 'L') {
-                    $tunggakan_pokok = 0;
-                    $tunggakan_jasa = 0;
-                    $saldo_pokok = 0;
-                    $saldo_jasa = 0;
-                } elseif ($pinkel->tgl_lunas <= $tgl_kondisi && $pinkel->status == 'R') {
-                    $tunggakan_pokok = 0;
-                    $tunggakan_jasa = 0;
-                    $saldo_pokok = 0;
-                    $saldo_jasa = 0;
-                } elseif ($pinkel->tgl_lunas <= $tgl_kondisi && $pinkel->status == 'H') {
+                if ($pinkel->tgl_lunas <= $tgl_kondisi && in_array($pinkel->status, ['L', 'R', 'H'])) {
                     $tunggakan_pokok = 0;
                     $tunggakan_jasa = 0;
                     $saldo_pokok = 0;
@@ -160,71 +185,29 @@
                 $tgl_akhir = new DateTime($tgl_kondisi);
                 $tgl_awal = new DateTime($pinkel->tgl_cair);
                 $selisih = $tgl_akhir->diff($tgl_awal);
-
                 $selisih = $selisih->y * 12 + $selisih->m;
-
-                $jum_nunggak = ceil($wajib_pokok == 0 ? 0 : $tunggakan_pokok/$wajib_pokok);
 
                 $_kolek = 0;
                 if ($wajib_pokok != '0') {
                     $_kolek = $tunggakan_pokok / $wajib_pokok;
                 }
-                $kolek_bulan = round($_kolek + ($selisih - $angsuran_ke));
 
-                $kolek_hari = 0;
-                if ($tunggakan_pokok <= 0) {
-                    $kolek_hari = 0;
-                } elseif ($jatuh_tempo != 0) {
-                    $kolek_hari = round((strtotime($tgl_kondisi) - strtotime($jatuh_tempo)) / (60 * 60 * 24))+(($jum_nunggak-1)*30);
-                    if ($kolek_hari < 0) {
-                        $kolek_hari = 0;
-                    }
-                }
+                $kolek_bulan = ceil($_kolek + ($selisih - $angsuran_ke));
 
-                // Inisialisasi semua kolom kolek berdasarkan jumlah aktif
-                for ($i = 1; $i <= $jumlah_kolek; $i++) {
-                    ${"kolek{$i}"} = 0;
-                }
+                // Tentukan tingkat kolek berdasarkan konfigurasi database (sama dengan kolek_desa)
+                $tingkat_kolek = getTingkatKolekCadangan($kolek_bulan, $kolekData);
 
-                // Logika penentuan kolektibilitas
-                $matched = false;
-                foreach ($kolek_items as $idx => $item) {
-                    $kolekNum = $idx + 1;
-                    
-                    if (!is_array($item) || !isset($item['durasi'], $item['satuan'])) {
-                        continue;
-                    }
-
-                    $durasi = (int) $item['durasi'];
-                    $match = false;
-                    
-                    if ($item['satuan'] === 'hari' && isset($kolek_hari) && $kolek_hari < $durasi) {
-                        $match = true;
-                        $kolek = $kolek_hari;
-                    } elseif ($item['satuan'] === 'bulan' && isset($kolek_bulan) && $kolek_bulan < $durasi) {
-                        $match = true;
-                        $kolek = $kolek_bulan;
-                    }
-
-                    if ($match) {
-                        ${"kolek{$kolekNum}"} = $saldo_pokok;
-                        $matched = true;
-                        break;
-                    }
-                }
-
-                // Jika tidak ada yang cocok, masukkan ke kategori terakhir
-                if (!$matched && $jumlah_kolek > 0) {
-                    ${"kolek{$jumlah_kolek}"} = $saldo_pokok;
-                }
+                // Inisialisasi array kolek untuk baris ini
+                $row_kolek = array_fill(0, count($kolekData), 0);
+                $row_kolek[$tingkat_kolek] = $saldo_pokok;
 
                 $j_alokasi += $pinkel->alokasi;
                 $j_saldo += $saldo_pokok;
                 $j_tunggakan_pokok += $tunggakan_pokok;
                 $j_tunggakan_jasa += $tunggakan_jasa;
                 
-                for ($i = 1; $i <= $jumlah_kolek; $i++) {
-                    ${"j_kolek{$i}"} += ${"kolek{$i}"};
+                foreach ($row_kolek as $idx => $val) {
+                    $j_kolek[$idx] += $val;
                 }
             @endphp
         @endforeach
@@ -237,8 +220,8 @@
                 $t_tunggakan_pokok += $j_tunggakan_pokok;
                 $t_tunggakan_jasa += $j_tunggakan_jasa;
                 
-                for ($i = 1; $i <= $jumlah_kolek; $i++) {
-                    $t_kolek_total[$i] += ${"j_kolek{$i}"};
+                foreach ($j_kolek as $idx => $val) {
+                    $t_kolek[$idx] += $val;
                 }
 
                 $t_pros = 0;
@@ -272,33 +255,31 @@
                     $total_npl = 0;
                     
                     // Hitung total saldo dan beban
-                    foreach ($kolek_items as $idx => $item) {
-                        $kolekNum = $idx + 1;
-                        $nilai_kolek = $t_kolek_total[$kolekNum] ?? 0;
-                        $prosentase = (float) $item['prosentase'];
+                    foreach ($activeKolek as $idx => $kolek) {
+                        $nilai_kolek = $t_kolek[$idx] ?? 0;
+                        $prosentase = floatval($kolek['prosentase']);
                         $beban = ($nilai_kolek * $prosentase) / 100;
                         $total_saldo += $nilai_kolek;
                         $total_beban += $beban;
                     }
                 @endphp
 
-                @foreach ($kolek_items as $idx => $item)
+                @foreach ($activeKolek as $idx => $kolek)
                     @php
-                        $kolekNum = $idx + 1;
-                        $nilai_kolek = $t_kolek_total[$kolekNum] ?? 0;
-                        $prosentase = (float) $item['prosentase'];
+                        $nilai_kolek = $t_kolek[$idx] ?? 0;
+                        $prosentase = floatval($kolek['prosentase']);
                         $beban = ($nilai_kolek * $prosentase) / 100;
                         $npl = $total_saldo > 0 ? ($nilai_kolek / $total_saldo) * 100 : 0;
                     @endphp
                     <tr>
                         <td align="center">{{ $no_urut }}</td>
-                        <td>{{ $item['nama'] }}</td>
+                        <td>{{ $kolek['nama'] }}</td>
                         <td align="center">{{ $prosentase }}%</td>
                         <td align="right">{{ number_format($nilai_kolek) }}</td>
                         <td align="right">{{ number_format($beban) }}</td>
                         @if ($idx == 0)
                             <td align="center" rowspan="{{ $jumlah_kolek+1 }}">
-                                {{ round($total_saldo > 0 ? (($total_saldo - $t_kolek_total[1]) / $total_saldo) * 100 : 0, 2) }}%
+                                {{ round($total_saldo > 0 ? (($total_saldo - ($t_kolek[0] ?? 0)) / $total_saldo) * 100 : 0, 2) }}%
                             </td>
                         @endif
                     </tr>
