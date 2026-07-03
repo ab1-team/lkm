@@ -103,8 +103,8 @@
                     <li>
                         Menggunakan dana tersebut untuk pembayaran kewajiban Pemberi Kuasa yang meliputi:
                         <ul>
-                            <li>Pokok pinjaman sebesar Rp {{ number_format($pinkel->proposal ?? 0, 2, ',', '.') }};</li>
-                            <li>Bunga pinjaman sebesar {{ number_format($pinkel->pros_jasa ?? 0, 1, ',', '.') }}%;</li>
+                            <li>Pokok pinjaman sebesar Rp {{ number_format($pinkel->proposal ?? 0, 2, ',', '.') }}</li>
+                            <li>Bunga pinjaman sebesar {{ number_format($pinkel->pros_jasa ?? 0, 1, ',', '.') }}%</li>
                             <li>Biaya administrasi atau biaya lain yang menjadi kewajiban Pemberi Kuasa
                                 berdasarkan Perjanjian Kredit.</li>
                         </ul>
