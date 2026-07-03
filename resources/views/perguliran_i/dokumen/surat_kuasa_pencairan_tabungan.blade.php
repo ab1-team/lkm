@@ -21,7 +21,7 @@
                 <p align="center" class="style6" style="font-size: 18pt; font-weight: bold; margin: 0;">SURAT KUASA</p>
                 <p align="center" class="style6" style="font-size: 13pt; font-weight: bold; margin: 0;">PENCAIRAN TABUNGAN UNTUK PENYELESAIAN KEWAJIBAN KREDIT</p>
                 <p align="center" class="style9" style="font-size: 10pt; margin: 2px 0 0 0;">
-                    Nomor : ........../SKK/PT-LKM-KDP/........../20.....
+                    &nbsp;
                 </p>
             </td>
         </tr>
@@ -59,12 +59,12 @@
         </tr>
         <tr class="no-break">
             <td class="style9" style="white-space:nowrap;">No. CIF/Nasabah</td>
-            <td class="style27" style="padding-left:14px;text-indent:-14px;">: {{ $pinkel->anggota->id }}</td>
+            <td class="style27" style="padding-left:14px;text-indent:-14px;">: ..................................</td>
             <td class="style9">&nbsp;</td>
         </tr>
         <tr class="no-break">
             <td class="style9" style="white-space:nowrap;">No. Rekening Tabungan</td>
-            <td class="style27" style="padding-left:14px;text-indent:-14px;">: {{ $nomor_rekening }}</td>
+            <td class="style27" style="padding-left:14px;text-indent:-14px;">: ..................................</td>
             <td class="style9">&nbsp;</td>
         </tr>
         <tr class="no-break">
@@ -76,7 +76,7 @@
         <tr>
             <td colspan="3" class="style9 align-justify" style="text-indent: 30px;">
                 Selanjutnya disebut sebagai <b>PEMBERI KUASA</b>.
-                Dengan ini memberikan kuasa kepada: <b>PT LKM KOMPAK DANA PERSADA</b> beralamat di
+                Dengan ini memberikan kuasa kepada: <b>{{ $kec->nama_lembaga_sort }}</b> beralamat di
                 Jl Raya Sruweng {{ $kec->nama_kec }} {{ $nama_kabupaten }}.
                 Dalam hal ini diwakili oleh pejabat yang berwenang sesuai ketentuan internal perusahaan,
                 selanjutnya disebut sebagai <b>PENERIMA KUASA</b>.
@@ -90,7 +90,7 @@
             <td colspan="3" class="style9 align-justify" style="text-indent: 30px;">
                 Pemberi Kuasa dengan ini memberikan kuasa yang tidak dapat dicabut kembali selama masih
                 terdapat kewajiban kredit (sepanjang diperbolehkan oleh ketentuan hukum yang berlaku) kepada
-                PT LKM Kompak Dana Persada untuk:
+                {{ $kec->nama_lembaga_sort }} untuk:
             </td>
         </tr>
         <tr>
@@ -98,7 +98,7 @@
                 <ol>
                     <li>
                         Mencairkan, mendebet, atau memindahbukukan sebagian atau seluruh saldo tabungan atas nama
-                        Pemberi Kuasa yang tersimpan pada PT LKM Kompak Dana Persada.
+                        Pemberi Kuasa yang tersimpan pada {{ $kec->nama_lembaga_sort }}.
                     </li>
                     <li>
                         Menggunakan dana tersebut untuk pembayaran kewajiban Pemberi Kuasa yang meliputi:
@@ -132,7 +132,7 @@
                     <li>
                         Pemberi Kuasa mengetahui dan menyetujui bahwa penggunaan saldo tabungan dilakukan
                         semata-mata untuk mengurangi atau melunasi kewajiban kreditnya pada
-                        PT LKM Kompak Dana Persada.
+                        {{ $kec->nama_lembaga_sort }}.
                     </li>
                     <li>
                         Apabila saldo tabungan tidak mencukupi untuk melunasi seluruh kewajiban kredit,
@@ -144,7 +144,7 @@
                         yang berlaku.
                     </li>
                     <li>
-                        Pemberi Kuasa membebaskan PT LKM Kompak Dana Persada dari segala tuntutan hukum
+                        Pemberi Kuasa membebaskan {{ $kec->nama_lembaga_sort }} dari segala tuntutan hukum
                         sepanjang tindakan pencairan atau pendebetan dilakukan sesuai isi surat kuasa ini
                         dan Perjanjian Kredit.
                     </li>
@@ -154,7 +154,7 @@
         <tr>
             <td colspan="3" class="style9 align-justify" style="text-indent: 30px;">
                 Surat Kuasa ini merupakan bagian yang tidak terpisahkan dari Perjanjian Kredit antara
-                Pemberi Kuasa dengan PT LKM Kompak Dana Persada dan berlaku sejak tanggal ditandatangani
+                Pemberi Kuasa dengan {{ $kec->nama_lembaga_sort }} dan berlaku sejak tanggal ditandatangani
                 sampai seluruh kewajiban kredit Pemberi Kuasa dinyatakan lunas atau surat kuasa ini berakhir
                 berdasarkan ketentuan hukum yang berlaku.
             </td>
@@ -173,7 +173,7 @@
                 <div align="center" class="style9">
                     <p style="margin: 0;">&nbsp;</p>
                     <p style="margin: 0;">Penerima Kuasa</p>
-                    <p style="margin: 0;">PT LKM KOMPAK DANA PERSADA</p>
+                    <p style="margin: 0;">{{ $kec->nama_lembaga_sort }}</p>
                 </div>
             </td>
             <td class="style26">
@@ -218,30 +218,6 @@
                 {{ $kec->sebutan_level_1 ?? '' }} {{ $kec->nama_lembaga_sort }}
             </td>
             <td colspan="2" align="center">&nbsp;</td>
-        </tr>
-    </table>
-
-    <table width="97%" border="0" align="center" cellpadding="3" cellspacing="0" style="font-size: 9pt;">
-        <tr>
-            <td colspan="2" class="style9"><b>SAKSI-SAKSI:</b></td>
-        </tr>
-        <tr>
-            <td width="50%" class="style26">
-                <div align="center" class="style9">
-                    <p style="margin: 0;">&nbsp;</p>
-                    <p style="margin: 0;">&nbsp;</p>
-                    <p style="margin: 0;">&nbsp;</p>
-                    <p style="margin: 0;">1. ..............................</p>
-                </div>
-            </td>
-            <td width="50%" class="style26">
-                <div align="center" class="style9">
-                    <p style="margin: 0;">&nbsp;</p>
-                    <p style="margin: 0;">&nbsp;</p>
-                    <p style="margin: 0;">&nbsp;</p>
-                    <p style="margin: 0;">2. ..............................</p>
-                </div>
-            </td>
         </tr>
     </table>
 @endsection
