@@ -203,20 +203,13 @@
                     @if ($trx->tr_idtp && $trx->tr_idtp->count() > 0 && (int) $trx->idtp !== 0)
 
                         @php
-                            $akunFilter = ['4.1.06.04', '4.1.03.04', '2.1.04.01'];
-                        @endphp
-
-                        @php
-                            $trFiltered = $trx->tr_idtp->filter(function ($tr) use ($akunFilter) {
-                                return in_array($tr->rekening_kredit, $akunFilter);
-                            });
                             $maxKredit = 5;
                             $count = $maxKredit;
-                            $totalTr = $trFiltered->count();
+                            $totalTr = $trx->tr_idtp->count();
                             $shown = 0;
                         @endphp
 
-                        @foreach ($trFiltered as $tr)
+                        @foreach ($trx->tr_idtp as $tr)
                             @if ($shown >= $maxKredit)
                                 @continue
                             @endif

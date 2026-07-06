@@ -177,6 +177,37 @@ class Keuangan
         return $trx;
     }
 
+    /**
+     * Enrich koleksi transaksi dengan field debit/kredit/posisi/saldo_running
+     * sesuai akun yang ditampilkan ($rek->kode_akun, $rek->jenis_mutasi).
+     * Reusable di jurnal.blade.php, _jurnal.blade.php, detail.blade.php, _detail.blade.php.
+     */
+    public function hitungSaldoRunning($transaksi, $rek, $saldo, $d_bulan_lalu, $k_bulan_lalu)
+    {
+        if ($rek->jenis_mutasi == 'debet') {
+            $total = (float)($saldo['debit'] - $saldo['kredit']) + ($d_bulan_lalu - $k_bulan_lalu);
+        } else {
+            $total = (float)($saldo['kredit'] - $saldo['debit']) + ($k_bulan_lalu - $d_bulan_lalu);
+        }
+
+        foreach ($transaksi as $trx) {
+            $isDebit = $trx->rekening_debit === $rek->kode_akun;
+            $trx->posisi_baris = $isDebit ? 'D' : 'K';
+            $trx->debit_baris = $isDebit ? (float) $trx->jumlah : 0;
+            $trx->kredit_baris = $isDebit ? 0 : (float) $trx->jumlah;
+            $trx->ref_baris = $isDebit ? $trx->rekening_kredit : $trx->rekening_debit;
+
+            $delta = $isDebit
+                ? ($rek->jenis_mutasi == 'debet' ? $trx->debit_baris - $trx->kredit_baris : $trx->kredit_baris - $trx->debit_baris)
+                : ($rek->jenis_mutasi == 'debet' ? $trx->kredit_baris - $trx->debit_baris : $trx->debit_baris - $trx->kredit_baris);
+
+            $total += $delta;
+            $trx->saldo_running = $total;
+        }
+
+        return $transaksi;
+    }
+
     public function komSaldo($rek)
     {
         $awal_debit = 0;

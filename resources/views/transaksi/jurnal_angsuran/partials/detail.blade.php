@@ -5,11 +5,19 @@
     $t_denda = 0;
 @endphp
 
+<style>
+    .badge-pos-d { background-color: #2dce89; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 9pt; font-weight: 600; }
+    .badge-pos-k { background-color: #f5365c; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 9pt; font-weight: 600; }
+    .col-akun { font-size: 9pt; line-height: 1.3; }
+</style>
+
 <table border="1" class="table table-striped midle">
     <thead class="bg-dark text-white">
         <tr>
             <th>No</th>
             <th>Tanggal</th>
+            <th>Kode Akun Debit (D)</th>
+            <th>Kode Akun Kredit (K)</th>
             <th>Keterangan</th>
             <th>Kode Kuitansi</th>
             <th>Pencairan</th>
@@ -21,7 +29,7 @@
     </thead>
     <tbody>
         <tr>
-            <td colspan="4" align="center" style="text-transform: uppercase;">
+            <td colspan="5" align="center" style="text-transform: uppercase;">
                 <b>Target Pembayaran</b>
             </td>
             <td align="right"><b>{{ number_format($pinkel->alokasi) }}</b></td>
@@ -33,12 +41,16 @@
         @foreach ($pinkel->real as $real)
             @php
                 $keterangan = '';
+                $akun_debit = '';
+                $akun_kredit = '';
                 $denda = 0;
                 $idt = 0;
             @endphp
             @foreach ($real->trx as $trx)
                 @php
                     $keterangan .= $trx->keterangan_transaksi . '<br>';
+                    $akun_debit = $trx->rekening_debit_nama;
+                    $akun_kredit = $trx->rekening_kredit_nama;
                     if (
                         $trx->rekening_kredit == '4.1.01.04' ||
                         $trx->rekening_kredit == '4.1.01.05' ||
@@ -53,6 +65,14 @@
             <tr>
                 <td align="center">{{ $loop->iteration }}</td>
                 <td align="center">{{ Tanggal::tglIndo($real->tgl_transaksi) }}</td>
+                <td align="left" class="col-akun">
+                    <span class="badge-pos-d">D</span>
+                    {{ $akun_debit }}
+                </td>
+                <td align="left" class="col-akun">
+                    <span class="badge-pos-k">K</span>
+                    {{ $akun_kredit }}
+                </td>
                 <td>{!! $keterangan !!}</td>
                 <td align="center">{{ $real->id }}</td>
                 <td align="right">0</td>
@@ -120,7 +140,7 @@
         @endforeach
 
         <tr>
-            <td colspan="4" align="right" style="text-transform: uppercase;">
+            <td colspan="6" align="right" style="text-transform: uppercase;">
                 <b>Total Transaksi</b>
             </td>
             <td align="right"><b>0</b></td>
@@ -131,7 +151,7 @@
         </tr>
 
         <tr>
-            <td colspan="4" align="right" style="text-transform: uppercase;">
+            <td colspan="6" align="right" style="text-transform: uppercase;">
                 <b>Saldo</b>
             </td>
             <td align="right"><b>{{ number_format($pinkel->alokasi) }}</b></td>

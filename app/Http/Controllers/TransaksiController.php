@@ -1978,12 +1978,16 @@ class TransaksiController extends Controller
         $data['rek'] = Rekening::where('kode_akun', $data['kode_akun'])->first();
         $data['transaksi'] = Transaksi::where('tgl_transaksi', 'LIKE', '%' . $tgl . '%')->where(function ($query) use ($data) {
             $query->where('rekening_debit', $data['kode_akun'])->orwhere('rekening_kredit', $data['kode_akun']);
-        })->with('user')->orderBy('tgl_transaksi', 'ASC')->orderBy('urutan', 'ASC')->orderBy('idt', 'ASC')->get();
+        })->with(['user', 'rek_debit', 'rek_kredit'])->orderBy('tgl_transaksi', 'ASC')->orderBy('urutan', 'ASC')->orderBy('idt', 'ASC')->get();
 
         $data['keuangan'] = $keuangan;
         $data['saldo'] = $keuangan->saldoAwal($data['tgl_kondisi'], $data['kode_akun']);
         $data['d_bulan_lalu'] = $keuangan->saldoD($awal_bulan, $data['kode_akun']);
         $data['k_bulan_lalu'] = $keuangan->saldoK($awal_bulan, $data['kode_akun']);
+
+        $data['transaksi'] = $keuangan->hitungSaldoRunning($data['transaksi'], $data['rek'], $data['saldo'], $data['d_bulan_lalu'], $data['k_bulan_lalu']);
+        $data['total_debit'] = $data['transaksi']->sum('debit_baris');
+        $data['total_kredit'] = $data['transaksi']->sum('kredit_baris');
 
         return [
             'label' => '<i class="fas fa-book"></i> ' . $data['rek']->kode_akun . ' - ' . $data['rek']->nama_akun . ' ' . $data['sub_judul'],
@@ -2119,7 +2123,12 @@ class TransaksiController extends Controller
     {
         $pinkel = PinjamanKelompok::where('id', $id)->with([
             'real',
-            'real.trx',
+            'real.trx' => function ($q) {
+                $q->orderBy('tgl_transaksi', 'ASC')->orderBy('idt', 'ASC');
+            },
+            'real.trx.rek_debit',
+            'real.trx.rek_kredit',
+            'real.trx.user',
             'kelompok'
         ])->first();
 

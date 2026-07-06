@@ -17,6 +17,8 @@
                     </div>
                 </td>
                 <th>Tanggal</th>
+                <th>Kode Akun Debit (D)</th>
+                <th>Kode Akun Kredit (K)</th>
                 <th>Keterangan</th>
                 <th>Kode Kuitansi</th>
                 <th>Pencairan</th>
@@ -27,7 +29,7 @@
         </thead>
         <tbody>
             <tr>
-                <td colspan="4" align="center" style="text-transform: uppercase;">
+                <td colspan="5" align="center" style="text-transform: uppercase;">
                     <b>Target Pembayaran</b>
                 </td>
                 <td align="right"><b>{{ number_format($pinkel->alokasi) }}</b></td>
@@ -38,12 +40,16 @@
             @foreach ($pinkel->real as $real)
                 @php
                     $keterangan = '';
+                    $akun_debit = '';
+                    $akun_kredit = '';
                     $denda = 0;
                     $idt = 0;
                 @endphp
                 @foreach ($real->trx as $trx)
                     @php
                         $keterangan .= $trx->keterangan_transaksi . '<br>';
+                        $akun_debit = $trx->rekening_debit_nama;
+                        $akun_kredit = $trx->rekening_kredit_nama;
                         if (
                             $trx->rekening_kredit == '4.1.01.04' ||
                             $trx->rekening_kredit == '4.1.01.05' ||
@@ -63,6 +69,8 @@
                         </div>
                     </td>
                     <td align="center">{{ Tanggal::tglIndo($real->tgl_transaksi) }}</td>
+                    <td align="left" style="font-size: 9pt;">(D) {{ $akun_debit }}</td>
+                    <td align="left" style="font-size: 9pt;">(K) {{ $akun_kredit }}</td>
                     <td>{!! $keterangan !!}</td>
                     <td align="center">{{ $real->id }}</td>
                     <td align="right">0</td>
@@ -79,7 +87,7 @@
             @endforeach
 
             <tr>
-                <td colspan="4" align="right" style="text-transform: uppercase;">
+                <td colspan="6" align="right" style="text-transform: uppercase;">
                     <b>Total Transaksi</b>
                 </td>
                 <td align="right"><b>0</b></td>
@@ -89,7 +97,7 @@
             </tr>
 
             <tr>
-                <td colspan="4" align="right" style="text-transform: uppercase;">
+                <td colspan="6" align="right" style="text-transform: uppercase;">
                     <b>Saldo</b>
                 </td>
                 <td align="right"><b>{{ number_format($pinkel->alokasi) }}</b></td>

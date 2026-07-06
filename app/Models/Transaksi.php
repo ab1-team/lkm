@@ -50,6 +50,27 @@ class Transaksi extends Model
         return $this->belongsTo(User::class, 'id_user');
     }
 
+    public function getRekeningDebitNamaAttribute()
+    {
+        if ($this->rek_debit) {
+            return $this->rekening_debit . ' - ' . $this->rek_debit->nama_akun;
+        }
+        return (string) $this->rekening_debit;
+    }
+
+    public function getRekeningKreditNamaAttribute()
+    {
+        if ($this->rek_kredit) {
+            return $this->rekening_kredit . ' - ' . $this->rek_kredit->nama_akun;
+        }
+        return (string) $this->rekening_kredit;
+    }
+
+    public function posisi($kodeAkun)
+    {
+        return $this->rekening_debit === $kodeAkun ? 'D' : 'K';
+    }
+
     public function tr_idtp()
     {
         return $this->hasMany(Transaksi::class, 'idtp', 'idtp');
