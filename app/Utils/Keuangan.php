@@ -197,9 +197,9 @@ class Keuangan
             $trx->kredit_baris = $isDebit ? 0 : (float) $trx->jumlah;
             $trx->ref_baris = $isDebit ? $trx->rekening_kredit : $trx->rekening_debit;
 
-            $delta = $isDebit
-                ? ($rek->jenis_mutasi == 'debet' ? $trx->debit_baris - $trx->kredit_baris : $trx->kredit_baris - $trx->debit_baris)
-                : ($rek->jenis_mutasi == 'debet' ? $trx->kredit_baris - $trx->debit_baris : $trx->debit_baris - $trx->kredit_baris);
+            $delta = $rek->jenis_mutasi == 'debet'
+                ? ($trx->debit_baris - $trx->kredit_baris)
+                : ($trx->kredit_baris - $trx->debit_baris);
 
             $total += $delta;
             $trx->saldo_running = $total;

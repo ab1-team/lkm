@@ -90,7 +90,7 @@
                             data-bs-placement="top" title="kartu angsuran" data-container="body" data-animation="true">
                             <span class="btn-inner--icon"><i class="fas fa-file-invoice"></i></span>
                         </button>
-                        <button type="button" data-action="/transaksi/dokumen/bkm_angsuran/{{ $idt }}"
+                        <button type="button" data-action="/transaksi/dokumen/bkm_angsuran_i/{{ $real_i->id }}"
                             class="btn btn-github btn-icon-only btn-tooltip btn-link" data-bs-toggle="tooltip"
                             data-bs-placement="top" title="BKM" data-container="body" data-animation="true">
                             <span class="btn-inner--icon"><i class="fas fa-file-circle-exclamation"></i></span>

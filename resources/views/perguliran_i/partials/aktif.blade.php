@@ -217,7 +217,7 @@
                                             <span class="btn-inner--icon"><i class="fas fa-file-invoice"></i></span>
                                         </button>
                                         <button type="button"
-                                            data-action="/transaksi/dokumen/bkm_angsuran/{{ $real->transaksi->idt }}"
+                                            data-action="/transaksi/dokumen/bkm_angsuran/{{ $real->id }}"
                                             class="btn btn-github btn-icon-only btn-tooltip btn-link"
                                             data-bs-toggle="tooltip" data-bs-placement="top" title="BKM"
                                             data-container="body" data-animation="true">

@@ -2510,16 +2510,46 @@ class TransaksiController extends Controller
         $keuangan = new Keuangan;
 
         $kec = Kecamatan::where('id', Session::get('lokasi'))->with('kabupaten')->first();
-        $trx = Transaksi::where('idt', $id)->with('rek_debit', 'tr_idtp', 'tr_idtp.rek_kredit')->withSum('tr_idtp', 'jumlah')->first();
 
-        if ($trx && (int) $trx->idtp === 0) {
-            $trx->setRelation('tr_idtp', collect());
-            $trx->tr_idtp_sum_jumlah = 0;
-        } elseif ($trx) {
-            $trx->setRelation('tr_idtp', $trx->tr_idtp->where('idt', '!=', $trx->idt)->values());
-            $trx->tr_idtp_sum_jumlah = $trx->tr_idtp->sum('jumlah');
+        $trxList = Transaksi::where('idtp', $id)
+            ->with(['rek_debit', 'rek_kredit'])
+            ->orderBy('idt', 'ASC')
+            ->get();
+
+        if ($trxList->isEmpty()) {
+            $trxList = Transaksi::where('idt', $id)
+                ->with(['rek_debit', 'rek_kredit'])
+                ->orderBy('idt', 'ASC')
+                ->get();
         }
-        $user = User::where('id', $trx->id_user)->first();
+
+        $first = $trxList->first();
+
+        $real = RealAngsuran::where('id', $id)->first();
+        $pokok = (float) ($real->realisasi_pokok ?? 0);
+        $jasa = (float) ($real->realisasi_jasa ?? 0);
+        $totalPokokJasa = $pokok + $jasa;
+        if ($totalPokokJasa <= 0) {
+            $totalPokokJasa = (float) $trxList->sum('jumlah');
+        }
+
+        $trx = (object) [
+            'idt' => $first ? $first->idt : $id,
+            'tgl_transaksi' => $first ? $first->tgl_transaksi : date('Y-m-d'),
+            'relasi' => $first->relasi ?? '',
+            'idtp' => $id,
+            'id_pinj' => $first->id_pinj ?? 0,
+            'id_pinj_i' => $first->id_pinj_i ?? 0,
+            'keterangan_transaksi' => 'Angsuran Pokok dan Jasa',
+            'jumlah' => $totalPokokJasa,
+            'rekening_debit' => optional($first)->rekening_debit,
+            'rekening_kredit' => optional($first)->rekening_kredit,
+            'rek_debit' => optional($first)->rek_debit,
+            'rek_kredit' => optional($first)->rek_kredit,
+            'id_user' => optional($first)->id_user,
+            'tr_idtp' => $trxList,
+            'tr_idtp_sum_jumlah' => $totalPokokJasa,
+        ];
 
         $dir = User::where([
             ['level', '1'],
@@ -2536,7 +2566,69 @@ class TransaksiController extends Controller
         $logo = $kec->logo;
         $gambar = '/storage/logo/' . $logo;
 
-        return view('transaksi.jurnal_angsuran.dokumen.bkm')->with(compact('trx', 'kec', 'dir', 'sekr', 'gambar', 'keuangan'));
+        return view('transaksi.jurnal_angsuran.dokumen.bkm_by_idtp')->with(compact('trx', 'kec', 'dir', 'sekr', 'gambar', 'keuangan'));
+    }
+
+    public function bkmAngsuranIndividu($realId)
+    {
+        $keuangan = new Keuangan;
+
+        $kec = Kecamatan::where('id', Session::get('lokasi'))->with('kabupaten')->first();
+        $real = RealAngsuranI::where('id', $realId)
+            ->with([
+                'trx' => function ($q) {
+                    $q->orderBy('idt', 'ASC');
+                },
+                'trx.rek_debit',
+                'trx.rek_kredit'
+            ])
+            ->first();
+
+        if (!$real) {
+            abort(404);
+        }
+
+        $pokok = (float) ($real->realisasi_pokok ?? 0);
+        $jasa = (float) ($real->realisasi_jasa ?? 0);
+        $totalPokokJasa = $pokok + $jasa;
+
+        $firstTrx = $real->trx->first();
+        $relasi = $firstTrx->relasi ?? '';
+
+        $trx = (object) [
+            'idt' => $real->id,
+            'tgl_transaksi' => $real->tgl_transaksi,
+            'relasi' => $relasi,
+            'idtp' => $real->id,
+            'id_pinj' => $real->loan_id,
+            'id_pinj_i' => $real->loan_id,
+            'keterangan_transaksi' => 'Angsuran Pokok dan Jasa',
+            'jumlah' => $totalPokokJasa,
+            'rekening_debit' => null,
+            'rekening_kredit' => null,
+            'rek_debit' => null,
+            'rek_kredit' => null,
+            'id_user' => optional($firstTrx)->id_user,
+            'tr_idtp' => $real->trx,
+            'tr_idtp_sum_jumlah' => $totalPokokJasa,
+        ];
+
+        $dir = User::where([
+            ['level', '1'],
+            ['jabatan', '1'],
+            ['lokasi', Session::get('lokasi')]
+        ])->first();
+
+        $sekr = User::where([
+            ['level', '1'],
+            ['jabatan', '3'],
+            ['lokasi', Session::get('lokasi')]
+        ])->first();
+
+        $logo = $kec->logo;
+        $gambar = '/storage/logo/' . $logo;
+
+        return view('transaksi.jurnal_angsuran.individu.dokumen.bkm')->with(compact('trx', 'real', 'kec', 'dir', 'sekr', 'gambar', 'keuangan'));
     }
 
     public function cetak(Request $request)

@@ -227,21 +227,11 @@
 
                         @if ($trx->idtp > 0 && $trx->id_pinj != 0)
                             <button type="button"
-                                data-action="/transaksi/dokumen/bkm_angsuran/{{ $trx->idt }}"
+                                data-action="/transaksi/dokumen/bkm_angsuran/{{ $trx->idtp }}"
                                 class="btn btn-warning btn-icon-only btn-tooltip btn-link" data-bs-toggle="tooltip"
                                 data-bs-placement="top" title="BKM Angsuran" data-container="body"
                                 data-animation="true">
                                 <span class="btn-inner--icon"><i class="fas fa-receipt"></i></span>
-                            </button>
-                        @endif
-
-                        @if ($trx->idtp > 0 && $trx->id_pinj != 0)
-                            <button type="button"
-                                data-action="/transaksi/dokumen/{{ $files }}_angsuran/{{ $trx->idt }}"
-                                class="btn btn-tumblr btn-icon-only btn-tooltip btn-link" data-bs-toggle="tooltip"
-                                data-bs-placement="top" title="{{ $files }}" data-container="body"
-                                data-animation="true">
-                                <span class="btn-inner--icon"><i class="fas fa-file-circle-exclamation"></i></span>
                             </button>
                         @else
                             <button type="button"

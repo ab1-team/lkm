@@ -19,7 +19,7 @@
             </button>
         </div>
         <div class="col-md-3 d-grid">
-            <button type="button" data-action="/transaksi/dokumen/bkm_angsuran/{{ $idt }}"
+            <button type="button" data-action="/transaksi/dokumen/bkm_angsuran/{{ $idtp }}"
                 class="btn btn-instagram btn-tooltip btn-sm btn-link mb-2" data-bs-toggle="tooltip"
                 data-bs-placement="top" title="BKM" data-container="body" data-animation="true">
                 <span class="btn-inner--icon">
