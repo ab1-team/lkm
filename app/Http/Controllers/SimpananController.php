@@ -12,6 +12,7 @@ use App\Models\Kecamatan;
 use App\Models\Keluarga;
 use App\Models\kode;
 use App\Models\PinjamanIndividu;
+use App\Models\PinjamanAnggota;
 use App\Models\Rekening;
 use App\Models\RealAngsuranI;
 use App\Models\RealSimpanan;
@@ -248,6 +249,61 @@ class SimpananController extends Controller
         $title = 'Cetak Sertifikat' . $simpanan->anggota->namadepan;
         return view('simpanan.partials.cetak_sertifikat', compact('title', 'simpanan', 'kec', 'dir'));
 
+    }
+
+    public function suratKuasaSimpananTabungan(Simpanan $simpanan)
+    {
+        $simpanan = $simpanan->where('id', $simpanan->id)->with(['anggota', 'anggota.d.sebutan_desa'])->first();
+
+        $kec = Kecamatan::where('id', Session::get('lokasi'))->with('kabupaten')->first();
+
+        $dir = User::where([
+            ['level', '1'],
+            ['lokasi', Session::get('lokasi')],
+        ])
+            ->where(function ($query) {
+                if (Session::get('lokasi') == '351') {
+                    $query->where('jabatan', '3');
+                } else {
+                    $query->where('jabatan', '1');
+                }
+            })->with(['j'])->first();
+
+        $kab = $kec->kabupaten;
+        if (Keuangan::startWith($kab->nama_kab, 'KOTA') || Keuangan::startWith($kab->nama_kab, 'KAB')) {
+            $nama_kabupaten = ucwords(strtolower($kab->nama_kab));
+        } else {
+            $nama_kabupaten = ' Kabupaten ' . ucwords(strtolower($kab->nama_kab));
+        }
+
+        $title = 'Surat Kuasa Simpanan Tabungan (' . $simpanan->anggota->namadepan . ' - CIF. ' . $simpanan->id . ')';
+
+        $pinkel = PinjamanAnggota::where('nia', $simpanan->anggota->id)
+            ->whereIn('status', ['W', 'A', 'L'])
+            ->orderBy('id', 'desc')
+            ->first();
+
+        $viewData = [
+            'simpanan' => $simpanan,
+            'pinkel' => $pinkel,
+            'kec' => $kec,
+            'dir' => $dir,
+            'nama_kabupaten' => $nama_kabupaten,
+            'title' => $title,
+            'judul' => $title,
+            'type' => 'pdf',
+            'report' => 'suratKuasa',
+            'logo' => $kec->logo,
+            'nama_lembaga' => $kec->nama_lembaga_sort,
+            'nama_kecamatan' => $kec->sebutan_kec . ' ' . $kec->nama_kec,
+            'nomor_usaha' => '',
+            'info' => $kec->alamat_kec . ', Telp.' . $kec->telpon_kec,
+        ];
+
+        $html = view('simpanan.partials.surat_kuasa_simpanan_tabungan', $viewData)->render();
+        $pdf = PDF::loadHTML($html);
+
+        return $pdf->stream();
     }
 
     public function koran(Simpanan $simpanan)
