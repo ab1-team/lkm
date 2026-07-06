@@ -364,8 +364,10 @@
                 <button type="button" id="btnCatatanBimbingan" class="btn btn-success btn-sm">
                     Catatan Bimbingan
                 </button>
-                <button type="button" data-bs-toggle="modal" data-bs-target="#Rescedule"
-                    class="btn btn-warning btn-sm">Resceduling Pinjaman</button>
+                @if (auth()->user()->jabatan == '1' && auth()->user()->level == '1')
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#Rescedule"
+                        class="btn btn-warning btn-sm">Resceduling Pinjaman</button>
+                @endif
                 <button type="button" data-bs-toggle="modal" data-bs-target="#Penghapusan"
                     class="btn btn-danger btn-sm">Penghapusan Pinjaman</button>
             </div>

@@ -131,7 +131,8 @@
         @csrf
         <input type="hidden" name="id" value="{{ $perguliran_i->id }}">
         <div class="card-body d-flex justify-content-between">
-            <a href="/perguliran_i/dokumen/kartu_angsuran/{{ $perguliran_i->id }}" target="_blank"  class="btn btn-outline-info flex-grow-1 me-2">
+            <a href="/perguliran_i/dokumen/kartu_angsuran/{{ $perguliran_i->id }}" target="_blank"
+                class="btn btn-outline-info flex-grow-1 me-2">
                 <b style="color: rgb(2, 102, 251);">Kartu Angsuran</b>
             </a>
             <button type="submit" data-bs-toggle="modal" name="report" value="rencanaAngsuran#pdf"
@@ -147,17 +148,16 @@
 </div>
 
 <div class="main-card mb-3 card">
-        <div class="card-body d-flex justify-content-between">
-            <button type="button" data-bs-toggle="modal" data-bs-target="#CetakDokumenProposal"
-            class="btn btn-info flex-grow-1 me-2"
-                style="background-color: rgb(23, 203, 20);">
-                <b>Cetak Dokumen Proposal</b>
-            </button>
-            <button type="button" data-bs-toggle="modal" data-bs-target="#CetakDokumenPencairan"
-                class="btn btn-info flex-grow-1 ms-2" style="background-color: rgb(4, 172, 250);">
-                <b>Cetak Dokumen Pencairan</b>
-            </button>
-        </div>
+    <div class="card-body d-flex justify-content-between">
+        <button type="button" data-bs-toggle="modal" data-bs-target="#CetakDokumenProposal"
+            class="btn btn-info flex-grow-1 me-2" style="background-color: rgb(23, 203, 20);">
+            <b>Cetak Dokumen Proposal</b>
+        </button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#CetakDokumenPencairan"
+            class="btn btn-info flex-grow-1 ms-2" style="background-color: rgb(4, 172, 250);">
+            <b>Cetak Dokumen Pencairan</b>
+        </button>
+    </div>
 </div>
 <div class="row">
     <div class="col-lg-12">
@@ -214,8 +214,7 @@
                                             class="btn btn-github btn-icon-only btn-tooltip btn-link"
                                             data-bs-toggle="tooltip" data-bs-placement="top" title="BKM"
                                             data-container="body" data-animation="true">
-                                            <span class="btn-inner--icon"><i
-                                                    class="fas fa-file-invoice"></i></span>
+                                            <span class="btn-inner--icon"><i class="fas fa-file-invoice"></i></span>
                                         </button>
                                         <button type="button"
                                             data-action="/transaksi/dokumen/bkm_angsuran/{{ $real->transaksi->idt }}"
@@ -233,22 +232,19 @@
                 </table>
 
             </div>
-            
-            @if ($perguliran_i->status == 'A')
+@if ($perguliran_i->status == 'A')
                 <div class="card-body ">
-                <button type="button" data-bs-toggle="modal" data-bs-target="#Rescedule" class="btn btn-info flex-grow-1 me-2" style="background-color: rgb(240, 148, 0);"
-                    @if (!in_array('perguliran.resceduling', Session::get('tombol', [])))
-                        disabled
+                    @if (auth()->user()->jabatan == '1' && auth()->user()->level == '1')
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#Rescedule"
+                            class="btn btn-info flex-grow-1 me-2" style="background-color: rgb(240, 148, 0);"
+                            @if (!in_array('perguliran.resceduling', Session::get('tombol', []))) disabled @endif>
+
+                            <b><i class="fa fa-recycle"></i> &nbsp; Resceduling Pinjaman</b>
+                        </button>
                     @endif
-                >
-                        <b><i class="fa fa-recycle"></i> &nbsp; Resceduling Pinjaman</b>
-                    </button>
                     <button type="button" data-bs-toggle="modal" data-bs-target="#Penghapusan"
-                    class="btn btn-secondary flex-grow-1 ms-2" style="background-color: rgb(253, 5, 5);"
-                    @if (!in_array('perguliran.penghapusan', Session::get('tombol', [])))
-                        disabled
-                    @endif
-                >
+                        class="btn btn-secondary flex-grow-1 ms-2" style="background-color: rgb(253, 5, 5);"
+                        @if (!in_array('perguliran.penghapusan', Session::get('tombol', []))) disabled @endif>
                         <b><i class="fa fa-trash"></i> &nbsp; Penghapusan Pinjaman</b>
                     </button>
                 </div>
