@@ -177,9 +177,9 @@
                 sampai target pelunasan, sebagaimana jadwal angsuran terlampir.
             </li>
             <li>Jika Kredit diselesaikan sebelum jangka waktu pengembalian, maka <b>Pihak Kedua</b> diwajibkan
-                membayar <b>sisa pokok, jasa pada bulan tersebut ditambah 1x jasa bulan berikutnya sebagai kompensasi.</b> </li>
+                membayar <b>sisa pokok dan jasa seluruhnya utuh.</b> </li>
             <li>
-                <b> Pihak Kedua </b> mebayar angsuran pertama dan biaya administrasi Ketika barang datang.
+                <b> Pihak Kedua </b> membayar DP dan atau biaya administrasi.
             </li>
             <li>
                 Pembayaran angsuran tersebut di lakukan setiap bulan di kantor {{ $kec->nama_lembaga_sort }} yang beralamat
