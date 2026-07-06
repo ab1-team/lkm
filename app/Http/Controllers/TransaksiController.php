@@ -2451,17 +2451,11 @@ class TransaksiController extends Controller
         $keuangan = new Keuangan;
 
         $kec = Kecamatan::where('id', Session::get('lokasi'))->with('kabupaten')->first();
-        $trx = Transaksi::where('idt', $id)->with('rek_debit', 'rek_kredit', 'tr_idtp', 'tr_idtp.rek_kredit')->withSum('tr_idtp', 'jumlah')->first();
-
-        if ($trx && (int) $trx->idtp === 0) {
-            $trx->setRelation('tr_idtp', collect());
-            $trx->tr_idtp_sum_jumlah = 0;
-        } elseif ($trx) {
-            $trx->setRelation('tr_idtp', $trx->tr_idtp->where('idt', '!=', $trx->idt)->values());
-            $trx->tr_idtp_sum_jumlah = $trx->tr_idtp->sum('jumlah');
-        }
+        $trx = Transaksi::where('idt', $id)->with('rek_debit', 'rek_kredit')->first();
 
         if ($trx) {
+            $trx->setRelation('tr_idtp', collect());
+            $trx->tr_idtp_sum_jumlah = 0;
             $trx->jumlah = (float) ($trx->jumlah ?? 0);
         }
 
@@ -2551,16 +2545,12 @@ class TransaksiController extends Controller
         $idt = $request->cetak;
 
         $data['kec'] = Kecamatan::where('id', Session::get('lokasi'))->with('kabupaten')->first();
-        $data['transaksi'] = Transaksi::whereIn('idt', $idt)->with('rek_debit', 'rek_kredit', 'tr_idtp', 'tr_idtp.rek_kredit')->withSum('tr_idtp', 'jumlah')->get();
+        $data['transaksi'] = Transaksi::whereIn('idt', $idt)->with('rek_debit', 'rek_kredit')->get();
 
         foreach ($data['transaksi'] as $trx) {
-            if ((int) $trx->idtp === 0) {
-                $trx->setRelation('tr_idtp', collect());
-                $trx->tr_idtp_sum_jumlah = 0;
-            } else {
-                $trx->setRelation('tr_idtp', $trx->tr_idtp->where('idt', '!=', $trx->idt)->values());
-                $trx->tr_idtp_sum_jumlah = $trx->tr_idtp->sum('jumlah');
-            }
+            $trx->setRelation('tr_idtp', collect());
+            $trx->tr_idtp_sum_jumlah = 0;
+            $trx->jumlah = (float) ($trx->jumlah ?? 0);
         }
 
         $data['dir'] = User::where([
@@ -2590,16 +2580,12 @@ class TransaksiController extends Controller
         $idt = $request->cetak;
 
         $data['kec'] = Kecamatan::where('id', Session::get('lokasi'))->with('kabupaten')->first();
-        $data['transaksi'] = Transaksi::whereIn('idt', $idt)->with('rek_debit', 'rek_kredit', 'tr_idtp', 'tr_idtp.rek_kredit')->withSum('tr_idtp', 'jumlah')->get();
+        $data['transaksi'] = Transaksi::whereIn('idt', $idt)->with('rek_debit', 'rek_kredit')->get();
 
         foreach ($data['transaksi'] as $trx) {
-            if ((int) $trx->idtp === 0) {
-                $trx->setRelation('tr_idtp', collect());
-                $trx->tr_idtp_sum_jumlah = 0;
-            } else {
-                $trx->setRelation('tr_idtp', $trx->tr_idtp->where('idt', '!=', $trx->idt)->values());
-                $trx->tr_idtp_sum_jumlah = $trx->tr_idtp->sum('jumlah');
-            }
+            $trx->setRelation('tr_idtp', collect());
+            $trx->tr_idtp_sum_jumlah = 0;
+            $trx->jumlah = (float) ($trx->jumlah ?? 0);
         }
 
         $data['dir'] = User::where([

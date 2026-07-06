@@ -12,6 +12,12 @@
     $total_saldo = $transaksi->isNotEmpty() ? (float) $transaksi->last()->saldo_running : (float)($saldo_awal_tahun + $saldo_awal_bulan);
 @endphp
 
+<style>
+    .badge-pos-d { background-color: #2dce89; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 9pt; font-weight: 600; }
+    .badge-pos-k { background-color: #f5365c; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 9pt; font-weight: 600; }
+    .col-akun { font-size: 9pt; line-height: 1.3; }
+</style>
+
 <form action="/transaksi/dokumen/cetak" method="post" id="FormCetakDokumenTransaksi" target="_blank">
     @csrf
 
@@ -125,12 +131,18 @@
                     </td>
                     <td align="center">{{ $loop->iteration }}.</td>
                     <td align="center">{{ Tanggal::tglIndo($trx->tgl_transaksi) }}</td>
-                    <td align="left" style="font-size: 9pt;">(D) {{ $trx->rekening_debit_nama }}</td>
-                    <td align="left" style="font-size: 9pt;">(K) {{ $trx->rekening_kredit_nama }}</td>
+                    <td align="left" class="col-akun">
+                        <span class="badge-pos-d">D</span>
+                        {{ $trx->rekening_debit_nama }}
+                    </td>
+                    <td align="left" class="col-akun">
+                        <span class="badge-pos-k">K</span>
+                        {{ $trx->rekening_kredit_nama }}
+                    </td>
                     <td>{{ $trx->keterangan_transaksi }}</td>
                     <td align="center">{{ $trx->idt }}</td>
-                    <td align="right">{{ number_format($trx->debit_baris, 2) }}</td>
-                    <td align="right">{{ number_format($trx->kredit_baris, 2) }}</td>
+                    <td align="right" style="{{ ($trx->rekening_debit === $rek->kode_akun) ? 'background:#e6f9f0;font-weight:600;' : '' }}">{{ number_format($trx->debit_baris, 2) }}</td>
+                    <td align="right" style="{{ ($trx->rekening_kredit === $rek->kode_akun) ? 'background:#fde2e6;font-weight:600;' : '' }}">{{ number_format($trx->kredit_baris, 2) }}</td>
                     <td align="right">{{ number_format($trx->saldo_running, 2) }}</td>
                     <td align="center">{{ $ins }}</td>
                 </tr>
