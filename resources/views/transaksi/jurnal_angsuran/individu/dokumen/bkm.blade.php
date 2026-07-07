@@ -47,8 +47,9 @@
         }
 
         .box {
-            width: 11cm;
+            width: 14cm;
             min-height: 8cm;
+            max-height: 11cm;
             border: 2px solid #000;
             padding-top: 10px;
             padding-bottom: 8px;
