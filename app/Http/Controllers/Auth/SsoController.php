@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kecamatan;
+use App\Models\Menu;
+use App\Models\MenuTombol;
 use App\Models\User;
 use App\Services\SsoTokenVerifier;
 use Illuminate\Http\Request;
@@ -62,12 +64,59 @@ class SsoController extends Controller
             abort(403, 'Tidak ada admin aktif (jabatan=1, level=1) untuk kecamatan ini.');
         }
 
-        // 5. Login sebagai admin lokal
+        // 4. Login sebagai admin lokal
         Auth::loginUsingId($pivot->id);
         $request->session()->regenerate();
 
+        $lokasi = $pivot->lokasi;
+
+        // 5. Build session keys — parity dengan AuthController::login()
         $hak_akses = explode(',', (string) $pivot->hak_akses);
         $angsuran = ! in_array('19', $hak_akses, true) && ! in_array('21', $hak_akses, true);
+
+        $menu = Menu::where('parent_id', '0')
+            ->whereNotIn('id', $hak_akses)
+            ->where('aktif', 'Y')
+            ->where(function ($query) use ($lokasi) {
+                $query->where('lokasi', '0')
+                    ->orWhere('lokasi', 'LIKE', '%#'.$lokasi.'#%');
+            })
+            ->where(function ($query) use ($lokasi) {
+                $query->where('kecuali', '0')
+                    ->orWhereNull('kecuali')
+                    ->orWhere('kecuali', 'NOT LIKE', '%#'.$lokasi.'#%');
+            })
+            ->with([
+                'child' => function ($query) use ($hak_akses, $lokasi) {
+                    $query->whereNotIn('id', $hak_akses)
+                        ->where(function ($query) use ($lokasi) {
+                            $query->where('lokasi', '0')
+                                ->orWhere('lokasi', 'LIKE', '%#'.$lokasi.'#%');
+                        })
+                        ->where(function ($query) use ($lokasi) {
+                            $query->where('kecuali', '0')
+                                ->orWhereNull('kecuali')
+                                ->orWhere('kecuali', 'NOT LIKE', '%#'.$lokasi.'#%');
+                        });
+                },
+                'child.child' => function ($query) use ($hak_akses, $lokasi) {
+                    $query->whereNotIn('id', $hak_akses)
+                        ->where(function ($query) use ($lokasi) {
+                            $query->where('lokasi', '0')
+                                ->orWhere('lokasi', 'LIKE', '%#'.$lokasi.'#%');
+                        })
+                        ->where(function ($query) use ($lokasi) {
+                            $query->where('kecuali', '0')
+                                ->orWhereNull('kecuali')
+                                ->orWhere('kecuali', 'NOT LIKE', '%#'.$lokasi.'#%');
+                        });
+                },
+            ])
+            ->orderBy('sort', 'ASC')
+            ->get();
+
+        $AksesTombol = explode(',', (string) $pivot->akses_tombol);
+        $MenuTombol = MenuTombol::whereNotIn('id', $AksesTombol)->pluck('akses')->toArray();
 
         $icon = $kec->logo
             ? '/storage/logo/'.$kec->logo
@@ -81,10 +130,12 @@ class SsoController extends Controller
             'foto' => $pivot->foto,
             'logo' => $kec->logo,
             'icon' => $icon,
+            'menu' => $menu,
+            'tombol' => $MenuTombol,
             'angsuran' => $angsuran,
         ]);
 
-        // 6. Audit log — simpan identitas asli user Holding + pivot lokal
+        // 6. Audit log
         Log::info('SSO auto-login success', [
             'holding_email' => $payload['email'],
             'holding_uid' => $payload['uid'],
