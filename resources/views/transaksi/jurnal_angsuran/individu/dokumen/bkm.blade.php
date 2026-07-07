@@ -30,24 +30,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BUKTI KAS MASUK</title>
     <style>
+        @page {
+            size: A4;
+            margin: 5mm;
+        }
+
         body {
             font-size: 9px;
             color: rgba(0, 0, 0, 0.8);
             font-family: Arial, Helvetica, sans-serif;
-            padding: 20px;
+            padding: 5px;
+            margin: 0;
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
         }
 
         .box {
-            width: 14cm;
-            min-height: 9cm;
+            width: 11cm;
+            min-height: 8cm;
             border: 2px solid #000;
-            padding-top: 16px;
-            padding-bottom: 12px;
-            padding-right: 22px;
-            padding-left: 12px;
+            padding-top: 10px;
+            padding-bottom: 8px;
+            padding-right: 12px;
+            padding-left: 10px;
             display: flex;
             flex-direction: column;
         }
@@ -55,7 +61,7 @@
         .box-header {
             padding-left: 16px;
             padding-right: 16px;
-            padding-bottom: 8px;
+            padding-bottom: 4px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.5);
         }
 
@@ -102,8 +108,8 @@
         }
 
         .ttd-table {
-            margin-top: auto;
-            padding-top: 20px;
+            margin-top: 0;
+            padding-top: 0px;
         }
 
         .ttd-table td {
@@ -159,8 +165,8 @@
                     </table>
                 </div>
             </div>
-            <div class="box-body fs-12">
-                <table width="100%">
+            <div class="box-body fs-12" style="display:flex; flex-direction:column; flex:1;">
+                <table width="100%" style="flex:1;">
                     <tr>
                         <td colspan="6" class="fs-10" align="center">
                             <h1>BUKTI KAS MASUK</h1>
