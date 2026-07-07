@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\UpkController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\SsoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DesaController;
 use App\Http\Controllers\GenerateController;
@@ -168,6 +169,8 @@ Route::group(['prefix' => 'rekap', 'as' => 'rekap.', 'middleware' => 'rekap'], f
 Route::get('/', [AuthController::class, 'index'])->middleware('guest')->name('/');
 Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 Route::get('/app', [AuthController::class, 'app']);
+
+Route::get('/auth/sso', [SsoController::class, 'consume'])->middleware('guest')->name('auth.sso');
 
 Route::get('/excel', [ExcelController::class, 'index']);
 
