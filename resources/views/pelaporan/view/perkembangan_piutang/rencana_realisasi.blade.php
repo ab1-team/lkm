@@ -178,7 +178,7 @@
                         <table class="p" border="0" width="100%" cellspacing="0" cellpadding="0"
                             style="font-size: 11px; table-layout: fixed;">
                             <tr style="font-weight: bold;">
-                                <td class="t l b" align="center" height="15" width="85%">
+                                <td class="t l b" align="center" height="15" width="104%">
                                     J U M L A H ({{ $t_kelompok }})
                                 </td>
                                 <td class="t l b" align="right" width="8.5%">
