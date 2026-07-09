@@ -44,10 +44,14 @@
         </tr>
         <tr>
             <td width="20%" height="10" class="style9">Alamat</td>
-            <td width="42%" class="style27">: {{ $pinkel->anggota->alamat }}
-                {{ $pinkel->anggota->d->sebutan_desa->sebutan_desa }}
-                {{ $pinkel->anggota->d->desa }} {{ $kec->sebutan_kec }} {{ $kec->nama_kec }}
-                {{ $nama_kabupaten }} </td>
+            <td width="42%" class="style27">
+                <span>: {{ $pinkel->anggota->alamat }}<br></span>
+                <span style="display: block; padding-left: 10pt;">
+                    {{ $pinkel->anggota->d->sebutan_desa->sebutan_desa }}
+                    {{ $pinkel->anggota->d->desa }} {{ $kec->sebutan_kec }} {{ $kec->nama_kec }}
+                    {{ $nama_kabupaten }}
+                </span>
+            </td>
             <td height="10" class="style9">&nbsp;</td>
         </tr>
         <tr>
