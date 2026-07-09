@@ -16,7 +16,7 @@
         }
     </style>
     @php
-        $nomor =0;
+        $nomor = 0;
     @endphp
     @foreach ($jenis_pp as $jpp)
         @php
@@ -36,9 +36,9 @@
         @endphp
 
         @if ($nomor > 1)
-            <div class="break"></div>        
+            <div class="break"></div>
             @php
-            $empty = false;
+                $empty = false;
             @endphp
         @endif
 
@@ -62,12 +62,17 @@
 
         <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
             <tr>
-                <th class="t l b" rowspan="2" width="5%">No</th>
-                <th class="t l b" rowspan="2" width="33%">Nama Nasabah - Load ID</th>
-                <th class="t l b" rowspan="2" width="27%">Nomor SPK</th>
-                <th class="t l b" rowspan="2" width="8%">Tgl Cair</th>
-                <th class="t l b" rowspan="2" width="5%">T/S</th>
-                <th class="t l b r" colspan="2" width="22%">Alokasi</th>
+                <th class="t l b" rowspan="2" width="3%">No</th>
+                <th class="t l b" rowspan="2" width="15%">NIK</th>
+                <th class="t l b" rowspan="2" width="30%">Nama Nasabah - Load ID</th>
+                <th class="t l b" rowspan="2" width="25%">Alamat</th>
+                <th class="t l b" rowspan="2" width="25%">Tempat Lahir</th>
+                <th class="t l b" rowspan="2" width="15%">Tanggal Lahir</th>
+
+                <th class="t l b" rowspan="2" width="20%">Nomor SPK</th>
+                <th class="t l b" rowspan="2" width="6%">Tgl Cair</th>
+                <th class="t l b" rowspan="2" width="4%">T/S</th>
+                <th class="t l b r" colspan="2" width="20%">Alokasi</th>
             </tr>
             <tr>
                 <th class="t l b" width="11%">Pengajuan</th>
@@ -89,7 +94,7 @@
                             $t_pencairan += $j_pencairan;
                         @endphp
                         <tr style="font-weight: bold;">
-                            <td class="t l b" colspan="5" align="center" height="15">
+                            <td class="t l b" colspan="9" align="left" height="15">
                                 Jumlah pemanfaat {{ $nama_desa }} ({{ $j_kelompok }})
                             </td>
                             <td class="t l b" align="right">
@@ -102,7 +107,7 @@
                     @endif
 
                     <tr style="font-weight: bold;">
-                        <td class="t l b r" colspan="7" align="left">
+                        <td class="t l b r" colspan="11" align="left">
                             {{ $pinj_i->kode_desa }}. {{ $pinj_i->nama_desa }}
                         </td>
                     </tr>
@@ -121,12 +126,24 @@
 
                 <tr>
                     <td class="t l b" align="center">{{ $nomor++ }}</td>
-                    <td class="t l b">{{ $pinj_i->namadepan }} - {{ $pinj_i->id }}</td>
+                    <td class="t l b">{{ $pinj_i->nik }}</td>
+                    <td class="t l b">
+                        {{ $pinj_i->namadepan }} - {{ $pinj_i->id }}
+                    </td>
+                    <td class="t l b">
+                        <span style="font-size: 9px;">{{ $pinj_i->alamat }}</span>
+                    </td>
+                    <td class="t l b">
+                        <span style="font-size: 9px;">{{ $pinj_i->tempat_lahir }}</span>
+                    </td>
+                    <td class="t l b" align="center">
+                        <span style="font-size: 9px;">{{ Tanggal::tglIndo($pinj_i->tgl_lahir) }}</span>
+                    </td>
                     <td class="t l b">{{ $pinj_i->spk_no }}</td>
                     <td class="t l b" align="center">{{ Tanggal::tglIndo($pinj_i->tgl_cair) }}</td>
                     <td class="t l b" align="center">{{ $pinj_i->jangka }}/{{ $pinj_i->sis_pokok->sistem }}</td>
-                    <td class="t l b" align="right">{{ number_format($pinj_i->proposal) }}</td>
-                    <td class="t l b r" align="right">{{ number_format($pinj_i->alokasi) }}</td>
+                    <td class="t l b" align="right">{{ number_format($pinj_i->proposal, 2) }}</td>
+                    <td class="t l b r" align="right">{{ number_format($pinj_i->alokasi, 2) }}</td>
                 </tr>
 
                 @php
@@ -145,7 +162,7 @@
                     $t_pencairan += $j_pencairan;
                 @endphp
                 <tr style="font-weight: bold;">
-                    <td class="t l b" colspan="5" align="center" height="15">
+                    <td class="t l b" colspan="9" align="left" height="15">
                         Jumlah Kelompok {{ $nama_desa }} ({{ $j_kelompok }})
                     </td>
                     <td class="t l b" align="right">
@@ -157,17 +174,17 @@
                 </tr>
 
                 <tr>
-                    <td colspan="7" style="padding: 0px !important;">
+                    <td colspan="11" style="padding: 0px !important;">
                         <table class="p" border="0" width="100%" cellspacing="0" cellpadding="0"
                             style="font-size: 11px; table-layout: fixed;">
                             <tr style="font-weight: bold;">
-                                <td class="t l b" align="center" height="15" width="78%">
+                                <td class="t l b" align="center" height="15" width="85%">
                                     J U M L A H ({{ $t_kelompok }})
                                 </td>
-                                <td class="t l b" align="right" width="11%">
+                                <td class="t l b" align="right" width="8.5%">
                                     {{ number_format($t_pengajuan, 2) }}
                                 </td>
-                                <td class="t l b r" align="right" width="11%">
+                                <td class="t l b r" align="right" width="8.5%">
                                     {{ number_format($t_pencairan, 2) }}
                                 </td>
                             </tr>

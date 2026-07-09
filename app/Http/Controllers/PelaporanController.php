@@ -3496,6 +3496,10 @@ class PelaporanController extends Controller
                     $query->select(
                         $tb_pinj_i . '.*',
                         $tb_angg . '.namadepan',
+                        $tb_angg . '.nik',
+                        $tb_angg . '.alamat',
+                        $tb_angg . '.tempat_lahir',
+                        $tb_angg . '.tgl_lahir',
                         'desa.nama_desa',
                         'desa.kd_desa',
                         'desa.kode_desa',
