@@ -175,7 +175,7 @@
             <li>Surat Rekomendasi dari Kepala Desa/Lurah;</li>
                 @endif
             <li>Surat Kesanggupan Penyerahan Jaminan;</li>
-            <li>Surat Pernyataan Piutang;</li>
+            <li>Surat Persetujuan Suami atau Istri / Ahli Waris;</li>
             <li>Tabel Rencana Angsuran;</li>
 
                 @if(session('lokasi') == 318)

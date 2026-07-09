@@ -85,9 +85,9 @@
                     <div style="font-size: 14pt;">
                         PEMERINTAH DAERAH {{ strtoupper($nama_kabupaten) }}
                     </div>
-                    <div style="font-size: 14pt;">
+                    {{-- <div style="font-size: 14pt;">
                         {{ strtoupper($kec->sebutan_kec) }} {{ strtoupper($kec->nama_kec) }}
-                    </div>
+                    </div> --}}
                     <div style="font-size: 12pt;">
                         <b>
                             {{ strtoupper($pinkel->anggota->d->sebutan_desa->sebutan_desa) }}
