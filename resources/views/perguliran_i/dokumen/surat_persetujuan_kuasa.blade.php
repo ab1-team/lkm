@@ -5,7 +5,7 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table width="97%" border="0" align="center" cellpadding="3" cellspacing="0">
+    <table width="100%" border="0" align="center" cellpadding="3" cellspacing="0">
 
         <tr>
             <td height="70" colspan="3" class="bottom">
@@ -21,30 +21,26 @@
             <td height="10" colspan="3" class="style9">Yang bertanda tangan dibawah ini:</td>
         </tr>
         <tr>
-            <td height="10" class="style9">Nama Lengkap </td>
-            <td class="style27">: {{ $pinkel->anggota->namadepan }}</td>
-            <td height="10" class="style9">&nbsp;</td>
+            <td height="10" width="25%" class="style9">Nama Lengkap </td>
+            <td class="style27" colspan="2">: {{ $pinkel->anggota->namadepan }}</td>
         </tr>
         <tr>
             <td height="10" class="style9">Jenis Kelamin </td>
-            <td class="style27">: {{ $pinkel->anggota->jk }}</td>
-            <td height="10" class="style9">&nbsp;</td>
+            <td class="style27" colspan="2">: {{ $pinkel->anggota->jk }}</td>
         </tr>
         <tr>
             <td height="10" class="style9">NIK</td>
-            <td class="style27">: {{ $pinkel->anggota->nik }}</td>
-            <td height="10" class="style9">&nbsp;</td>
+            <td class="style27" colspan="2">: {{ $pinkel->anggota->nik }}</td>
         </tr>
         <tr>
-            <td height="10" class="style9">Tempat,Tanggal Lahir </td>
-            <td class="style27">: {{ $pinkel->anggota->tempat_lahir }}
+            <td height="30" class="style9">Tempat,Tanggal Lahir </td>
+            <td height="30" class="style27" colspan="2">: {{ $pinkel->anggota->tempat_lahir }}
                 {{ Tanggal::tglLatin($pinkel->anggota->tgl_lahir) }}
             </td>
-            <td height="10" class="style9">&nbsp;</td>
         </tr>
         <tr>
             <td width="20%" height="10" class="style9">Alamat</td>
-            <td width="42%" class="style27">
+            <td width="42%" class="style27" colspan="2">
                 <span>: {{ $pinkel->anggota->alamat }}<br></span>
                 <span style="display: block; padding-left: 5pt;">
                     {{ $pinkel->anggota->d->sebutan_desa->sebutan_desa }}
@@ -52,22 +48,19 @@
                     {{ $nama_kabupaten }}
                 </span>
             </td>
-            <td height="10" class="style9">&nbsp;</td>
         </tr>
         <tr>
             <td height="10" class="style9">Pekerjaan</td>
-            <td class="style27">
+            <td class="style27" colspan="2">
                 :
 				{{is_numeric($pinkel->anggota->usaha) ? $pinkel->anggota->u->nama_usaha : $pinkel->anggota->usaha}}
 
             </td>
-            <td height="10" class="style9">&nbsp;</td>
         </tr>
 
         <tr>
             <td height="10" class="style9">Nomor HP</td>
-            <td class="style27">: {{ $pinkel->anggota->hp }}</td>
-            <td height="10" class="style9">&nbsp;</td>
+            <td class="style27" colspan="2">: {{ $pinkel->anggota->hp }}</td>
         </tr>
 
 
@@ -77,14 +70,13 @@
         </tr>
         <tr>
             <td height="10" class="style9">Nama Lengkap </td>
-            <td class="style27">: {{ $dir->namadepan }} {{ $dir->namabelakang }}</td>
-            <td height="10" class="style9">&nbsp;</td>
+            <td class="style27" colspan="2">: {{ $dir->namadepan }} {{ $dir->namabelakang }}</td>
         </tr>
+        
         <tr>
             <td height="10" class="style9">Jabatan </td>
             {{-- <td class="style27">: {{ $dir->j->nama_jabatan }} {{ $kec->nama_lembaga_sort }}</td> --}}
-            <td class="style27">: {{ $kec->sebutan_level_1 }} {{ $kec->nama_lembaga_sort }}</td>
-            <td height="10" class="style9">&nbsp;</td>
+            <td class="style27" colspan="2">: {{ $kec->sebutan_level_1 }} {{ $kec->nama_lembaga_sort }}</td>
         </tr>
     </table>
 
