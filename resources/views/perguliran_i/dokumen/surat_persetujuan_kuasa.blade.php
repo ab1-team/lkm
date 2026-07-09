@@ -46,7 +46,7 @@
             <td width="20%" height="10" class="style9">Alamat</td>
             <td width="42%" class="style27">
                 <span>: {{ $pinkel->anggota->alamat }}<br></span>
-                <span style="display: block; padding-left: 10pt;">
+                <span style="display: block; padding-left: 5pt;">
                     {{ $pinkel->anggota->d->sebutan_desa->sebutan_desa }}
                     {{ $pinkel->anggota->d->desa }} {{ $kec->sebutan_kec }} {{ $kec->nama_kec }}
                     {{ $nama_kabupaten }}
