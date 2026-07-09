@@ -34,7 +34,7 @@
         </tr>
         <tr>
             <td height="10" class="style9">Tempat,Tanggal Lahir </td>
-            <td height="10" class="style27" colspan="2">: {{ $pinkel->anggota->tempat_lahir }}
+            <td height="10" class="style27" colspan="2">: {{ $pinkel->anggota->tempat_lahir }}, 
                 {{ Tanggal::tglLatin($pinkel->anggota->tgl_lahir) }}
             </td>
         </tr>

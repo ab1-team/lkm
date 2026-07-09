@@ -1,5 +1,7 @@
 @php
     use App\Utils\Tanggal;
+
+    $logoPath = storage_path('app/public/logo_kab/' . ($kab->id ?? '') . '.png');
 @endphp
 
 <head>
@@ -78,8 +80,10 @@
             style="font-size: 10pt; position: relative; top: -20pt;">
             <tr class="b">
                 <td align="center">
-                    <img src="../storage/app/public/logo_kab/{{ $kab->id }}.png" width="70"
-                        alt="{{ $kab->id }}.png" style="margin-bottom: 8pt;">
+                    @if (file_exists($logoPath))
+                        <img src="../storage/app/public/logo_kab/{{ $kab->id }}.png" width="70"
+                            alt="{{ $kab->id }}.png" style="margin-bottom: 8pt;">
+                    @endif
                 </td>
                 <td align="center">
                     <div style="font-size: 14pt;">
