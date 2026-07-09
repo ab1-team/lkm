@@ -49,9 +49,6 @@
                 <div style="font-weight: bold;">
                     {{ $pinkel->anggota->d->sebutan_desa->sebutan_kades }} {{ $pinkel->anggota->d->nama_desa }}
                 </div>
-                <div>
-                    {{ $kec->sebutan_kec }} {{ $kec->nama_kec }}
-                </div>
                 <div>Di</div>
                 <div>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tempat

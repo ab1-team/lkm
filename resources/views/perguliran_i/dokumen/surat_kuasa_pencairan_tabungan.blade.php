@@ -25,11 +25,9 @@
                 </p>
             </td>
         </tr>
-        <br>
         <tr class="no-break">
             <td colspan="3" class="style9">Yang bertanda tangan di bawah ini:</td>
         </tr>
-        <br>
         <tr class="no-break">
             <td width="25%" class="style9" style="white-space:nowrap;">Nama</td>
             <td class="style27" style="padding-left:14px;text-indent:-14px;">: {{ $pinkel->anggota->namadepan }}</td>
@@ -48,14 +46,18 @@
             <td class="style9">&nbsp;</td>
         </tr>
         <tr class="no-break">
-            <td class="style9" style="white-space:nowrap;">Alamat</td>
-            <td class="style27" style="padding-left:14px;text-indent:-14px;">: {{ $pinkel->anggota->alamat }}
+            <td class="style9" style="white-space:nowrap; vertical-align: top;">Alamat</td>
+            <td class="style27" style="padding-left:7px; text-indent:-7px; vertical-align: top;">: {{ $pinkel->anggota->alamat }}
                 {{ $pinkel->anggota->d->sebutan_desa->sebutan_desa }}
                 {{ $pinkel->anggota->d->nama_desa }}
-                {{ $kec->sebutan_kec }} {{ $kec->nama_kec }}
+                @php
+                    $kec_desa = $pinkel->anggota->d->nama_kec ?? $kec->nama_kec;
+                    $sebutan_kec_desa = $pinkel->anggota->d->sebutan_kec ?? 'Kec.';
+                @endphp
+                {{ $sebutan_kec_desa }} {{ $kec_desa }}
                 {{ $nama_kabupaten }}
             </td>
-            <td class="style9">&nbsp;</td>
+            <td class="style9" style="vertical-align: top;">&nbsp;</td>
         </tr>
         <tr class="no-break">
             <td class="style9" style="white-space:nowrap;">No. CIF/Nasabah</td>
