@@ -111,7 +111,7 @@
     </tr>
     <tr>
         <td width="30">&nbsp;</td>
-        <td width="80">Nama Lengkap</td>
+        <td width="25%">Nama Lengkap</td>
         <td width="5" align="right">:</td>
         <td style="font-weight: bold;">{{ $pinkel->anggota->namadepan }}</td>
     </tr>
@@ -189,7 +189,7 @@
     </td>
     </tr>
 </table>
-<table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt; margin-top: 40px;">
+<table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt; margin-top: 30px;">
 
     <tr>
         <td width="30%" class="style9 align-justify">&nbsp;</td>
