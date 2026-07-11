@@ -14,13 +14,13 @@
         }
     </style>
 
-    <table width="97%" border="0" align="center" cellpadding="2" cellspacing="0" style="font-size: 8pt; margin-top: 5px;">
+    <table width="97%" border="0" align="center" cellpadding="2" cellspacing="0" style="font-size: 9pt; margin-top: 2px;">
 
         <tr class="no-break">
-            <td height="30" colspan="3" class="bottom" style="padding-bottom: 0;">
-                <p align="center" class="style6" style="font-size: 18pt; font-weight: bold; margin: 0;">SURAT KUASA</p>
-                <p align="center" class="style6" style="font-size: 13pt; font-weight: bold; margin: 0;">PENCAIRAN TABUNGAN UNTUK PENYELESAIAN KEWAJIBAN KREDIT</p>
-                <p align="center" class="style9" style="font-size: 10pt; margin: 2px 0 0 0;">
+            <td height="10" colspan="3" class="bottom" style="padding-bottom: 0;">
+                <p align="center" class="style6" style="font-size: 14pt; font-weight: bold; margin: 0;">SURAT KUASA</p>
+                <p align="center" class="style6" style="font-size: 10pt; font-weight: bold; margin: 0;">PENCAIRAN TABUNGAN UNTUK PENYELESAIAN KEWAJIBAN KREDIT</p>
+                <p align="center" class="style9" style="font-size: 5pt; margin: 2px 0 0 0;">
                     &nbsp;
                 </p>
             </td>
@@ -30,19 +30,19 @@
         </tr>
         <tr class="no-break">
             <td width="25%" class="style9" style="white-space:nowrap;">Nama</td>
-            <td class="style27" style="padding-left:14px;text-indent:-14px;">: {{ $pinkel->anggota->namadepan }}</td>
+            <td class="style27" style="padding-left:10px;text-indent:-10px;">: {{ $pinkel->anggota->namadepan }}</td>
             <td class="style9">&nbsp;</td>
         </tr>
         <tr class="no-break">
             <td class="style9" style="white-space:nowrap;">Tempat/Tanggal Lahir</td>
-            <td class="style27" style="padding-left:14px;text-indent:-14px;">: {{ $pinkel->anggota->tempat_lahir }},
+            <td class="style27" style="padding-left:10px;text-indent:-10px;">: {{ $pinkel->anggota->tempat_lahir }},
                 {{ Tanggal::tglLatin($pinkel->anggota->tgl_lahir) }}
             </td>
             <td class="style9">&nbsp;</td>
         </tr>
         <tr class="no-break">
             <td class="style9" style="white-space:nowrap;">NIK</td>
-            <td class="style27" style="padding-left:14px;text-indent:-14px;">: {{ $pinkel->anggota->nik }}</td>
+            <td class="style27" style="padding-left:10px;text-indent:-10px;">: {{ $pinkel->anggota->nik }}</td>
             <td class="style9">&nbsp;</td>
         </tr>
         <tr class="no-break">
@@ -61,17 +61,17 @@
         </tr>
         <tr class="no-break">
             <td class="style9" style="white-space:nowrap;">No. CIF/Nasabah</td>
-            <td class="style27" style="padding-left:14px;text-indent:-14px;">: ..................................</td>
+            <td class="style27" style="padding-left:10px;text-indent:-10px;">: ..................................</td>
             <td class="style9">&nbsp;</td>
         </tr>
         <tr class="no-break">
             <td class="style9" style="white-space:nowrap;">No. Rekening Tabungan</td>
-            <td class="style27" style="padding-left:14px;text-indent:-14px;">: ..................................</td>
+            <td class="style27" style="padding-left:10px;text-indent:-10px;">: ..................................</td>
             <td class="style9">&nbsp;</td>
         </tr>
         <tr class="no-break">
             <td class="style9" style="white-space:nowrap;">No. Perjanjian Kredit</td>
-            <td class="style27" style="padding-left:14px;text-indent:-14px;">: {{ $pinkel->spk_no ?? $pinkel->id }}</td>
+            <td class="style27" style="padding-left:10px;text-indent:-10px;">: {{ $pinkel->spk_no ?? $pinkel->id }}</td>
             <td class="style9">&nbsp;</td>
         </tr>
         <br>
@@ -83,10 +83,6 @@
                 Dalam hal ini diwakili oleh pejabat yang berwenang sesuai ketentuan internal perusahaan,
                 selanjutnya disebut sebagai <b>PENERIMA KUASA</b>.
             </td>
-        </tr>
-        <br>
-        <tr>
-            <td colspan="3" class="style9"><b>KHUSUS</b></td>
         </tr>
         <tr>
             <td colspan="3" class="style9 align-justify" style="text-indent: 30px;">
@@ -125,8 +121,8 @@
         </tr>
         <tr>
             <td colspan="3" class="style9 align-justify">
-                <b>Pemberi Kuasa menyatakan bahwa:</b>
-                <ol>
+                <b style="display:block; margin-bottom: 2px;">Pemberi Kuasa menyatakan bahwa:</b>
+                <ol style="margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0;">
                     <li>
                         Saldo tabungan yang digunakan berdasarkan surat kuasa ini merupakan milik sah
                         Pemberi Kuasa.
@@ -169,9 +165,9 @@
         </tr>
     </table>
 
-    <table width="97%" border="0" align="center" cellpadding="2" cellspacing="0" style="font-size: 9pt; margin-top: 10px;">
+    <table width="97%" border="0" align="center" cellpadding="2" cellspacing="0" style="font-size: 9pt; margin-top: 5px;">
         <tr>
-            <td class="style26" style="padding-top: 4px;">
+            <td class="style26" style="padding-top: 2px;">
                 <div align="center" class="style9">
                     <p style="margin: 0; font-size: 9pt;">Penerima Kuasa</p>
                     <p style="margin: 0; font-size: 9pt;">{{ $kec->nama_lembaga_sort }}</p>
