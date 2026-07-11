@@ -152,7 +152,7 @@
     <form action="/perguliran_i/dokumen?status=P" target="_blank" method="post">
         @csrf
         <input type="hidden" name="id" value="{{ $perguliran_i->id }}">
-        <div class="card-body d-flex justify-content-between">
+        <div class="card-body d-flex p-3 pt-3 pb-0 ps-3 pe-3 justify-content-between">
             <button type="button" data-bs-toggle="modal" data-bs-target="#CetakDokumenProposal"
                 class="btn btn-info flex-grow-1 me-2" style="background-color: rgb(23, 203, 20);">
                 <b>Cetak Dokumen Proposal</b>
@@ -169,7 +169,7 @@
     <form action="/perguliran_i/dokumen?status=W" target="_blank" method="post">
         @csrf
         <input type="hidden" name="id" value="{{ $perguliran_i->id }}">
-        <div class="card-body d-flex justify-content-between">
+        <div class="card-body d-flex p-3 pt-3 pb-0 ps-3 pe-3 justify-content-between">
             <a href="/perguliran_i/dokumen/kartu_angsuran/{{ $perguliran_i->id }}" target="_blank" class="btn btn-outline-info flex-grow-1 me-2">
                 <b style="color: rgb(2, 102, 251);">Kartu Angsuran</b>
             </a>
