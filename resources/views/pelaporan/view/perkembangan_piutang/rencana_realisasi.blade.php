@@ -60,19 +60,20 @@
             </tr>
         </table>
 
-        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+        <table border="0" width="100%" cellspacing="0" cellpadding="0"
+            style="font-size: 11px; table-layout: fixed; word-wrap: break-word;">
             <tr>
-                <th class="t l b" rowspan="2" width="3%">No</th>
-                <th class="t l b" rowspan="2" width="15%">NIK</th>
+                <th class="t l b" rowspan="2" width="4%">No</th>
+                <th class="t l b" rowspan="2" width="18%">NIK</th>
                 <th class="t l b" rowspan="2" width="30%">Nama Nasabah - Load ID</th>
-                <th class="t l b" rowspan="2" width="25%">Alamat</th>
-                <th class="t l b" rowspan="2" width="25%">Tempat Lahir</th>
-                <th class="t l b" rowspan="2" width="15%">Tanggal Lahir</th>
+                <th class="t l b" rowspan="2" width="26%">Alamat</th>
+                <th class="t l b" rowspan="2" width="16%">Tempat Lahir</th>
+                <th class="t l b" rowspan="2" width="12%">Tanggal Lahir</th>
 
-                <th class="t l b" rowspan="2" width="20%">Nomor SPK</th>
-                <th class="t l b" rowspan="2" width="6%">Tgl Cair</th>
-                <th class="t l b" rowspan="2" width="4%">T/S</th>
-                <th class="t l b r" colspan="2" width="20%">Alokasi</th>
+                <th class="t l b" rowspan="2" width="22%">Nomor SPK</th>
+                <th class="t l b" rowspan="2" width="12%">Tgl Cair</th>
+                <th class="t l b" rowspan="2" width="5%">T/S</th>
+                <th class="t l b r" colspan="2" width="28%">Alokasi</th>
             </tr>
             <tr>
                 <th class="t l b" width="11%">Pengajuan</th>
@@ -161,6 +162,8 @@
                     $t_pengajuan += $j_pengajuan;
                     $t_pencairan += $j_pencairan;
                 @endphp
+
+                {{-- Baris Jumlah Kelompok Desa --}}
                 <tr style="font-weight: bold;">
                     <td class="t l b" colspan="9" align="left" height="15">
                         Jumlah Kelompok {{ $nama_desa }} ({{ $j_kelompok }})
@@ -173,29 +176,16 @@
                     </td>
                 </tr>
 
-                <tr>
-                    <td colspan="11" style="padding: 0px !important;">
-                        <table class="p" border="0" width="100%" cellspacing="0" cellpadding="0"
-                            style="font-size: 11px; table-layout: fixed;">
-                            <tr style="font-weight: bold;">
-                                <td class="t l b" align="center" height="15" width="104%">
-                                    J U M L A H ({{ $t_kelompok }})
-                                </td>
-                                <td class="t l b" align="right" width="8.5%">
-                                    {{ number_format($t_pengajuan, 2) }}
-                                </td>
-                                <td class="t l b r" align="right" width="8.5%">
-                                    {{ number_format($t_pencairan, 2) }}
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td colspan="3">
-                                    <div style="margin-top: 16px;"></div>
-                                    {!! json_decode(str_replace('{tanggal}', $tanggal_kondisi, $kec->ttd->tanda_tangan_pelaporan), true) !!}
-                                </td>
-                            </tr>
-                        </table>
+                {{-- Baris JUMLAH TOTAL (Sejajar dengan kolom di atasnya) --}}
+                <tr style="font-weight: bold; background-color: #f0f0f0;">
+                    <td class="t l b" colspan="9" align="center" height="15">
+                        J U M L A H ({{ $t_kelompok }})
+                    </td>
+                    <td class="t l b" align="right">
+                        {{ number_format($t_pengajuan, 2) }}
+                    </td>
+                    <td class="t l b r" align="right">
+                        {{ number_format($t_pencairan, 2) }}
                     </td>
                 </tr>
             @endif
