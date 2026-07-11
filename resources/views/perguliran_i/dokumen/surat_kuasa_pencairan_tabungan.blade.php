@@ -14,7 +14,7 @@
         }
     </style>
 
-    <table width="97%" border="0" align="center" cellpadding="3" cellspacing="0" style="font-size: 9pt;">
+    <table width="97%" border="0" align="center" cellpadding="2" cellspacing="0" style="font-size: 8pt; margin-top: 5px;">
 
         <tr class="no-break">
             <td height="30" colspan="3" class="bottom" style="padding-bottom: 0;">
@@ -169,54 +169,45 @@
         </tr>
     </table>
 
-    <table width="97%" border="0" align="center" cellpadding="3" cellspacing="0" style="font-size: 9pt; page-break-before: always;">
+    <table width="97%" border="0" align="center" cellpadding="2" cellspacing="0" style="font-size: 9pt; margin-top: 10px;">
         <tr>
-            <td class="style26">
+            <td class="style26" style="padding-top: 4px;">
                 <div align="center" class="style9">
-                    <p style="margin: 0;">&nbsp;</p>
-                    <p style="margin: 0;">Penerima Kuasa</p>
-                    <p style="margin: 0;">{{ $kec->nama_lembaga_sort }}</p>
+                    <p style="margin: 0; font-size: 9pt;">Penerima Kuasa</p>
+                    <p style="margin: 0; font-size: 9pt;">{{ $kec->nama_lembaga_sort }}</p>
                 </div>
             </td>
-            <td class="style26">
-                <div align="center" class="style9">
+            <td class="style26" style="padding-top: 4px;">
+                <div align="center" class="style9" style="font-size: 9pt;">
                     {{ $kec->nama_kec }},
                     {{ Tanggal::tglLatin($pinkel->tgl_cair ?? date('Y-m-d')) }} <br>
-                    <p style="margin: 0;">Pemberi Kuasa</p>
+                    <p style="margin: 0; font-size: 9pt;">Pemberi Kuasa</p>
                 </div>
             </td>
         </tr>
         <tr>
-            <td align="center">
+            <td align="center" style="height: 60px; vertical-align: bottom;">
                 @php
                     $logoPath = storage_path('app/public/qr/' . session('lokasi') . '.jpeg');
                 @endphp
 
                 @if (file_exists($logoPath))
-                    <img src="../storage/app/public/qr/{{ session('lokasi') }}.jpeg" height="70"
+                    <img src="../storage/app/public/qr/{{ session('lokasi') }}.jpeg" height="55"
                         alt="{{ $kec->id }}">
-                @else
-                    <p style="margin: 0;">&nbsp;</p>
-                    <p style="margin: 0;">&nbsp;</p>
-                    <p style="margin: 0;">&nbsp;</p>
                 @endif
             </td>
-            <td colspan="2" align="center">
-                <p style="margin: 0;">&nbsp;</p>
-                <p style="margin: 0;">&nbsp;</p>
-                <p style="margin: 0;">&nbsp;</p>
-            </td>
+            <td colspan="2" align="center" style="height: 60px; vertical-align: bottom;">&nbsp;</td>
         </tr>
         <tr>
-            <td align="center" style="font-weight: bold;">
+            <td align="center" style="font-weight: bold; font-size: 9pt; padding-top: 2px;">
                 {{ $dir->namadepan }} {{ $dir->namabelakang }}
             </td>
-            <td colspan="2" align="center" style="font-weight: bold;">
+            <td colspan="2" align="center" style="font-weight: bold; font-size: 9pt; padding-top: 2px;">
                 {{ $pinkel->anggota->namadepan }}
             </td>
         </tr>
         <tr>
-            <td align="center">
+            <td align="center" style="font-size: 8pt;">
                 {{ $kec->sebutan_level_1 ?? '' }} {{ $kec->nama_lembaga_sort }}
             </td>
             <td colspan="2" align="center">&nbsp;</td>
