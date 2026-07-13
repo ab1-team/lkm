@@ -28,7 +28,11 @@
             <td>&nbsp;</td>
             <td colspan="2" align="left" style="padding-left: 8px;">
                 <div><b>Kepada Yth.</b></div>
-                <div><b>Kepala Dinas PMD {{ $nama_kabupaten }}</b></div>
+                @if (Session::get('lokasi') == 109)
+                    <div><b>Dewan Komisaris PT LKM AKAS</b></div>
+                @else
+                    <div><b>Kepala Dinas PMD {{ $nama_kabupaten }}</b></div>
+                @endif
                 <div><b>Di {{ $kab->alamat_kab }}.</b></div>
             </td>
         </tr>
