@@ -18,18 +18,12 @@
         $redaksi_spk = str_replace('<ol>', '', str_replace('</ol>', '', $kec->redaksi_spk));
         $redaksi_spk = str_replace('<ul>', '', str_replace('</ul>', '', $redaksi_spk));
     }
+
+    $p2_isi = trim(str_replace('"', '', stripslashes(strip_tags($kec->redaksi_spk ?? ''))));
+    $p2_break = strlen($p2_isi) > 5;
 @endphp
 @extends('perguliran_i.dokumen.layout.base')
 @section('content')
-    <style>
-        /* styles.css */
-        .centered-text {
-            font-size: 10pt;
-            text-align: center;
-            text-align: justify;
-        }
-    </style>
-
     <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11pt;">
         <br>
         <tr>
@@ -158,7 +152,7 @@
         </ol>
     </div>
 
-    <div style="text-align: center;">
+    <div style="text-align: center;" class="no-break">
         <b class="centered-text"> PASAL 2 </b>
         <h3 class="fa fa-align-center" aria-hidden="true" style="font-size: 10pt;"> Penyerahan Pinjaman </i> </h3>
         <ol class="centered-text">
@@ -176,10 +170,15 @@
             </li>
         </ol>
     </div>
-    <br>
+    @if ($p2_break)
+        <p class="page-break">&nbsp;</p>
+    @else
+        <br>
+        <br>
+    @endif
 
     <div style="text-align: center;">
-        <b class="centered-text"> PASAL 3 </b>
+        <b class="centered-text" style="{{ $p2_break ? 'page-break-before: always;' : '' }}"> PASAL 3 </b>
         <h3 class="fa fa-align-center" aria-hidden="true" style="font-size: 10pt;"> Sistem Pengembalian </i> </h3>
         <div class="centered-text">
             <ol class="centered-text">
@@ -266,7 +265,7 @@
                 obyek yang disebutkan sebagai Barang jaminan atau agunan dimaksud dalam pasal 5 secara sah dan memiliki hak
                 sepenuhnya untuk menjual atau melakukan lelang atau memiliki sendiri atas barang jaminan/agunan tersebut
                 dalam rangka melunasi utang <b> Pihak Kedua </b> .
-            </li>
+            </li><br>
             <li> Kuasa yang diberikan oleh <b> Pihak Kedua </b> kepada <b> Pihak Pertama </b> didalam atau berdasarkan
                 perjanjian
                 ini, merupakan bagian yang terpenting dan tidak terpisahkan dari perjanjian ini, kuasa mana tidak dapat

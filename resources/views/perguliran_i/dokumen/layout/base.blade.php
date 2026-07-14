@@ -77,6 +77,14 @@
             page-break-after: always;
         }
 
+        .no-break {
+            page-break-inside: avoid;
+        }
+
+        p.page-break {
+            page-break-before: always;
+        }
+
         li {
             text-align: justify;
         }
