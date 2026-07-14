@@ -262,7 +262,7 @@
             </li>
 
         </ol>
-    </div> <br>
+    </div> <br> <br> <br>
     <div style="text-align: center;">
         <b class="centered-text"> PASAL 7 </b><br>
         <b class="centered-text">KERUSAKAN DAN KEHILANGAN </b>
