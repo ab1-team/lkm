@@ -232,9 +232,9 @@
                 </table>
 
             </div>
-@if ($perguliran_i->status == 'A')
+            @if ($perguliran_i->status == 'A')
                 <div class="card-body ">
-                    @if (auth()->user()->jabatan == '1' && auth()->user()->level == '1')
+                @if ((auth()->user()->jabatan == '1' || auth()->user()->jabatan == '8') && auth()->user()->level == '1')
                         <button type="button" data-bs-toggle="modal" data-bs-target="#Rescedule"
                             class="btn btn-info flex-grow-1 me-2" style="background-color: rgb(240, 148, 0);"
                             @if (!in_array('perguliran.resceduling', Session::get('tombol', []))) disabled @endif>

@@ -364,7 +364,7 @@
                 <button type="button" id="btnCatatanBimbingan" class="btn btn-success btn-sm">
                     Catatan Bimbingan
                 </button>
-                @if (auth()->user()->jabatan == '1' && auth()->user()->level == '1')
+                @if ((auth()->user()->jabatan == '1' || auth()->user()->jabatan == '8') && auth()->user()->level == '1')
                     <button type="button" data-bs-toggle="modal" data-bs-target="#Rescedule"
                         class="btn btn-warning btn-sm">Resceduling Pinjaman</button>
                 @endif
