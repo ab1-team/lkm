@@ -71,14 +71,13 @@ class TransaksiController extends Controller
             $pinkel = '0';
         }
     
-        $api = env('APP_API', 'http://localhost:3000');
-        $api_key = env('APP_API_KEY');
+        $api = env('WA_GATEWAY_BASE', 'https://wa-gateway.enpiistudio.com');
+        $api_key = env('WA_GATEWAY_API_KEY');
 
         $wa = \App\Models\Whatsapp::where('lokasi', Session::get('lokasi'))->first();
-        $wa_device_id = $wa->device_id ?? null;
-        $wa_device_key = $wa->device_key ?? null;
+        $wa_instance_name = $wa->instance_name ?? null;
 
-        return view('transaksi.jurnal_angsuran.index')->with(compact('title', 'rekening', 'pinkel', 'kec', 'api', 'api_key', 'wa_device_id', 'wa_device_key'));
+        return view('transaksi.jurnal_angsuran.index')->with(compact('title', 'rekening', 'pinkel', 'kec', 'api', 'api_key', 'wa_instance_name'));
     }
 
     public function jurnalAngsuranIndividu()
@@ -98,14 +97,13 @@ class TransaksiController extends Controller
             $pinkel = '0';
         }
 
-        $api = env('APP_API', 'http://localhost:3000');
-        $api_key = env('APP_API_KEY');
+        $api = env('WA_GATEWAY_BASE', 'https://wa-gateway.enpiistudio.com');
+        $api_key = env('WA_GATEWAY_API_KEY');
 
         $wa = \App\Models\Whatsapp::where('lokasi', Session::get('lokasi'))->first();
-        $wa_device_id = $wa->device_id ?? null;
-        $wa_device_key = $wa->device_key ?? null;
+        $wa_instance_name = $wa->instance_name ?? null;
 
-        return view('transaksi.jurnal_angsuran.individu.index')->with(compact('title', 'rekening', 'pinkel', 'kec', 'api', 'api_key', 'wa_device_id', 'wa_device_key'));
+        return view('transaksi.jurnal_angsuran.individu.index')->with(compact('title', 'rekening', 'pinkel', 'kec', 'api', 'api_key', 'wa_instance_name'));
     }
 
     public function ebudgeting()
@@ -1133,7 +1131,12 @@ class TransaksiController extends Controller
                 'whatsapp' => $whatsapp,
                 'number' => $pinkel->kelompok->telpon,
                 'nama_kelompok' => $pinkel->kelompok->nama_kelompok,
-                'pesan' => $pesan
+                'pesan' => $pesan,
+                'instance' => optional(\App\Models\Whatsapp::where('lokasi', $kec->id)->first())->instance_name,
+                'apikey' => env('WA_GATEWAY_API_KEY'),
+                'url' => optional(\App\Models\Whatsapp::where('lokasi', $kec->id)->first())->instance_name
+                    ? rtrim(env('WA_GATEWAY_BASE', 'https://wa-gateway.enpiistudio.com'), '/').'/message/sendText/'.optional(\App\Models\Whatsapp::where('lokasi', $kec->id)->first())->instance_name
+                    : null,
             ]);
         } catch (\Exception $e) {
             return $e;

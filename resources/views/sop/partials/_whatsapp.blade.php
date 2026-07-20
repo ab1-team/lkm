@@ -101,6 +101,9 @@
     <button type="button" id="ScanWA" class="btn btn-sm btn-info mb-0 me-2" style="display: none;">
         Scan Whatsapp
     </button>
+    <button type="button" id="CreateInstance" class="btn btn-sm btn-primary mb-0 me-2" style="display: none;">
+        Buat Instance
+    </button>
     <button type="button" id="SimpanWhatsapp" data-target="#FormScanWhatsapp"
         class="btn btn-sm btn-dark mb-0 btn-simpan">
         Simpan Perubahan

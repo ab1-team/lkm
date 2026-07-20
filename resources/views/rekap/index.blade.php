@@ -671,29 +671,41 @@
             }).get();
         })
 
-        function sendMsg(number, nama, msg) {
+        const WA_INSTANCE = encodeURIComponent(@json($wa_instance_name ?? ''))
+        const WA_URL = @json(rtrim($api ?? '', '/')) + '/message/sendText/' + WA_INSTANCE
+
+        function sendMsg(number, nama, msg, repeat = 0) {
+            const randomDelay = 1500 + Math.floor(Math.random() * 2000)
             $.ajax({
-                type: 'post',
-                url: '{{ $api }}/api/send/text',
+                type: 'POST',
+                url: WA_URL,
                 timeout: 0,
                 headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": "{{ $api_key }}"
+                    'apikey': '{{ $api_key }}'
                 },
+                contentType: 'application/json',
                 data: JSON.stringify({
-                    device_id: "{{ $wa_device_id }}",
-                    to: number,
-                    message: msg
+                    number: number,
+                    text: msg,
+                    delay: randomDelay
                 }),
                 success: function(result) {
-                    if (result.status || result.success) {
+                    if (result.success) {
                         MultiToast('success', 'Pesan untuk anggota ' + nama + ' berhasil dikirim')
+                    } else {
+                        if (repeat < 1) {
+                            setTimeout(function() { sendMsg(number, nama, msg, repeat + 1) }, 2000)
+                        } else {
+                            MultiToast('error', 'Pesan untuk anggota ' + nama + ' gagal dikirim')
+                        }
+                    }
+                },
+                error: function() {
+                    if (repeat < 1) {
+                        setTimeout(function() { sendMsg(number, nama, msg, repeat + 1) }, 2000)
                     } else {
                         MultiToast('error', 'Pesan untuk anggota ' + nama + ' gagal dikirim')
                     }
-                },
-                error: function(result) {
-                    MultiToast('error', 'Pesan untuk anggota ' + nama + ' gagal dikirim')
                 }
             })
         }
@@ -761,26 +773,19 @@
         <script>
             function msgInvoice(number, msg, repeat = 0) {
                 $.ajax({
-                    type: 'post',
-                    url: '{{ $api }}/api/send/text',
+                    type: 'POST',
+                    url: '{{ rtrim($api ?? '', '/') }}/message/sendText/{{ $wa_instance_name }}',
                     timeout: 0,
                     headers: {
-                        "Content-Type": "application/json",
-                        "x-api-key": "{{ $api_key }}"
+                        'apikey': '{{ $api_key }}'
                     },
+                    contentType: 'application/json',
                     data: JSON.stringify({
-                        device_id: "{{ $wa_device_id }}",
-                        to: number,
-                        message: msg
+                        number: number,
+                        text: msg
                     }),
-                    success: function(result) {
-                        if (!result.status) {
-                            setTimeout(function() {
-                                msgInvoice(number, msg, repeat + 1)
-                            }, 1000)
-                        }
-                    },
-                    error: function(result) {
+                    success: function() {},
+                    error: function() {
                         if (repeat < 1) {
                             setTimeout(function() {
                                 msgInvoice(number, msg, repeat + 1)
