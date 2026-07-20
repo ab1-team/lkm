@@ -12,11 +12,14 @@ class Inventaris
     public static function nilaiBuku($tgl, $inv)
     {
         $tgl_beli = $inv->tgl_beli;
-        $tgl_beli = date('Y-m-d', strtotime('+1 month', strtotime($tgl_beli)));
 
         $unit = $inv->unit;
         $harga_satuan = $inv->harsat * $unit;
         $umur = $inv->umur_ekonomis;
+
+        if ($inv->kategori == 1 && $inv->jenis == 1) {
+            return $harga_satuan;
+        }
 
         $penyusutan = $inv->harsat <= 0 ? 0 : round($harga_satuan / $inv->umur_ekonomis, 2);
         $ak_umur = self::bulan($inv->tgl_beli, $tgl);
@@ -32,8 +35,6 @@ class Inventaris
 
     public static function bulan($start, $end, $periode = 'bulan')
     {
-        $start = date('Y-m-d', strtotime('+1 month', strtotime($start)));
-
         $batasan = date('t');
         $thn_awal    = substr($start, 0, 4);
         $bln_awal    = substr($start, 5, 2);   //12
@@ -129,7 +130,9 @@ class Inventaris
             ['kategori', $kategori],
             ['status', '!=', '0'],
             ['lokasi', Session::get('lokasi')],
-            ['tgl_beli', '<=', $tgl_kondisi]
+            ['tgl_beli', '<=', $tgl_kondisi],
+            ['tgl_beli', 'NOT LIKE', ''],
+            ['harsat', '>', '0']
         ])->orderBy('tgl_beli', 'ASC')->get();
 
         foreach ($inventaris as $inv) {
@@ -215,7 +218,8 @@ class Inventaris
                 $t_akum_susut += $akum_susut;
                 $t_nilai_buku += $nilai_buku;
 
-                if ($inv->status == 'Dijual' || $inv->status == 'Hilang' || $inv->status == 'Dihapus') {
+                $tahun_validasi = substr($inv->tgl_validasi, 0, 4);
+                if ($nilai_buku == 0 && $tahun_validasi < $tahun) {
                     $j_unit += $inv->unit;
                     $j_harga += $inv->harsat * $inv->unit;
                     $j_penyusutan += $penyusutan;
@@ -242,14 +246,14 @@ class Inventaris
         $rekening = Rekening::select(
             DB::raw("SUM(tb$th_lalu) as debit"),
             DB::raw("SUM(tbk$th_lalu) as kredit"),
-            DB::raw('(SELECT sum(jumlah) as dbt FROM 
-            transaksi_' . Session::get('lokasi') . ' as td WHERE 
-            td.rekening_debit=rekening_' . Session::get('lokasi') . '.kode_akun AND 
+            DB::raw('(SELECT sum(jumlah) as dbt FROM
+            transaksi_' . Session::get('lokasi') . ' as td WHERE
+            td.rekening_debit=rekening_' . Session::get('lokasi') . '.kode_akun AND
             td.tgl_transaksi BETWEEN "' . $awal_tahun . '" AND "' . $akhir_hari . '"
             ) as saldo_debit'),
-            DB::raw('(SELECT sum(jumlah) as dbt FROM 
-            transaksi_' . Session::get('lokasi') . ' as td WHERE 
-            td.rekening_kredit=rekening_' . Session::get('lokasi') . '.kode_akun AND 
+            DB::raw('(SELECT sum(jumlah) as dbt FROM
+            transaksi_' . Session::get('lokasi') . ' as td WHERE
+            td.rekening_kredit=rekening_' . Session::get('lokasi') . '.kode_akun AND
             td.tgl_transaksi BETWEEN "' . $awal_tahun . '" AND "' . $akhir_hari . '"
             ) as saldo_kredit'),
             'kode_akun'
