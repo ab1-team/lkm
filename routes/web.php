@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\HealthController;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\UpkController;
@@ -88,6 +89,8 @@ Route::get('/storage/logo/{filename}', function ($filename) {
 
 Route::get('/master', [AdminAuthController::class, 'index'])->middleware('guest');
 Route::post('/master/login', [AdminAuthController::class, 'login'])->middleware('guest');
+
+Route::get('/health', [HealthController::class, 'check']);
 Route::group(['prefix' => 'master', 'as' => 'master.', 'middleware' => 'master'], function () {
     Route::get('/dashboard', [AdminController::class, 'index']);
     Route::get('/simpan_saldo', [DashboardController::class, 'simpanSaldo']);
@@ -216,6 +219,8 @@ Route::put('/pengaturan/calk/{kec}', [SopController::class, 'calk'])->middleware
 Route::put('/pengaturan/kustomisasi_calk/{kec}', [SopController::class, 'kustomisasiCalk'])->middleware('auth', 'is_aktif');
 
 Route::post('/pengaturan/whatsapp/save_device', [SopController::class, 'save_whatsapp_session'])->middleware('auth');
+Route::get('/pengaturan/whatsapp/connection_state', [SopController::class, 'evolution_connection_state'])->middleware('auth');
+Route::get('/pengaturan/whatsapp/qr', [SopController::class, 'evolution_qr'])->middleware('auth');
 Route::post('/pengaturan/whatsapp/delete_session', [SopController::class, 'delete_whatsapp_session'])->middleware('auth');
 Route::post('/pengaturan/whatsapp/{token}', [SopController::class, 'whatsapp'])->middleware('auth', 'is_aktif');
 
