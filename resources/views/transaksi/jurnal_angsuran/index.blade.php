@@ -101,7 +101,8 @@
                             </div>
                             <div class="col-4">
                                 <div class="d-grid">
-                                    <button class="btn btn-danger btn-sm mb-2" id="btnDetailAngsuran">Riwayat Angsuran</button>
+                                    <button class="btn btn-danger btn-sm mb-2" id="btnDetailAngsuran">Riwayat
+                                        Angsuran</button>
                                 </div>
                             </div>
                             <div class="col-4">
@@ -120,8 +121,8 @@
                                     data-bs-target="#Pokok" role="tab" aria-controls="Pokok" aria-selected="true">
                                     Pokok
                                 </button>
-                                <button class="btn btn-outline-warning flex-fill mb-0" data-bs-toggle="tab" data-bs-target="#Jasa"
-                                    role="tab" aria-controls="Jasa" aria-selected="false">
+                                <button class="btn btn-outline-warning flex-fill mb-0" data-bs-toggle="tab"
+                                    data-bs-target="#Jasa" role="tab" aria-controls="Jasa" aria-selected="false">
                                     Jasa
                                 </button>
                             </div>
@@ -277,9 +278,9 @@
                 $.get('/transaksi/detail/' + id, function(result) {
                     if (result.status == 'success') {
                         var alokasi_pokok = result.alokasi_pokok ?? 0
-                        var alokasi_jasa  = result.alokasi_jasa  ?? 0
-                        var real_pokok    = result.real_pokok    ?? 0
-                        var real_jasa     = result.real_jasa     ?? 0
+                        var alokasi_jasa = result.alokasi_jasa ?? 0
+                        var real_pokok = result.real_pokok ?? 0
+                        var real_jasa = result.real_jasa ?? 0
 
                         $('#loan-id').html(result.perguliran.id)
                         $('#_pokok').val(alokasi_pokok)
@@ -388,7 +389,7 @@
                 data: form.serialize(),
                 success: function(result) {
                     loading.close()
-                    
+
                     if (result.success) {
                         $.get('/angsuran/notifikasi/' + result.idtp, function(res) {
                             $('#notif').html(res.view)
@@ -399,7 +400,7 @@
                             $('#jasa').val('0.00')
                             $('#denda').val('0.00')
                             $('#total').val('0.00')
-                            
+
                             $('#id').trigger('change')
                         })
 
@@ -413,8 +414,8 @@
                 },
                 error: function(result) {
                     loading.close()
-                    Swal.fire('Error', '', 'warning')
-                    
+                    Swal.fire('Error', result.responseJSON?.msg || 'Gagal memposting angsuran kelompok', 'warning')
+
                     if (result.responseJSON && result.responseJSON.errors) {
                         $.each(result.responseJSON.errors, function(index, val) {
                             $('#msg_' + index).html(val[0])
@@ -505,7 +506,7 @@
 
         $(document).on('click', '#btnAngsuranAnggota', function(e) {
             e.preventDefault()
-            
+
             var id = $('#id').val()
             if (id == '' || id == '0') {
                 Swal.fire({
@@ -571,7 +572,9 @@
                         MultiToast('success', 'Pesan untuk Nasabah ' + nama + ' berhasil dikirim')
                     } else {
                         if (repeat < 1) {
-                            setTimeout(function() { sendMsg(number, nama, msg, repeat + 1) }, 2000)
+                            setTimeout(function() {
+                                sendMsg(number, nama, msg, repeat + 1)
+                            }, 2000)
                         } else {
                             MultiToast('error', 'Pesan untuk Nasabah ' + nama + ' gagal dikirim')
                         }
@@ -579,7 +582,9 @@
                 },
                 error: function() {
                     if (repeat < 1) {
-                        setTimeout(function() { sendMsg(number, nama, msg, repeat + 1) }, 2000)
+                        setTimeout(function() {
+                            sendMsg(number, nama, msg, repeat + 1)
+                        }, 2000)
                     } else {
                         MultiToast('error', 'Pesan untuk Nasabah ' + nama + ' gagal dikirim')
                     }

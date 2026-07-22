@@ -1101,12 +1101,12 @@ class TransaksiController extends Controller
 
             $whatsapp = false;
             $pesan = '';
+            $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
             if (strlen($pinkel->kelompok->telpon) >= 11 && strlen(auth()->user()->hp) >= 11 && (Keuangan::startWith($pinkel->kelompok->telpon, '08') || Keuangan::startWith($pinkel->kelompok->telpon, '628'))) {
                 $nama_kelompok = $pinkel->kelompok->nama_kelompok;
                 $desa = $pinkel->kelompok->d->sebutan_desa->sebutan_desa . ' ' . $pinkel->kelompok->d->nama_desa;
 
                 $whatsapp = true;
-                $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
                 $pesan_wa = json_decode($kec->whatsapp, true);
                 $pesan = $pesan_wa['angsuran'];
                 $pesan = strtr($pesan, [
@@ -1139,8 +1139,12 @@ class TransaksiController extends Controller
                     : null,
             ]);
         } catch (\Exception $e) {
-            return $e;
             DB::rollback();
+
+            return response()->json([
+                'success' => false,
+                'msg' => 'Gagal memposting angsuran kelompok'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
