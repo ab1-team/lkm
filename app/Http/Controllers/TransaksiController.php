@@ -457,6 +457,11 @@ class TransaksiController extends Controller
         $insert = Saldo::insert($saldo_tutup_buku);
 
         Transaksi::whereIn('keterangan_transaksi', $trx['delete'])->delete();
+        $now = now();
+        foreach ($trx['insert'] as &$r) {
+            $r['created_at'] = $now;
+            $r['updated_at'] = $now;
+        }
         $transaksi = Transaksi::insert($trx['insert']);
 
         return response()->json([
@@ -985,6 +990,11 @@ class TransaksiController extends Controller
                     'id_user' => auth()->user()->id
                 ];
             }
+            $now = now();
+            foreach ($transaksi as &$r) {
+                $r['created_at'] = $now;
+                $r['updated_at'] = $now;
+            }
             Transaksi::insert($transaksi);
 
             $jasa_pinjaman = ($pinkel->pros_jasa / 100) * $pinkel->alokasi;
@@ -1289,6 +1299,11 @@ class TransaksiController extends Controller
                     'urutan' => '0',
                     'id_user' => auth()->user()->id
                 ];
+            }
+            $now = now();
+            foreach ($transaksi as &$r) {
+                $r['created_at'] = $now;
+                $r['updated_at'] = $now;
             }
             Transaksi::insert($transaksi);
 
@@ -2041,6 +2056,11 @@ class TransaksiController extends Controller
                     'urutan' => $trx->urutan,
                     'id_user' => auth()->user()->id
                 ];
+            }
+            $now = now();
+            foreach ($trx_reversal as &$r) {
+                $r['created_at'] = $now;
+                $r['updated_at'] = $now;
             }
             $reversal = Transaksi::insert($trx_reversal);
 

@@ -367,6 +367,11 @@ class PinjamanAnggotaController extends Controller
             $jasa_anggota = $hapus_jasa;
         }
 
+        $now = now();
+        foreach ($transaksi as &$r) {
+            $r['created_at'] = $now;
+            $r['updated_at'] = $now;
+        }
         Transaksi::insert($transaksi);
         Penghapusan::insert([
             'lokasi' => Session::get('lokasi'),
