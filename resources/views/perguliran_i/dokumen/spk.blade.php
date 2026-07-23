@@ -208,7 +208,10 @@
                     {{ \Carbon\Carbon::parse($ra->jatuh_tempo)->translatedFormat('d F Y') }} dan
                     sampai target pelunasan, sebagaimana jadwal angsuran terlampir.
                 </li>
-                <li>
+                @if(session('lokasi') == '206')
+                    &nbsp;
+                    @else
+                        <li>
                     Keterlambatan angsuran Pihak Kedua telah melampaui 1(satu) bulan, maka Pihak kedua di bebani denda sebesar 
                     @if(session('lokasi') == '362')
                         0.1%
@@ -217,6 +220,7 @@
                     @endif
                     diakumulasikan dari jumlah tunggakan pada saat jatuh tempo angsuran
                 </li>
+                    @endif
             </ol>
         </div>
     </div>
