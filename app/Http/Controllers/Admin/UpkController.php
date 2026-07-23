@@ -267,6 +267,11 @@ class UpkController extends Controller
             ModelsTransaksi::whereIn('idt', $data_idt)->delete();
         }
 
+        $now = now();
+        foreach ($insert as &$r) {
+            $r['created_at'] = $now;
+            $r['updated_at'] = $now;
+        }
         ModelsTransaksi::insert($insert);
 
         $is_next = $transaksi->hasMorePages();

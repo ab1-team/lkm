@@ -71,14 +71,13 @@ class TransaksiController extends Controller
             $pinkel = '0';
         }
     
-        $api = env('APP_API', 'http://localhost:3000');
-        $api_key = env('APP_API_KEY');
+        $api = env('WA_GATEWAY_BASE', 'https://wa-gateway.enpiistudio.com');
+        $api_key = env('WA_GATEWAY_API_KEY');
 
         $wa = \App\Models\Whatsapp::where('lokasi', Session::get('lokasi'))->first();
-        $wa_device_id = $wa->device_id ?? null;
-        $wa_device_key = $wa->device_key ?? null;
+        $wa_instance_name = $wa->instance_name ?? null;
 
-        return view('transaksi.jurnal_angsuran.index')->with(compact('title', 'rekening', 'pinkel', 'kec', 'api', 'api_key', 'wa_device_id', 'wa_device_key'));
+        return view('transaksi.jurnal_angsuran.index')->with(compact('title', 'rekening', 'pinkel', 'kec', 'api', 'api_key', 'wa_instance_name'));
     }
 
     public function jurnalAngsuranIndividu()
@@ -98,14 +97,13 @@ class TransaksiController extends Controller
             $pinkel = '0';
         }
 
-        $api = env('APP_API', 'http://localhost:3000');
-        $api_key = env('APP_API_KEY');
+        $api = env('WA_GATEWAY_BASE', 'https://wa-gateway.enpiistudio.com');
+        $api_key = env('WA_GATEWAY_API_KEY');
 
         $wa = \App\Models\Whatsapp::where('lokasi', Session::get('lokasi'))->first();
-        $wa_device_id = $wa->device_id ?? null;
-        $wa_device_key = $wa->device_key ?? null;
+        $wa_instance_name = $wa->instance_name ?? null;
 
-        return view('transaksi.jurnal_angsuran.individu.index')->with(compact('title', 'rekening', 'pinkel', 'kec', 'api', 'api_key', 'wa_device_id', 'wa_device_key'));
+        return view('transaksi.jurnal_angsuran.individu.index')->with(compact('title', 'rekening', 'pinkel', 'kec', 'api', 'api_key', 'wa_instance_name'));
     }
 
     public function ebudgeting()
@@ -459,6 +457,11 @@ class TransaksiController extends Controller
         $insert = Saldo::insert($saldo_tutup_buku);
 
         Transaksi::whereIn('keterangan_transaksi', $trx['delete'])->delete();
+        $now = now();
+        foreach ($trx['insert'] as &$r) {
+            $r['created_at'] = $now;
+            $r['updated_at'] = $now;
+        }
         $transaksi = Transaksi::insert($trx['insert']);
 
         return response()->json([
@@ -987,6 +990,11 @@ class TransaksiController extends Controller
                     'id_user' => auth()->user()->id
                 ];
             }
+            $now = now();
+            foreach ($transaksi as &$r) {
+                $r['created_at'] = $now;
+                $r['updated_at'] = $now;
+            }
             Transaksi::insert($transaksi);
 
             $jasa_pinjaman = ($pinkel->pros_jasa / 100) * $pinkel->alokasi;
@@ -1103,12 +1111,12 @@ class TransaksiController extends Controller
 
             $whatsapp = false;
             $pesan = '';
+            $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
             if (strlen($pinkel->kelompok->telpon) >= 11 && strlen(auth()->user()->hp) >= 11 && (Keuangan::startWith($pinkel->kelompok->telpon, '08') || Keuangan::startWith($pinkel->kelompok->telpon, '628'))) {
                 $nama_kelompok = $pinkel->kelompok->nama_kelompok;
                 $desa = $pinkel->kelompok->d->sebutan_desa->sebutan_desa . ' ' . $pinkel->kelompok->d->nama_desa;
 
                 $whatsapp = true;
-                $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
                 $pesan_wa = json_decode($kec->whatsapp, true);
                 $pesan = $pesan_wa['angsuran'];
                 $pesan = strtr($pesan, [
@@ -1133,11 +1141,20 @@ class TransaksiController extends Controller
                 'whatsapp' => $whatsapp,
                 'number' => $pinkel->kelompok->telpon,
                 'nama_kelompok' => $pinkel->kelompok->nama_kelompok,
-                'pesan' => $pesan
+                'pesan' => $pesan,
+                'instance' => optional(\App\Models\Whatsapp::where('lokasi', $kec->id)->first())->instance_name,
+                'apikey' => env('WA_GATEWAY_API_KEY'),
+                'url' => optional(\App\Models\Whatsapp::where('lokasi', $kec->id)->first())->instance_name
+                    ? rtrim(env('WA_GATEWAY_BASE', 'https://wa-gateway.enpiistudio.com'), '/').'/message/sendText/'.optional(\App\Models\Whatsapp::where('lokasi', $kec->id)->first())->instance_name
+                    : null,
             ]);
         } catch (\Exception $e) {
-            return $e;
             DB::rollback();
+
+            return response()->json([
+                'success' => false,
+                'msg' => 'Gagal memposting angsuran kelompok'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -1282,6 +1299,11 @@ class TransaksiController extends Controller
                     'urutan' => '0',
                     'id_user' => auth()->user()->id
                 ];
+            }
+            $now = now();
+            foreach ($transaksi as &$r) {
+                $r['created_at'] = $now;
+                $r['updated_at'] = $now;
             }
             Transaksi::insert($transaksi);
 
@@ -2034,6 +2056,11 @@ class TransaksiController extends Controller
                     'urutan' => $trx->urutan,
                     'id_user' => auth()->user()->id
                 ];
+            }
+            $now = now();
+            foreach ($trx_reversal as &$r) {
+                $r['created_at'] = $now;
+                $r['updated_at'] = $now;
             }
             $reversal = Transaksi::insert($trx_reversal);
 

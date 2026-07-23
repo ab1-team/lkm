@@ -1048,35 +1048,30 @@
                 }
 
                 messages.push({
-                    to: number,
-                    message: msg
+                    number: number,
+                    text: msg
                 })
-
-                // Registrasi agar notifikasi muncul (Filter Sesi LKM)
-                if (typeof registerLkmMessage === 'function') {
-                    registerLkmMessage(number);
-                }
             });
 
             if (messages.length == 0) return;
 
-            $.ajax({
-                type: 'POST',
-                url: '{{ $api }}/api/send/personalized',
-                headers: {
-                    'x-api-key': '{{ $api_key }}'
-                },
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    device_id: "{{ $wa_device_id }}",
-                    messages: messages
-                }),
-                success: function(result) {
-                    if (result.success) {
-                        Swal.fire('Berhasil', 'Pesan Berhasil Masuk Antrean', 'success')
-                    }
-                }
-            })
+            var sent = 0;
+            var failed = 0;
+            messages.forEach(function(m, i) {
+                setTimeout(function() {
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ rtrim($api ?? '', '/') }}/message/sendText/{{ $wa_instance_name }}',
+                        headers: {
+                            'apikey': '{{ $api_key }}'
+                        },
+                        contentType: 'application/json',
+                        data: JSON.stringify(m),
+                        success: function() { sent++; if (sent + failed === messages.length) Swal.fire('Berhasil', 'Pesan Berhasil Masuk Antrean', 'success') },
+                        error: function() { failed++; if (sent + failed === messages.length) Swal.fire('Selesai', 'Pesan terkirim: ' + sent + ', gagal: ' + failed, 'info') }
+                    })
+                }, i * 1500);
+            });
         })
 
         $(document).on('click', '#btnjatuhTempo', function(e) {
@@ -1149,25 +1144,24 @@
 
     @if (Session::get('invoice'))
         <script>
-            function msgInvoice(number, msg) {
+            function msgInvoice(number, msg, repeat = 0) {
                 $.ajax({
                     type: 'POST',
-                    url: '{{ $api }}/api/send/text',
+                    url: '{{ rtrim($api ?? '', '/') }}/message/sendText/{{ $wa_instance_name }}',
                     timeout: 0,
                     headers: {
-                        "Content-Type": "application/json",
-                        "x-api-key": "{{ $api_key }}"
+                        'apikey': '{{ $api_key }}'
                     },
+                    contentType: 'application/json',
                     data: JSON.stringify({
-                        device_id: "{{ $wa_device_id }}",
-                        to: number,
-                        message: msg
+                        number: number,
+                        text: msg
                     }),
-                    success: function(result) {
-                        // Success handling without retry
-                    },
-                    error: function(result) {
-                        // Error handling without retry
+                    success: function() {},
+                    error: function() {
+                        if (repeat < 1) {
+                            setTimeout(function() { msgInvoice(number, msg, repeat + 1) }, 1000)
+                        }
                     }
                 })
             }

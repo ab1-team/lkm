@@ -57,17 +57,12 @@
         </tr>
         <tr class="no-break">
             <td style="white-space:nowrap;">No. CIF/Nasabah</td>
-            <td style="padding-left:10px;text-indent:-10px;">: ..................................</td>
+            <td style="padding-left:10px;text-indent:-10px;">: {{ $simpanan->id }}</td>
             <td>&nbsp;</td>
         </tr>
         <tr class="no-break">
             <td style="white-space:nowrap;">No. Rekening Tabungan</td>
-            <td style="padding-left:10px;text-indent:-10px;">: ..................................</td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr class="no-break">
-            <td style="white-space:nowrap;">No. Perjanjian Kredit</td>
-            <td style="padding-left:10px;text-indent:-10px;">: {{ $simpanan->id }}</td>
+            <td style="padding-left:10px;text-indent:-10px;">: {{ $simpanan->nomor_rekening }}</td>
             <td>&nbsp;</td>
         </tr>
         <br>
