@@ -2079,20 +2079,22 @@ class PelaporanController extends Controller
 
     private function BB(array $data)
     {
+        set_time_limit(300);
+
         $keuangan = new Keuangan;
 
         $thn = $data['tahun'];
         $bln = $data['bulan'];
         $hari = $data['hari'];
 
-        $tgl = $thn . '-' . $bln . '-' . $hari;
-        $tgl = $thn . '-';
         $data['judul'] = 'Laporan Tahunan';
-        $data['sub_judul'] = 'Tahun ' . Tanggal::tahun($tgl);
-        $data['tgl'] = Tanggal::tahun($tgl);
+        $data['sub_judul'] = 'Tahun ' . $thn;
+        $data['tgl'] = $thn;
         $awal_bulan = $thn . '00-00';
+        $tgl_from = $thn . '-01-01';
+        $tgl_to = $thn . '-12-31';
         if ($data['bulanan']) {
-            $tgl = $thn . '-' . $bln . '-';
+            $tgl = $thn . '-' . sprintf('%02d', $bln) . '-';
             $data['judul'] = 'Laporan Bulanan';
             $data['sub_judul'] = 'Bulan ' . Tanggal::namaBulan($tgl) . ' ' . Tanggal::tahun($tgl);
             $data['tgl'] = Tanggal::namaBulan($tgl) . ' ' . Tanggal::tahun($tgl);
@@ -2101,10 +2103,12 @@ class PelaporanController extends Controller
             if ($bln == 1) {
                 $awal_bulan = $thn . '00-00';
             }
+            $tgl_from = $thn . '-' . sprintf('%02d', $bln) . '-01';
+            $tgl_to = $thn . '-' . sprintf('%02d', $bln) . '-' . date('t', strtotime($tgl_from));
         }
 
         if ($data['harian']) {
-            $tgl = $thn . '-' . $bln . '-' . $hari;
+            $tgl = $thn . '-' . sprintf('%02d', $bln) . '-' . sprintf('%02d', $hari);
             $data['judul'] = 'Laporan Harian';
             $data['sub_judul'] = 'Tanggal ' . $hari . ' ' . Tanggal::namaBulan($tgl) . ' ' . Tanggal::tahun($tgl);
             $data['tgl'] = Tanggal::tglLatin($tgl);
@@ -2112,10 +2116,12 @@ class PelaporanController extends Controller
             if ($tgl != $thn . '-01-01') {
                 $awal_bulan = date('Y-m-d', strtotime('-1 day', strtotime($tgl)));
             }
+            $tgl_from = $tgl;
+            $tgl_to = $tgl;
         }
 
         $data['rek'] = Rekening::where('kode_akun', $data['kode_akun'])->first();
-        $data['transaksi'] = Transaksi::where('tgl_transaksi', 'LIKE', '%' . $tgl . '%')->where(function ($query) use ($data) {
+        $data['transaksi'] = Transaksi::whereBetween('tgl_transaksi', [$tgl_from, $tgl_to])->where(function ($query) use ($data) {
             $query->where('rekening_debit', $data['kode_akun'])->orwhere('rekening_kredit', $data['kode_akun']);
         })->with([
             'user',
