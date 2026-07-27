@@ -325,39 +325,19 @@ class PelaporanController extends Controller
 
         if (is_string($result)) {
             $html = $result;
-            try {
-                // Gunakan ExcelExporter untuk konversi HTML ke native Excel
-                $exporter = new \App\Utils\ExcelExporter();
-                $exporter->fromHtml($html);
-                
-                $filename = ($request->laporan ?? 'laporan')
-                    . '_' . $data['tahun']
-                    . ($data['bulanan'] ? '_' . $data['bulan'] : '')
-                    . '.xlsx';
+            if (ob_get_length()) ob_end_clean();
 
-                if (ob_get_length()) ob_end_clean();
-                
-                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename="' . $filename . '"');
-                header('Cache-Control: max-age=0');
+            $filename = ($request->laporan ?? 'laporan')
+                . '_' . $data['tahun']
+                . ($data['bulanan'] ? '_' . $data['bulan'] : '')
+                . '.xls';
 
-                $exporter->output();
-                exit;
-            } catch (\Exception $e) {
-                // Log error untuk debug
-                \Log::error('Excel Export Error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
-                
-                // Fallback
-                if (ob_get_length()) ob_end_clean();
-                
-                $filename = ($request->laporan ?? 'laporan') . '_' . $data['tahun'] . '.xls';
-                
-                header('Content-Type: application/vnd.ms-excel');
-                header('Content-Disposition: attachment;filename="' . $filename . '"');
-                
-                echo $html;
-                exit;
-            }
+            header('Content-Type: application/vnd.ms-excel; charset=utf-8');
+            header('Content-Disposition: attachment;filename="' . $filename . '"');
+            header('Cache-Control: max-age=0');
+
+            echo $html;
+            exit;
         }
         return $result;
     }
