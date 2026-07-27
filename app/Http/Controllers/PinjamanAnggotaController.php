@@ -504,6 +504,7 @@ public function cariAnggota()
         $sa_pokok = $pinkel->sistem_angsuran;
         $sa_jasa = $pinkel->sa_jasa;
         $pros_jasa = $pinkel->pros_jasa;
+        $jenis_jasa = $pinkel->jenis_jasa;
 
         if ($pinkel->status == 'P') {
             $alokasi = $pinkel->proposal;
@@ -529,6 +530,88 @@ public function cariAnggota()
 
         $sistem_pokok = $pinkel->sis_pokok->sistem;
         $sistem_jasa = $pinkel->sis_jasa->sistem;
+
+        if ($jenis_jasa == '2' || $jenis_jasa == '3') {
+            $kec = \App\Models\Kecamatan::where('id', Session::get('lokasi'))->first();
+            $bunga_per_bulan = ($pros_jasa / 100) / 12;
+
+            RencanaAngsuran::where([
+                ['loan_id', $id_pinj],
+                ['angsuran_ke', '!=', '0']
+            ])->delete();
+
+            RencanaAngsuran::create([
+                'loan_id' => $id_pinj,
+                'angsuran_ke' => '0',
+                'jatuh_tempo' => $tgl,
+                'wajib_pokok' => '0',
+                'wajib_jasa' => '0',
+                'target_pokok' => '0',
+                'target_jasa' => '0',
+                'lu' => date('Y-m-d H:i:s'),
+                'id_user' => auth()->user()->id,
+            ]);
+
+            if ($jenis_jasa == '3') {
+                $angsuran_total = Keuangan::pembulatan(
+                    ($alokasi * $bunga_per_bulan) / (1 - pow(1 + $bunga_per_bulan, -$jangka)),
+                    (string) $kec->pembulatan
+                );
+            } else {
+                $angsuran_total = 0;
+            }
+
+            if ($jenis_jasa == '2') {
+                $pokok_per = Keuangan::pembulatan($alokasi / $jangka, (string) $kec->pembulatan);
+            }
+
+            $rencana = [];
+            $sisa_pokok = $alokasi;
+            $target_pokok = 0;
+            $target_jasa = 0;
+
+            for ($i = 1; $i <= $jangka; $i++) {
+                if ($sa_pokok == 12) {
+                    $tambah = $i * 7;
+                    $penambahan = "+$tambah days";
+                } else {
+                    $penambahan = "+$i month";
+                }
+                $jatuh_tempo = date('Y-m-d', strtotime($penambahan, strtotime($tgl)));
+
+                $jasa = Keuangan::pembulatan($sisa_pokok * $bunga_per_bulan, (string) $kec->pembulatan);
+
+                if ($jenis_jasa == '2') {
+                    $pokok = ($i == $jangka) ? $sisa_pokok : $pokok_per;
+                } else {
+                    $pokok = $angsuran_total - $jasa;
+                    if ($i == $jangka) {
+                        $pokok = $sisa_pokok;
+                        $angsuran_total = $pokok + $jasa;
+                    }
+                }
+
+                $target_pokok += $pokok;
+                $target_jasa += $jasa;
+                $sisa_pokok -= $pokok;
+
+                $rencana[] = [
+                    'loan_id' => $id_pinj,
+                    'angsuran_ke' => $i,
+                    'jatuh_tempo' => $jatuh_tempo,
+                    'wajib_pokok' => $pokok,
+                    'wajib_jasa' => $jasa,
+                    'target_pokok' => $target_pokok,
+                    'target_jasa' => $target_jasa,
+                    'lu' => date('Y-m-d H:i:s'),
+                    'id_user' => auth()->user()->id,
+                ];
+            }
+
+            RencanaAngsuran::insert($rencana);
+
+            return true;
+        }
 
         if ($sa_pokok == 11) {
             $tempo_pokok = ($jangka) - 24 / $sistem_pokok;

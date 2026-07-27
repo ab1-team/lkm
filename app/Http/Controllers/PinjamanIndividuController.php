@@ -3330,11 +3330,38 @@ class PinjamanIndividuController extends Controller
             $ra[$i]['pokok'] = $angsuran_pokok;
         }
 
+        $bunga_per_bulan = ($pros_jasa / 100) / 12;
+
+        if ($jenis_jasa == '2') {
+            $pokok_per = Keuangan::pembulatan(
+                $alokasi / ($jumlah_angsuran - $index + 1),
+                (string) $kec->pembulatan
+            );
+            $sisa_pokok = $alokasi;
+
+            for ($j = $index; $j <= $jumlah_angsuran; $j++) {
+                $jasa = Keuangan::pembulatan(
+                    $sisa_pokok * $bunga_per_bulan,
+                    (string) $kec->pembulatan
+                );
+
+                if ($j == $jumlah_angsuran) {
+                    $pokok = $sisa_pokok;
+                } else {
+                    $pokok = $pokok_per;
+                }
+
+                $ra[$j]['pokok'] = $pokok;
+                $ra[$j]['jasa'] = $jasa;
+
+                $sisa_pokok -= $pokok;
+            }
+        }
+
         if ($jenis_jasa == '3') {
 
-            $bunga_per_bulan = ($pros_jasa / 100) / $jangka;
             $angsuran_total = Keuangan::pembulatan(
-                ($alokasi * $bunga_per_bulan) / (1 - pow(1 + $bunga_per_bulan, -$jangka)),
+                ($alokasi * $bunga_per_bulan) / (1 - pow(1 + $bunga_per_bulan, -($jumlah_angsuran - $index + 1))),
                 (string) $kec->pembulatan
             );
 
