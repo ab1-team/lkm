@@ -290,6 +290,12 @@ class PelaporanController extends Controller
         }
 
         $data['tgl_kondisi'] = $data['tahun'] . '-' . $data['bulan'] . '-' . $data['hari'];
+
+        if (!$data['bulanan']) {
+            $data['bulan'] = null;
+            $data['hari'] = null;
+            $data['tgl_kondisi'] = $data['tahun'] . '-12-31';
+        }
         $data['tanggal_kondisi'] = $kec->nama_kec . ', ' . Tanggal::tglLatin($data['tgl_kondisi']);
 
         $file = $request->laporan;
@@ -2067,6 +2073,7 @@ class PelaporanController extends Controller
         $bln = $data['bulan'];
         $hari = $data['hari'];
 
+        $tgl = $thn . '-01-01';
         $data['judul'] = 'Laporan Tahunan';
         $data['sub_judul'] = 'Tahun ' . $thn;
         $data['tgl'] = $thn;
