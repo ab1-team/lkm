@@ -198,7 +198,7 @@
                     sebesar
                     <b> {{ number_format($pinkel->alokasi) }} ({{ $keuangan->terbilang($pinkel->alokasi) }} Rupiah) </b>
                     ditambah
-                    jasa <b> {{ number_format($pinkel->pros_jasa / $pinkel->jangka,2) }} % Flat </b> sebesar
+                    jasa <b> {{ number_format($pinkel->pros_jasa / $pinkel->jangka,2) }} % {{ $pinkel->sis_jasa->nama_sistem }} </b> sebesar
                     <b> {{ number_format($pinkel->alokasi * ($pinkel->pros_jasa / $pinkel->jangka / 100)) }}
                         ({{ $keuangan->terbilang($pinkel->alokasi * ($pinkel->pros_jasa / $pinkel->jangka / 100)) }}
                         Rupiah)
@@ -208,19 +208,19 @@
                     {{ \Carbon\Carbon::parse($ra->jatuh_tempo)->translatedFormat('d F Y') }} dan
                     sampai target pelunasan, sebagaimana jadwal angsuran terlampir.
                 </li>
-                @if(session('lokasi') == '206')
-                    &nbsp;
-                    @else
-                        <li>
-                    Keterlambatan angsuran Pihak Kedua telah melampaui 1(satu) bulan, maka Pihak kedua di bebani denda sebesar 
-                    @if(session('lokasi') == '362')
-                        0.1%
-                    @else
-                        2%
-                    @endif
-                    diakumulasikan dari jumlah tunggakan pada saat jatuh tempo angsuran
-                </li>
-                    @endif
+                @if(in_array(session('lokasi'), ['206', '109']))
+    &nbsp;
+@else
+    <li>
+        Keterlambatan angsuran Pihak Kedua telah melampaui 1 (satu) bulan, maka Pihak Kedua dibebani denda sebesar
+        @if(session('lokasi') == '362')
+            0.1%
+        @else
+            2%
+        @endif
+        diakumulasikan dari jumlah tunggakan pada saat jatuh tempo angsuran.
+    </li>
+@endif
             </ol>
         </div>
     </div>
