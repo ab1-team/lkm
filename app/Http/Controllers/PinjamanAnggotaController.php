@@ -533,7 +533,7 @@ public function cariAnggota()
 
         if ($jenis_jasa == '2' || $jenis_jasa == '3') {
             $kec = \App\Models\Kecamatan::where('id', Session::get('lokasi'))->first();
-            $bunga_per_bulan = ($pros_jasa / 100) / 12;
+            $bunga_per_bulan = ($pros_jasa / 100) / $jangka;
 
             RencanaAngsuran::where([
                 ['loan_id', $id_pinj],

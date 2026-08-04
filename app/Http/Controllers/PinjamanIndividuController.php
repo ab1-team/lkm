@@ -3330,7 +3330,7 @@ class PinjamanIndividuController extends Controller
             $ra[$i]['pokok'] = $angsuran_pokok;
         }
 
-        $bunga_per_bulan = ($pros_jasa / 100) / 12;
+        $bunga_per_bulan = ($pros_jasa / 100) / $jangka;
 
         if ($jenis_jasa == '2') {
             $pokok_per = Keuangan::pembulatan(
