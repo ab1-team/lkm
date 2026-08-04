@@ -879,6 +879,10 @@ class SopController extends Controller
         $apiKey = env('WA_GATEWAY_API_KEY');
         $base = rtrim(env('WA_GATEWAY_BASE', 'https://wa-gateway.enpiistudio.com'), '/');
 
+        if (! $apiKey) {
+            return response()->json(['success' => false, 'msg' => 'WA_GATEWAY_API_KEY belum di-set di .env', 'state' => 'unknown']);
+        }
+
         try {
             $client = new \GuzzleHttp\Client([
                 'timeout' => 10,
@@ -924,6 +928,10 @@ class SopController extends Controller
 
         $apiKey = env('WA_GATEWAY_API_KEY');
         $base = rtrim(env('WA_GATEWAY_BASE', 'https://wa-gateway.enpiistudio.com'), '/');
+
+        if (! $apiKey) {
+            return response()->json(['success' => false, 'msg' => 'WA_GATEWAY_API_KEY belum di-set di .env', 'qr' => null]);
+        }
 
         try {
             $client = new \GuzzleHttp\Client([

@@ -1043,12 +1043,12 @@
                 var anggota = pesan.split('||')[1]
                 var msg = pesan.split('||')[2]
 
-                if (!number.startsWith('08') && !number.startsWith('628')) {
-                    number = '0' + number;
-                }
+                var normalized = WaNormalizeNumber(number)
 
                 messages.push({
-                    number: number,
+                    number: normalized,
+                    rawNumber: number,
+                    anggota: anggota,
                     text: msg
                 })
             });
@@ -1057,6 +1057,7 @@
 
             var sent = 0;
             var failed = 0;
+            var failedDetails = [];
             messages.forEach(function(m, i) {
                 setTimeout(function() {
                     $.ajax({
@@ -1066,13 +1067,69 @@
                             'apikey': '{{ $api_key }}'
                         },
                         contentType: 'application/json',
-                        data: JSON.stringify(m),
-                        success: function() { sent++; if (sent + failed === messages.length) Swal.fire('Berhasil', 'Pesan Berhasil Masuk Antrean', 'success') },
-                        error: function() { failed++; if (sent + failed === messages.length) Swal.fire('Selesai', 'Pesan terkirim: ' + sent + ', gagal: ' + failed, 'info') }
+                        data: JSON.stringify({
+                            number: m.number,
+                            text: m.text
+                        }),
+                        success: function(res) {
+                            sent++;
+                            if (sent + failed === messages.length) {
+                                if (failed === 0) {
+                                    Swal.fire('Berhasil', 'Pesan Berhasil Masuk Antrean', 'success')
+                                } else {
+                                    showFailedSummary(sent, failed, failedDetails)
+                                }
+                            }
+                        },
+                        error: function(xhr) {
+                            failed++;
+                            var detail = parseWaError(xhr, m);
+                            failedDetails.push(detail);
+                            console.error('[WA] Gagal kirim ke', m.number, '(', m.anggota, ') —', detail);
+                            if (sent + failed === messages.length) {
+                                showFailedSummary(sent, failed, failedDetails)
+                            }
+                        }
                     })
                 }, i * 1500);
             });
         })
+
+        function parseWaError(xhr, m) {
+            var status = xhr && xhr.status ? xhr.status : 'network'
+            var body = ''
+            if (xhr && xhr.responseText) {
+                try {
+                    var parsed = JSON.parse(xhr.responseText)
+                    body = parsed.message || parsed.error || parsed.response?.message || ''
+                } catch (e) {
+                    body = xhr.responseText.substring(0, 200)
+                }
+            }
+            if (!body) body = (xhr && xhr.statusText) ? xhr.statusText : 'tidak ada respon dari gateway'
+            var label = m.anggota + ' (' + (m.rawNumber || m.number) + ') — HTTP ' + status + ': ' + body
+            if (m.rawNumber && m.rawNumber !== m.number) {
+                label += ' [dikirim sebagai ' + m.number + ']'
+            }
+            return label
+        }
+
+        function showFailedSummary(sent, failed, details) {
+            var html = 'Pesan terkirim: ' + sent + ', gagal: ' + failed
+            if (details && details.length) {
+                html += '<hr class="my-2"><div class="text-start text-sm" style="max-height: 240px; overflow:auto;"><b>Detail Gagal:</b><ul class="mb-0 ps-3">'
+                details.forEach(function(d) {
+                    html += '<li>' + d + '</li>'
+                })
+                html += '</ul></div>'
+            }
+            Swal.fire({
+                title: 'Selesai',
+                html: html,
+                icon: 'info',
+                width: 600
+            })
+        }
 
         $(document).on('click', '#btnjatuhTempo', function(e) {
             e.preventDefault()
@@ -1154,13 +1211,16 @@
                     },
                     contentType: 'application/json',
                     data: JSON.stringify({
-                        number: number,
+                        number: WaNormalizeNumber(number),
                         text: msg
                     }),
                     success: function() {},
-                    error: function() {
+                    error: function(xhr) {
+                        console.error('[WA] msgInvoice gagal ke', number, '—', WaErrText(xhr))
                         if (repeat < 1) {
                             setTimeout(function() { msgInvoice(number, msg, repeat + 1) }, 1000)
+                        } else {
+                            Toastr('error', 'Invoice gagal dikirim ke ' + number + ' — ' + WaErrText(xhr))
                         }
                     }
                 })

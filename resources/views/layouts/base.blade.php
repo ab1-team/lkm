@@ -551,6 +551,31 @@
             });
         }
 
+        function WaErrText(xhr) {
+            var status = (xhr && xhr.status) ? xhr.status : 'network';
+            var body = '';
+            if (xhr && xhr.responseText) {
+                try {
+                    var parsed = JSON.parse(xhr.responseText);
+                    body = parsed.message || parsed.error || (parsed.response && parsed.response.message) || '';
+                } catch (e) {
+                    body = xhr.responseText.substring(0, 200);
+                }
+            }
+            if (!body) body = (xhr && xhr.statusText) ? xhr.statusText : 'tidak ada respon dari gateway';
+            return 'HTTP ' + status + ': ' + body;
+        }
+
+        function WaNormalizeNumber(num) {
+            if (!num) return '';
+            var n = String(num).replace(/[^0-9]/g, '');
+            if (!n) return '';
+            if (n.startsWith('62')) return n;
+            if (n.startsWith('0')) return '62' + n.substring(1);
+            if (n.startsWith('8')) return '62' + n;
+            return '62' + n;
+        }
+
         function open_window(link) {
             return window.open(link);
         }

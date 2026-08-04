@@ -685,7 +685,7 @@
                 },
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    number: number,
+                    number: WaNormalizeNumber(number),
                     text: msg,
                     delay: randomDelay
                 }),
@@ -693,18 +693,20 @@
                     if (result.success) {
                         MultiToast('success', 'Pesan untuk anggota ' + nama + ' berhasil dikirim')
                     } else {
+                        var reason = (result && (result.message || result.error)) ? (result.message || result.error) : 'respon gateway tidak sukses'
                         if (repeat < 1) {
                             setTimeout(function() { sendMsg(number, nama, msg, repeat + 1) }, 2000)
                         } else {
-                            MultiToast('error', 'Pesan untuk anggota ' + nama + ' gagal dikirim')
+                            MultiToast('error', 'Pesan untuk ' + nama + ' gagal — ' + reason)
                         }
                     }
                 },
-                error: function() {
+                error: function(xhr) {
+                    console.error('[WA] Gagal kirim ke', number, '(', nama, ') —', WaErrText(xhr))
                     if (repeat < 1) {
                         setTimeout(function() { sendMsg(number, nama, msg, repeat + 1) }, 2000)
                     } else {
-                        MultiToast('error', 'Pesan untuk anggota ' + nama + ' gagal dikirim')
+                        MultiToast('error', 'Pesan untuk ' + nama + ' gagal — ' + WaErrText(xhr))
                     }
                 }
             })
@@ -781,15 +783,18 @@
                     },
                     contentType: 'application/json',
                     data: JSON.stringify({
-                        number: number,
+                        number: WaNormalizeNumber(number),
                         text: msg
                     }),
                     success: function() {},
-                    error: function() {
+                    error: function(xhr) {
+                        console.error('[WA] msgInvoice gagal ke', number, '—', WaErrText(xhr))
                         if (repeat < 1) {
                             setTimeout(function() {
                                 msgInvoice(number, msg, repeat + 1)
                             }, 1000)
+                        } else {
+                            Toastr('error', 'Invoice gagal dikirim ke ' + number + ' — ' + WaErrText(xhr))
                         }
                     }
                 })

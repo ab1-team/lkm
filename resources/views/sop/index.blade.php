@@ -243,24 +243,27 @@
         let ListContainer = $('#Pesan')
         const API = '{{ $api }}'
         const MASTER_KEY = '{{ $api_key }}'
-        const SAVED_INSTANCE = '{{ $instance_name }}'
+        const SAVED_INSTANCE = @json($instance_name)
 
         let pollInterval = null
         let qrPollInterval = null
 
         function setIdleState() {
+            console.log('[WA] setIdleState - SAVED_INSTANCE =', SAVED_INSTANCE)
             $('#HapusWa, #ScanWA').hide()
             $('#CreateInstance').show()
             ListContainer.html('<li>Pastikan WhatsApp Gateway menyala.</li>')
         }
 
         function setActiveState(instance) {
+            console.log('[WA] setActiveState -', instance)
             $('#CreateInstance, #ScanWA').hide()
             $('#HapusWa').show()
             ListContainer.html('<li class="text-success fw-bold text-sm">Whatsapp Aktif (' + instance + ')</li>')
         }
 
         function setPendingState(instance) {
+            console.log('[WA] setPendingState -', instance)
             $('#CreateInstance').hide()
             $('#HapusWa, #ScanWA').show()
             ListContainer.html('<li>Menunggu koneksi ke WhatsApp...</li>')
@@ -315,7 +318,13 @@
                     url: '/pengaturan/whatsapp/qr',
                     success: function(res) {
                         console.log('QR poll:', res)
-                        if (res.success && res.qr) {
+                        if (!res.success) {
+                            clearInterval(qrPollInterval)
+                            ListContainer.html('<li class="text-danger fw-bold text-sm">' + (res.msg || 'Gagal memuat QR dari gateway.') + '</li>')
+                            Toastr('error', res.msg || 'Gagal memuat QR dari gateway.')
+                            return
+                        }
+                        if (res.qr) {
                             clearInterval(qrPollInterval)
                             $('#QrCode').attr('src', res.qr.startsWith('data:') ? res.qr : 'data:image/png;base64,' + res.qr)
                             ListContainer.html('<li class="text-success fw-bold text-sm">Scan QR dari WhatsApp</li>')
@@ -403,8 +412,12 @@
 
         $(document).on('click', '#ScanWA', function(e) {
             e.preventDefault()
+            console.log('[WA] #ScanWA clicked - SAVED_INSTANCE =', SAVED_INSTANCE)
 
-            if (!SAVED_INSTANCE) return
+            if (!SAVED_INSTANCE) {
+                Toastr('error', 'Instance belum dibuat. Klik "Buat Instance" terlebih dahulu.')
+                return
+            }
 
             $('#ModalScanWA').modal('show')
             $('#QrCode').attr('src', '/assets/img/qr.png')
@@ -414,6 +427,12 @@
                 type: 'GET',
                 url: '/pengaturan/whatsapp/qr',
                 success: function(res) {
+                    console.log('[WA] /qr response:', res)
+                    if (!res.success) {
+                        ListContainer.html('<li class="text-danger fw-bold text-sm">' + (res.msg || 'Gagal memuat QR dari gateway.') + '</li>')
+                        Toastr('error', res.msg || 'Gagal memuat QR dari gateway.')
+                        return
+                    }
                     if (res.qr) {
                         $('#QrCode').attr('src', res.qr.startsWith('data:') ? res.qr : 'data:image/png;base64,' + res.qr)
                         ListContainer.html('<li class="text-success fw-bold text-sm">Scan QR dari WhatsApp</li>')
@@ -422,6 +441,11 @@
                         pollQr()
                     }
                     pollConnectionState(SAVED_INSTANCE)
+                },
+                error: function(xhr) {
+                    console.error('[WA] /qr error:', xhr)
+                    ListContainer.html('<li class="text-danger fw-bold text-sm">Gagal terhubung ke gateway (' + xhr.status + ').</li>')
+                    Toastr('error', 'Gagal terhubung ke gateway (' + xhr.status + ').')
                 }
             })
         })
@@ -439,10 +463,21 @@
                 type: 'GET',
                 url: '/pengaturan/whatsapp/qr',
                 success: function(res) {
+                    if (!res.success) {
+                        ListContainer.html('<li class="text-danger fw-bold text-sm">' + (res.msg || 'Gagal memuat QR dari gateway.') + '</li>')
+                        Toastr('error', res.msg || 'Gagal memuat QR dari gateway.')
+                        return
+                    }
                     if (res.qr) {
                         $('#QrCode').attr('src', res.qr.startsWith('data:') ? res.qr : 'data:image/png;base64,' + res.qr)
                         ListContainer.html('<li class="text-success fw-bold text-sm">Scan QR dari WhatsApp</li>')
+                    } else {
+                        ListContainer.html('<li>QR belum tersedia, coba lagi beberapa detik.</li>')
                     }
+                },
+                error: function(xhr) {
+                    ListContainer.html('<li class="text-danger fw-bold text-sm">Gagal terhubung ke gateway (' + xhr.status + ').</li>')
+                    Toastr('error', 'Gagal terhubung ke gateway (' + xhr.status + ').')
                 }
             })
         })
