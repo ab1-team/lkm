@@ -9,20 +9,49 @@ use Session;
 
 class Inventaris
 {
-    public static function nilaiBuku($tgl, $inv)
+    /**
+     * Tabel batas cutoff per lokasi: selama tanggal laporan (tgl_kondisi)
+     * <= tanggal cutoff, lokasi tsb masih pakai perhitungan LAMA.
+     * Setelah cutoff, otomatis pakai perhitungan BARU.
+     *
+     * Tambah lokasi lain di sini kalau ada permintaan serupa.
+     */
+    protected static array $cutoffLegacy = [
+        '362' => '2026-06-30', // s.d. Juni 2026 pakai lama, mulai Juli 2026 pakai baru
+    ];
+
+    /**
+     * Satu-satunya titik keputusan: apakah laporan untuk lokasi & tanggal
+     * kondisi tertentu masih harus pakai perhitungan versi lama.
+     *
+     * Panggil ini SEKALI di awal (controller/blade), lalu simpan hasilnya
+     * ke variabel dan lempar ke method-method di bawah lewat parameter
+     * $pakaiLama. Jangan panggil ulang per baris data — supaya satu
+     * laporan konsisten pakai satu versi dari awal sampai akhir.
+     */
+    public static function pakaiLama(?string $tglLaporan = null, ?string $lokasi = null): bool
     {
-        $tgl_beli = $inv->tgl_beli;
+        $lokasi = $lokasi ?? Session::get('lokasi');
+        $tglLaporan = $tglLaporan ?? date('Y-m-d');
 
-        $unit = $inv->unit;
-        $harga_satuan = $inv->harsat * $unit;
-        $umur = $inv->umur_ekonomis;
+        $cutoff = static::$cutoffLegacy[$lokasi] ?? null;
 
-        if ($inv->kategori == 1 && $inv->jenis == 1) {
+        return $cutoff !== null && $tglLaporan <= $cutoff;
+    }
+
+    public static function nilaiBuku($tgl, $inv, ?bool $pakaiLama = null)
+    {
+        $pakaiLama = $pakaiLama ?? self::pakaiLama($tgl);
+
+        $harga_satuan = $inv->harsat * $inv->unit;
+
+        // Khusus versi baru: kategori 1 & jenis 1 tidak disusutkan sama sekali.
+        if (!$pakaiLama && $inv->kategori == 1 && $inv->jenis == 1) {
             return $harga_satuan;
         }
 
         $penyusutan = $inv->harsat <= 0 ? 0 : round($harga_satuan / $inv->umur_ekonomis, 2);
-        $ak_umur = self::bulan($inv->tgl_beli, $tgl);
+        $ak_umur = self::bulan($inv->tgl_beli, $tgl, 'bulan', $pakaiLama);
         $ak_susut = $penyusutan * $ak_umur;
         $nilai = $harga_satuan - $ak_susut;
 
@@ -33,12 +62,22 @@ class Inventaris
         return $nilai;
     }
 
-    public static function bulan($start, $end, $periode = 'bulan')
+    public static function bulan($start, $end, $periode = 'bulan', ?bool $pakaiLama = null)
     {
+        // Fallback pakai $end sebagai proxy tanggal laporan kalau flag tidak
+        // dikirim eksplisit. Untuk hasil yang benar (terutama saat menghitung
+        // pakai_lalu / umur yg $end-nya bukan tgl_kondisi laporan), sebaiknya
+        // SELALU kirim $pakaiLama eksplisit dari pemanggil.
+        $pakaiLama = $pakaiLama ?? self::pakaiLama($end);
+
+        if ($pakaiLama) {
+            $start = date('Y-m-d', strtotime('+1 month', strtotime($start)));
+        }
+
         $batasan = date('t');
         $thn_awal    = substr($start, 0, 4);
-        $bln_awal    = substr($start, 5, 2);   //12
-        $tgl_awal    = 01;   //29
+        $bln_awal    = substr($start, 5, 2);
+        $tgl_awal    = 01;
 
         if ($tgl_awal <= $batasan) {
             $tgl_awal = 01;
@@ -95,23 +134,19 @@ class Inventaris
         switch ($periode) {
             case "hari":
                 return $day;
-                break;
             case "bulan":
                 return $month;
-                break;
             case "tahun":
                 return (float) ($month / 12);
-                break;
         }
     }
 
-    public static function penyusutan($tgl_kondisi, $kategori)
+    public static function penyusutan($tgl_kondisi, $kategori, ?bool $pakaiLama = null)
     {
+        $pakaiLama = $pakaiLama ?? self::pakaiLama($tgl_kondisi);
+
         $ymd = explode('-', $tgl_kondisi);
         $tahun = $ymd[0];
-        $bulan = $ymd[1];
-        $hari = $ymd[2];
-        $th_lalu = $tahun - 1;
 
         $t_unit = 0;
         $t_harga = 0;
@@ -125,15 +160,21 @@ class Inventaris
         $j_akum_susut = 0;
         $j_nilai_buku = 0;
 
-        $inventaris = ModelsInventaris::where([
+        $where = [
             ['jenis', '1'],
             ['kategori', $kategori],
             ['status', '!=', '0'],
             ['lokasi', Session::get('lokasi')],
             ['tgl_beli', '<=', $tgl_kondisi],
-            ['tgl_beli', 'NOT LIKE', ''],
-            ['harsat', '>', '0']
-        ])->orderBy('tgl_beli', 'ASC')->get();
+        ];
+
+        // Filter tambahan ini cuma ada di versi baru.
+        if (!$pakaiLama) {
+            $where[] = ['tgl_beli', 'NOT LIKE', ''];
+            $where[] = ['harsat', '>', '0'];
+        }
+
+        $inventaris = ModelsInventaris::where($where)->orderBy('tgl_beli', 'ASC')->get();
 
         foreach ($inventaris as $inv) {
             if ($kategori == '1') {
@@ -153,13 +194,13 @@ class Inventaris
                 }
             } else {
                 $satuan_susut = $inv->harsat <= 0 ? 0 : round(($inv->harsat / $inv->umur_ekonomis) * $inv->unit, 2);
-                $pakai_lalu = Inventaris::bulan($inv->tgl_beli, $tahun - 1 . '-12-31');
-                $nilai_buku = Inventaris::nilaiBuku($tgl_kondisi, $inv);
+                $pakai_lalu = self::bulan($inv->tgl_beli, $tahun - 1 . '-12-31', 'bulan', $pakaiLama);
+                $nilai_buku = self::nilaiBuku($tgl_kondisi, $inv, $pakaiLama);
 
                 if (!($inv->status == 'Baik') && $tgl_kondisi >= $inv->tgl_validasi) {
-                    $umur = Inventaris::bulan($inv->tgl_beli, $inv->tgl_validasi);
+                    $umur = self::bulan($inv->tgl_beli, $inv->tgl_validasi, 'bulan', $pakaiLama);
                 } else {
-                    $umur = Inventaris::bulan($inv->tgl_beli, $tgl_kondisi);
+                    $umur = self::bulan($inv->tgl_beli, $tgl_kondisi, 'bulan', $pakaiLama);
                 }
 
                 $_satuan_susut = $satuan_susut;
@@ -218,8 +259,15 @@ class Inventaris
                 $t_akum_susut += $akum_susut;
                 $t_nilai_buku += $nilai_buku;
 
-                $tahun_validasi = substr($inv->tgl_validasi, 0, 4);
-                if ($nilai_buku == 0 && $tahun_validasi < $tahun) {
+                // Syarat masuk "jumlah dihapus/hilang/dijual" beda antar versi.
+                if ($pakaiLama) {
+                    $masukJumlahDihapus = in_array($inv->status, ['Dijual', 'Hilang', 'Dihapus']);
+                } else {
+                    $tahun_validasi = substr($inv->tgl_validasi, 0, 4);
+                    $masukJumlahDihapus = ($nilai_buku == 0 && $tahun_validasi < $tahun);
+                }
+
+                if ($masukJumlahDihapus) {
                     $j_unit += $inv->unit;
                     $j_harga += $inv->harsat * $inv->unit;
                     $j_penyusutan += $penyusutan;
@@ -238,7 +286,6 @@ class Inventaris
         $ymd = explode('-', $tanggal);
         $y = $ymd[0];
         $m = $ymd[1];
-        $d = $ymd[2];
         $th_lalu = $y - 1;
         $awal_tahun = $y . '-01-01';
         $akhir_hari = $y . '-' . $m . '-' . date('t', strtotime("$y-$m-01"));
@@ -259,9 +306,6 @@ class Inventaris
             'kode_akun'
         )
             ->groupBy(DB::raw("kode_akun", "jenis_mutasi"))->where('kode_akun', $kode_akun)->first();
-
-        $lev1 = explode('.', $kode_akun)[0];
-        $jenis_mutasi = 'kredit';
 
         $saldo = $rekening->kredit + $rekening->saldo_kredit;
 

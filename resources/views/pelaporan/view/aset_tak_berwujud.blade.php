@@ -6,6 +6,12 @@
 @extends('pelaporan.layout.base')
 
 @section('content')
+    @php
+        // Satu titik keputusan untuk seluruh laporan ini: lokasi 362 dengan
+        // tanggal kondisi s.d. Juni 2026 masih pakai perhitungan lama.
+        // Mulai Juli 2026 otomatis pakai perhitungan baru.
+        $pakaiLama = Inventaris::pakaiLama($tgl_kondisi);
+    @endphp
     @foreach ($inventaris as $rek)
         @php
             $t_unit = 0;
@@ -65,13 +71,13 @@
                     }
 
                     $satuan_susut = $inv->harsat <= 0 ? 0 : round(($inv->harsat * $inv->unit) / $inv->umur_ekonomis, 2);
-                    $pakai_lalu = Inventaris::bulan($inv->tgl_beli, $tahun - 1 . '-12-31');
-                    $nilai_buku = Inventaris::nilaiBuku($tgl_kondisi, $inv);
+                    $pakai_lalu = Inventaris::bulan($inv->tgl_beli, $tahun - 1 . '-12-31', 'bulan', $pakaiLama);
+                    $nilai_buku = Inventaris::nilaiBuku($tgl_kondisi, $inv, $pakaiLama);
 
                     if (!($inv->status == 'Baik') && $tgl_kondisi >= $inv->tgl_validasi) {
-                        $umur = Inventaris::bulan($inv->tgl_beli, $inv->tgl_validasi);
+                        $umur = Inventaris::bulan($inv->tgl_beli, $inv->tgl_validasi, 'bulan', $pakaiLama);
                     } else {
-                        $umur = Inventaris::bulan($inv->tgl_beli, $tgl_kondisi);
+                        $umur = Inventaris::bulan($inv->tgl_beli, $tgl_kondisi, 'bulan', $pakaiLama);
                     }
 
                     $_satuan_susut = $satuan_susut;

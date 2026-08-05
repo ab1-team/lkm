@@ -6,6 +6,12 @@
 @extends('pelaporan.layout.base')
 
 @section('content')
+    @php
+        // Satu titik keputusan untuk seluruh laporan ini: lokasi 362 dengan
+        // tanggal kondisi s.d. Juni 2026 masih pakai perhitungan lama.
+        // Mulai Juli 2026 otomatis pakai perhitungan baru.
+        $pakaiLama = Inventaris::pakaiLama($tgl_kondisi);
+    @endphp
     @foreach ($inventaris as $rek)
         @php
             $t_unit = 0;
@@ -13,13 +19,11 @@
             $t_penyusutan = 0;
             $t_akum_susut = 0;
             $t_nilai_buku = 0;
-
             $j_unit = 0;
             $j_harga = 0;
             $j_penyusutan = 0;
             $j_akum_susut = 0;
             $j_nilai_buku = 0;
-
             $no = 1;
         @endphp
         @if ($rek->lev4 != '1')
@@ -39,7 +43,6 @@
             <tr>
                 <td colspan="3" height="5"></td>
             </tr>
-
         </table>
         <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10px; table-layout: fixed;">
             <thead>
@@ -65,7 +68,6 @@
                     <th class="t l b r" width="8%">Biaya</th>
                 </tr>
             </thead>
-
             <tbody>
                 @foreach ($rek->inventaris as $inv)
                     @php
@@ -83,18 +85,33 @@
                             @php
                                 $t_unit += $inv->unit;
                                 $t_harga += $inv->harsat * $inv->unit;
-
                                 $nilai_buku = $inv->harsat * $inv->unit;
-                                if (!$is_valid) {
-                                    $nilai_buku = '0';
-                                }
 
-                                if (!($inv->status == 'Baik') && $tgl_kondisi >= $inv->tgl_validasi) {
-                                    $j_unit += $inv->unit;
-                                    $j_harga += $inv->harsat * $inv->unit;
-                                    $j_nilai_buku += $nilai_buku;
+                                if ($pakaiLama) {
+                                    // Versi lama: t_nilai_buku selalu ikut harga penuh
+                                    // (di-hitung sebelum nilai_buku di-nol-kan), dan
+                                    // nilai_buku cuma di-nol-kan utk status Dijual/Hapus.
+                                    $t_nilai_buku += $inv->harsat * $inv->unit;
+                                    if ($inv->status == 'Dijual' || $inv->status == 'Hapus') {
+                                        $nilai_buku = '0';
+                                    }
+                                    if (!$is_valid) {
+                                        $j_unit += $inv->unit;
+                                        $j_harga += $inv->harsat * $inv->unit;
+                                        $j_nilai_buku += $inv->harsat * $inv->unit;
+                                    }
                                 } else {
-                                    $t_nilai_buku += $nilai_buku;
+                                    // Versi baru: nilai_buku di-nol-kan utk semua status
+                                    // tidak valid (bukan cuma Dijual/Hapus), dan item
+                                    // tidak valid tidak masuk t_nilai_buku sama sekali.
+                                    if (!$is_valid) {
+                                        $nilai_buku = '0';
+                                        $j_unit += $inv->unit;
+                                        $j_harga += $inv->harsat * $inv->unit;
+                                        $j_nilai_buku += $nilai_buku;
+                                    } else {
+                                        $t_nilai_buku += $nilai_buku;
+                                    }
                                 }
                             @endphp
                             <td class="t l b" align="center">{{ $no++ }}</td>
@@ -111,22 +128,19 @@
                             @php
                                 $satuan_susut =
                                     $inv->harsat <= 0 ? 0 : round(($inv->harsat * $inv->unit) / $inv->umur_ekonomis, 2);
-                                $pakai_lalu = Inventaris::bulan($inv->tgl_beli, $tahun - 1 . '-12-31');
-                                $nilai_buku = Inventaris::nilaiBuku($tgl_kondisi, $inv);
-
+                                $pakai_lalu = Inventaris::bulan($inv->tgl_beli, $tahun - 1 . '-12-31', 'bulan', $pakaiLama);
+                                $nilai_buku = Inventaris::nilaiBuku($tgl_kondisi, $inv, $pakaiLama);
                                 if (!($inv->status == 'Baik') && $tgl_kondisi >= $inv->tgl_validasi) {
-                                    $umur = Inventaris::bulan($inv->tgl_beli, $inv->tgl_validasi);
+                                    $umur = Inventaris::bulan($inv->tgl_beli, $inv->tgl_validasi, 'bulan', $pakaiLama);
                                 } else {
-                                    $umur = Inventaris::bulan($inv->tgl_beli, $tgl_kondisi);
+                                    $umur = Inventaris::bulan($inv->tgl_beli, $tgl_kondisi, 'bulan', $pakaiLama);
                                 }
-
                                 $_satuan_susut = $satuan_susut;
                                 if ($umur >= $inv->umur_ekonomis) {
                                     $harga = $inv->harsat * $inv->unit;
                                     $_susut = $satuan_susut * ($inv->umur_ekonomis - 1);
                                     $satuan_susut = $harga - $_susut - 1;
                                 }
-
                                 $susut = $satuan_susut * $umur;
                                 if ($umur >= $inv->umur_ekonomis && $inv->harsat * $inv->unit > 0) {
                                     $akum_umur = $inv->umur_ekonomis;
@@ -136,15 +150,12 @@
                                 } else {
                                     $akum_umur = $umur;
                                     $akum_susut = $susut;
-
                                     if ($nilai_buku < 0) {
                                         $nilai_buku = 1;
                                     }
                                 }
-
                                 $umur_pakai = $akum_umur - $pakai_lalu;
                                 $penyusutan = $satuan_susut * $umur_pakai;
-
                                 if (
                                     ($inv->status == 'Hilang' and $tgl_kondisi >= $inv->tgl_validasi) ||
                                     ($inv->status == 'Dijual' && $tgl_kondisi >= $inv->tgl_validasi) ||
@@ -155,35 +166,36 @@
                                     $penyusutan = 0;
                                     $umur_pakai = 0;
                                 }
-
                                 if ($inv->status == 'Rusak' and $tgl_kondisi >= $inv->tgl_validasi) {
                                     $akum_susut = $inv->harsat * $inv->unit - 1;
                                     $nilai_buku = 1;
                                     $penyusutan = 0;
                                     $umur_pakai = 0;
                                 }
-
                                 if ($umur_pakai >= 0 && $inv->harsat * $inv->unit > 0) {
                                     $penyusutan = $penyusutan;
                                 } else {
                                     $umur_pakai = 0;
                                     $penyusutan = 0;
                                 }
-
                                 if ($akum_umur == $inv->umur_ekonomis && $umur_pakai > '0') {
                                     $penyusutan = $_satuan_susut * ($umur_pakai - 1) + $satuan_susut;
                                 }
-
                                 $t_unit += $inv->unit;
                                 $t_harga += $inv->harsat * $inv->unit;
                                 $t_penyusutan += $penyusutan;
                                 $t_akum_susut += $akum_susut;
                                 $t_nilai_buku += $nilai_buku;
 
-                                $tahun_validasi = substr($inv->tgl_validasi, 0, 4);
+                                // Syarat masuk "jumlah dihapus/hilang/dijual" beda antar versi.
+                                if ($pakaiLama) {
+                                    $masuk_jumlah_dihapus = in_array($inv->status, ['Dijual', 'Hilang', 'Dihapus']);
+                                } else {
+                                    $tahun_validasi = substr($inv->tgl_validasi, 0, 4);
+                                    $masuk_jumlah_dihapus = $nilai_buku == 0 && $tahun_validasi < $tahun;
+                                }
                             @endphp
-
-                            @if ($nilai_buku == 0 && $tahun_validasi < $tahun)
+                            @if ($masuk_jumlah_dihapus)
                                 @php
                                     $j_unit += $inv->unit;
                                     $j_harga += $inv->harsat * $inv->unit;
@@ -211,7 +223,6 @@
                         @endif
                     </tr>
                 @endforeach
-
                 @if ($rek->lev4 != '1')
                     <tr>
                         <td class="t l b" height="15" colspan="5">
@@ -227,7 +238,6 @@
                         <td class="t l b r" align="right">{{ number_format($j_nilai_buku, 2) }}</td>
                     </tr>
                 @endif
-
                 <tr>
                     <td colspan="15" style="padding: 0px !important">
                         <table class="p" border="0" width="100%" cellspacing="0" cellpadding="0"
@@ -254,7 +264,6 @@
                                 <td class="t l b r" width="8%" align="right">{{ number_format($t_nilai_buku, 2) }}
                                 </td>
                             </tr>
-
                             <tr>
                                 <td colspan="{{ $rek->lev4 == '1' ? 6 : 9 }}">
                                     <div style="margin-top: 16px;"></div>
