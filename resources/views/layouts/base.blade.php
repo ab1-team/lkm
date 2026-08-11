@@ -557,13 +557,60 @@
             if (xhr && xhr.responseText) {
                 try {
                     var parsed = JSON.parse(xhr.responseText);
-                    body = parsed.message || parsed.error || (parsed.response && parsed.response.message) || '';
+                    body = WaExtractReason(parsed) || parsed.message || parsed.error || (parsed.response && parsed.response.message) || '';
                 } catch (e) {
                     body = xhr.responseText.substring(0, 200);
                 }
             }
             if (!body) body = (xhr && xhr.statusText) ? xhr.statusText : 'tidak ada respon dari gateway';
             return 'HTTP ' + status + ': ' + body;
+        }
+
+        function WaExtractReason(obj) {
+            if (!obj || typeof obj !== 'object') return '';
+            var candidates = [
+                obj.message, obj.error, obj.msg,
+                obj.response && obj.response.message,
+                obj.response && obj.response.error,
+                obj.error && obj.error.message
+            ];
+            for (var i = 0; i < candidates.length; i++) {
+                var c = candidates[i];
+                if (c === null || c === undefined) continue;
+                if (typeof c === 'string') {
+                    if (c.trim().length > 0) return c.trim();
+                } else if (typeof c === 'number' || typeof c === 'boolean') {
+                    return String(c);
+                } else if (Array.isArray(c)) {
+                    var parts = c.map(function(item) {
+                        if (item === null || item === undefined) return '';
+                        if (typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean') return String(item);
+                        if (typeof item === 'object') return JSON.stringify(item);
+                        return '';
+                    }).filter(Boolean);
+                    if (parts.length) return parts.join('; ');
+                } else if (typeof c === 'object') {
+                    try { return JSON.stringify(c); } catch (e) { return ''; }
+                }
+            }
+            return '';
+        }
+
+        function WaErrorReason(result) {
+            if (result === null || result === undefined) return 'respon gateway kosong';
+            if (typeof result === 'string') return result;
+            var status = result.status;
+            var okFlag = result.success;
+            var reason = WaExtractReason(result);
+            if (okFlag === true) return '';
+            if (okFlag === false) {
+                if (typeof status === 'number' && status >= 400) return 'HTTP ' + status + (reason ? ': ' + reason : '');
+                return reason || 'respon gateway tidak sukses';
+            }
+            if (typeof status === 'number' && status >= 400) {
+                return 'HTTP ' + status + (reason ? ': ' + reason : '');
+            }
+            return reason || '';
         }
 
         function WaNormalizeNumber(num) {

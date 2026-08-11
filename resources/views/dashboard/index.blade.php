@@ -1072,7 +1072,14 @@
                             text: m.text
                         }),
                         success: function(res) {
-                            sent++;
+                            var reason = WaErrorReason(res);
+                            if (reason) {
+                                failed++;
+                                failedDetails.push(m.anggota + ' — ' + reason);
+                                console.error('[WA] Gagal kirim (success path) ke', m.number, '(', m.anggota, ') —', reason);
+                            } else {
+                                sent++;
+                            }
                             if (sent + failed === messages.length) {
                                 if (failed === 0) {
                                     Swal.fire('Berhasil', 'Pesan Berhasil Masuk Antrean', 'success')

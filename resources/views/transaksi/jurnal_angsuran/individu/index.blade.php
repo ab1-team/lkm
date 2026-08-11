@@ -562,10 +562,10 @@
                     delay: randomDelay
                 }),
                 success: function(result) {
-                    if (result.success) {
+                    var reason = WaErrorReason(result)
+                    if (!reason) {
                         MultiToast('success', 'Pesan untuk Nasabah ' + nama + ' berhasil dikirim')
                     } else {
-                        var reason = (result && (result.message || result.error)) ? (result.message || result.error) : 'respon gateway tidak sukses'
                         if (repeat < 1) {
                             setTimeout(function() { sendMsg(number, nama, msg, repeat + 1) }, 2000)
                         } else {
