@@ -237,6 +237,23 @@
 @endsection
 
 @section('script')
+    <style>
+        .swal-wa-title-small {
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            text-transform: lowercase !important;
+            letter-spacing: 0 !important;
+            color: #888 !important;
+            margin-bottom: 8px !important;
+        }
+        .swal2-popup.swal2-popup-wa-error {
+            background: #1f1f1f !important;
+            color: #fff !important;
+        }
+        .swal2-popup.swal2-popup-wa-error .swal2-icon {
+            margin-top: 12px !important;
+        }
+    </style>
     <script src="/vendor/ckeditor/ckeditor.js"></script>
 
     <script>
@@ -342,6 +359,16 @@
             CKEDITOR.replace('editor_spk');
             CKEDITOR.replace('editor_calk');
 
+            window.escapeHtml = function(str) {
+                if (str === null || str === undefined) return ''
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;')
+            }
+
             if (SAVED_INSTANCE) {
                 $.ajax({
                     type: 'GET',
@@ -399,7 +426,15 @@
                                     pollQr()
                                 }
                             } else {
-                                Swal.fire('Error', res.msg || 'Gagal membuat instance.', 'error')
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'error',
+                                    html:
+                                        '<div style="background:#000;color:#fff;font-size:12px;padding:8px 10px;border-radius:4px;text-align:left;line-height:1.4;word-break:space;white-space:pre-wrap;">'+
+                                        escapeHtml(res.msg || 'Gagal membuat instance.')+
+                                        '</div>',
+                                    customClass: { title: 'swal-wa-title-small', popup: 'swal2-popup-wa-error' }
+                                })
                             }
                         },
                         error: function(xhr) {
@@ -410,16 +445,27 @@
                             } catch (e) {
                                 body = xhr && xhr.responseText ? xhr.responseText : null
                             }
-                            var detail = 'Gagal terhubung ke gateway Evolution.'
+                            var headline = 'Gagal terhubung ke gateway Evolution.'
                             if (xhr && xhr.status) {
-                                detail += ' (HTTP ' + xhr.status + ')'
+                                headline += ' (HTTP ' + xhr.status + ')'
                             }
+                            var reason = ''
                             if (body && (body.msg || body.message)) {
-                                detail += ' — ' + (body.msg || body.message)
+                                reason = String(body.msg || body.message)
                             } else if (xhr && xhr.statusText) {
-                                detail += ' — ' + xhr.statusText
+                                reason = String(xhr.statusText)
                             }
-                            Swal.fire('Error', detail, 'error')
+                            var reasonBlock = reason
+                                ? '<div style="background:#000;color:#9cdcfe;font-size:11px;padding:8px 10px;border-radius:4px;text-align:left;line-height:1.4;word-break:space;white-space:pre-wrap;margin-top:6px;max-height:220px;overflow:auto;">'+escapeHtml(reason)+'</div>'
+                                : ''
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'error',
+                                html:
+                                    '<div style="background:#000;color:#fff;font-size:12px;padding:8px 10px;border-radius:4px;text-align:left;line-height:1.4;word-break:space;white-space:pre-wrap;">'+
+                                    escapeHtml(headline)+'</div>'+reasonBlock,
+                                customClass: { title: 'swal-wa-title-small', popup: 'swal2-popup-wa-error' }
+                            })
                         }
                     })
                 }

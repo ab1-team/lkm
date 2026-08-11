@@ -751,7 +751,9 @@ class SopController extends Controller
             return response()->json(['success' => false, 'msg' => 'WA_GATEWAY_API_KEY belum di-set di .env']);
         }
 
-        $instanceName = 'lkm_'.\Illuminate\Support\Str::slug($kec->nama_lembaga_sort ?? $kec->nama_kec ?? 'lkm').'-'.$kec->id;
+        $instanceName = 'lkm_'.\Illuminate\Support\Str::slug($kec->nama_lembaga_sort ?? $kec->nama_kec ?? 'lkm')
+            .'-'.$kec->id
+            .'-'.\Illuminate\Support\Str::lower(\Illuminate\Support\Str::random(4));
 
         try {
             // NOTE: enpii Cloudflare WAF blocks User-Agent: GuzzleHttp/7 → use browser-like UA.
@@ -864,6 +866,38 @@ class SopController extends Controller
                 'pairingCode' => $pairingCode,
                 'state' => $connectBody['instance']['state'] ?? null,
             ]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            $sqlCode = $e->errorInfo[1] ?? null;
+            $isDuplicate = ($sqlCode == 1062) || (isset($e->errorInfo[0]) && $e->errorInfo[0] === '23000');
+
+            \Log::warning('Evolution save_whatsapp_session db error', [
+                'instance' => $instanceName,
+                'endpoint' => $base.'/instance/create',
+                'class' => get_class($e),
+                'sql_state' => $e->errorInfo[0] ?? null,
+                'sql_code' => $sqlCode,
+                'message' => $e->getMessage(),
+            ]);
+
+            if ($isDuplicate) {
+                $msg = 'Nama instance WhatsApp bentrok dengan data lain di database. Silakan hubungi admin untuk dibuatkan nama instance baru.';
+            } else {
+                $msg = 'Kesalahan database saat menyimpan instance: '.$e->getMessage();
+            }
+
+            return response()->json(['success' => false, 'msg' => $msg], 500);
+        } catch (\GuzzleHttp\Exception\ConnectException | \GuzzleHttp\Exception\RequestException $e) {
+            \Log::error('Evolution save_whatsapp_session network error', [
+                'instance' => $instanceName,
+                'endpoint' => $base.'/instance/create',
+                'class' => get_class($e),
+                'message' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'msg' => 'Gagal terhubung ke gateway Evolution: '.$e->getMessage(),
+            ], 500);
         } catch (\Exception $e) {
             \Log::error('Evolution save_whatsapp_session error', [
                 'instance' => $instanceName,
@@ -872,9 +906,7 @@ class SopController extends Controller
                 'message' => $e->getMessage(),
             ]);
 
-            $msg = 'Gagal terhubung ke gateway Evolution: '.$e->getMessage();
-
-            return response()->json(['success' => false, 'msg' => $msg], 500);
+            return response()->json(['success' => false, 'msg' => $e->getMessage()], 500);
         }
     }
 
