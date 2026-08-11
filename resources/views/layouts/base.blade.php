@@ -568,12 +568,28 @@
 
         function WaExtractReason(obj) {
             if (!obj || typeof obj !== 'object') return '';
+            var msgKeys = ['extendedTextMessage','conversation','imageMessage','videoMessage',
+                           'documentMessage','audioMessage','stickerMessage','contactMessage',
+                           'locationMessage','listMessage','buttonsMessage','templateMessage',
+                           'reactionMessage','ephemeralMessage','protocolMessage'];
             var candidates = [
-                obj.message, obj.error, obj.msg,
                 obj.response && obj.response.message,
                 obj.response && obj.response.error,
-                obj.error && obj.error.message
+                obj.error && obj.error.message,
+                obj.error,
+                obj.msg
             ];
+            if (obj.message && typeof obj.message === 'object') {
+                var isMsgStructure = false;
+                for (var k = 0; k < msgKeys.length; k++) {
+                    if (obj.message[msgKeys[k]]) { isMsgStructure = true; break; }
+                }
+                if (!isMsgStructure && Array.isArray(obj.message) === false) {
+                    candidates.push(obj.message);
+                }
+            } else if (obj.message !== undefined) {
+                candidates.push(obj.message);
+            }
             for (var i = 0; i < candidates.length; i++) {
                 var c = candidates[i];
                 if (c === null || c === undefined) continue;
@@ -596,9 +612,24 @@
             return '';
         }
 
+        function WaLooksLikeSuccess(result) {
+            if (!result || typeof result !== 'object') return false;
+            if (result.key && typeof result.key === 'object' &&
+                (result.key.id || result.key.remoteJid)) {
+                return true;
+            }
+            var s = result.status;
+            if (typeof s === 'string') {
+                var ok = ['PENDING','SENT','DELIVERED','READ','PLAYED','SUCCESS','SERVER_ACK','DELIVERY_ACK','READ_ACK'];
+                for (var i = 0; i < ok.length; i++) if (s === ok[i]) return true;
+            }
+            return false;
+        }
+
         function WaErrorReason(result) {
             if (result === null || result === undefined) return 'respon gateway kosong';
             if (typeof result === 'string') return result;
+            if (WaLooksLikeSuccess(result)) return '';
             var status = result.status;
             var okFlag = result.success;
             var reason = WaExtractReason(result);
