@@ -402,8 +402,24 @@
                                 Swal.fire('Error', res.msg || 'Gagal membuat instance.', 'error')
                             }
                         },
-                        error: function() {
-                            Swal.fire('Error', 'Gagal terhubung ke gateway Evolution.', 'error')
+                        error: function(xhr) {
+                            console.error('[WA] /save_device error:', xhr)
+                            var body = null
+                            try {
+                                body = xhr && xhr.responseText ? JSON.parse(xhr.responseText) : null
+                            } catch (e) {
+                                body = xhr && xhr.responseText ? xhr.responseText : null
+                            }
+                            var detail = 'Gagal terhubung ke gateway Evolution.'
+                            if (xhr && xhr.status) {
+                                detail += ' (HTTP ' + xhr.status + ')'
+                            }
+                            if (body && (body.msg || body.message)) {
+                                detail += ' — ' + (body.msg || body.message)
+                            } else if (xhr && xhr.statusText) {
+                                detail += ' — ' + xhr.statusText
+                            }
+                            Swal.fire('Error', detail, 'error')
                         }
                     })
                 }

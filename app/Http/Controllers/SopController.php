@@ -781,6 +781,7 @@ class SopController extends Controller
             $createBody = json_decode($createBodyRaw, true);
             \Log::info('Evolution create instance', [
                 'instance' => $instanceName,
+                'endpoint' => $base.'/instance/create',
                 'status' => $createRes->getStatusCode(),
                 'has_qr' => ! empty($createBody['qrcode']['base64'] ?? null),
             ]);
@@ -791,6 +792,12 @@ class SopController extends Controller
                 if (is_array($errMsg)) {
                     $errMsg = json_encode($errMsg);
                 }
+
+                \Log::warning('Evolution create instance non-success', [
+                    'instance' => $instanceName,
+                    'status' => $createStatus,
+                    'body' => $createBodyRaw,
+                ]);
 
                 return response()->json([
                     'success' => false,
@@ -858,9 +865,16 @@ class SopController extends Controller
                 'state' => $connectBody['instance']['state'] ?? null,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Evolution save_whatsapp_session error: '.$e->getMessage());
+            \Log::error('Evolution save_whatsapp_session error', [
+                'instance' => $instanceName,
+                'endpoint' => $base.'/instance/create',
+                'class' => get_class($e),
+                'message' => $e->getMessage(),
+            ]);
 
-            return response()->json(['success' => false, 'msg' => $e->getMessage()], 500);
+            $msg = 'Gagal terhubung ke gateway Evolution: '.$e->getMessage();
+
+            return response()->json(['success' => false, 'msg' => $msg], 500);
         }
     }
 
