@@ -16,6 +16,7 @@ use App\Models\RencanaAngsuran;
 use App\Models\Saldo;
 use App\Models\Transaksi;
 use App\Models\JenisProdukPinjaman;
+use Illuminate\Support\Facades\Schema;
 use App\Utils\Keuangan;
 use App\Utils\Tanggal;
 use Illuminate\Http\Request;
@@ -62,6 +63,30 @@ class DashboardController extends Controller
             $data['proposal'] = $pinj->p;
             $data['verifikasi'] = $pinj->v;
             $data['waiting'] = $pinj->w;
+        }
+
+        $data['pinjaman_kelompok'] = 0;
+        $data['proposal_kelompok'] = 0;
+        $data['verifikasi_kelompok'] = 0;
+        $data['waiting_kelompok'] = 0;
+        $tb_kelompok = 'pinjaman_kelompok_' . Session::get('lokasi');
+        if (Schema::hasTable($tb_kelompok)) {
+            $data['pinjaman_kelompok'] = PinjamanKelompok::where([
+                ['status', 'A'],
+                ['tgl_cair', '<=', $tgl]
+            ])->count();
+
+            $pinj_k = PinjamanKelompok::select([
+                DB::raw("(SELECT count(*) FROM $tb_kelompok WHERE status='P') as p"),
+                DB::raw("(SELECT count(*) FROM $tb_kelompok WHERE status='V') as v"),
+                DB::raw("(SELECT count(*) FROM $tb_kelompok WHERE status='W') as w"),
+            ])->first();
+
+            if ($pinj_k) {
+                $data['proposal_kelompok'] = $pinj_k->p;
+                $data['verifikasi_kelompok'] = $pinj_k->v;
+                $data['waiting_kelompok'] = $pinj_k->w;
+            }
         }
 
         // Ambil jenis produk pinjaman berdasarkan lokasi & kecuali
@@ -239,6 +264,8 @@ class DashboardController extends Controller
     {
         $status = request()->get('status');
         $tipe   = request()->get('tipe', 'individu'); // default individu
+        $page   = max(1, (int) request()->get('page', 1));
+        $perPage = 20;
 
         if ($status == 'P') {
             $tgl    = 'tgl_proposal';
@@ -255,15 +282,19 @@ class DashboardController extends Controller
         }
 
         $table = '';
-        $no    = 1;
 
         if ($tipe === 'kelompok') {
-            $pinjaman = PinjamanKelompok::where('status', $status)
+            $query = PinjamanKelompok::where('status', $status)
                 ->with(['kelompok', 'kelompok.d', 'kelompok.d.sebutan_desa'])
-                ->orderBy($tgl, 'ASC')
-                ->get();
+                ->orderBy($tgl, 'ASC');
 
-            foreach ($pinjaman as $pinj) {
+            $total      = (clone $query)->count();
+            $lastPage   = max(1, (int) ceil($total / $perPage));
+            $page       = min($page, $lastPage);
+            $pinjaman   = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+            $noAwal     = ($page - 1) * $perPage + 1;
+
+            foreach ($pinjaman as $i => $pinj) {
                 $nama_desa = '';
                 if ($pinj->kelompok && $pinj->kelompok->d) {
                     $nama_desa = optional($pinj->kelompok->d->sebutan_desa)->sebutan_desa
@@ -271,7 +302,7 @@ class DashboardController extends Controller
                 }
 
                 $table .= '<tr>';
-                $table .= '<td align="center">' . $no . '</td>';
+                $table .= '<td align="center">' . ($noAwal + $i) . '</td>';
                 $table .= '<td align="center">' . ($pinj->kelompok->kd_kelompok ?? '-') . '</td>';
                 $table .= '<td>' . ($pinj->kelompok->nama_kelompok ?? '-') . '</td>';
                 $table .= '<td>' . $nama_desa . '</td>';
@@ -279,20 +310,24 @@ class DashboardController extends Controller
                 $table .= '<td align="center">' . Tanggal::tglIndo($pinj->$tgl) . '</td>';
                 $table .= '<td align="right">' . number_format($pinj->$alokasi) . '</td>';
                 $table .= '</tr>';
-
-                $no++;
             }
         } else {
-            $pinjaman = PinjamanAnggota::where([
-                ['status', $status],
-                ['jenis_pinjaman', 'I']
-            ])->with([
-                'anggota',
-                'anggota.d',
-                'anggota.d.sebutan_desa'
-            ])->orderBy('tgl_cair', 'ASC')->get();
+            $query = PinjamanAnggota::where([
+                    ['status', $status],
+                    ['jenis_pinjaman', 'I']
+                ])->with([
+                    'anggota',
+                    'anggota.d',
+                    'anggota.d.sebutan_desa'
+                ])->orderBy('tgl_cair', 'ASC');
 
-            foreach ($pinjaman as $pinj_anggota) {
+            $total      = (clone $query)->count();
+            $lastPage   = max(1, (int) ceil($total / $perPage));
+            $page       = min($page, $lastPage);
+            $pinjaman   = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+            $noAwal     = ($page - 1) * $perPage + 1;
+
+            foreach ($pinjaman as $i => $pinj_anggota) {
                 $nama_desa = '';
                 if ($pinj_anggota->anggota->d) {
                     $nama_desa = $pinj_anggota->anggota->d->sebutan_desa->sebutan_desa
@@ -300,7 +335,7 @@ class DashboardController extends Controller
                 }
 
                 $table .= '<tr>';
-                $table .= '<td align="center">' . $no . '</td>';
+                $table .= '<td align="center">' . ($noAwal + $i) . '</td>';
                 $table .= '<td align="center">' . $pinj_anggota->anggota->nik . '</td>';
                 $table .= '<td>' . $pinj_anggota->anggota->namadepan . '</td>';
                 $table .= '<td>' . $nama_desa . ' ' . $pinj_anggota->anggota->alamat . '</td>';
@@ -308,14 +343,21 @@ class DashboardController extends Controller
                 $table .= '<td align="center">' . Tanggal::tglIndo($pinj_anggota->$tgl) . '</td>';
                 $table .= '<td align="right">' . number_format($pinj_anggota->$alokasi) . '</td>';
                 $table .= '</tr>';
-
-                $no++;
             }
         }
 
+        $from = ($pinjaman->count() > 0) ? (($page - 1) * $perPage + 1) : 0;
+        $to   = ($page - 1) * $perPage + $pinjaman->count();
+
         return response()->json([
-            'success' => true,
-            'table'   => $table
+            'success'   => true,
+            'table'     => $table,
+            'page'      => $page,
+            'perPage'   => $perPage,
+            'total'     => $total,
+            'lastPage'  => $lastPage,
+            'from'      => $from,
+            'to'        => $to,
         ]);
     }
 
