@@ -726,7 +726,10 @@ class SopController extends Controller
 
     public function detailInvoice($inv)
     {
-        $inv = AdminInvoice::where('idv', $inv)->with('jp')->first();
+        $inv = AdminInvoice::where('idv', $inv)
+            ->where('lokasi', Session::get('lokasi'))
+            ->with('jp')
+            ->firstOrFail();
 
         $title = 'Invoice #' . $inv->nomor . ' - ' . $inv->jp->nama_jp;
         return view('sop.detail_invoice')->with(compact('title', 'inv'));

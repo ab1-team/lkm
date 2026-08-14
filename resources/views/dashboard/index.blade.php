@@ -6,6 +6,84 @@
 
         <input type="hidden" name="tgl" id="tgl" value="{{ date('d/m/Y') }}">
     </form>
+
+    @if ($near_due_invoice_count > 0)
+    <style>
+    #nearDueAlert {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+        color: #664d03;
+        border: 1px solid #ffe69c;
+        border-left: 5px solid #dc3545;
+        border-radius: 10px;
+        padding: 16px ;
+        box-shadow: 0 2px 10px rgba(220, 53, 69, 0.08);
+    }
+
+    #nearDueAlert .alert-icon {
+        flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #dc3545;
+        color: #ffffff;
+        border-radius: 50%;
+        font-size: 16px;
+    }
+
+    #nearDueAlert .alert-body {
+        flex: 1;
+        line-height: 1.6;
+        font-size: 0.95rem;
+    }
+
+    #nearDueAlert strong {
+        color: #842029;
+        font-weight: 700;
+    }
+
+    #nearDueAlert a.alert-link {
+        color: #dc3545;
+        text-decoration: none;
+        font-weight: 600;
+        border-bottom: 1px solid #dc3545;
+        transition: opacity 0.15s ease;
+    }
+
+    #nearDueAlert a.alert-link:hover {
+        opacity: 0.7;
+    }
+
+    #nearDueAlert .btn-close {
+        filter: none;
+        opacity: 0.5;
+    }
+
+    #nearDueAlert .btn-close:hover {
+        opacity: 0.9;
+    }
+    </style>
+    <div class="alert alert-dismissible fade show" role="alert" id="nearDueAlert">
+        <div class="alert-icon">
+            <i class="fa fa-exclamation-triangle"></i>
+        </div>
+        <div class="alert-body">
+            <strong>Pemberitahuan!</strong>
+            Terdapat {{ $near_due_invoice_count }} invoice belum dibayar
+            dengan total <strong>Rp. {{ number_format($near_due_invoice_amount, 2) }}</strong>
+            yang akan jatuh tempo pada
+            <strong>{{ \Carbon\Carbon::parse($near_due_invoice_date)->translatedFormat('d F Y') }}</strong>.
+            Mohon segera lakukan pembayaran untuk menghindari pemblokiran sistem.
+            <a href="/pengaturan/invoice" class="alert-link">Lihat detail</a>.
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
+
     <!-- Trigger Button (Hidden) -->
     @if ($jumlah_unpaid > 0)
         <button type="button" id="triggerPopup" class="d-none" data-bs-toggle="modal"

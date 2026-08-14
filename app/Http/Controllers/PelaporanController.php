@@ -4271,11 +4271,14 @@ class PelaporanController extends Controller
         $root_domain = explode('.', request()->getHost())[0];
         $allowed = ['master', 'laravel'];
 
-        $kec = Kecamatan::where('web_kec', request()->getHost())->orwhere('web_alternatif', request()->getHost())->first();
         $data['inv'] = AdminInvoice::where('idv', $invoice->idv)->with('jp', 'trx', 'kec', 'kec.kabupaten')->first();
 
+        if (!$data['inv']) {
+            abort(404);
+        }
+
         if (!in_array($root_domain, $allowed)) {
-            if ($kec->id != $data['inv']->lokasi) {
+            if (Session::get('lokasi') != $data['inv']->lokasi) {
                 abort(404);
             }
         }

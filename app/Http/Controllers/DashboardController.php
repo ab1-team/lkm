@@ -166,6 +166,19 @@ class DashboardController extends Controller
             ->where('status', 'UNPAID')
             ->sum('jumlah');
 
+        $soonDue = Carbon::today()->addDays(14)->toDateString();
+        $nearDueInvoice = AdminInvoice::where([
+                ['lokasi', Session::get('lokasi')],
+                ['status', 'UNPAID'],
+            ])
+            ->whereBetween('tgl_lunas', [$today, $soonDue])
+            ->orderBy('tgl_lunas')
+            ->get();
+
+        $data['near_due_invoice_count']  = $nearDueInvoice->count();
+        $data['near_due_invoice_amount'] = $nearDueInvoice->sum('jumlah');
+        $data['near_due_invoice_date']   = optional($nearDueInvoice->first())->tgl_lunas;
+
         $data['api'] = env('WA_GATEWAY_BASE', 'https://wa-gateway.enpiistudio.com');
         $data['api_key'] = env('WA_GATEWAY_API_KEY');
 

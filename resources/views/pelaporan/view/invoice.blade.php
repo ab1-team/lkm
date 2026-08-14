@@ -1,24 +1,16 @@
 @php
     use App\Utils\Tanggal;
 
-    $dari =
-        Tanggal::tahun($inv->tgl_invoice) .
-        '-' .
-        Tanggal::bulan($inv->kec->tgl_pakai) .
-        '-' .
-        Tanggal::hari($inv->kec->tgl_pakai);
-    $sampai = date('Y-m-d', strtotime('+1 years', strtotime($dari)));
-
     if ($inv->status == 'UNPAID') {
-        $tanggal = $dari;
+        $tanggal = $inv->tgl_lunas;
         $keterangan_tanggal = 'Jatuh Tempo';
         $status = 'U N P A I D';
-        $keterangan = 'Masa Pakai Sejak Tanggal ' . Tanggal::tglIndo($inv->kec->tgl_pakai);
+        $keterangan = 'Masa Berlaku s/d ' . Tanggal::tglIndo($inv->tgl_lunas);
     } elseif ($inv->status == 'PAID') {
         $tanggal = $inv->tgl_lunas;
         $keterangan_tanggal = 'Tanggal Lunas';
         $status = 'P A I D';
-        $keterangan = 'Masa Aktif Tanggal ' . Tanggal::tglIndo($dari) . ' - ' . Tanggal::tglIndo($sampai);
+        $keterangan = 'Masa Aktif Tanggal ' . Tanggal::tglIndo($inv->tgl_invoice) . ' - ' . Tanggal::tglIndo($inv->tgl_lunas);
     }
 
     $batas_waktu = $tanggal;
