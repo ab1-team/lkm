@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\AdminInvoice;
 use App\Models\Usaha;
 use App\Models\Kecamatan;
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
 use Session;
@@ -20,14 +21,23 @@ class Aktif
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $today = date('Y-m-d');
+        $today = Carbon::today()->toDateString();
         $invoice = AdminInvoice::where([
             ['status', 'UNPAID'],
             ['lokasi', Session::get('lokasi')]
-        ])->where('tgl_lunas', '<=', $today)->first();
-        Session::put('invoice', $invoice);
+        ])->where('tgl_lunas', '<=', $today)
+            ->orderBy('tgl_lunas')
+            ->first();
 
-        if ($invoice) {
+        $isOverdue = $invoice && Carbon::parse($invoice->tgl_lunas)->lt(Carbon::today());
+
+        if ($isOverdue) {
+            Session::put('invoice', $invoice);
+        } else {
+            Session::forget('invoice');
+        }
+
+        if ($invoice && $isOverdue) {
             if ($request->is('dashboard') || $request->is('pengaturan/*') || $request->is('pelaporan/*')) {
                 return $next($request);
             } else {

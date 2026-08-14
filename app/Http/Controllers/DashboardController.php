@@ -147,8 +147,18 @@ class DashboardController extends Controller
             ['lokasi', Session::get('lokasi')],
             ['status', 'UNPAID']
         ])
-            ->where('tgl_lunas', '<=', $today)->count();
-        $data['jumlah_unpaid'] = $unpaidInvoice;
+            ->where('tgl_lunas', '<=', $today)
+            ->orderBy('tgl_lunas')
+            ->get();
+
+        $data['jumlah_unpaid'] = $unpaidInvoice->count();
+        $data['invoice_overdue'] = $unpaidInvoice->contains(function ($i) use ($today) {
+            return $i->tgl_lunas < $today;
+        });
+        $data['invoice_due_today'] = $unpaidInvoice->contains(function ($i) use ($today) {
+            return $i->tgl_lunas == $today;
+        });
+        $data['tgl_lunas_invoice'] = optional($unpaidInvoice->first())->tgl_lunas;
         $data['user'] = auth()->user();
         $data['saldo'] = $this->_saldo($tgl);
         $data['jumlah_saldo'] = Saldo::where('kode_akun', 'NOT LIKE', $kec->kd_kec . '%')->count();

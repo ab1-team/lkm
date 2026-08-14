@@ -12,6 +12,10 @@
             data-bs-target="#notificationPopup"></button>
     @endif
 
+    @php
+        $invoiceLocked = $invoice_overdue ?? false;
+    @endphp
+
     <style>
         .text-justify {
             text-align: justify;
@@ -358,11 +362,16 @@
     <!-- Popup Modal -->
     @if ($jumlah_unpaid > 0)
     <div class="modal fade" id="notificationPopup" tabindex="-1" aria-labelledby="notificationPopupLabel"
-        aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="true">
+        aria-hidden="true"
+        data-bs-backdrop="{{ $invoiceLocked ? 'static' : 'true' }}"
+        data-bs-keyboard="{{ $invoiceLocked ? 'false' : 'true' }}">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="notificationPopupLabel">Notification</h5>
+                    @if (!$invoiceLocked)
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    @endif
                 </div>
                 <div class="modal-body text-justify">
                     LKM <strong>{{ $nama_lkm }} </strong> saat ini memiliki tagihan invoice sebesar
@@ -372,10 +381,24 @@
                     <br>Pembayaran Transfer Via : <br>
                     - Bank Mandiri Nomor Rekening : <b> 185-000-417-4733 an. Santoso,</b> <br>
                     - Bank BRI Nomor Rekening : <b>0048-01-057317-505 an.Santoso</b><br>
-                    Cek info selengkapnya pada menu <strong> Biaya Perpanjangan </strong> di menu pengaturan ->invoice.
+                    @if (!$invoiceLocked && $tgl_lunas_invoice)
+                        <br><small class="text-muted">
+                            Batas pelunasan: <strong>{{ \Carbon\Carbon::parse($tgl_lunas_invoice)->translatedFormat('d F Y') }}</strong>
+                        </small>
+                    @endif
+                    @if ($invoiceLocked)
+                        <br><small class="text-danger">
+                            Invoice sudah melewati tanggal jatuh tempo. Akses aplikasi dibatasi sampai invoice dilunasi.
+                        </small>
+                    @endif
+                    <br>Cek info selengkapnya pada menu <strong> Biaya Perpanjangan </strong> di menu pengaturan ->invoice.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" tabindex="0" class="btn btn-primary" id="logout">OK</button>
+                    @if ($invoiceLocked)
+                        <button type="button" tabindex="0" class="btn btn-primary" id="logout">Logout</button>
+                    @else
+                        <button type="button" tabindex="0" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                    @endif
                 </div>
 
                 <form action="/logout" method="post" id="formLogout">
