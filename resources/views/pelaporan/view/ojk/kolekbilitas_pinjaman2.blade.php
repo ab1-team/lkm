@@ -32,64 +32,25 @@ $section = 0;
             $t_saldo = 0;
             $t_tunggakan_pokok = 0;
             $t_tunggakan_jasa = 0;
-            
-            // Parse JSON kolek configuration
-            // Kondisi khusus untuk session lokasi 362
-            if (session()->get('lokasi') == 362) {
-                $klk = [
-                    [
-                        'nama' => 'Lancar',
-                        'prosentase' => '0',
-                        'durasi' => '10',
-                        'satuan' => 'hari'
-                    ],
-                    [
-                        'nama' => 'Dalam Perhatian Khusus',
-                        'prosentase' => '5',
-                        'durasi' => '90',
-                        'satuan' => 'hari'
-                    ],
-                    [
-                        'nama' => 'kurang Lancar',
-                        'prosentase' => '15',
-                        'durasi' => '120',
-                        'satuan' => 'hari'
-                    ],
-                    [
-                        'nama' => 'Diragukan',
-                        'prosentase' => '50',
-                        'durasi' => '180',
-                        'satuan' => 'hari'
-                    ],
-                    [
-                        'nama' => 'Macet',
-                        'prosentase' => '100',
-                        'durasi' => '999',
-                        'satuan' => 'hari'
-                    ]
-                ];
-            } else {
-                $klk = json_decode($kec->kolek, true);
-            }
-            
-            // Filter hanya item yang tidak null
-            $kolek_items = [];
+
+            // Kolektibilitas POJK (sama persis dengan PTK_POJK di Penilaian Tingkat Kesehatan)
+            // 5 kategori: Lancar (0%), DPK (5%), Kurang Lancar (15%), Diragukan (50%), Macet (100%)
+            // Durasi mengikuti standar umum POJK untuk Lembaga Keuangan Mikro
+            $kolek_items = [
+                ['nama' => 'Lancar', 'prosentase' => '0', 'durasi' => '10', 'satuan' => 'hari'],
+                ['nama' => 'Dalam Perhatian Khusus', 'prosentase' => '5', 'durasi' => '90', 'satuan' => 'hari'],
+                ['nama' => 'Kurang Lancar', 'prosentase' => '15', 'durasi' => '120', 'satuan' => 'hari'],
+                ['nama' => 'Diragukan', 'prosentase' => '50', 'durasi' => '180', 'satuan' => 'hari'],
+                ['nama' => 'Macet', 'prosentase' => '100', 'durasi' => '9999', 'satuan' => 'hari'],
+            ];
+
             $kolek_config = [];
-            
-            if (is_array($klk)) {
-                foreach ($klk as $index => $item) {
-                    // Hanya include jika nama tidak null
-                    if (!empty($item['nama'])) {
-                        $kolek_items[] = $item;
-                        $kolek_config['kolek' . (count($kolek_items))] = $item;
-                    }
-                }
+            foreach ($kolek_items as $i => $item) {
+                $kolek_config['kolek' . ($i + 1)] = $item;
             }
-            
-            // Jumlah kolom kolektibilitas yang aktif
+
             $jumlah_kolek = count($kolek_items);
-            
-            // Inisialisasi total untuk setiap kolom kolek
+
             $t_kolek_total = [];
             for ($i = 1; $i <= $jumlah_kolek; $i++) {
                 $t_kolek_total[$i] = 0;
@@ -272,18 +233,19 @@ $section = 0;
                         ${"kolek{$i}"} = 0;
                     }
 
-                    // Logika penentuan kolektibilitas
+                    // Logika penentuan kolektibilitas (sama dengan helper tingkat_kesehatan di Keuangan.php)
+                    // Menggunakan $kolek_hari / $kolek_bulan vs durasi koleksi POJK
                     $matched = false;
                     foreach ($kolek_items as $idx => $item) {
                         $kolekNum = $idx + 1;
-                        
+
                         if (!is_array($item) || !isset($item['durasi'], $item['satuan'])) {
                             continue;
                         }
 
                         $durasi = (int) $item['durasi'];
                         $match = false;
-                        
+
                         if ($item['satuan'] === 'hari' && isset($kolek_hari) && $kolek_hari < $durasi) {
                             $match = true;
                             $kolek = $kolek_hari;
@@ -436,9 +398,9 @@ $section = 0;
                                                 $prev_durasi = $idx > 0 ? $kolek_items[$idx - 1]['durasi'] : 0;
                                             @endphp
                                             @if ($is_last)
-                                                {{ $item['nama'] }} (keterlambatan lebih dari {{ $prev_durasi }} {{ $item['satuan'] }}) <br>
+                                                {{ $item['nama'] }} (keterlambatan lebih dari {{ $prev_durasi }} {{ $item['satuan'] }}, PPAP {{ $item['prosentase'] }}%) <br>
                                             @else
-                                                {{ $item['nama'] }} (keterlambatan kurang dari {{ $item['durasi'] }} {{ $item['satuan'] }}) <br>
+                                                {{ $item['nama'] }} (keterlambatan kurang dari {{ $item['durasi'] }} {{ $item['satuan'] }}, PPAP {{ $item['prosentase'] }}%) <br>
                                             @endif
                                         @endforeach
                                     </p>
