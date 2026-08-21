@@ -176,7 +176,9 @@ Asumsi skor tetap **75** (placeholder, belum integrasi form penilaian kualitatif
 Wajib set PK=5 jika salah satu kondisi terpenuhi, **terlepas dari skor komposit**:
 - NPL Neto ≥ 25%
 - Rasio Ekuitas < 50%
-- Coverage PPAP < 50%
+- Coverage PPAP < 50% (atau `ppap_wajib_minimum = 0` **tidak** trigger, lihat catatan)
+
+> ⚠️ **Catatan fix**: Sejak versi fix PK 5, ketika `ppap_wajib_minimum = 0` (tidak ada pinjaman Kurang Lancar/Diragukan/Macet, semua Lancar/DPK), maka `ppap_coverage` otomatis di-set **100%** karena secara logika tidak ada kebutuhan PPAP. Sebelumnya di-set 0 yang salah trigger PK 5 meski skor komposit sangat tinggi (misal 81).
 
 ---
 
