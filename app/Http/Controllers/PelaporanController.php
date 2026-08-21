@@ -5601,7 +5601,7 @@ class PelaporanController extends Controller
         $rasio_ekuitas = ($modal_disetor > 0) ? ($total_ekuitas / $modal_disetor) * 100 : 0;
         $rasio_npl_neto = ($outstanding_pinjaman > 0) ? ($npl_neto / $outstanding_pinjaman) * 100 : 0;
         $rasio_likuiditas = ($liabilitas_lancar > 0) ? ($sum_kas / $liabilitas_lancar) * 100 : 0;
-        $ppap_coverage = ($ppap_wajib_minimum > 0) ? ($cadangan_piutang_terbentuk / $ppap_wajib_minimum) * 100 : 0;
+        $ppap_coverage = ($ppap_wajib_minimum > 0) ? ($cadangan_piutang_terbentuk / $ppap_wajib_minimum) * 100 : 100;
 
         $pendapatan = $keuangan->pendapatan($tgl);
         $biaya = $keuangan->biaya($tgl);
@@ -5742,23 +5742,85 @@ class PelaporanController extends Controller
         }
 
         $rekomendasi = [];
+
+        // Helper format rupiah konsisten
+        $rp = function ($n) {
+            return 'Rp ' . number_format((float) $n, 0, ',', '.');
+        };
+
+        // ===== Hitung selisih/need untuk rekomendasi actionable =====
+        // 1. Solvabilitas: butuh total_aset >= 1.10 * total_liabilitas
+        //    cara paling cepat: turunkan liabilitas (bayar utang) atau naikkan ekuitas
+        $need_solvabilitas = max(0, ($total_liabilitas * 1.10) - $total_aset);
+        $target_ekuitas_solv = max(0, ($total_liabilitas * 1.10) - ($total_aset - $total_liabilitas));
+
+        // 2. Ekuitas: butuh total_ekuitas >= 0.75 * modal_disetor
+        $need_ekuitas = max(0, ($modal_disetor * 0.75) - $total_ekuitas);
+
+        // 3. PPAP: butuh cadangan_piutang_terbentuk >= ppap_wajib_minimum
+        $need_ppap = max(0, $ppap_wajib_minimum - $cadangan_piutang_terbentuk);
+
+        // 4. Likuiditas: butuh kas >= 0.04 * liabilitas_lancar
+        $need_kas = max(0, ($liabilitas_lancar * 0.04) - $sum_kas);
+
         if ($rasio_solvabilitas < 110) {
-            $rekomendasi[] = 'PERMODALAN: Rasio Solvabilitas ' . number_format($rasio_solvabilitas, 2) . '% di bawah batas minimum 110%. Segera tingkatkan modal disetor atau konversi SHU menjadi ekuitas, serta evaluasi komposisi liabilitas agar aset mampu menutup kewajiban.';
+            $rekomendasi[] = 'PERMODALAN: Rasio Solvabilitas ' . number_format($rasio_solvabilitas, 2) . '% di bawah batas minimum 110%. '
+                . 'Cara perbaikan: '
+                . '(a) Tambahkan minimal ' . $rp($need_solvabilitas) . ' ke rekening Kas (1.1.01) atau Bank (1.1.02) dari setoran modal/hibah; '
+                . '(b) Naikkan ekuitas di rekening Simpanan Pokok (3.1.01), Simpanan Wajib (3.1.02), atau Modal Hibah (3.1.03) minimal ' . $rp($target_ekuitas_solv) . '; '
+                . '(c) Atau kurangi liabilitas dengan membayar jatuh tempo simpanan anggota / utang bank tepat waktu. '
+                . 'Setelah penyesuaian, target Total Aset minimal ' . $rp($total_liabilitas * 1.10) . ' (110% dari Liabilitas ' . $rp($total_liabilitas) . ').';
         }
         if ($rasio_ekuitas < 75) {
-            $rekomendasi[] = 'PERMODALAN: Rasio Ekuitas ' . number_format($rasio_ekuitas, 2) . '% di bawah minimum 75%. Tambah modal disetor dari pemilik, setorkan tambahan simpanan pokok/wajib/hibah (koperasi), atau alokasikan SHU tahun berjalan secara periodik.';
+            $rekomendasi[] = 'PERMODALAN: Rasio Ekuitas ' . number_format($rasio_ekuitas, 2) . '% di bawah minimum 75%. '
+                . 'Cara perbaikan: '
+                . '(a) Tambahkan setoran Simpanan Pokok anggota baru/rekrut anggota baru di rekening 3.1.01; '
+                . '(b) Naikkan Simpanan Wajib di rekening 3.1.02 dengan menambah iuran bulanan; '
+                . '(c) Setorkan modal hibah/donasi ke rekening 3.1.03 (Modal Penyertaan); '
+                . '(d) Alokasikan SHU tahun berjalan secara periodik ke rekening 3.2.xx (Cadangan) daripada dibagikan penuh. '
+                . 'Total Ekuitas minimal ' . $rp($modal_disetor * 0.75) . ' (75% dari Modal Disetor ' . $rp($modal_disetor) . '), sehingga perlu tambahan sekitar ' . $rp($need_ekuitas) . '.';
         }
         if ($rasio_npl_neto > 5) {
-            $rekomendasi[] = 'KUALITAS ASET: NPL Neto ' . number_format($rasio_npl_neto, 2) . '% melebihi batas 5%. Lakukan restrukturisasi pinjaman bermasalah, evaluasi kembali kelayakan agunan, terapkan ' . chr(34) . 'early warning system' . chr(34) . ' untuk deteksi keterlambatan angsuran, dan perkuat fungsi penagihan.';
+            $target_outstanding = $outstanding_pinjaman;
+            $max_npl_nominal = $target_outstanding * 0.05;
+            $kelebihan_npl = max(0, $npl_neto - $max_npl_nominal);
+            $rekomendasi[] = 'KUALITAS ASET: NPL Neto ' . number_format($rasio_npl_neto, 2) . '% melebihi batas 5%. '
+                . 'Cara perbaikan: '
+                . '(a) Kurangi NPL Neto menjadi maksimal ' . $rp($max_npl_nominal) . ' (5% dari Outstanding ' . $rp($outstanding_pinjaman) . '), selisih yang harus diturunkan sekitar ' . $rp($kelebihan_npl) . '; '
+                . '(b) Restrukturisasi pinjaman di kolektibilitas Kurang Lancar/Diragukan (kurangi tunggakan pokok); '
+                . '(c) Lunasi atau hapus buku pinjaman Macet (setelah melalui mekanisme Penghapusan Piutang ke rekening 1.1.14 / Cadangan); '
+                . '(d) Terapkan early warning system: monitoring angsuran ke-3 belum bayar → kirim surat peringatan; ke-4 → kunjungan penagih; ke-6 → serahkan ke collection agent; '
+                . '(e) Perketat analisis kelayakan agunan di awal pemberian pinjaman (rasio coverage agunan minimal 125%).';
         }
         if ($ppap_coverage < 100) {
-            $rekomendasi[] = 'KUALITAS ASET: Cadangan PPAP yang terbentuk baru ' . number_format($ppap_coverage, 2) . '% dari PPAP wajib minimum. Tambahkan penyisihan PPAP hingga memenuhi: DPK 5%, Kurang Lancar 15%, Diragukan 50%, Macet 100%.';
+            $rekomendasi[] = 'KUALITAS ASET: Cadangan PPAP yang terbentuk baru ' . number_format($ppap_coverage, 2) . '% dari PPAP wajib minimum. '
+                . 'Cara perbaikan: '
+                . '(a) Tambahkan penyisihan PPAP ke rekening Cadangan Piutang (1.1.14) sebesar ' . $rp($need_ppap) . ' agar PPAP coverage menjadi 100%; '
+                . '(b) Sumber dana: alokasikan sebagian SHU tahun berjalan, atau catat sebagai beban pada laba rugi; '
+                . '(c) Formulasi penyisihan per kolektibilitas: DPK 5% dari saldo, Kurang Lancar 15%, Diragukan 50%, Macet 100%; '
+                . '(d) Review saldo pinjaman per kolektibilitas per bulan dan sesuaikan saldo rekening 1.1.14 agar sesuai rumus di atas. '
+                . 'PPAP wajib minimum saat ini: ' . $rp($ppap_wajib_minimum) . ', PPAP terbentuk: ' . $rp($cadangan_piutang_terbentuk) . '.';
         }
         if ($rasio_likuiditas < 4) {
-            $rekomendasi[] = 'LIKUIDITAS: Rasio Kas & Setara Kas terhadap Liabilitas Lancar hanya ' . number_format($rasio_likuiditas, 2) . '% (minimum 4%). Pertahankan cadangan kas minimum, diversifikasi penempatan dana yang likuid, dan monitor jadwal jatuh tempo liabilitas jangka pendek.';
+            $rekomendasi[] = 'LIKUIDITAS: Rasio Kas & Setara Kas terhadap Liabilitas Lancar hanya ' . number_format($rasio_likuiditas, 2) . '% (minimum 4%). '
+                . 'Cara perbaikan: '
+                . '(a) Tambahkan saldo Kas (1.1.01) atau Bank (1.1.02) minimal ' . $rp($need_kas) . ' untuk mencapai rasio 4% dari Liabilitas Lancar ' . $rp($liabilitas_lancar) . '; '
+                . '(b) Cara mengisi: percepat penagihan angsuran pinjaman, tunda pencairan pinjaman baru sampai rasio terpenuhi, tarik simpanan berjangka yang jatuh tempo; '
+                . '(c) Diversifikasi penempatan dana likuid: porsi 60% di rekening giro bank (1.1.02.01), 30% di deposito on-call (1.1.02.02), 10% kas tunai (1.1.01); '
+                . '(d) Monitor jadwal jatuh tempo liabilitas jangka pendek (Simpanan Sukarela 2.1.02 dan Simpanan Berjangka ≤1 tahun 2.1.03) dan pastikan dana tersedia H-7 sebelum jatuh tempo; '
+                . '(e) Target saldo kas & setara kas minimal ' . $rp($liabilitas_lancar * 0.04) . '.';
         }
         if ($roa < 0.5) {
-            $rekomendasi[] = 'RENTABILITAS: ROA tercapai ' . number_format($roa, 2) . '%. Optimalkan margin jasa pinjaman, efisiensi beban operasional, dan tingkatkan aset produktif yang menghasilkan.';
+            $target_roa = $total_aset * 0.005;
+            $gap_laba = max(0, $target_roa - $laba_bersih);
+            $rekomendasi[] = 'RENTABILITAS: ROA tercapai ' . number_format($roa, 2) . '% (target ≥0,5%). '
+                . 'Cara perbaikan: '
+                . '(a) Tingkatkan laba bersih menjadi minimal ' . $rp($target_roa) . ' (gap sekitar ' . $rp($gap_laba) . ') dengan: '
+                . '   • Naikkan margin jasa pinjaman: review prosentase jasa pada rekening 4.1.xx (Pendapatan Jasa Pinjaman), '
+                . '   • Kurangi beban operasional: efisiensi pos Beban Gaji (5.1.01), Beban ATK (5.1.02), Beban Administrasi (5.1.03); '
+                . '(b) Tingkatkan aset produktif: alirkan dana dari Kas/Bank yang berlebih ke Piutang Pinjaman (1.1.03) untuk menghasilkan bunga; '
+                . '(c) Review portofolio pinjaman: fokus pada produk dengan margin tertinggi dan NPL terendah. '
+                . 'Pendapatan saat ini: ' . $rp($pendapatan) . ', Biaya: ' . $rp($biaya) . ', Laba: ' . $rp($laba_bersih) . '.';
         }
         $rekomendasi[] = 'MANAJEMEN: Dokumentasikan secara berkala hasil rapat pengurus, kebijakan manajemen risiko, serta kepatuhan terhadap SOP. Tingkatkan kompetensi sumber daya manusia melalui pelatihan literasi keuangan dan tata kelola.';
 

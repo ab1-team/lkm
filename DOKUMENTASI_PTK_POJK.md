@@ -16,7 +16,7 @@ Modul ini menghasilkan:
 
 | File | Deskripsi |
 |---|---|
-| `app/Http/Controllers/PelaporanController.php` (line 5499–5825) | Method `PTK_POJK()` — controller pelaporan |
+| `app/Http/Controllers/PelaporanController.php` (line 5499–5829) | Method `PTK_POJK()` — controller pelaporan |
 | `app/Utils/Keuangan.php` (line 613–836) | Helper `tingkat_kesehatan()` — hitung kolek, NPL, PPAP |
 | `resources/views/pelaporan/view/pojk/penilaian_tingkat_kesehatan.blade.php` | View laporan (PDF / HTML) |
 
@@ -229,18 +229,41 @@ Deteksi koleksi menggunakan **substring matching case-insensitive** pada nama ko
 
 ## Rekomendasi Otomatis
 
-Rekomendasi di-generate dinamis dari rasio yang **tidak memenuhi** threshold. Contoh:
+Rekomendasi di-generate dinamis dari rasio yang **tidak memenuhi** threshold. Setiap rekomendasi menyertakan:
+- **Nominal** selisih/need yang harus dipenuhi (Rp ...)
+- **Rekening** spesifik yang harus ditambah/dinaikkan (1.1.01, 1.1.02, 1.1.14, 3.1.01, dst.)
+- **Cara** yang actionable (tambah setoran, naikkan iuran, hapus buku, dst.)
 
-| Kondisi | Rekomendasi |
+### Helper Perhitungan Selisih
+
+```php
+$rp = fn($n) => 'Rp ' . number_format((float) $n, 0, ',', '.');
+
+$need_solvabilitas  = max(0, ($total_liabilitas * 1.10) - $total_aset);
+$target_ekuitas_solv = max(0, ($total_liabilitas * 1.10) - ($total_aset - $total_liabilitas));
+$need_ekuitas       = max(0, ($modal_disetor * 0.75) - $total_ekuitas);
+$need_ppap          = max(0, $ppap_wajib_minimum - $cadangan_piutang_terbentuk);
+$need_kas           = max(0, ($liabilitas_lancar * 0.04) - $sum_kas);
+```
+
+### Detail per Rekomendasi
+
+| Kondisi | Yang Ditampilkan |
 |---|---|
-| `rasio_solvabilitas < 110%` | "PERMODALAN: Rasio Solvabilitas X% di bawah batas minimum 110%. Segera tingkatkan modal disetor atau konversi SHU menjadi ekuitas..." |
-| `rasio_ekuitas < 75%` | "PERMODALAN: Rasio Ekuitas X% di bawah minimum 75%. Tambah modal disetor dari pemilik..." |
-| `rasio_npl_neto > 5%` | "KUALITAS ASET: NPL Neto X% melebihi batas 5%. Lakukan restrukturisasi pinjaman bermasalah..." |
-| `ppap_coverage < 100%` | "KUALITAS ASET: Cadangan PPAP yang terbentuk baru X% dari PPAP wajib minimum..." |
-| `rasio_likuiditas < 4%` | "LIKUIDITAS: Rasio Kas & Setara Kas terhadap Liabilitas Lancar hanya X%..." |
-| `roa < 0.5%` | "RENTABILITAS: ROA tercapai X%. Optimalkan margin jasa pinjaman..." |
-| Manajemen | Selalu ditambahkan: dokumentasi rapat, kebijakan risiko, pelatihan SDM |
+| **`rasio_solvabilitas < 110%`** | Cara: (a) tambah ke **Kas 1.1.01** atau **Bank 1.1.02** dari setoran modal/hibah; (b) naikkan **Simpanan Pokok 3.1.01**, **Simpanan Wajib 3.1.02**, atau **Modal Hibah 3.1.03**; (c) kurangi liabilitas (bayar simpanan/utang bank tepat waktu). Target: Total Aset minimal **Rp X** (110% dari Liabilitas) |
+| **`rasio_ekuitas < 75%`** | Cara: (a) setoran Simpanan Pokok anggota baru di **3.1.01**; (b) naikkan Simpanan Wajib **3.1.02** (iuran bulanan); (c) setor modal hibah ke **3.1.03**; (d) alokasikan SHU ke cadangan **3.2.xx**. Target Total Ekuitas minimal **Rp X** (75% dari Modal Disetor) |
+| **`rasio_npl_neto > 5%`** | Cara: (a) kurangi NPL Neto menjadi ≤ **Rp X** (5% Outstanding), selisih diturunkan **Rp Y**; (b) restrukturisasi pinjaman KL/Diragukan; (c) hapus buku pinjaman Macet via mekanisme Penghapusan Piutang ke **1.1.14**; (d) early warning system (angsuran ke-3 → surat, ke-4 → kunjungan, ke-6 → collection); (e) coverage agunan minimal 125% |
+| **`ppap_coverage < 100%`** | Cara: (a) tambahkan penyisihan PPAP ke **Cadangan Piutang 1.1.14** sebesar **Rp X** agar coverage 100%; (b) sumber: alokasi SHU atau beban laba rugi; (c) formulasi: DPK 5%, KL 15%, Diragukan 50%, Macet 100% |
+| **`rasio_likuiditas < 4%`** | Cara: (a) tambah **Kas 1.1.01** atau **Bank 1.1.02** minimal **Rp X** untuk rasio 4%; (b) percepat penagihan, tunda pencairan, tarik simpanan berjangka jatuh tempo; (c) diversifikasi: 60% giro (**1.1.02.01**), 30% deposito on-call (**1.1.02.02**), 10% kas (**1.1.01**); (d) monitor **Simpanan Sukarela 2.1.02** dan **Simpanan Berjangka ≤1 tahun 2.1.03**; (e) target kas minimal **Rp X** |
+| **`roa < 0.5%`** | Cara: (a) naikkan laba ke minimal **Rp X** (gap **Rp Y**) dengan review margin jasa **4.1.xx** dan efisiensi **Beban Gaji 5.1.01**, **Beban ATK 5.1.02**, **Beban Administrasi 5.1.03**; (b) alirkan Kas/Bank ke **Piutang Pinjaman 1.1.03**; (c) review portofolio |
+| **Manajemen** | Selalu ditambahkan: dokumentasi rapat, kebijakan risiko, pelatihan SDM |
 | **Semua rasio memenuhi** | "PERTAHANKAN: Kinerja keuangan LKM saat ini telah memenuhi seluruh rasio POJK..." |
+
+### Contoh Output Rekomendasi
+
+Misal Rasio Solvabilitas = 105%, Liabilitas = Rp 100.000.000:
+
+> **PERMODALAN**: Rasio Solvabilitas 105.00% di bawah batas minimum 110%. Cara perbaikan: (a) Tambahkan minimal **Rp 5.000.000** ke rekening **Kas (1.1.01)** atau **Bank (1.1.02)** dari setoran modal/hibah; (b) Naikkan ekuitas di rekening **Simpanan Pokok (3.1.01)**, **Simpanan Wajib (3.1.02)**, atau **Modal Hibah (3.1.03)** minimal **Rp 10.000.000**; (c) Atau kurangi liabilitas dengan membayar jatuh tempo simpanan anggota / utang bank tepat waktu. Setelah penyesuaian, target Total Aset minimal **Rp 110.000.000** (110% dari Liabilitas **Rp 100.000.000**).
 
 ---
 
@@ -354,6 +377,8 @@ Method `PTK_POJK` ditulis uppercase. Disarankan rename ke `ptk_pojk` (snake_case
 |---|---|
 | Initial | Penambahan method `PTK_POJK()` di controller + view `penilaian_tingkat_kesehatan.blade.php` |
 | Konsistensi KBP2 | View `kolekbilitas_pinjaman2.blade.php` diseragamkan ke 5 koleksi POJK tetap |
+| Fix PK 5 saat PPAP wajib = 0 | `ppap_coverage` di-set 100% ketika `ppap_wajib_minimum = 0` (tidak ada pinjaman KL/Diragukan/Macet), agar tidak salah trigger PK 5 |
+| Rekomendasi actionable | Setiap rekomendasi menyertakan **nominal selisih** dan **rekening spesifik** (Kas 1.1.01, Bank 1.1.02, Cadangan Piutang 1.1.14, Simpanan Pokok 3.1.01, dst.) serta cara perbaikan yang konkret |
 
 ---
 
