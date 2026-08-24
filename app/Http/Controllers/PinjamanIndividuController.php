@@ -1003,6 +1003,7 @@ class PinjamanIndividuController extends Controller
         ]);
 
         if ($request->status == 'W' || $request->status == 'A') {
+            request()->merge(['save' => 'true', 'status' => $request->status]);
             $this->generate($perguliran_i->id);
         }
 
@@ -3190,9 +3191,15 @@ class PinjamanIndividuController extends Controller
             } elseif ($pinj_i->status == 'W') {
                 $alokasi = $pinj_i->alokasi;
                 $tgl = $pinj_i->tgl_cair;
+                if ($tgl == '0000-00-00' || empty($tgl)) {
+                    $tgl = $pinj_i->tgl_tunggu;
+                }
             } else {
                 $alokasi = $pinj_i->alokasi;
                 $tgl = $pinj_i->tgl_cair;
+                if ($tgl == '0000-00-00' || empty($tgl)) {
+                    $tgl = $pinj_i->tgl_tunggu;
+                }
             }
 
             if (request()->get('status')) {
@@ -3205,9 +3212,15 @@ class PinjamanIndividuController extends Controller
                 } elseif (request()->get('status') == 'W') {
                     $alokasi = $pinj_i->alokasi;
                     $tgl = $pinj_i->tgl_cair;
+                    if ($tgl == '0000-00-00' || empty($tgl)) {
+                        $tgl = $pinj_i->tgl_tunggu;
+                    }
                 } else {
                     $alokasi = $pinj_i->alokasi;
                     $tgl = $pinj_i->tgl_cair;
+                    if ($tgl == '0000-00-00' || empty($tgl)) {
+                        $tgl = $pinj_i->tgl_tunggu;
+                    }
                 }
             }
         }
