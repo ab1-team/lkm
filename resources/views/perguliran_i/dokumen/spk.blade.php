@@ -20,7 +20,6 @@
     }
 
     $p2_isi = trim(str_replace('"', '', stripslashes(strip_tags($kec->redaksi_spk ?? ''))));
-    $p2_break = strlen($p2_isi) > 5;
 @endphp
 @extends('perguliran_i.dokumen.layout.base')
 @section('content')
@@ -162,23 +161,22 @@
                 tersebut secara tunai dan sekaligus kepada Pihak Kedua pada saat perjanjian ini dibuat dan ditanda tangani.
                 Pihak Kedua menyatakan telah menerimanya dengan menandatangani bukti penerimaan (kwitansi) yang sah.
             </li>
-            {{-- @if ($redaksi_spk)
-        {!! json_decode($redaksi_spk, true) !!}
-        @endif --}}
-            <li>
-                {{ str_replace('"', '', stripslashes(strip_tags($kec->redaksi_spk))) }}
-            </li>
+            @if ($kec->redaksi_spk)
+                @php
+                    $redaksi_render = str_replace(['<ol>', '</ol>', '<ul>', '</ul>'], '', $kec->redaksi_spk);
+                    $redaksi_render = str_replace(['<li>', '</li>'], ['', '<br>'], $redaksi_render);
+                @endphp
+                <li>
+                    {!! json_decode($redaksi_render, true) !!}
+                </li>
+            @endif
         </ol>
     </div>
-    @if ($p2_break)
-        <p class="page-break">&nbsp;</p>
-    @else
-        <br>
-        <br>
-    @endif
+    <br>
+    <br>
 
     <div style="text-align: center;">
-        <b class="centered-text" style="{{ $p2_break ? 'page-break-before: always;' : '' }}"> PASAL 3 </b>
+        <b class="centered-text"> PASAL 3 </b>
         <h3 class="fa fa-align-center" aria-hidden="true" style="font-size: 10pt;"> Sistem Pengembalian </i> </h3>
         <div class="centered-text">
             <ol class="centered-text">
@@ -301,29 +299,29 @@
         <b class="centered-text"> PASAL 7 </b>
         <h3 class="fa fa-align-center" aria-hidden="true" style="font-size: 10pt;"> Lain - Lain
             </i> </h3>
-        <div class="centered-text">
-            Hal-hal yang belum atau belum cukup diatur dalam perjanjian ini akan diatur lebih lanjut dalam bentuk surat
-            menyurat dan atau addendum perjanjian yang ditandatangani oleh para pihak yang merupakan satu kesatuan dan
-            bagian yang tidak terpisahkan dari perjanjian ini.
-        </div>
     </div>
+    <p>
+        Hal-hal yang belum atau belum cukup diatur dalam perjanjian ini akan diatur lebih lanjut dalam bentuk surat
+        menyurat dan atau addendum perjanjian yang ditandatangani oleh para pihak yang merupakan satu kesatuan dan
+        bagian yang tidak terpisahkan dari perjanjian ini.
+    </p>
 
     <div style="text-align: center;">
         <b class="centered-text"> PASAL 8 </b>
         <h3 class="fa fa-align-center" aria-hidden="true" style="font-size: 10pt;"> Penutup </i> </h3>
-        <div class="centered-text">
-            Perjanjian Utang Piutang uang ini dibuat rangkap 2 (dua) di atas kertas bermaterai
-            cukup untuk masing-masing pihak yang mempunyai kekuatan hukum yang sama dan ditanda
-            tangani oleh kedua belah pihak dalam keadaan sehat jasmani dan rohani, serta tanpa
-            unsur paksaan dari pihak manapun.
-        </div>
-        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;" class="p">
-            <tr>
-                <td>
-                    {!! $ttd !!}
-                </td>
-            </tr>
-        </table>
     </div>
+    <p>
+        Perjanjian Utang Piutang uang ini dibuat rangkap 2 (dua) di atas kertas bermaterai
+        cukup untuk masing-masing pihak yang mempunyai kekuatan hukum yang sama dan ditanda
+        tangani oleh kedua belah pihak dalam keadaan sehat jasmani dan rohani, serta tanpa
+        unsur paksaan dari pihak manapun.
+    </p>
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;" class="p">
+        <tr>
+            <td>
+                {!! $ttd !!}
+            </td>
+        </tr>
+    </table>
 
 @endsection
