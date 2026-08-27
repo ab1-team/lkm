@@ -33,6 +33,7 @@
         content="lkm, situnai, upk, online, siupk, upk online, siupk online, asta brata teknologi, abt">
     <meta name="author" content="Enfii">
     <meta name="msapplication-tap-highlight" content="no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="apple-touch-icon" sizes="76x76" href="{{ Session::get('icon') }}">
     <link rel="icon" type="image/png" href="{{ Session::get('icon') }}">
@@ -154,7 +155,6 @@
 
                     <ul class="navbar-nav justify-content-end align-items-center">
 
-
                         <li class="nav-item dropdown d-flex align-items-center ps-2">
                             <a href="javascript:;"
                                 class="nav-link text-white font-weight-bold px-0 d-flex align-items-center gap-2"
@@ -233,6 +233,10 @@
                             </ul>
                         </li>
 
+
+                        @auth
+                            @include('components.notif-bell')
+                        @endauth
 
                         <li class="nav-item px-3 d-flex align-items-center">
                             <a href="/pengaturan/sop" class="nav-link text-white p-0">
@@ -429,6 +433,8 @@
 
 
     @yield('script')
+
+    <script src="{{ asset('js/notif-bell.js') }}"></script>
 
     <script>
 

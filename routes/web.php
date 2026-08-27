@@ -30,6 +30,8 @@ use App\Http\Controllers\SahamController;
 use App\Http\Controllers\SimpananController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UpdateFiturController;
+use App\Http\Controllers\Admin\UpdateFiturController as AdminUpdateFiturController;
 use App\Models\Kecamatan;
 use App\Models\PinjamanKelompok;
 use App\Models\User;
@@ -495,5 +497,15 @@ Route::resource('/simpanan', SimpananController::class)->middleware('auth', 'is_
 Route::get('/bunga', [SimpananController::class, 'bunga'])->middleware('auth', 'is_aktif');
 Route::get('/bunga/info', [SimpananController::class, 'infoBunga'])->middleware('auth', 'is_aktif');
 Route::get('/simpan_bunga', [SimpananController::class, 'simpanBunga'])->middleware('auth');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/notifikasi/dropdown', [UpdateFiturController::class, 'dropdown'])->name('notif.dropdown');
+    Route::post('/notifikasi/tandai-dibaca', [UpdateFiturController::class, 'tandaiDibaca'])->name('notif.tandaiDibaca');
+    Route::get('/notifikasi/timeline', [UpdateFiturController::class, 'timeline'])->name('notif.timeline');
+});
+
+Route::middleware('auth')->prefix('admin/update-fitur')->name('admin.updateFitur.')->group(function () {
+    Route::resource('/', AdminUpdateFiturController::class)->parameters(['' => 'update_fitur']);
+});
 
 Route::get('/{invoice}', [PelaporanController::class, 'invoice']);
