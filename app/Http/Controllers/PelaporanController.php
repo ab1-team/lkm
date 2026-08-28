@@ -3602,6 +3602,7 @@ class PelaporanController extends Controller
                         ->withSum(['real' => function ($q) use ($data) {
                             $q->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
+                        ->where($tb_pinkel . '.tgl_cair', 'LIKE', $data['tgl_cair'] . '%')
                         ->where(function ($q) use ($tb_pinkel, $mingguan_jpp_ids) {
                             if (!empty($mingguan_jpp_ids)) {
                                 $q->whereIn($tb_pinkel . '.jenis_pp', $mingguan_jpp_ids)
