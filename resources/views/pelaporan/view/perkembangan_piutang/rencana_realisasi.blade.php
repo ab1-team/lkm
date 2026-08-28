@@ -46,7 +46,7 @@
             <tr>
                 <td colspan="3" align="center">
                     <div style="font-size: 18px;">
-                        <b>LAPORAN REALISASI PENCAIRAN {{ $jpp->nama_jpp }}</b>
+                        <b>LAPORAN REALISASI PENCAIRAN {{ strtoupper($jpp->nama_jpp) }}</b>
                     </div>
                     <div style="font-size: 16px;">
                         <b style="text-transform: uppercase;">
