@@ -3544,7 +3544,7 @@ class PelaporanController extends Controller
         }
     }
 
-    private function _rencana_realisasi(array $data)
+    private function rencana_realisasi_k(array $data)
     {
         $keuangan = new Keuangan;
         $thn = $data['tahun'];
@@ -3612,7 +3612,7 @@ class PelaporanController extends Controller
                         ->join($tb_kel, $tb_kel . '.id', '=', $tb_pinkel . '.id_kel')
                         ->join('desa', $tb_kel . '.desa', '=', 'desa.kd_desa')
                         ->join('sebutan_desa', 'sebutan_desa.id', '=', 'desa.sebutan')
-                        ->where($tb_pinkel . '.sistem_angsuran', '!=', '12')->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')->where(function ($query) use ($data) {
+                        ->where($tb_pinkel . '.sistem_angsuran', '!=', '12')->where($tb_pinkel . '.sistem_angsuran', '!=', '25')->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinkel'] . '.status', 'A'],
                                 [$data['tb_pinkel'] . '.tgl_cair', '<=', $data['tgl_akhir']]
@@ -3630,8 +3630,8 @@ class PelaporanController extends Controller
             ])->get();
 
         $data['keuangan'] = $keuangan;
-
-        $view = view('pelaporan.view.perkembangan_piutang._rencana_realisasi', $data)->render();
+        $data['judul_halaman'] = 'Rencana Realisasi Kelompok';
+        $view = view('pelaporan.view.perkembangan_piutang.rencana_realisasi_k', $data)->render();
 
         if ($data['type'] == 'pdf') {
             $paperSize = Session::get('lokasi') == 109 ? [0, 0, 595.28, 935.43] : 'A4';
