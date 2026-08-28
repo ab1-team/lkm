@@ -5,16 +5,19 @@
     $section = 0;
     $empty = false;
 @endphp
-
+<title>{{ $title }}</title>
 @extends('pelaporan.layout.base')
 
 @section('content')
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <style>
         html {
             margin-left: 40px;
             margin-right: 40px;
-            body { font-family: 'DejaVu Sans', sans-serif; }
+
+            body {
+                font-family: 'DejaVu Sans', sans-serif;
+            }
         }
     </style>
     @php
@@ -66,10 +69,10 @@
             style="font-size: 11px; table-layout: fixed; word-wrap: break-word;">
             <tr>
                 <th class="t l b" rowspan="2" width="4%">No</th>
-                <th class="t l b" rowspan="2" width="30%">Nama Kelompok - Load ID</th>
+                <th class="t l b" rowspan="2" width="26%">Nama Kelompok - Load ID</th>
                 <th class="t l b" rowspan="2" width="26%">Alamat</th>
                 <th class="t l b" rowspan="2" width="15%">Ketua</th>
-                <th class="t l b" rowspan="2" width="4%">[]</th>
+                <th class="t l b" rowspan="2" width="8%">jumlah</th>
 
                 <th class="t l b" rowspan="2" width="18%">Nomor SPK</th>
                 <th class="t l b" rowspan="2" width="12%">Tgl Cair</th>

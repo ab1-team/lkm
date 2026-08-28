@@ -3638,6 +3638,8 @@ class PelaporanController extends Controller
             ])->get();
 
         $data['keuangan'] = $keuangan;
+        $data['title'] = 'Rencana Realisasi Kelompok';
+
         $view = view('pelaporan.view.perkembangan_piutang.rencana_realisasi_k', $data)->render();
 
         if ($data['type'] == 'pdf') {
