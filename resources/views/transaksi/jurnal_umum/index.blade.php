@@ -459,40 +459,69 @@
             $('#notifikasi').html('')
 
             var form = $('#FormTransaksi')
-            $.ajax({
-                type: 'POST',
-                url: form.attr('action'),
-                data: form.serialize(),
-                success: function(result) {
-                    if (result.success) {
-                        Swal.fire('Berhasil', result.msg, 'success').then(() => {
-                            $('#notifikasi').html(result.view)
-                            var sumber_dana = $('#sumber_dana').val()
-                            var tgl_transaksi = $('#tgl_transaksi').val().split('/')
-                            var tahun = tgl_transaksi[2];
-                            var bulan = tgl_transaksi[1];
-                            var hari = tgl_transaksi[0];
+            var sumber_dana = $('#sumber_dana').val()
+            var nominalRaw = $('#nominal').val()
+            var nominal = parseInt(nominalRaw.split(',').join('').split('.00').join('')) || 0
 
-                            $.get('/trasaksi/saldo/' + sumber_dana + '?tahun=' + tahun +
-                                '&bulan=' + bulan + '&hari=' + hari,
-                                function(res) {
-                                    $('#saldo').html(formatter.format(res.saldo))
-                                })
-                        })
+            var cekSaldo = function(callback) {
+                var lev1 = sumber_dana.split('.')[0]
+                var skipAkun = ['1.2.02', '1.2.04', '1.1.04']
+
+                if (lev1 != '1') return callback(true)
+                if (skipAkun.some(function(p) { return sumber_dana.indexOf(p) === 0 })) return callback(true)
+                if (nominal < 0) return callback(true)
+
+                var tgl = $('#tgl_transaksi').val().split('/')
+                var tahun = tgl[2], bulan = tgl[1], hari = tgl[0]
+
+                $.get('/trasaksi/saldo/' + sumber_dana + '?tahun=' + tahun + '&bulan=' + bulan + '&hari=' + hari, function(res) {
+                    if (res.saldo < nominal) {
+                        Swal.fire('Error', 'Nominal transaksi melebihi saldo', 'error')
+                        callback(false)
                     } else {
-                        Swal.fire('Error', result.msg, 'error')
+                        callback(true)
                     }
-                },
-                error: function(result) {
-                    const respons = result.responseJSON;
+                })
+            }
 
-                    Swal.fire('Error', 'Cek kembali input yang anda masukkan', 'error')
-                    $.map(respons, function(res, key) {
-                        $('#' + key).parent('.input-group.input-group-static').addClass(
-                            'is-invalid')
-                        $('#msg_' + key).html(res)
-                    })
-                }
+            cekSaldo(function(ok) {
+                if (!ok) return
+
+                $.ajax({
+                    type: 'POST',
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function(result) {
+                        if (result.success) {
+                            Swal.fire('Berhasil', result.msg, 'success').then(() => {
+                                $('#notifikasi').html(result.view)
+                                var sumber_dana = $('#sumber_dana').val()
+                                var tgl_transaksi = $('#tgl_transaksi').val().split('/')
+                                var tahun = tgl_transaksi[2];
+                                var bulan = tgl_transaksi[1];
+                                var hari = tgl_transaksi[0];
+
+                                $.get('/trasaksi/saldo/' + sumber_dana + '?tahun=' + tahun +
+                                    '&bulan=' + bulan + '&hari=' + hari,
+                                    function(res) {
+                                        $('#saldo').html(formatter.format(res.saldo))
+                                    })
+                            })
+                        } else {
+                            Swal.fire('Error', result.msg, 'error')
+                        }
+                    },
+                    error: function(result) {
+                        const respons = result.responseJSON;
+
+                        Swal.fire('Error', 'Cek kembali input yang anda masukkan', 'error')
+                        $.map(respons, function(res, key) {
+                            $('#' + key).parent('.input-group.input-group-static').addClass(
+                                'is-invalid')
+                            $('#msg_' + key).html(res)
+                        })
+                    }
+                })
             })
         })
 
