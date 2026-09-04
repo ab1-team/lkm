@@ -19,8 +19,8 @@
     </div>
     <div class="col-md-6">
         <div class="position-relative mb-3">
-            <label for="fee_agen" >Fee Agen (Rp)</label>
-            <input type="text" name="nominal" id="fee_agen" class="form-control">
+            <label for="nominal" >Fee Agen (Rp)</label>
+            <input type="text" name="nominal" id="nominal" class="form-control">
             <small class="text-danger" id="msg_nominal"></small>
         </div>
     </div>

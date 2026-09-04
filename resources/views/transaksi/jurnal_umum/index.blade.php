@@ -553,7 +553,7 @@
             // $('#fee_agen').val(fee_agen)
             // $('#keterangan').val("Fee ke Agen A.N " + namadepan + " (" + id_pinjaman + ")")
 
-            $('#fee_agen').val(fee_agen);
+            $('#nominal').val(fee_agen);
 
             if (namadepan && !isNaN(id_pinjaman)) {
                 $('#keterangan').val("Fee ke Agen A.N " + namadepan + " (" + id_pinjaman + ")");
