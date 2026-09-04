@@ -108,7 +108,7 @@
                                 <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item" data-bs-toggle="tab" href="#tab-content-ttd-qr">
                                         <i class="fa-solid fa-signature"></i>
-                                        <span>Tanda Tangan</span>
+                                        <span>Tanda Tangan Gambar</span>
                                     </a>
                                 </div>
                                 <div class="mb-1">
