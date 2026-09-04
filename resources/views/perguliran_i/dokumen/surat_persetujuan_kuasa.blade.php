@@ -34,7 +34,7 @@
         </tr>
         <tr>
             <td height="10" class="style9">Tempat,Tanggal Lahir </td>
-            <td height="10" class="style27" colspan="2">: {{ $pinkel->anggota->tempat_lahir }}, 
+            <td height="10" class="style27" colspan="2">: {{ $pinkel->anggota->tempat_lahir }},
                 {{ Tanggal::tglLatin($pinkel->anggota->tgl_lahir) }}
             </td>
         </tr>
@@ -67,7 +67,7 @@
             <td height="10" class="style9">Nama Lengkap </td>
             <td class="style27" colspan="2">: {{ $dir->namadepan }} {{ $dir->namabelakang }}</td>
         </tr>
-        
+
         <tr>
             <td height="10" class="style9">Jabatan </td>
             {{-- <td class="style27">: {{ $dir->j->nama_jabatan }} {{ $kec->nama_lembaga_sort }}</td> --}}
@@ -123,12 +123,8 @@
         </tr>
         <tr>
             <td align="center">
-                @php
-                    $logoPath = storage_path('app/public/qr/' . session('lokasi') . '.jpeg');
-                @endphp
-
-                @if (file_exists($logoPath))
-                    <img src="../storage/app/public/qr/{{ session('lokasi') }}.jpeg" height="70"
+                @if ($ttdQrUrl = \App\Utils\QrTtdHelper::inlineDataUri(session('lokasi')))
+                    <img src="{{ $ttdQrUrl }}" width="150" height="auto" style="height:auto"
                         alt="{{ $kec->id }}">
                 @else
                     <p>&nbsp;</p>
@@ -144,7 +140,11 @@
         </tr>
         <tr>
             <td align="center" style="font-weight: bold;">
-                {{ $dir->namadepan }} {{ $dir->namabelakang }}
+                @if (\App\Utils\QrTtdHelper::displayHasName(session('lokasi')))
+                    {{ $dir->namadepan }} {{ $dir->namabelakang }}
+                @else
+                    &nbsp;
+                @endif
             </td>
             <td colspan="2" align="center" style="font-weight: bold;">
                 {{ $pinkel->anggota->namadepan }}

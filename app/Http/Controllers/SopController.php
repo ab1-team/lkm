@@ -10,6 +10,7 @@ use App\Models\DokumenPinjaman;
 use App\Models\User;
 use App\Models\Whatsapp;
 use App\Utils\Pinjaman;
+use App\Utils\QrTtdHelper;
 use App\Utils\Tanggal;
 use DOMDocument;
 use Illuminate\Http\Request;
@@ -438,7 +439,166 @@ class SopController extends Controller
         ]);
     }
 
-    // Legacy route kept for backward compatibility (no-op on Evolution migration).
+    public function hapusTtdQr(Request $request, Kecamatan $kec)
+    {
+        $dir = QrTtdHelper::DIRECTORY;
+
+        $deleted = 0;
+        foreach (QrTtdHelper::EXTENSIONS as $ext) {
+            foreach (['', QrTtdHelper::NAME_SUFFIX] as $suffix) {
+                $existing = "{$dir}/{$kec->id}{$suffix}.{$ext}";
+                if (Storage::disk('public')->exists($existing)) {
+                    Storage::disk('public')->delete($existing);
+                    $deleted++;
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'msg'    => $deleted > 0
+                ? 'Gambar tanda tangan berhasil dihapus.'
+                : 'Tidak ada gambar tanda tangan untuk dihapus.',
+        ]);
+    }
+
+    public function saveTtdQr(Request $request, Kecamatan $kec)
+    {
+        $disk   = Storage::disk('public');
+        $dir    = QrTtdHelper::DIRECTORY;
+        $lokasi = $kec->id;
+        $desired = $request->boolean('dengan_nama');
+
+        $hasExisting = false;
+        foreach (QrTtdHelper::EXTENSIONS as $ext) {
+            foreach (['', QrTtdHelper::NAME_SUFFIX] as $suffix) {
+                if ($disk->exists("{$dir}/{$lokasi}{$suffix}.{$ext}")) {
+                    $hasExisting = true;
+                    break 2;
+                }
+            }
+        }
+
+        $rules = [
+            'dengan_nama' => 'nullable|boolean',
+        ];
+        $messages = [];
+
+        if (!$hasExisting) {
+            $rules['gambar_ttd'] = 'required|image|mimes:jpg,jpeg,png|max:4096';
+            $messages['gambar_ttd.required'] = 'Pilih gambar tanda tangan terlebih dahulu.';
+            $messages['gambar_ttd.image']    = 'File harus berupa gambar.';
+            $messages['gambar_ttd.mimes']    = 'Format yang didukung: JPG, JPEG, PNG.';
+            $messages['gambar_ttd.max']      = 'Ukuran maksimum 4MB.';
+        } else {
+            $rules['gambar_ttd'] = 'nullable|image|mimes:jpg,jpeg,png|max:4096';
+            $messages['gambar_ttd.image']    = 'File harus berupa gambar.';
+            $messages['gambar_ttd.mimes']    = 'Format yang didukung: JPG, JPEG, PNG.';
+            $messages['gambar_ttd.max']      = 'Ukuran maksimum 4MB.';
+        }
+
+        $validate = Validator::make($request->all(), $rules, $messages);
+
+        if ($validate->fails()) {
+            return response()->json([
+                'success' => false,
+                'msg'    => $validate->errors()->first(),
+            ], 422);
+        }
+
+        $disk->makeDirectory($dir);
+
+        $uploadedFile = $request->file('gambar_ttd');
+        $willUpload   = $uploadedFile && $uploadedFile->isValid();
+
+        if ($willUpload) {
+            foreach (QrTtdHelper::EXTENSIONS as $ext) {
+                foreach (['', QrTtdHelper::NAME_SUFFIX] as $suffix) {
+                    $existing = "{$dir}/{$lokasi}{$suffix}.{$ext}";
+                    if ($disk->exists($existing)) {
+                        $disk->delete($existing);
+                    }
+                }
+            }
+
+            $extension = strtolower($uploadedFile->getClientOriginalExtension());
+            if (!in_array($extension, QrTtdHelper::EXTENSIONS, true)) {
+                $extension = 'jpeg';
+            }
+
+            $suffix   = $desired ? QrTtdHelper::NAME_SUFFIX : '';
+            $filename = "{$lokasi}{$suffix}.{$extension}";
+            $path     = $uploadedFile->storeAs($dir, $filename, 'public');
+
+            return response()->json([
+                'success'   => true,
+                'msg'       => 'Gambar tanda tangan berhasil diunggah.',
+                'url'       => '/storage/' . $path,
+                'path'      => $path,
+                'with_name' => $desired,
+                'uploaded'  => true,
+            ]);
+        }
+
+        $disk = Storage::disk('public');
+        $currentPath = null;
+        $currentExt  = null;
+        foreach (QrTtdHelper::EXTENSIONS as $ext) {
+            $candidate = "{$dir}/{$lokasi}-name.{$ext}";
+            if ($disk->exists($candidate)) {
+                $currentPath = $candidate;
+                $currentExt  = $ext;
+                break;
+            }
+            $candidate = "{$dir}/{$lokasi}.{$ext}";
+            if ($disk->exists($candidate)) {
+                $currentPath = $candidate;
+                $currentExt  = $ext;
+                break;
+            }
+        }
+
+        if ($currentPath === null) {
+            return response()->json([
+                'success' => false,
+                'msg'    => 'Tidak ada gambar untuk diubah.',
+            ], 422);
+        }
+
+        $alreadyHasName = str_contains(basename($currentPath), QrTtdHelper::NAME_SUFFIX);
+
+        if ($alreadyHasName === $desired) {
+            return response()->json([
+                'success'   => true,
+                'msg'       => 'Tidak ada perubahan yang perlu disimpan.',
+                'with_name' => $desired,
+                'uploaded'  => false,
+                'noop'      => true,
+            ]);
+        }
+
+        $targetName = $desired
+            ? "{$lokasi}-name.{$currentExt}"
+            : "{$lokasi}.{$currentExt}";
+
+        $targetPath = "{$dir}/{$targetName}";
+
+        if ($disk->exists($targetPath) && $targetPath !== $currentPath) {
+            $disk->delete($targetPath);
+        }
+
+        $disk->move($currentPath, $targetPath);
+
+        return response()->json([
+            'success'   => true,
+            'msg'       => $desired
+                ? 'Nama penandatangan akan disertakan di bawah gambar.'
+                : 'Nama penandatangan dihilangkan dari blok tanda tangan.',
+            'with_name' => $desired,
+            'path'      => $targetPath,
+            'uploaded'  => false,
+        ]);
+    }
     public function whatsapp($token)
     {
         return response()->json([

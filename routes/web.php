@@ -217,6 +217,8 @@ Route::put('/pengaturan/simpanan/{kec}', [SopController::class, 'simpanan'])->mi
 Route::put('/pengaturan/asuransi/{kec}', [SopController::class, 'asuransi'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/spk/{kec}', [SopController::class, 'spk'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/logo/{kec}', [SopController::class, 'logo'])->middleware('auth', 'is_aktif');
+Route::post('/pengaturan/ttd-qr/save/{kec}', [SopController::class, 'saveTtdQr'])->middleware('auth', 'is_aktif');
+Route::delete('/pengaturan/ttd-qr/{kec}', [SopController::class, 'hapusTtdQr'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/calk/{kec}', [SopController::class, 'calk'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/kustomisasi_calk/{kec}', [SopController::class, 'kustomisasiCalk'])->middleware('auth', 'is_aktif');
 
@@ -487,7 +489,7 @@ Route::get('/qr/{filename}', function ($filename) {
         abort(404);
     }
     return response()->file($path);
-});
+})->name('qr.serve');
 
 Route::get('/simpanan/get-transaksi', [SimpananController::class, 'getTransaksi'])->middleware('auth', 'is_aktif');
 

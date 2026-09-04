@@ -106,6 +106,12 @@
                                     </a>
                                 </div>
                                 <div class="mb-1">
+                                    <a role="tab" class="btn btn-white settings-nav-item" data-bs-toggle="tab" href="#tab-content-ttd-qr">
+                                        <i class="fa-solid fa-signature"></i>
+                                        <span>Tanda Tangan</span>
+                                    </a>
+                                </div>
+                                <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item" data-bs-toggle="tab" href="#tab-content-7">
                                         <i class="fa-solid fa-camera-rotate"></i>
                                         <span>Whatsapp</span>
@@ -197,6 +203,20 @@
                                         <div class="card-body">
                                             <h5 class="card-title">Upload LOGO</h5>
                                             @include('sop.partials._logo')
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane tabs-animation fade" id="tab-content-ttd-qr" role="tabpanel">
+                                <div class="row">
+                                    <div class="main-card mb-3 card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Upload Gambar Tanda Tangan</h5>
+                                            <p class="text-muted small mb-3">
+                                                Gambar ini akan ditampilkan sebagai tanda tangan Direksi Lembaga di blok tanda tangan dokumen-dokumen pinjaman (SPK, Perjanjian, Kuitansi, dll).
+                                            </p>
+                                            @include('sop.partials._ttd_qr')
                                         </div>
                                     </div>
                                 </div>
@@ -586,6 +606,10 @@
                 $('#custom_calk').val(CKEDITOR.instances.editor_calk.getData())
             }
 
+            if ($(this).attr('id') == 'SimpanTtdQr') {
+                return
+            }
+
             var form = $($(this).attr('data-target'))
             $.ajax({
                 type: form.attr('method'),
@@ -652,6 +676,165 @@
                     }
                 })
             }
+        })
+
+        $(document).on('click', '#EditTtdQrDropzone', function(e) {
+            e.preventDefault()
+            $('#gambar_ttd').trigger('click')
+        })
+
+        var $dropzone = $('#EditTtdQrDropzone')
+        $dropzone.on('dragover', function(e) {
+            e.preventDefault()
+            e.stopPropagation()
+            $(this).addClass('dragover')
+        })
+        $dropzone.on('dragleave', function(e) {
+            e.preventDefault()
+            e.stopPropagation()
+            $(this).removeClass('dragover')
+        })
+        $dropzone.on('drop', function(e) {
+            e.preventDefault()
+            e.stopPropagation()
+            $(this).removeClass('dragover')
+            var files = e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.files
+            if (files && files.length > 0) {
+                var dt = new DataTransfer()
+                dt.items.add(files[0])
+                document.getElementById('gambar_ttd').files = dt.files
+                $('#gambar_ttd').trigger('change')
+            }
+        })
+
+        $(document).on('change', '#gambar_ttd', function() {
+            var file = $(this).get(0).files[0]
+            var $pending = $('#pendingFileInfo')
+            var $preview = $('#previewTtdQr')
+            if (!file) {
+                $pending.addClass('d-none')
+                return
+            }
+            var allowedTypes = ['image/jpeg', 'image/jpg', 'image/png']
+            if (allowedTypes.indexOf(file.type) === -1) {
+                Toastr('error', 'Format harus JPG, JPEG, atau PNG.')
+                $(this).val('')
+                $pending.addClass('d-none')
+                return
+            }
+            if (file.size > 4 * 1024 * 1024) {
+                Toastr('error', 'Ukuran maksimum 4MB.')
+                $(this).val('')
+                $pending.addClass('d-none')
+                return
+            }
+            var reader = new FileReader()
+            reader.onload = function(e) {
+                $preview.attr('src', e.target.result)
+                $pending.removeClass('d-none')
+            }
+            reader.readAsDataURL(file)
+        })
+
+        $(document).on('click', '#SimpanTtdQr', function(e) {
+            e.preventDefault()
+            e.stopImmediatePropagation()
+
+            var $form = $('#FormTtdQr')
+            var $btn = $(this)
+            var originalHtml = $btn.html()
+
+            var fileInput = document.getElementById('gambar_ttd')
+            var hasFile = fileInput && fileInput.files && fileInput.files.length > 0
+
+            if (!hasFile) {
+                var $warn = $('#pendingFileInfo')
+                if ($warn.length && !$warn.hasClass('d-none')) {
+                    Toastr('error', 'Batalkan dulu gambar baru, atau klik Simpan untuk mengunggahnya.')
+                    return
+                }
+            }
+
+            $btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-1"></i> Menyimpan...')
+
+            var formData = new FormData($form[0])
+            $.ajax({
+                type: 'POST',
+                url: $form.attr('action'),
+                data: formData,
+                contentType: false,
+                cache: false,
+                processData: false,
+                headers: { 'X-CSRF-TOKEN': $('input[name="_token"]').first().val() },
+                success: function(result) {
+                    if (result.success) {
+                        Toastr('success', result.msg || 'Berhasil disimpan')
+
+                        if (result.url) {
+                            var freshUrl = result.url.split('?')[0] + '?t=' + Date.now()
+                            $('#previewTtdQr').attr('src', freshUrl)
+                        }
+
+                        $('#gambar_ttd').val('')
+                        $('#pendingFileInfo').addClass('d-none')
+
+                        $('.logo-preview-wrapper').css('border-color', '#22c55e')
+                        $('#HapusTtdQr').prop('disabled', false).attr('title', 'Hapus gambar')
+
+                        var withName = !!result.with_name
+                        var ext = (result.path || '').split('.').pop() || 'png'
+                        var id = {{ $kec->id }}
+                        var fname = withName ? (id + '-name.' + ext) : (id + '.' + ext)
+                        var suffix = withName ? ' (dengan nama penandatangan di bawah)' : ''
+                        $('#pathInfoTtd').html('File aktif: <code>storage/app/public/qr/' + fname + '</code>' + suffix)
+
+                        $('.logo-hover-overlay span').text('Klik atau jatuhkan file untuk mengganti')
+                        $('.logo-upload-container').removeClass('d-none')
+                        $('.alert-warning').addClass('d-none')
+                    } else {
+                        Toastr('error', result.msg || 'Gagal menyimpan')
+                    }
+                },
+                error: function(xhr) {
+                    var msg = (xhr.responseJSON && xhr.responseJSON.msg) || 'Gagal menyimpan'
+                    Toastr('error', msg)
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).html(originalHtml)
+                }
+            })
+        })
+
+        $(document).on('click', '#HapusTtdQr', function(e) {
+            e.preventDefault()
+            if (!confirm('Hapus gambar tanda tangan untuk lokasi ini? Dokumen akan kembali menampilkan area kosong.')) return
+
+            $.ajax({
+                type: 'DELETE',
+                url: '/pengaturan/ttd-qr/' + {{ $kec->id }},
+                data: { _token: $('input[name="_token"]').first().val() },
+                success: function(result) {
+                    if (result.success) {
+                        Toastr('success', result.msg || 'Berhasil dihapus')
+
+                        $('#previewTtdQr').attr('src', '/assets/img/qr.png?t=' + Date.now())
+                        $('#pathInfoTtd').html('Pilih gambar untuk dipratinjau. Klik <strong>Simpan Perubahan</strong> untuk mengunggah.')
+                        $('#pendingFileInfo').addClass('d-none')
+                        $('#gambar_ttd').val('')
+                        $('#dengan_nama').prop('checked', true)
+
+                        $('.logo-preview-wrapper').css('border-color', '#cbd5e1')
+                        $('#HapusTtdQr').prop('disabled', true).attr('title', 'Tidak ada gambar untuk dihapus')
+                        $('.logo-hover-overlay span').text('Klik atau jatuhkan file untuk mengunggah')
+                        $('.alert-warning').removeClass('d-none')
+                    } else {
+                        Toastr('error', result.msg || 'Gagal hapus')
+                    }
+                },
+                error: function() {
+                    Toastr('error', 'Gagal menghapus')
+                }
+            })
         })
     </script>
 @endsection

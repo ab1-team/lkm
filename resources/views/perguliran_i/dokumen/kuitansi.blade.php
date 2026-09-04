@@ -89,7 +89,7 @@
         </td>
     </tr>
 
-    
+
     @if (in_array(session('lokasi'), [1, 351, 352, 353, 354]))
     <tr>
         <td align="center" colspan="6">Setuju Dibayarkan</td>
@@ -101,12 +101,8 @@
     </tr>
     <tr>
         <td align="center" colspan="6">
-            @php
-                $qrDirPath = storage_path('app/public/qr/' . session('lokasi') . '.jpeg');
-            @endphp
-
-            @if (file_exists($qrDirPath))
-                <img src="../storage/app/public/qr/{{ session('lokasi') }}.jpeg" height="70" alt="{{ $kec->id }}">
+            @if ($ttdQrUrl = \App\Utils\QrTtdHelper::inlineDataUri(session('lokasi')))
+                <img src="{{ $ttdQrUrl }}" width="150" height="auto" style="height:auto" alt="{{ $kec->id }}">
             @else
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
@@ -121,7 +117,11 @@
     </tr>
     <tr>
         <td align="center" colspan="6">
-            <b>{{ $dir->namadepan }} {{ $dir->namabelakang }}</b>
+            @if (\App\Utils\QrTtdHelper::displayHasName(session('lokasi')))
+                <b>{{ $dir->namadepan }} {{ $dir->namabelakang }}</b>
+            @else
+                &nbsp;
+            @endif
         </td>
         <td align="center" colspan="6">
             <b>{{ $pinkel->anggota->namadepan }}</b>
@@ -140,12 +140,8 @@
     </tr>
     <tr>
         <td align="center" colspan="3">
-            @php
-                $qrDirPath = storage_path('app/public/qr/' . session('lokasi') . '.jpeg');
-            @endphp
-
-            @if (file_exists($qrDirPath))
-                <img src="../storage/app/public/qr/{{ session('lokasi') }}.jpeg" height="70" alt="{{ $kec->id }}">
+            @if ($ttdQrUrl = \App\Utils\QrTtdHelper::inlineDataUri(session('lokasi')))
+                <img src="{{ $ttdQrUrl }}" width="150" height="auto" style="height:auto" alt="{{ $kec->id }}">
             @else
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
@@ -165,7 +161,11 @@
     </tr>
     <tr>
         <td align="center" colspan="3">
-            <b>{{ $dir->namadepan ?? '' }} {{ $dir->namabelakang ?? '' }}</b>
+            @if (\App\Utils\QrTtdHelper::displayHasName(session('lokasi')))
+                <b>{{ $dir->namadepan ?? '' }} {{ $dir->namabelakang ?? '' }}</b>
+            @else
+                &nbsp;
+            @endif
         </td>
         <td align="center" colspan="3">
             <b>{{ $bend->namadepan ?? '' }} {{ $bend->namabelakang ?? '' }}</b>

@@ -304,7 +304,7 @@
 
                 <td>&nbsp;</td>
             </tr>
-            
+
         </table>
 
         <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
@@ -394,12 +394,8 @@
             </tr>
             <tr>
                 <td align="center">
-                    @php
-                        $logoPath = storage_path('app/public/qr/' . session('lokasi') . '.jpeg');
-                    @endphp
-
-                    @if (file_exists($logoPath))
-                        <img src="/qr/{{ session('lokasi') }}.jpeg" height="70" alt="{{ $kec->id }}">
+                    @if ($ttdQrUrl = \App\Utils\QrTtdHelper::inlineDataUri(session('lokasi')))
+                        <img src="{{ $ttdQrUrl }}" width="150" height="auto" style="height:auto" alt="{{ $kec->id }}">
                     @else
                         <p>&nbsp;</p>
                         <p>&nbsp;</p>
@@ -414,7 +410,11 @@
             </tr>
             <tr>
                 <td align="center" style="font-weight: bold;">
-                    {{ $dir->namadepan }} {{ $dir->namabelakang }}
+                    @if (\App\Utils\QrTtdHelper::displayHasName(session('lokasi')))
+                        {{ $dir->namadepan }} {{ $dir->namabelakang }}
+                    @else
+                        &nbsp;
+                    @endif
                 </td>
                 <td align="center" style="font-weight: bold;">
                     {{ $nia->anggota->namadepan }}

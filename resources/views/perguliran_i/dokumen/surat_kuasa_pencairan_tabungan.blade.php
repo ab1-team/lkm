@@ -182,21 +182,23 @@
             </td>
         </tr>
         <tr>
-            <td align="center" style="height: 60px; vertical-align: bottom;">
-                @php
-                    $logoPath = storage_path('app/public/qr/' . session('lokasi') . '.jpeg');
-                @endphp
-
-                @if (file_exists($logoPath))
-                    <img src="../storage/app/public/qr/{{ session('lokasi') }}.jpeg" height="55"
+            <td align="center" style="height: 90px; vertical-align: bottom;">
+                @if ($ttdQrUrl = \App\Utils\QrTtdHelper::inlineDataUri(session('lokasi')))
+                    <img src="{{ $ttdQrUrl }}" width="150" height="auto" style="height:auto"
                         alt="{{ $kec->id }}">
+                @else
+                    &nbsp;
                 @endif
             </td>
-            <td colspan="2" align="center" style="height: 60px; vertical-align: bottom;">&nbsp;</td>
+            <td colspan="2" align="center" style="height: 90px; vertical-align: bottom;">&nbsp;</td>
         </tr>
         <tr>
             <td align="center" style="font-weight: bold; font-size: 9pt; padding-top: 2px;">
-                {{ $dir->namadepan }} {{ $dir->namabelakang }}
+                @if (\App\Utils\QrTtdHelper::displayHasName(session('lokasi')))
+                    {{ $dir->namadepan }} {{ $dir->namabelakang }}
+                @else
+                    &nbsp;
+                @endif
             </td>
             <td colspan="2" align="center" style="font-weight: bold; font-size: 9pt; padding-top: 2px;">
                 {{ $pinkel->anggota->namadepan }}
