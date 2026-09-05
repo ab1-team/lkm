@@ -80,7 +80,7 @@ class UpdateFiturController extends Controller
 
     private function fotoDir(): string
     {
-        $dir = public_path(self::FOTO_DIR);
+        $dir = storage_path('app/public/' . self::FOTO_DIR);
 
         if (!is_dir($dir)) {
             @mkdir($dir, 0775, true);
@@ -101,7 +101,7 @@ class UpdateFiturController extends Controller
     private function hapusFotoLama(?string $filename): void
     {
         if ($filename) {
-            $path = public_path(self::FOTO_DIR . '/' . $filename);
+            $path = storage_path('app/public/' . self::FOTO_DIR . '/' . $filename);
             if (is_file($path)) {
                 @unlink($path);
             }

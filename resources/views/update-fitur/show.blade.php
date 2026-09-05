@@ -62,7 +62,7 @@
                 </div>
 
                 @if ($update_fitur->foto)
-                    <img src="{{ asset('uploads/update-fitur/' . $update_fitur->foto) }}"
+                    <img src="{{ asset('storage/update-fitur/' . $update_fitur->foto) }}"
                          alt="{{ $update_fitur->judul }}" class="detail-foto">
                 @endif
             </div>

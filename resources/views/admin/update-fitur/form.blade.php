@@ -100,7 +100,7 @@
 
                             @if ($item->exists && $item->foto)
                                 <div class="mt-2">
-                                    <img src="{{ asset('uploads/update-fitur/' . $item->foto) }}"
+                                    <img src="{{ asset('storage/update-fitur/' . $item->foto) }}"
                                          alt="" style="max-height: 120px;" class="rounded">
                                 </div>
                             @endif

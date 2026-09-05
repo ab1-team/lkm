@@ -89,6 +89,15 @@ Route::get('/storage/logo/{filename}', function ($filename) {
     abort(404);
 })->where('filename', '.*');
 
+Route::get('/storage/update-fitur/{filename}', function ($filename) {
+    $filename = basename($filename);
+    $path = storage_path('app/public/update-fitur/' . $filename);
+    if (Illuminate\Support\Facades\File::exists($path)) {
+        return response()->file($path);
+    }
+    abort(404);
+})->where('filename', '.*');
+
 Route::get('/master', [AdminAuthController::class, 'index'])->middleware('guest');
 Route::post('/master/login', [AdminAuthController::class, 'login'])->middleware('guest');
 
