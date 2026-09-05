@@ -62,7 +62,7 @@
                 </div>
 
                 @if ($update_fitur->foto)
-                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public_uploads')->url('update-fitur/' . $update_fitur->foto) }}"
+                    <img src="{{ asset('uploads/update-fitur/' . $update_fitur->foto) }}"
                          alt="{{ $update_fitur->judul }}" class="detail-foto">
                 @endif
             </div>

@@ -5,24 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\UpdateFitur;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class UpdateFiturController extends Controller
 {
     private const FOTO_DIR = 'update-fitur';
-    private const FOTO_DISK = 'public_uploads';
-
-    private function fotoDisk()
-    {
-        $disk = Storage::disk(self::FOTO_DISK);
-
-        if (!$disk->exists(self::FOTO_DIR)) {
-            $disk->makeDirectory(self::FOTO_DIR);
-        }
-
-        return $disk;
-    }
 
     public function index()
     {
@@ -91,12 +78,22 @@ class UpdateFiturController extends Controller
         ]);
     }
 
+    private function fotoDir(): string
+    {
+        $dir = public_path(self::FOTO_DIR);
+
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0775, true);
+        }
+
+        return $dir;
+    }
+
     private function simpanFoto(Request $request): string
     {
-        $disk = $this->fotoDisk();
         $file = $request->file('foto');
         $filename = $file->hashName();
-        $file->storeAs(self::FOTO_DIR, $filename, self::FOTO_DISK);
+        $file->move($this->fotoDir(), $filename);
 
         return $filename;
     }
@@ -104,7 +101,10 @@ class UpdateFiturController extends Controller
     private function hapusFotoLama(?string $filename): void
     {
         if ($filename) {
-            Storage::disk(self::FOTO_DISK)->delete(self::FOTO_DIR . '/' . $filename);
+            $path = public_path(self::FOTO_DIR . '/' . $filename);
+            if (is_file($path)) {
+                @unlink($path);
+            }
         }
     }
 }

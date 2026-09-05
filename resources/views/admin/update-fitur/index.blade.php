@@ -40,7 +40,7 @@
                                         </td>
                                         <td>
                                             @if ($item->foto)
-                                                <img src="{{ \Illuminate\Support\Facades\Storage::disk('public_uploads')->url('update-fitur/' . $item->foto) }}"
+                                                <img src="{{ asset('uploads/update-fitur/' . $item->foto) }}"
                                                      alt="" style="height: 40px;">
                                             @else
                                                 -
