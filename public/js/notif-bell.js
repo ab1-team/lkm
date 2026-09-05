@@ -3,10 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const badge = document.getElementById('notif-badge');
     if (!list) return;
 
-    function bindTandaiDibaca() {
-        document.getElementById('btn-tandai-dibaca')?.addEventListener('click', tandaiDibaca);
-    }
-
     function muatNotifikasi() {
         fetch('/notifikasi/dropdown')
             .then(res => res.json())
@@ -19,30 +15,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 if (data.items.length === 0) {
-                    list.innerHTML = '<div class="py-4">Tidak ada notifikasi.</div>';
+                    list.innerHTML = '<div class="py-4 text-muted">Tidak ada notifikasi.</div>';
                     return;
                 }
 
-                let html = data.items.slice(0, 5).map(item => `
-                    <div class="notif-item px-3 py-2 border-bottom text-start">
+                list.innerHTML = data.items.slice(0, 5).map(item => `
+                    <a href="/notifikasi/timeline/${item.id}" class="notif-item d-block px-3 py-2 border-bottom text-decoration-none">
                         <strong class="d-block text-dark">${item.judul}</strong>
                         <div class="text-muted" style="font-size:.75rem">${item.tanggal}</div>
-                    </div>
+                    </a>
                 `).join('');
-
-                list.innerHTML = html;
             });
     }
 
-    function tandaiDibaca() {
+    document.getElementById('btn-tandai-dibaca')?.addEventListener('click', function () {
         fetch('/notifikasi/tandai-dibaca', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
             },
         }).then(() => muatNotifikasi());
-    }
+    });
 
     muatNotifikasi();
-    bindTandaiDibaca();
 });

@@ -176,10 +176,12 @@ button.btn-sm {
 
 .notif-item {
     transition: background-color 0.15s ease;
+    color: inherit;
 }
 
 .notif-item:hover {
     background-color: #f8fafc;
+    color: inherit;
 }
 
 .notif-footer {
