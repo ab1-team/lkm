@@ -11,6 +11,18 @@ use Illuminate\Validation\Rule;
 class UpdateFiturController extends Controller
 {
     private const FOTO_DIR = 'update-fitur';
+    private const FOTO_DISK = 'public_uploads';
+
+    private function fotoDisk()
+    {
+        $disk = Storage::disk(self::FOTO_DISK);
+
+        if (!$disk->exists(self::FOTO_DIR)) {
+            $disk->makeDirectory(self::FOTO_DIR);
+        }
+
+        return $disk;
+    }
 
     public function index()
     {
@@ -81,9 +93,10 @@ class UpdateFiturController extends Controller
 
     private function simpanFoto(Request $request): string
     {
+        $disk = $this->fotoDisk();
         $file = $request->file('foto');
         $filename = $file->hashName();
-        $file->storeAs(self::FOTO_DIR, $filename, 'public');
+        $file->storeAs(self::FOTO_DIR, $filename, self::FOTO_DISK);
 
         return $filename;
     }
@@ -91,7 +104,7 @@ class UpdateFiturController extends Controller
     private function hapusFotoLama(?string $filename): void
     {
         if ($filename) {
-            Storage::disk('public')->delete(self::FOTO_DIR . '/' . $filename);
+            Storage::disk(self::FOTO_DISK)->delete(self::FOTO_DIR . '/' . $filename);
         }
     }
 }

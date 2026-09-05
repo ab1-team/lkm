@@ -3,6 +3,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const badge = document.getElementById('notif-badge');
     if (!list) return;
 
+    function bindTandaiDibaca() {
+        document.getElementById('btn-tandai-dibaca')?.addEventListener('click', tandaiDibaca);
+    }
+
     function muatNotifikasi() {
         fetch('/notifikasi/dropdown')
             .then(res => res.json())
@@ -15,27 +19,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 if (data.items.length === 0) {
-                    list.innerHTML = '<div class="text-center text-muted small py-3">Belum ada update</div>';
+                    list.innerHTML = '<div class="py-4">Tidak ada notifikasi.</div>';
                     return;
                 }
 
                 let html = data.items.slice(0, 5).map(item => `
-                    <div class="small border-bottom py-2">
-                        <strong>${item.judul}</strong>
+                    <div class="notif-item px-3 py-2 border-bottom text-start">
+                        <strong class="d-block text-dark">${item.judul}</strong>
                         <div class="text-muted" style="font-size:.75rem">${item.tanggal}</div>
                     </div>
                 `).join('');
 
-                html += `
-                    <div class="d-flex justify-content-between mt-2">
-                        <a href="/notifikasi/timeline" class="small">Lihat semua</a>
-                        <button type="button" class="btn btn-sm btn-link small p-0" id="btn-tandai-dibaca">Tandai sudah dibaca</button>
-                    </div>
-                `;
-
                 list.innerHTML = html;
-
-                document.getElementById('btn-tandai-dibaca')?.addEventListener('click', tandaiDibaca);
             });
     }
 
@@ -49,4 +44,5 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     muatNotifikasi();
+    bindTandaiDibaca();
 });

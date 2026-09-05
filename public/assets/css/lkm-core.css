@@ -157,6 +157,41 @@ button.btn-sm {
     display: none;
 }
 
+.notif-dropdown {
+    min-width: 320px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.notif-header {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
+.notif-list {
+    max-height: 320px;
+    overflow-y: auto;
+    background: #fff;
+}
+
+.notif-item {
+    transition: background-color 0.15s ease;
+}
+
+.notif-item:hover {
+    background-color: #f8fafc;
+}
+
+.notif-footer {
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+}
+
+.notif-footer .btn {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
 .modal-dialog {
     box-shadow: unset !important;
 }

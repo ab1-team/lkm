@@ -48,4 +48,11 @@ class UpdateFiturController extends Controller
 
         return view('update-fitur.timeline', compact('items', 'title'));
     }
+
+    public function show(UpdateFitur $update_fitur)
+    {
+        $title = $update_fitur->judul;
+
+        return view('update-fitur.show', compact('update_fitur', 'title'));
+    }
 }

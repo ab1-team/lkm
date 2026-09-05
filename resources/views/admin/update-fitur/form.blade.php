@@ -88,7 +88,7 @@
 
                             @if ($item->exists && $item->foto)
                                 <div class="mt-2">
-                                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url('update-fitur/' . $item->foto) }}"
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public_uploads')->url('update-fitur/' . $item->foto) }}"
                                          alt="" style="max-height: 120px;" class="rounded">
                                 </div>
                             @endif

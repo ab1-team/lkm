@@ -504,6 +504,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifikasi/dropdown', [UpdateFiturController::class, 'dropdown'])->name('notif.dropdown');
     Route::post('/notifikasi/tandai-dibaca', [UpdateFiturController::class, 'tandaiDibaca'])->name('notif.tandaiDibaca');
     Route::get('/notifikasi/timeline', [UpdateFiturController::class, 'timeline'])->name('notif.timeline');
+    Route::get('/notifikasi/timeline/{update_fitur}', [UpdateFiturController::class, 'show'])->name('notif.show');
 });
 
 Route::middleware('auth')->prefix('admin/update-fitur')->name('admin.updateFitur.')->group(function () {
