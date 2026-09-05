@@ -5894,4 +5894,665 @@ class PelaporanController extends Controller
             return $view;
         }
     }
+
+    private function SEOJK_KBP19(array $data)
+    {
+        $thn = $data['tahun'];
+        $bln = $data['bulan'];
+        $hari = $data['hari'];
+        $tgl = $thn . '-' . $bln . '-' . $hari;
+
+        $data['sub_judul'] = 'Tahun ' . Tanggal::tahun($tgl);
+        $data['tgl'] = Tanggal::tahun($tgl);
+        if ($data['bulanan']) {
+            $data['sub_judul'] = 'Periode ' . Tanggal::namaBulan($tgl) . ' ' . Tanggal::tahun($tgl);
+            $data['tgl'] = Tanggal::namaBulan($tgl) . ' ' . Tanggal::tahun($tgl);
+        }
+
+        $tk = (new Keuangan)->tingkat_kesehatan($tgl);
+        $saldo_pokok = $tk['saldo_pokok'];
+        $nunggak_pokok = $tk['nunggak_pokok'];
+        $sum_kolek_total = $tk['sum_kolek_total'];
+
+        $tb_pinj_i = 'pinjaman_anggota_' . $data['kec']->id;
+        $data['jenis_pp'] = JenisProdukPinjaman::where(function ($query) {
+            $query->where('lokasi', '0')
+                ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+        })
+            ->orWhere(function ($query) {
+                $query->where('lokasi', session('lokasi'))
+                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+            })
+            ->with([
+                'pinjaman_individu' => function ($query) use ($data, $tb_pinj_i) {
+                    $tb_ang = 'anggota_' . $data['kec']->id;
+
+                    $query->select($tb_pinj_i . '.*', $tb_ang . '.namadepan', 'agent.agent AS nama_agent', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
+                        ->join($tb_ang, $tb_ang . '.id', '=', $tb_pinj_i . '.nia')
+                        ->join('agent', $tb_pinj_i . '.id_agent', '=', 'agent.id')
+                        ->join('desa', $tb_ang . '.desa', '=', 'desa.kd_desa')
+                        ->join('sebutan_desa', 'sebutan_desa.id', '=', 'desa.sebutan')
+                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')
+                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')
+                        ->where(function ($query) use ($data, $tb_pinj_i) {
+                            $query->where([
+                                [$tb_pinj_i . '.status', 'A'],
+                                [$tb_pinj_i . '.tgl_cair', '<=', $data['tgl_kondisi']]
+                            ])->orwhere([
+                                [$tb_pinj_i . '.status', 'L'],
+                                [$tb_pinj_i . '.tgl_cair', '<=', $data['tgl_kondisi']],
+                                [$tb_pinj_i . '.tgl_lunas', '>=', "$data[tahun]-01-01"]
+                            ])->orwhere([
+                                [$tb_pinj_i . '.status', 'L'],
+                                [$tb_pinj_i . '.tgl_lunas', '<=', $data['tgl_kondisi']],
+                                [$tb_pinj_i . '.tgl_lunas', '>=', "$data[tahun]-01-01"]
+                            ])->orwhere([
+                                [$tb_pinj_i . '.status', 'R'],
+                                [$tb_pinj_i . '.tgl_cair', '<=', $data['tgl_kondisi']],
+                                [$tb_pinj_i . '.tgl_lunas', '>=', "$data[tahun]-01-01"]
+                            ])->orwhere([
+                                [$tb_pinj_i . '.status', 'R'],
+                                [$tb_pinj_i . '.tgl_lunas', '<=', $data['tgl_kondisi']],
+                                [$tb_pinj_i . '.tgl_lunas', '>=', "$data[tahun]-01-01"]
+                            ]);
+                        })
+                        ->orderBy($tb_ang . '.desa', 'ASC')
+                        ->orderBy($tb_pinj_i . '.id_agent', 'ASC')
+                        ->orderBy($tb_pinj_i . '.tgl_cair', 'ASC');
+                },
+                'pinjaman_individu.saldo' => function ($query) use ($data) {
+                    $query->where('tgl_transaksi', '<=', $data['tgl_kondisi']);
+                },
+                'pinjaman_individu.target' => function ($query) use ($data) {
+                    $query->where('jatuh_tempo', '<=', $data['tgl_kondisi']);
+                }
+            ])->get();
+
+        $data['rekap_kolek'] = [
+            'saldo_pokok_total' => $saldo_pokok,
+            'nunggak_pokok_total' => $nunggak_pokok,
+            'sum_kolek_total' => $sum_kolek_total,
+        ];
+
+        $data['laporan'] = 'Kolektibilitas Pinjaman (POJK 19/2021)';
+        $view = view('pelaporan.view.seojk.kolekbilitas_pinjaman_19', $data)->render();
+
+        if ($data['type'] == 'pdf') {
+            $paperSize = Session::get('lokasi') == 109 ? [0, 0, 595.28, 935.43] : 'A4';
+            $pdf = PDF::loadHTML($view)->setPaper($paperSize, 'landscape');
+            return $pdf->stream();
+        } else {
+            return $view;
+        }
+    }
+
+    private function SEOJK_KBP41(array $data)
+    {
+        $thn = $data['tahun'];
+        $bln = $data['bulan'];
+        $hari = $data['hari'];
+        $tgl = $thn . '-' . $bln . '-' . $hari;
+
+        $data['sub_judul'] = 'Tahun ' . Tanggal::tahun($tgl);
+        $data['tgl'] = Tanggal::tahun($tgl);
+        if ($data['bulanan']) {
+            $data['sub_judul'] = 'Periode ' . Tanggal::namaBulan($tgl) . ' ' . Tanggal::tahun($tgl);
+            $data['tgl'] = Tanggal::namaBulan($tgl) . ' ' . Tanggal::tahun($tgl);
+        }
+
+        $data['jenis_pp_i'] = JenisProdukPinjaman::where(function ($query) {
+            $query->where('lokasi', '0')
+                ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+        })
+            ->orWhere(function ($query) {
+                $query->where('lokasi', session('lokasi'))
+                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+            })
+            ->with([
+                'pinjaman_individu' => function ($query) use ($data) {
+                    $tb_pinj_i = 'pinjaman_anggota_' . $data['kec']->id;
+                    $tb_ang = 'anggota_' . $data['kec']->id;
+                    $data['tb_pinj_i'] = $tb_pinj_i;
+
+                    $query->select($tb_pinj_i . '.*', $tb_ang . '.namadepan', 'agent.agent AS nama_agent', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
+                        ->join($tb_ang, $tb_ang . '.id', '=', $tb_pinj_i . '.nia')
+                        ->join('agent', $tb_pinj_i . '.id_agent', '=', 'agent.id')
+                        ->join('desa', $tb_ang . '.desa', '=', 'desa.kd_desa')
+                        ->join('sebutan_desa', 'sebutan_desa.id', '=', 'desa.sebutan')
+                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')
+                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')
+                        ->where(function ($query) use ($data) {
+                            $query->where([
+                                [$data['tb_pinj_i'] . '.status', 'A'],
+                                [$data['tb_pinj_i'] . '.jenis_pinjaman', 'I'],
+                                [$data['tb_pinj_i'] . '.tgl_cair', '<=', $data['tgl_kondisi']]
+                            ])->orwhere([
+                                [$data['tb_pinj_i'] . '.status', 'L'],
+                                [$data['tb_pinj_i'] . '.jenis_pinjaman', 'I'],
+                                [$data['tb_pinj_i'] . '.tgl_cair', '<=', $data['tgl_kondisi']],
+                                [$data['tb_pinj_i'] . '.tgl_lunas', '>=', "$data[tahun]-01-01"]
+                            ])->orwhere([
+                                [$data['tb_pinj_i'] . '.status', 'L'],
+                                [$data['tb_pinj_i'] . '.jenis_pinjaman', 'I'],
+                                [$data['tb_pinj_i'] . '.tgl_lunas', '<=', $data['tgl_kondisi']],
+                                [$data['tb_pinj_i'] . '.tgl_lunas', '>=', "$data[tahun]-01-01"]
+                            ])->orwhere([
+                                [$data['tb_pinj_i'] . '.status', 'R'],
+                                [$data['tb_pinj_i'] . '.jenis_pinjaman', 'I'],
+                                [$data['tb_pinj_i'] . '.tgl_cair', '<=', $data['tgl_kondisi']],
+                                [$data['tb_pinj_i'] . '.tgl_lunas', '>=', "$data[tahun]-01-01"]
+                            ])->orwhere([
+                                [$data['tb_pinj_i'] . '.status', 'R'],
+                                [$data['tb_pinj_i'] . '.jenis_pinjaman', 'I'],
+                                [$data['tb_pinj_i'] . '.tgl_lunas', '<=', $data['tgl_kondisi']],
+                                [$data['tb_pinj_i'] . '.tgl_lunas', '>=', "$data[tahun]-01-01"]
+                            ])->orwhere([
+                                [$data['tb_pinj_i'] . '.status', 'H'],
+                                [$data['tb_pinj_i'] . '.jenis_pinjaman', 'I'],
+                                [$data['tb_pinj_i'] . '.tgl_cair', '<=', $data['tgl_kondisi']],
+                                [$data['tb_pinj_i'] . '.tgl_lunas', '>=', "$data[tahun]-01-01"]
+                            ])->orwhere([
+                                [$data['tb_pinj_i'] . '.status', 'H'],
+                                [$data['tb_pinj_i'] . '.jenis_pinjaman', 'I'],
+                                [$data['tb_pinj_i'] . '.tgl_lunas', '<=', $data['tgl_kondisi']],
+                                [$data['tb_pinj_i'] . '.tgl_lunas', '>=', "$data[tahun]-01-01"]
+                            ]);
+                        })
+                        ->orderBy($tb_ang . '.desa', 'ASC')
+                        ->orderBy($tb_pinj_i . '.id_agent', 'ASC')
+                        ->orderBy($tb_pinj_i . '.tgl_cair', 'ASC');
+                },
+                'pinjaman_individu.saldo' => function ($query) use ($data) {
+                    $query->where('tgl_transaksi', '<=', $data['tgl_kondisi']);
+                },
+                'pinjaman_individu.target' => function ($query) use ($data) {
+                    $query->where('jatuh_tempo', '<=', $data['tgl_kondisi']);
+                }
+            ])->get();
+
+        $data['laporan'] = 'Kolektibilitas Pinjaman (POJK 41/2024)';
+        $view = view('pelaporan.view.seojk.kolekbilitas_pinjaman_41', $data)->render();
+
+        if ($data['type'] == 'pdf') {
+            $paperSize = Session::get('lokasi') == 109 ? [0, 0, 595.28, 935.43] : 'A4';
+            $pdf = PDF::loadHTML($view)->setPaper($paperSize, 'landscape');
+            return $pdf->stream();
+        } else {
+            return $view;
+        }
+    }
+
+    private function SEOJK_PTK19(array $data)
+    {
+        $keuangan = new Keuangan;
+        $thn = $data['tahun'];
+        $bln = $data['bulan'];
+        $hari = $data['hari'];
+        $tgl = $thn . '-' . $bln . '-' . $hari;
+
+        $data['sub_judul'] = 'Tahun ' . Tanggal::tahun($tgl);
+        $data['tgl'] = Tanggal::tahun($tgl);
+        if ($data['bulanan']) {
+            $data['sub_judul'] = 'Periode ' . Tanggal::namaBulan($tgl) . ' ' . Tanggal::tahun($tgl);
+            $data['tgl'] = Tanggal::namaBulan($tgl) . ' ' . Tanggal::tahun($tgl);
+        }
+
+        $aset = $keuangan->aset($tgl);
+        $total_aset = $aset['aset_produktif'];
+        $cadangan_piutang_terbentuk = $aset['cadangan_piutang'];
+
+        $bln_loop = str_pad((int) $bln, 2, '0', STR_PAD_LEFT);
+        $rek_aset = Rekening::where('lev1', '1')->with([
+            'kom_saldo' => function ($query) use ($thn, $bln_loop) {
+                $query->where('tahun', $thn)->where(function ($query) use ($bln_loop) {
+                    $query->where('bulan', '0')->orwhere('bulan', $bln_loop);
+                });
+            }
+        ])->get();
+        $sum_kas = 0;
+        foreach ($rek_aset as $rek) {
+            if ($rek->lev1 == '1' && $rek->lev2 == '1' && in_array($rek->lev3, ['01', '02'])) {
+                $sum_kas += $keuangan->komSaldo($rek);
+            }
+        }
+
+        $rek_liab = Rekening::where('lev1', '2')->with([
+            'kom_saldo' => function ($query) use ($thn, $bln_loop) {
+                $query->where('tahun', $thn)->where(function ($query) use ($bln_loop) {
+                    $query->where('bulan', '0')->orwhere('bulan', $bln_loop);
+                });
+            }
+        ])->get();
+        $total_liabilitas = 0;
+        $liabilitas_lancar = 0;
+        foreach ($rek_liab as $rek) {
+            $saldo = $keuangan->komSaldo($rek);
+            $total_liabilitas += $saldo;
+            if ($rek->lev2 == '1') {
+                $liabilitas_lancar += $saldo;
+            }
+        }
+
+        $rek_ekuitas = Rekening::where('lev1', '3')->with([
+            'kom_saldo' => function ($query) use ($thn, $bln_loop) {
+                $query->where('tahun', $thn)->where(function ($query) use ($bln_loop) {
+                    $query->where('bulan', '0')->orwhere('bulan', $bln_loop);
+                });
+            }
+        ])->get();
+        $total_ekuitas = 0;
+        foreach ($rek_ekuitas as $rek) {
+            $total_ekuitas += $keuangan->komSaldo($rek);
+        }
+
+        $modal_disetor = $keuangan->modal_awal($tgl);
+
+        $rasio_likuiditas = ($liabilitas_lancar > 0) ? ($sum_kas / $liabilitas_lancar) * 100 : 0;
+        $rasio_solvabilitas = ($total_liabilitas > 0) ? ($total_aset / $total_liabilitas) * 100 : 0;
+        $rasio_ekuitas = ($modal_disetor > 0) ? ($total_ekuitas / $modal_disetor) * 100 : 0;
+
+        $status_lik = $rasio_likuiditas >= 4 ? 'Memenuhi' : 'Tidak Memenuhi';
+        $status_sol = $rasio_solvabilitas >= 110 ? 'Memenuhi' : 'Tidak Memenuhi';
+        $status_ek = $rasio_ekuitas >= 75 ? 'Memenuhi' : 'Tidak Memenuhi';
+
+        $kritis = ($rasio_likuiditas < 3) && ($rasio_solvabilitas < 100);
+        if ($kritis) {
+            $status_kesimpulan = 'KONDISI MEMBAHAYAKAN KELANGSUNGAN USAHA';
+            $warna_kesimpulan = '#dc3545';
+            $alasan_kesimpulan = 'Rasio Likuiditas turun di bawah 3% dan Rasio Solvabilitas turun di bawah 100%.';
+        } else {
+            $status_kesimpulan = 'SEHAT';
+            $warna_kesimpulan = '#28a745';
+            $alasan_kesimpulan = 'Rasio Likuiditas dan Solvabilitas berada di atas batas minimum POJK.';
+        }
+
+        $data['analisis'] = [
+            'total_aset' => $total_aset,
+            'total_liabilitas' => $total_liabilitas,
+            'kas_setara_kas' => $sum_kas,
+            'liabilitas_lancar' => $liabilitas_lancar,
+            'modal_disetor' => $modal_disetor,
+            'total_ekuitas' => $total_ekuitas,
+            'rasio_likuiditas' => $rasio_likuiditas,
+            'rasio_solvabilitas' => $rasio_solvabilitas,
+            'rasio_ekuitas' => $rasio_ekuitas,
+            'status_likuiditas' => $status_lik,
+            'status_solvabilitas' => $status_sol,
+            'status_ekuitas' => $status_ek,
+            'status_kesimpulan' => $status_kesimpulan,
+            'warna_kesimpulan' => $warna_kesimpulan,
+            'alasan_kesimpulan' => $alasan_kesimpulan,
+        ];
+
+        $data['laporan'] = 'Penilaian Tingkat Kesehatan (POJK 19/2021)';
+        $view = view('pelaporan.view.seojk.penilaian_tingkat_kesehatan_19', $data)->render();
+
+        if ($data['type'] == 'pdf') {
+            $paperSize = Session::get('lokasi') == 109 ? [0, 0, 595.28, 935.43] : 'A4';
+            $pdf = PDF::loadHTML($view)->setPaper($paperSize, 'portrait');
+            return $pdf->stream();
+        } else {
+            return $view;
+        }
+    }
+
+    private function SEOJK_PTK41(array $data)
+    {
+        $keuangan = new Keuangan;
+        $thn = $data['tahun'];
+        $bln = $data['bulan'];
+        $hari = $data['hari'];
+        $tgl = $thn . '-' . $bln . '-' . $hari;
+
+        $data['sub_judul'] = 'Tahun ' . Tanggal::tahun($tgl);
+        $data['tgl'] = Tanggal::tahun($tgl);
+        if ($data['bulanan']) {
+            $data['sub_judul'] = 'Periode ' . Tanggal::namaBulan($tgl) . ' ' . Tanggal::tahun($tgl);
+            $data['tgl'] = Tanggal::namaBulan($tgl) . ' ' . Tanggal::tahun($tgl);
+        }
+
+        $aset = $keuangan->aset($tgl);
+        $total_aset = $aset['aset_produktif'];
+        $cadangan_piutang_terbentuk = $aset['cadangan_piutang'];
+
+        $bln_loop = str_pad((int) $bln, 2, '0', STR_PAD_LEFT);
+        $rek_aset = Rekening::where('lev1', '1')->with([
+            'kom_saldo' => function ($query) use ($thn, $bln_loop) {
+                $query->where('tahun', $thn)->where(function ($query) use ($bln_loop) {
+                    $query->where('bulan', '0')->orwhere('bulan', $bln_loop);
+                });
+            }
+        ])->get();
+        $sum_kas = 0;
+        foreach ($rek_aset as $rek) {
+            if ($rek->lev1 == '1' && $rek->lev2 == '1' && in_array($rek->lev3, ['01', '02'])) {
+                $sum_kas += $keuangan->komSaldo($rek);
+            }
+        }
+
+        $rek_liab = Rekening::where('lev1', '2')->with([
+            'kom_saldo' => function ($query) use ($thn, $bln_loop) {
+                $query->where('tahun', $thn)->where(function ($query) use ($bln_loop) {
+                    $query->where('bulan', '0')->orwhere('bulan', $bln_loop);
+                });
+            }
+        ])->get();
+        $total_liabilitas = 0;
+        $liabilitas_lancar = 0;
+        foreach ($rek_liab as $rek) {
+            $saldo = $keuangan->komSaldo($rek);
+            $total_liabilitas += $saldo;
+            if ($rek->lev2 == '1') {
+                $liabilitas_lancar += $saldo;
+            }
+        }
+
+        $rek_ekuitas = Rekening::where('lev1', '3')->with([
+            'kom_saldo' => function ($query) use ($thn, $bln_loop) {
+                $query->where('tahun', $thn)->where(function ($query) use ($bln_loop) {
+                    $query->where('bulan', '0')->orwhere('bulan', $bln_loop);
+                });
+            }
+        ])->get();
+        $total_ekuitas = 0;
+        foreach ($rek_ekuitas as $rek) {
+            $total_ekuitas += $keuangan->komSaldo($rek);
+        }
+
+        $modal_disetor = $keuangan->modal_awal($tgl);
+
+        $tk = $keuangan->tingkat_kesehatan($tgl);
+        $outstanding_pinjaman = $tk['saldo_pokok'];
+        $kolek_items = $tk['kolek_items'];
+        $sum_kolek_total = $tk['sum_kolek_total'];
+
+        $npl_bermasalah = 0;
+        $ppap_wajib_minimum = 0;
+        foreach ($kolek_items as $idx => $item) {
+            $nama = strtolower($item['nama'] ?? '');
+            $saldo = $sum_kolek_total[$idx] ?? 0;
+            $prosentase = (float) ($item['prosentase'] ?? 0);
+
+            $is_kurang_lancar = str_contains($nama, 'kurang');
+            $is_diragukan = str_contains($nama, 'ragu');
+            $is_macet = str_contains($nama, 'macet');
+            $is_dpk = str_contains($nama, 'dpk') || str_contains($nama, 'dalam perhatian khusus');
+
+            if ($is_kurang_lancar || $is_diragukan || $is_macet) {
+                $npl_bermasalah += $saldo;
+            }
+
+            if ($is_dpk) {
+                $ppap_wajib_minimum += $saldo * 0.05;
+            } elseif ($is_kurang_lancar) {
+                $ppap_wajib_minimum += $saldo * 0.15;
+            } elseif ($is_diragukan) {
+                $ppap_wajib_minimum += $saldo * 0.50;
+            } elseif ($is_macet) {
+                $ppap_wajib_minimum += $saldo * 1.00;
+            }
+        }
+
+        $tb_pinj_i = 'pinjaman_anggota_' . $data['kec']->id;
+        $pinjaman_agg = PinjamanIndividu::where('sistem_angsuran', '!=', '12')
+            ->where('sistem_angsuran', '!=', '25')
+            ->where(function ($query) use ($data) {
+                $query->where([
+                    ['status', 'A'],
+                    ['tgl_cair', '<=', $data['tgl_kondisi']]
+                ])->orwhere([
+                    ['status', 'L'],
+                    ['tgl_cair', '<=', $data['tgl_kondisi']],
+                    ['tgl_lunas', '>=', "$data[tahun]-01-01"]
+                ])->orwhere([
+                    ['status', 'L'],
+                    ['tgl_lunas', '<=', $data['tgl_kondisi']],
+                    ['tgl_lunas', '>=', "$data[tahun]-01-01"]
+                ])->orwhere([
+                    ['status', 'R'],
+                    ['tgl_cair', '<=', $data['tgl_kondisi']],
+                    ['tgl_lunas', '>=', "$data[tahun]-01-01"]
+                ])->orwhere([
+                    ['status', 'R'],
+                    ['tgl_lunas', '<=', $data['tgl_kondisi']],
+                    ['tgl_lunas', '>=', "$data[tahun]-01-01"]
+                ]);
+            })
+            ->get();
+
+        $agunan_bermasalah = 0;
+        foreach ($pinjaman_agg as $p) {
+            $jam = json_decode($p->jaminan, true);
+            if (!is_array($jam) || !isset($jam['jenis_jaminan'])) continue;
+
+            $jj = (string) $jam['jenis_jaminan'];
+            $nilai = 0;
+            if ($jj === '1' && isset($jam['nilai_jual_tanah'])) {
+                $nilai = (float) $jam['nilai_jual_tanah'];
+            } elseif ($jj === '2' && isset($jam['nilai_jual_kendaraan'])) {
+                $nilai = (float) $jam['nilai_jual_kendaraan'];
+            } elseif ($jj === '4' && isset($jam['nilai_jaminan'])) {
+                $nilai = (float) $jam['nilai_jaminan'];
+            }
+
+            $persen = 0;
+            if ($nama = strtolower($jam['nama_jaminan'] ?? '')) {
+                if (str_contains($nama, 'deposito')) {
+                    $persen = 1.00;
+                } elseif (str_contains($nama, ' ht') || str_contains($nama, ' hak tanggungan') || str_contains($nama, ' hak_tanggungan')) {
+                    $persen = 0.80;
+                } elseif (str_contains($nama, 'tanah adat') || str_contains($nama, ' adat')) {
+                    $persen = 0.50;
+                } elseif (str_contains($nama, 'kendaraan')) {
+                    $persen = 0.50;
+                } else {
+                    $persen = 0.60;
+                }
+            } else {
+                if ($jj === '1') {
+                    $persen = 0.60;
+                } elseif ($jj === '2') {
+                    $persen = 0.50;
+                } else {
+                    $persen = 0;
+                }
+            }
+            $agunan_bermasalah += $nilai * $persen;
+        }
+
+        $rasio_solvabilitas = ($total_liabilitas > 0) ? ($total_aset / $total_liabilitas) * 100 : 0;
+        $rasio_ekuitas = ($modal_disetor > 0) ? ($total_ekuitas / $modal_disetor) * 100 : 0;
+        $rasio_likuiditas = ($liabilitas_lancar > 0) ? ($sum_kas / $liabilitas_lancar) * 100 : 0;
+        $ppap_coverage = ($ppap_wajib_minimum > 0) ? ($cadangan_piutang_terbentuk / $ppap_wajib_minimum) * 100 : 100;
+
+        $npl_neto_nominal = max(0, $npl_bermasalah - $cadangan_piutang_terbentuk - $agunan_bermasalah);
+        $rasio_npl_neto = ($outstanding_pinjaman > 0) ? ($npl_neto_nominal / $outstanding_pinjaman) * 100 : 0;
+
+        $pendapatan = $keuangan->pendapatan($tgl);
+        $biaya = $keuangan->biaya($tgl);
+        $laba_bersih = $pendapatan - $biaya;
+        $roa = ($total_aset > 0) ? ($laba_bersih / $total_aset) * 100 : 0;
+
+        $skor_permodalan = 0;
+        $pm_rasio_sol = 0;
+        if ($rasio_solvabilitas >= 120) {
+            $pm_rasio_sol = 100;
+        } elseif ($rasio_solvabilitas >= 115) {
+            $pm_rasio_sol = 75;
+        } elseif ($rasio_solvabilitas >= 110) {
+            $pm_rasio_sol = 50;
+        } elseif ($rasio_solvabilitas >= 105) {
+            $pm_rasio_sol = 25;
+        } else {
+            $pm_rasio_sol = 0;
+        }
+
+        $pm_rasio_ek = 0;
+        if ($rasio_ekuitas >= 100) {
+            $pm_rasio_ek = 100;
+        } elseif ($rasio_ekuitas >= 90) {
+            $pm_rasio_ek = 75;
+        } elseif ($rasio_ekuitas >= 75) {
+            $pm_rasio_ek = 50;
+        } elseif ($rasio_ekuitas >= 60) {
+            $pm_rasio_ek = 25;
+        } else {
+            $pm_rasio_ek = 0;
+        }
+        $skor_permodalan = ($pm_rasio_sol * 0.5) + ($pm_rasio_ek * 0.5);
+
+        $skor_kualitas_aset = 0;
+        $ka_npl = 0;
+        if ($rasio_npl_neto <= 2) {
+            $ka_npl = 100;
+        } elseif ($rasio_npl_neto <= 3.5) {
+            $ka_npl = 75;
+        } elseif ($rasio_npl_neto <= 5) {
+            $ka_npl = 50;
+        } elseif ($rasio_npl_neto <= 10) {
+            $ka_npl = 25;
+        } else {
+            $ka_npl = 0;
+        }
+
+        $ka_ppap = 0;
+        if ($ppap_coverage >= 100) {
+            $ka_ppap = 100;
+        } elseif ($ppap_coverage >= 80) {
+            $ka_ppap = 75;
+        } elseif ($ppap_coverage >= 60) {
+            $ka_ppap = 50;
+        } elseif ($ppap_coverage >= 40) {
+            $ka_ppap = 25;
+        } else {
+            $ka_ppap = 0;
+        }
+        $skor_kualitas_aset = ($ka_npl * 0.6) + ($ka_ppap * 0.4);
+
+        $skor_manajemen = 75;
+
+        $skor_rentabilitas = 0;
+        if ($roa >= 2.5) {
+            $skor_rentabilitas = 100;
+        } elseif ($roa >= 1.5) {
+            $skor_rentabilitas = 75;
+        } elseif ($roa >= 0.5) {
+            $skor_rentabilitas = 50;
+        } elseif ($roa >= 0) {
+            $skor_rentabilitas = 25;
+        } else {
+            $skor_rentabilitas = 0;
+        }
+
+        $skor_likuiditas = 0;
+        if ($rasio_likuiditas >= 10) {
+            $skor_likuiditas = 100;
+        } elseif ($rasio_likuiditas >= 7) {
+            $skor_likuiditas = 75;
+        } elseif ($rasio_likuiditas >= 4) {
+            $skor_likuiditas = 50;
+        } elseif ($rasio_likuiditas >= 2) {
+            $skor_likuiditas = 25;
+        } else {
+            $skor_likuiditas = 0;
+        }
+
+        $skor_komposit = ($skor_permodalan * 0.25)
+            + ($skor_kualitas_aset * 0.35)
+            + ($skor_manajemen * 0.20)
+            + ($skor_rentabilitas * 0.10)
+            + ($skor_likuiditas * 0.10);
+
+        $pk = 3;
+        $pk_label = 'Cukup Sehat';
+        if ($rasio_npl_neto >= 25 || $rasio_ekuitas < 50 || $ppap_coverage < 50) {
+            $pk = 5;
+            $pk_label = 'Tidak Sehat';
+        } elseif ($skor_komposit >= 81) {
+            $pk = 1;
+            $pk_label = 'Sangat Sehat';
+        } elseif ($skor_komposit >= 66) {
+            $pk = 2;
+            $pk_label = 'Sehat';
+        } elseif ($skor_komposit >= 51) {
+            $pk = 3;
+            $pk_label = 'Cukup Sehat';
+        } else {
+            $pk = 4;
+            $pk_label = 'Kurang Sehat';
+        }
+
+        $status_pengawasan = 'Normal';
+        $status_pengawasan_label = 'Pengawasan Normal';
+        $status_pengawasan_warna = '#28a745';
+        $status_pengawasan_alasan = 'Seluruh rasio utama terpenuhi sesuai ketentuan POJK.';
+        if ($pk == 5 || $rasio_ekuitas < 50 || $rasio_npl_neto >= 25) {
+            $status_pengawasan = 'Khusus';
+            $status_pengawasan_label = 'Pengawasan Khusus';
+            $status_pengawasan_warna = '#dc3545';
+            $alasan = [];
+            if ($pk == 5) $alasan[] = 'Peringkat Komposit (PK 5)';
+            if ($rasio_ekuitas < 50) $alasan[] = 'Rasio Ekuitas < 50% (' . number_format($rasio_ekuitas, 2) . '%)';
+            if ($rasio_npl_neto >= 25) $alasan[] = 'NPL Neto >= 25% (' . number_format($rasio_npl_neto, 2) . '%)';
+            $status_pengawasan_alasan = 'Dipicu oleh: ' . implode(', ', $alasan) . '.';
+        } elseif ($pk == 4 || ($rasio_ekuitas >= 50 && $rasio_ekuitas < 75) || ($rasio_npl_neto > 5 && $rasio_npl_neto < 25)) {
+            $status_pengawasan = 'Intensif';
+            $status_pengawasan_label = 'Pengawasan Intensif';
+            $status_pengawasan_warna = '#fd7e14';
+            $alasan = [];
+            if ($pk == 4) $alasan[] = 'Peringkat Komposit (PK 4)';
+            if ($rasio_ekuitas >= 50 && $rasio_ekuitas < 75) $alasan[] = 'Rasio Ekuitas 50% s.d <75% (' . number_format($rasio_ekuitas, 2) . '%)';
+            if ($rasio_npl_neto > 5 && $rasio_npl_neto < 25) $alasan[] = 'NPL Neto >5% s.d <25% (' . number_format($rasio_npl_neto, 2) . '%)';
+            $status_pengawasan_alasan = 'Dipicu oleh: ' . implode(', ', $alasan) . '.';
+        }
+
+        $data['analisis'] = [
+            'total_aset' => $total_aset,
+            'total_liabilitas' => $total_liabilitas,
+            'kas_setara_kas' => $sum_kas,
+            'liabilitas_lancar' => $liabilitas_lancar,
+            'modal_disetor' => $modal_disetor,
+            'total_ekuitas' => $total_ekuitas,
+            'outstanding_pinjaman' => $outstanding_pinjaman,
+            'npl_bermasalah' => $npl_bermasalah,
+            'npl_neto_nominal' => $npl_neto_nominal,
+            'agunan_bermasalah' => $agunan_bermasalah,
+            'cadangan_ppap_terbentuk' => $cadangan_piutang_terbentuk,
+            'ppap_wajib_minimum' => $ppap_wajib_minimum,
+            'kolek_items' => $kolek_items,
+            'sum_kolek_total' => $sum_kolek_total,
+            'pendapatan' => $pendapatan,
+            'biaya' => $biaya,
+            'laba_bersih' => $laba_bersih,
+            'roa' => $roa,
+            'rasio_solvabilitas' => $rasio_solvabilitas,
+            'rasio_ekuitas' => $rasio_ekuitas,
+            'rasio_npl_neto' => $rasio_npl_neto,
+            'rasio_likuiditas' => $rasio_likuiditas,
+            'ppap_coverage' => $ppap_coverage,
+            'skor_permodalan' => $skor_permodalan,
+            'skor_kualitas_aset' => $skor_kualitas_aset,
+            'skor_manajemen' => $skor_manajemen,
+            'skor_rentabilitas' => $skor_rentabilitas,
+            'skor_likuiditas' => $skor_likuiditas,
+            'skor_komposit' => $skor_komposit,
+            'pk' => $pk,
+            'pk_label' => $pk_label,
+            'status_pengawasan' => $status_pengawasan,
+            'status_pengawasan_label' => $status_pengawasan_label,
+            'status_pengawasan_warna' => $status_pengawasan_warna,
+            'status_pengawasan_alasan' => $status_pengawasan_alasan,
+        ];
+
+        $data['laporan'] = 'Penilaian Tingkat Kesehatan & Status Pengawasan';
+        $view = view('pelaporan.view.seojk.penilaian_tingkat_kesehatan_41', $data)->render();
+
+        if ($data['type'] == 'pdf') {
+            $paperSize = Session::get('lokasi') == 109 ? [0, 0, 595.28, 935.43] : 'A4';
+            $pdf = PDF::loadHTML($view)->setPaper($paperSize, 'portrait');
+            return $pdf->stream();
+        } else {
+            return $view;
+        }
+    }
 }
