@@ -1,6 +1,18 @@
 @extends('admin.layout.base')
 
 @section('content')
+    <style>
+        .form-uf .form-control,
+        .form-uf .form-select {
+            border: 1px solid #0d6efd;
+        }
+        .form-uf .form-control:focus,
+        .form-uf .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+        }
+    </style>
+
     <div class="row">
         <div class="col-md-8">
             <div class="card">
@@ -20,7 +32,7 @@
                         </div>
                     @endif
 
-                    <form
+                    <form class="form-uf"
                         action="{{ $item->exists ? route('admin.updateFitur.update', $item->id) : route('admin.updateFitur.store') }}"
                         method="post" enctype="multipart/form-data">
                         @csrf
@@ -51,7 +63,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Jenis</label>
-                            <select name="jenis" class="form-control @error('jenis') is-invalid @enderror" required>
+                            <select name="jenis" class="form-select @error('jenis') is-invalid @enderror" required>
                                 <option value="">-- Pilih Jenis --</option>
                                 @foreach (config('update_fitur.jenis') as $key => $val)
                                     <option value="{{ $key }}"
