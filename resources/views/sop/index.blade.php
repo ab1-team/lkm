@@ -781,16 +781,10 @@
                         $('.logo-preview-wrapper').css('border-color', '#22c55e')
                         $('#HapusTtdQr').prop('disabled', false).attr('title', 'Hapus gambar')
 
-                        var withName = !!result.with_name
-                        var ext = (result.path || '').split('.').pop() || 'png'
-                        var id = {{ $kec->id }}
-                        var fname = withName ? (id + '-name.' + ext) : (id + '.' + ext)
-                        var suffix = withName ? ' (dengan nama penandatangan di bawah)' : ''
-                        $('#pathInfoTtd').html('File aktif: <code>storage/app/public/qr/' + fname + '</code>' + suffix)
+                        $('#pathInfoTtd').html('Gambar tanda tangan saat ini tersimpan untuk lokasi ini.')
 
                         $('.logo-hover-overlay span').text('Klik atau jatuhkan file untuk mengganti')
                         $('.logo-upload-container').removeClass('d-none')
-                        $('.alert-warning').addClass('d-none')
                     } else {
                         Toastr('error', result.msg || 'Gagal menyimpan')
                     }
@@ -826,7 +820,6 @@
                         $('.logo-preview-wrapper').css('border-color', '#cbd5e1')
                         $('#HapusTtdQr').prop('disabled', true).attr('title', 'Tidak ada gambar untuk dihapus')
                         $('.logo-hover-overlay span').text('Klik atau jatuhkan file untuk mengunggah')
-                        $('.alert-warning').removeClass('d-none')
                     } else {
                         Toastr('error', result.msg || 'Gagal hapus')
                     }

@@ -31,10 +31,8 @@
                 Format didukung: <strong>JPG, JPEG, PNG</strong> (Maks. 4MB).
             </p>
             <p class="text-xs text-muted mb-0 mt-1" id="pathInfoTtd" style="color: #64748b; font-size: 0.75rem;">
-                @if ($withName)
-                    File aktif: <code>storage/app/public/qr/{{ $kec->id }}-name.{{ \App\Utils\QrTtdHelper::findExtension($kec->id) }}</code> (dengan nama penandatangan di bawah)
-                @elseif ($hasFile)
-                    File aktif: <code>storage/app/public/qr/{{ $kec->id }}.{{ \App\Utils\QrTtdHelper::findExtension($kec->id) }}</code>
+                @if ($hasFile)
+                    Gambar tanda tangan saat ini tersimpan untuk lokasi ini.
                 @else
                     Pilih gambar untuk dipratinjau. Klik <strong>Simpan Perubahan</strong> untuk mengunggah.
                 @endif
@@ -76,13 +74,6 @@
         </button>
     </div>
 </form>
-
-@if (!$hasFile)
-    <div class="alert alert-warning mt-3 text-center" role="alert" style="font-size: 0.85rem;">
-        <i class="fa-solid fa-triangle-exclamation me-1"></i>
-        Belum ada gambar tanda tangan. Dokumen pinjaman akan menampilkan area kosong sebagai fallback.
-    </div>
-@endif
 
 <style>
     .logo-upload-container:hover .logo-preview-wrapper {
