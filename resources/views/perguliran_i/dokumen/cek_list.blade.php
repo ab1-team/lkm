@@ -198,8 +198,24 @@
     <div style="width:100%; font-size:10pt;">
         <div style="width:40%; margin-left:auto; text-align:center;">
             <div>Diperiksa oleh</div>
-            <div style="height:80px;"></div>
-            <div><b>{{ $dir->namadepan }}</b></div>
+            <div style="height:80px; vertical-align:bottom;">
+                @if ($ttdQrUrl = \App\Utils\QrTtdHelper::inlineDataUri(session('lokasi')))
+                    <img src="{{ $ttdQrUrl }}" width="150" height="auto" style="height:auto" alt="{{ $kec->id }}">
+                @else
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                @endif
+            </div>
+            <div>
+                <b>
+                    @if (\App\Utils\QrTtdHelper::displayHasName(session('lokasi')))
+                        {{ $dir->namadepan }} {{ $dir->namabelakang }}
+                    @else
+                        &nbsp;
+                    @endif
+                </b>
+            </div>
         </div>
     </div>
 

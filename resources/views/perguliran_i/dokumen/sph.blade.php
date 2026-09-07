@@ -219,10 +219,31 @@
                             <td width="20" align="center"> Pihak Kedua </td>
                             <td width="10" align="center"> &nbsp; </td>
                             <td width="70" align="center"> Pihak Pertama </td>
-                        </tr> <br> <br> <br> <br> <br><br><br><br>
+                        </tr>
                         <tr>
                             <td width="10" align="center"> &nbsp; </td>
-                            <td width="20" align="center">{{ $dir->namadepan }} {{ $dir->namabelakang }}<br>
+                            <td width="20" align="center" style="vertical-align:bottom;">
+                                @if ($ttdQrUrl = \App\Utils\QrTtdHelper::inlineDataUri(session('lokasi')))
+                                    <img src="{{ $ttdQrUrl }}" width="150" height="auto" style="height:auto" alt="{{ $kec->id }}">
+                                @else
+                                    <p>&nbsp;</p>
+                                    <p>&nbsp;</p>
+                                    <p>&nbsp;</p>
+                                @endif
+                            </td>
+                            <td width="10" align="center"> &nbsp; </td>
+                            <td width="70" align="center">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td width="10" align="center"> &nbsp; </td>
+                            <td width="20" align="center">
+                                <strong>
+                                    @if (\App\Utils\QrTtdHelper::displayHasName(session('lokasi')))
+                                        {{ $dir->namadepan }} {{ $dir->namabelakang }}
+                                    @else
+                                        &nbsp;
+                                    @endif
+                                </strong><br>
                                 {{ $kec->sebutan_level_1 }} {{ $kec->nama_lembaga_sort }}
                             </td>
                             <td width="10" align="center"> &nbsp; </td>

@@ -197,11 +197,27 @@
             <div style="display:table-cell; text-align:center;">Yang Menyatakan</div>
         </div>
         <div style="display:table-row;">
-            <div style="display:table-cell;" colspan="3" style="height:80px;">&nbsp;</div>
+            <div style="display:table-cell; text-align:center; height:80px; vertical-align:bottom;">
+                @if ($ttdQrUrl = \App\Utils\QrTtdHelper::inlineDataUri(session('lokasi')))
+                    <img src="{{ $ttdQrUrl }}" width="150" height="auto" style="height:auto" alt="{{ $kec->id }}">
+                @else
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                @endif
+            </div>
+            <div style="display:table-cell; text-align:center; height:80px; vertical-align:bottom;">&nbsp;</div>
+            <div style="display:table-cell; text-align:center; height:80px; vertical-align:bottom;">&nbsp;</div>
         </div>
         <div style="display:table-row;">
             <div style="display:table-cell; text-align:center;">
-                <b>{{ $dir->namadepan}} {{ $dir->namabelakang}}</b>
+                <b>
+                    @if (\App\Utils\QrTtdHelper::displayHasName(session('lokasi')))
+                        {{ $dir->namadepan}} {{ $dir->namabelakang}}
+                    @else
+                        &nbsp;
+                    @endif
+                </b>
             </div>
             <div style="display:table-cell; text-align:center;">
                 <b>{{ $pinkel->anggota->penjamin}}</b>

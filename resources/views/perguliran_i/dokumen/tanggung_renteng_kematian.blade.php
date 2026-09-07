@@ -140,11 +140,25 @@
             <td align="center">Ketua Kelompok,</td>
         </tr>
         <tr>
-            <td colspan="2" height="50">&nbsp;</td>
+            <td colspan="2" height="80">
+                @if ($ttdQrUrl = \App\Utils\QrTtdHelper::inlineDataUri(session('lokasi')))
+                    <img src="{{ $ttdQrUrl }}" width="150" height="auto" style="height:auto" alt="{{ $kec->id }}">
+                @else
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                @endif
+            </td>
         </tr>
         <tr>
             <td align="center">
-                <b>{{ $dir->namadepan }} {{ $dir->namabelakang }}</b>
+                <b>
+                    @if (\App\Utils\QrTtdHelper::displayHasName(session('lokasi')))
+                        {{ $dir->namadepan }} {{ $dir->namabelakang }}
+                    @else
+                        &nbsp;
+                    @endif
+                </b>
             </td>
             <td align="center">
                 <b>{{ $pinkel->anggota->ketua }}</b>
