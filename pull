@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# /pull — Fetch dan rebase dari remote, dengan opsi pilih branch
+# Usage:
+#   /pull                  → git pull --rebase origin/<current-branch>
+#   /pull origin develop   → git pull --rebase origin develop
+#   /pull --no-rebase      → plain merge (tidak rebase)
+#   /pull --fetch-only     → hanya fetch, tidak merge/rebase
+#   /pull --dry-run        → tampilkan rencana tanpa eksekusi
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || { echo "❌ Bukan di dalam git repo"; exit 1; })"
+cd "$REPO_ROOT"
+
+BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+REMOTE="origin"
+TARGET="$BRANCH"
+REBASE=true
+FETCH_ONLY=false
+DRY_RUN=false
+
+for arg in "$@"; do
+  case "$arg" in
+    --no-rebase)   REBASE=false ;;
+    --fetch-only)  FETCH_ONLY=true ;;
+    --dry-run)     DRY_RUN=true ;;
+    -h|--help)
+      sed -n '2,12p' "$0"
+      exit 0
+      ;;
+    *)
+      # pola "origin nama-branch" atau "nama-branch"
+      if [[ "$arg" == "origin" ]]; then
+        continue
+      fi
+      REMOTE="${REMOTE}"
+      TARGET="$arg"
+      ;;
+  esac
+done
+
+run() {
+  if $DRY_RUN; then
+    printf '[dry-run] '
+    printf '%s\n' "$*"
+  else
+    eval "$@"
+  fi
+}
+
+echo "📦 Repo   : $REPO_ROOT"
+echo "🌿 Local  : $BRANCH"
+echo "🎯 Target : $REMOTE/$TARGET"
+echo
+
+# cek remote branch ada
+if ! git ls-remote --exit-code --heads "$REMOTE" "$TARGET" >/dev/null 2>&1; then
+  echo "❌ Branch '$TARGET' tidak ada di remote '$REMOTE'."
+  exit 1
+fi
+
+echo "⬇️  Fetching $REMOTE..."
+run "git fetch $REMOTE"
+echo
+
+if $FETCH_ONLY; then
+  echo "✅ Fetch selesai (skip merge/rebase)."
+  exit 0
+fi
+
+if $REBASE; then
+  echo "🔀 Rebasing onto $REMOTE/$TARGET..."
+  run "git rebase $REMOTE/$TARGET"
+else
+  echo "🔀 Merging $REMOTE/$TARGET..."
+  run "git merge --no-edit $REMOTE/$TARGET"
+fi
+
+echo
+echo "✅ Selesai."

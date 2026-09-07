@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+# /push — Commit, pull --rebase, dan push ke origin/<current-branch>
+# Usage:
+#   /push                  → stage semua, pakai pesan commit otomatis, lalu push
+#   /push "msg commit"     → stage semua, pakai pesan commit custom
+#   /push --no-pull        → skip pull --rebase
+#   /push --dry-run        → tampilkan rencana tanpa eksekusi
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || { echo "❌ Bukan di dalam git repo"; exit 1; })"
+cd "$REPO_ROOT"
+
+BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+REMOTE="origin"
+
+DRY_RUN=false
+DO_PULL=true
+COMMIT_MSG=""
+
+for arg in "$@"; do
+  case "$arg" in
+    --dry-run) DRY_RUN=true ;;
+    --no-pull) DO_PULL=false ;;
+    -h|--help)
+      sed -n '2,12p' "$0"
+      exit 0
+      ;;
+    *) COMMIT_MSG="$arg" ;;
+  esac
+done
+
+run() {
+  if $DRY_RUN; then
+    printf '[dry-run] '
+    printf '%s\n' "$*"
+  else
+    eval "$@"
+  fi
+}
+
+echo "📦 Repo   : $REPO_ROOT"
+echo "🌿 Branch : $BRANCH"
+echo
+
+# --- 1. cek status ---
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo "📝 Working tree status:"
+  git status --short
+  echo
+else
+  echo "ℹ️  Tidak ada perubahan di working tree."
+fi
+
+# --- 2. cek remote branch ada ---
+if ! git ls-remote --exit-code --heads "$REMOTE" "$BRANCH" >/dev/null 2>&1; then
+  echo "❌ Branch '$BRANCH' tidak ada di remote '$REMOTE'."
+  echo "   Jalankan 'git push --set-upstream $REMOTE $BRANCH' dulu untuk setup upstream."
+  exit 1
+fi
+
+# --- 3. pull --rebase ---
+if $DO_PULL; then
+  echo "⬇️  Pulling $REMOTE/$BRANCH (rebase)..."
+  run "git pull --rebase $REMOTE $BRANCH"
+  echo
+fi
+
+# --- 4. stage + commit ---
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo "➕ Staging semua perubahan..."
+  run "git add -A"
+
+  if [[ -z "$COMMIT_MSG" ]]; then
+    # pesan otomatis berdasarkan jumlah file yang berubah
+    COUNT=$(git diff --cached --name-only | wc -l | tr -d ' ')
+    COMMIT_MSG="chore: sync $COUNT file(s) via /push"
+  fi
+
+  echo "📝 Commit message: \"$COMMIT_MSG\""
+  run "git commit -m \"$COMMIT_MSG\""
+  echo
+else
+  echo "ℹ️  Tidak ada perubahan untuk di-commit."
+fi
+
+# --- 5. push ---
+echo "⬆️  Pushing ke $REMOTE/$BRANCH..."
+run "git push $REMOTE $BRANCH"
+
+echo
+echo "✅ Selesai."
