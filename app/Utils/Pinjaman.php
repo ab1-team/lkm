@@ -480,4 +480,76 @@ class Pinjaman
 
         return $fungsi;
     }
+
+    public static function nextSpkCounter($lokasi, $loanModel = 'pinjaman_individu', $tahun = null, $excludeLoanId = null)
+    {
+        $tahun = $tahun ?: date('Y');
+
+        if ($loanModel === 'pinjaman_kelompok') {
+            $table = 'pinjaman_kelompok_' . $lokasi;
+            $query = \DB::table($table)
+                ->whereNotIn('status', ['P', 'V'])
+                ->whereYear('tgl_cair', $tahun);
+        } else {
+            $table = 'pinjaman_anggota_' . $lokasi;
+            $query = \DB::table($table)
+                ->whereNotIn('status', ['P', 'V'])
+                ->whereYear('tgl_cair', $tahun);
+        }
+
+        if ($excludeLoanId !== null) {
+            $query->where('id', '!=', $excludeLoanId);
+        }
+
+        return ((int) $query->count()) + 1;
+    }
+
+    public static function renderSpkFormat($format, $kec, $tglCair = null, $loanId = null, $noUrut = null)
+    {
+        if (empty($format)) {
+            return '';
+        }
+
+        $tglCair = $tglCair ?: date('Y-m-d');
+        $keuangan = new Keuangan;
+
+        $bulan = (string) Tanggal::bulan($tglCair);
+        $bulanRomawi = $keuangan->romawi((int) $bulan);
+        $tahun = (string) Tanggal::tahun($tglCair);
+
+        if ($noUrut === null) {
+            $noUrut = self::nextSpkCounter($kec->id, 'pinjaman_individu', $tahun, $loanId);
+        }
+
+        $replacer = [
+            '{no_urut}' => (string) $noUrut,
+            '{kec_id}' => (string) ($kec->id ?? ''),
+            '{kd_kec}' => (string) ($kec->kd_kec ?? ''),
+            '{nama_kec}' => (string) ($kec->nama_kec ?? ''),
+            '{lembaga_short}' => (string) ($kec->nama_lembaga_sort ?? ''),
+            '{lembaga_long}' => (string) ($kec->nama_lembaga_long ?? ''),
+            '{tahun}' => $tahun,
+            '{bulan}' => $bulan,
+            '{bulanromawi}' => $bulanRomawi,
+            '{loan_id}' => (string) ($loanId ?? ''),
+        ];
+
+        return strtr($format, $replacer);
+    }
+
+    public static function renderSpkPreview($kec, $format = null, $tglCair = null)
+    {
+        if ($format === null) {
+            $format = $kec->spk_format ?? '';
+        }
+        if (empty($format)) {
+            return '(kosong)';
+        }
+        $tglCair = $tglCair ?: date('Y-m-d');
+        try {
+            return self::renderSpkFormat($format, $kec, $tglCair);
+        } catch (\Exception $e) {
+            return '(pratinjau tidak tersedia)';
+        }
+    }
 }

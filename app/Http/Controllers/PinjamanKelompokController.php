@@ -863,9 +863,19 @@ class PinjamanKelompokController extends Controller
 
             if (! $request->nomor_spk) {
                 $tgl_cair = Tanggal::tglNasional($data[$tgl]);
-                $nomor_spk = $perguliran->id;
-                $nomor_spk .= '/DS-'.substr($perguliran->kelompok->d->kode_desa, -2);
-                $nomor_spk .= '/'.Tanggal::tglRomawi($tgl_cair);
+
+                if ($perguliran->status == 'V' && empty($perguliran->spk_no) && !empty($kec->spk_format)) {
+                    $nomor_spk = Pinjaman::renderSpkFormat(
+                        $kec->spk_format,
+                        $kec,
+                        $tgl_cair,
+                        $perguliran->id
+                    );
+                } else {
+                    $nomor_spk = $perguliran->id;
+                    $nomor_spk .= '/DS-'.substr($perguliran->kelompok->d->kode_desa, -2);
+                    $nomor_spk .= '/'.Tanggal::tglRomawi($tgl_cair);
+                }
 
                 $data['nomor_spk'] = $nomor_spk;
             }

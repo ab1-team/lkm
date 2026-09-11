@@ -68,6 +68,12 @@
                                     </a>
                                 </div>
                                 <div class="mb-1">
+                                    <a role="tab" class="btn btn-white settings-nav-item" id="spk_format" data-bs-toggle="tab" href="#tab-content-spk-format">
+                                        <i class="fa-solid fa-hashtag"></i>
+                                        <span>Format Penomoran SPK</span>
+                                    </a>
+                                </div>
+                                <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item" data-bs-toggle="tab" href="#tab-content-9">
                                         <i class="fa-solid fa-square-poll-horizontal"></i>
                                         <span>Kolektibilitas</span>
@@ -153,6 +159,16 @@
                                         <div class="card-body">
                                             <h5 class="card-title">Sistem Peminjam</h5>
                                             @include('sop.partials._pinjaman')
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane tabs-animation fade" id="tab-content-spk-format" role="tabpanel">
+                                <div class="row">
+                                    <div class="main-card mb-3 card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Format Penomoran SPK</h5>
+                                            @include('sop.partials._spk_format')
                                         </div>
                                     </div>
                                 </div>

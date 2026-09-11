@@ -227,6 +227,8 @@ Route::put('/pengaturan/kolek/{kec}', [SopController::class, 'kolek'])->middlewa
 Route::put('/pengaturan/simpanan/{kec}', [SopController::class, 'simpanan'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/asuransi/{kec}', [SopController::class, 'asuransi'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/spk/{kec}', [SopController::class, 'spk'])->middleware('auth', 'is_aktif');
+Route::put('/pengaturan/spk_format/{kec}', [SopController::class, 'spkFormat'])->middleware('auth', 'is_aktif');
+Route::get('/pengaturan/spk_format/preview', [SopController::class, 'spkFormatPreview'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/logo/{kec}', [SopController::class, 'logo'])->middleware('auth', 'is_aktif');
 Route::post('/pengaturan/ttd-qr/save/{kec}', [SopController::class, 'saveTtdQr'])->middleware('auth', 'is_aktif');
 Route::delete('/pengaturan/ttd-qr/{kec}', [SopController::class, 'hapusTtdQr'])->middleware('auth', 'is_aktif');

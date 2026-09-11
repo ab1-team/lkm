@@ -377,6 +377,49 @@ class SopController extends Controller
         ]);
     }
 
+    public function spkFormat(Request $request, Kecamatan $kec)
+    {
+        $format = (string) $request->input('spk_format', '');
+
+        if (strlen($format) > 255) {
+            return response()->json([
+                'success' => false,
+                'msg' => 'Format Penomoran SPK maksimal 255 karakter.',
+                'errors' => ['spk_format' => ['Format Penomoran SPK maksimal 255 karakter.']],
+            ], Response::HTTP_MOVED_PERMANENTLY);
+        }
+
+        Kecamatan::where('id', $kec->id)->update([
+            'spk_format' => $format !== '' ? $format : null,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'msg' => $format !== ''
+                ? 'Format Penomoran SPK Berhasil Diperbarui.'
+                : 'Format Penomoran SPK dikosongkan. Nomor SPK tidak akan diisi otomatis.',
+        ]);
+    }
+
+    public function spkFormatPreview(Request $request)
+    {
+        $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
+        if (! $kec) {
+            return response()->json([
+                'success' => false,
+                'preview' => '',
+            ]);
+        }
+
+        $format = (string) $request->input('format', '');
+        $preview = Pinjaman::renderSpkPreview($kec, $format);
+
+        return response()->json([
+            'success' => true,
+            'preview' => $preview,
+        ]);
+    }
+
     public function kustomisasiCalk(Request $request, Kecamatan $kec)
     {
         $data = $request->only([

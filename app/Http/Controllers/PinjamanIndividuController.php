@@ -955,6 +955,18 @@ class PinjamanIndividuController extends Controller
         } elseif ($request->status == 'W') {
 
             $data['depe'] = ($data['depe']) ?: 0;
+            $tglCair = Tanggal::tglNasional($data['tgl_cair']);
+
+            $autoSpkNo = null;
+            if ($perguliran_i->status == 'V' && empty($perguliran_i->spk_no) && !empty($kec->spk_format)) {
+                $autoSpkNo = Pinjaman::renderSpkFormat(
+                    $kec->spk_format,
+                    $kec,
+                    $tglCair,
+                    $perguliran_i->id
+                );
+            }
+
             $update = [
                 'tgl_dana' => Tanggal::tglNasional($data[$tgl]),
                 $tgl => Tanggal::tglNasional($data[$tgl]),
@@ -964,8 +976,8 @@ class PinjamanIndividuController extends Controller
                 'jenis_jasa' => $data['jenis_jasa'],
                 'sistem_angsuran' => $data['sistem_angsuran_pokok'],
                 'sa_jasa' => $data['sistem_angsuran_jasa'],
-                'tgl_cair' => Tanggal::tglNasional($data['tgl_cair']),
-                // 'spk_no' => $data['nomor_spk'],
+                'tgl_cair' => $tglCair,
+                'spk_no' => $autoSpkNo ?? $perguliran_i->spk_no,
                 'alokasi' => intval(str_replace(',', '', str_replace('.00', '', $data[$harga]))) - intval(str_replace(',', '', str_replace('.00', '', $data['depe']))),
                 'depe' => str_replace(',', '', str_replace('.00', '', $data['depe'])),
                 // 'depe' => str_replace(',', '', str_replace('.00', '', $data[$harga])) * ($request->depe / 100),
