@@ -2198,6 +2198,11 @@ class TransaksiController extends Controller
             ['loan_id', $data['real']->loan_id],
             ['jatuh_tempo', '<=', date('Y-m-t', strtotime($data['real']->tgl_transaksi))],
         ])->orderBy('jatuh_tempo', 'DESC')->first();
+        $data['ra_angsuran_ke'] = RencanaAngsuranI::where([
+            ['loan_id', $data['real']->loan_id],
+            ['target_pokok', '>=', $data['real']->sum_pokok],
+            ['angsuran_ke', '!=', '0'],
+        ])->orderBy('target_pokok', 'ASC')->first();
         $data['pinkel'] = PinjamanIndividu::where('id', $data['real']->loan_id)->with([
             'anggota',
             'jpp',
@@ -2220,6 +2225,11 @@ class TransaksiController extends Controller
             ['loan_id', $data['real']->loan_id],
             ['jatuh_tempo', '<=', date('Y-m-t', strtotime($data['real']->tgl_transaksi))],
         ])->orderBy('jatuh_tempo', 'DESC')->first();
+        $data['ra_angsuran_ke'] = RencanaAngsuran::where([
+            ['loan_id', $data['real']->loan_id],
+            ['target_pokok', '>=', $data['real']->sum_pokok],
+            ['angsuran_ke', '!=', '0'],
+        ])->orderBy('target_pokok', 'ASC')->first();
         $data['pinkel'] = PinjamanKelompok::where('id', $data['real']->loan_id)->with([
             'kelompok',
             'kelompok.d',
@@ -2244,6 +2254,11 @@ class TransaksiController extends Controller
             ['loan_id', $data['real']->loan_id],
             ['jatuh_tempo', '<=', date('Y-m-t', strtotime($data['real']->tgl_transaksi))]
         ])->orderBy('jatuh_tempo', 'DESC')->first();
+        $data['ra_angsuran_ke'] = RencanaAngsuran::where([
+            ['loan_id', $data['real']->loan_id],
+            ['target_pokok', '>=', $data['real']->sum_pokok],
+            ['angsuran_ke', '!=', '0'],
+        ])->orderBy('target_pokok', 'ASC')->first();
         $data['pinkel'] = PinjamanKelompok::where('id', $data['real']->loan_id)->with([
             'kelompok',
             'kelompok.d',
@@ -2268,6 +2283,11 @@ class TransaksiController extends Controller
             ['loan_id', $data['real']->loan_id],
             ['jatuh_tempo', '<=', date('Y-m-t', strtotime($data['real']->tgl_transaksi))],
         ])->orderBy('jatuh_tempo', 'DESC')->first();
+        $data['ra_angsuran_ke'] = RencanaAngsuranI::where([
+            ['loan_id', $data['real']->loan_id],
+            ['target_pokok', '>=', $data['real']->sum_pokok],
+            ['angsuran_ke', '!=', '0'],
+        ])->orderBy('target_pokok', 'ASC')->first();
         $data['pinkel'] = PinjamanIndividu::where('id', $data['real']->loan_id)->with([
             'anggota',
             'anggota.d',
@@ -2298,6 +2318,11 @@ class TransaksiController extends Controller
             ['loan_id', $data['real']->loan_id],
             ['jatuh_tempo', '<=', date('Y-m-t', strtotime($data['real']->tgl_transaksi))]
         ])->orderBy('jatuh_tempo', 'DESC')->first();
+        $data['ra_angsuran_ke'] = RencanaAngsuranI::where([
+            ['loan_id', $data['real']->loan_id],
+            ['target_pokok', '>=', $data['real']->sum_pokok],
+            ['angsuran_ke', '!=', '0'],
+        ])->orderBy('target_pokok', 'ASC')->first();
         $data['pinkel'] = PinjamanIndividu::where('id', $data['real']->loan_id)->with([
             'anggota',
             'anggota.d',

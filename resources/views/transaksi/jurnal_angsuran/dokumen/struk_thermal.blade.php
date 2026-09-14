@@ -142,7 +142,7 @@
             <td width="24%">{{ substr($no_kuitansi, 0, -1) }}</td>
             <td colspan="2" width="50%">
                 <div align="right">
-                    Angsuran ke: {{ $ra_bulan_ini->angsuran_ke > 0 ? $ra_bulan_ini->angsuran_ke : 1 }}
+                    Angsuran ke: {{ ($ra_angsuran_ke && $ra_angsuran_ke->angsuran_ke > 0) ? $ra_angsuran_ke->angsuran_ke : 1 }}
                     dari {{ $jum_angsuran }}
                 </div>
             </td>

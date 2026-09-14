@@ -233,7 +233,7 @@
         <tr>
             <td>Angsuran Ke</td>
             <td>:</td>
-            <td>{{ $ra_bulan_ini ? $ra_bulan_ini->angsuran_ke : 1 }} dari {{ $jum_angsuran }}</td>
+            <td>{{ ($ra_angsuran_ke && $ra_angsuran_ke->angsuran_ke > 0) ? $ra_angsuran_ke->angsuran_ke : 1 }} dari {{ $jum_angsuran }}</td>
         </tr>
     </table>
 
