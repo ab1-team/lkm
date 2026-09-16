@@ -38,14 +38,24 @@ class SimpananController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $simpanan = Simpanan::with(['anggota', 'js'])
-                ->select('simpanan.*');
+            $lokasi = Session::get('lokasi');
+            $tableAnggota = 'anggota_' . $lokasi;
+
+            $simpanan = Simpanan::query()
+                ->leftJoin($tableAnggota, $tableAnggota . '.id', '=', 'simpanan.nia')
+                ->leftJoin('jenis_jasa as js', 'js.id', '=', 'simpanan.jenis_simpanan')
+                ->select(
+                    'simpanan.*',
+                    $tableAnggota . '.namadepan as nama_anggota',
+                    'js.nama_js as jenis_simpanan_nama'
+                );
+
             return DataTables::of($simpanan)
                 ->addColumn('nama_anggota', function ($row) {
-                    return $row->anggota->namadepan ?? '-';
+                    return $row->nama_anggota ?? '-';
                 })
                 ->addColumn('jenis_simpanan', function ($row) {
-                    return $row->js->nama_js ?? '-';
+                    return $row->jenis_simpanan_nama ?? '-';
                 })
                 ->addColumn('status', function ($row) {
                     $status = '<span class="badge bg-secondary">-</span>';
@@ -61,17 +71,32 @@ class SimpananController extends Controller
                 ->editColumn('tgl_buka', function ($row) {
                     return date('d/m/Y', strtotime($row->tgl_buka));
                 })
+                ->orderColumn('id', function ($query, $order) {
+                    $query->orderBy('simpanan.id', $order);
+                })
+                ->orderColumn('nomor_rekening', function ($query, $order) {
+                    $query->orderBy('simpanan.nomor_rekening', $order);
+                })
                 ->orderColumn('nama_anggota', function ($query, $order) {
-                    $lokasi = Session::get('lokasi');
-                    $table = 'anggota_' . $lokasi;
-                    $query->orderByRaw(
-                        "(SELECT namadepan FROM {$table} WHERE {$table}.id = simpanan.nia) {$order}"
-                    );
+                    $query->orderBy('simpanan.nia', $order);
                 })
                 ->orderColumn('jenis_simpanan', function ($query, $order) {
-                    $query->orderByRaw(
-                        "(SELECT nama_js FROM jenis_jasa WHERE jenis_jasa.id = simpanan.jenis_simpanan) {$order}"
-                    );
+                    $query->orderBy('simpanan.jenis_simpanan', $order);
+                })
+                ->orderColumn('jumlah', function ($query, $order) {
+                    $query->orderBy('simpanan.jumlah', $order);
+                })
+                ->orderColumn('tgl_buka', function ($query, $order) {
+                    $query->orderBy('simpanan.tgl_buka', $order);
+                })
+                ->orderColumn('status', function ($query, $order) {
+                    $query->orderBy('simpanan.status', $order);
+                })
+                ->filterColumn('nama_anggota', function ($query, $keyword) use ($tableAnggota) {
+                    $query->where($tableAnggota . '.namadepan', 'like', "%{$keyword}%");
+                })
+                ->filterColumn('jenis_simpanan', function ($query, $keyword) {
+                    $query->where('js.nama_js', 'like', "%{$keyword}%");
                 })
                 ->rawColumns(['status'])
                 ->make(true);
