@@ -41,6 +41,13 @@
                     <button class="btn btn-info btn-sm" onclick="window.open('/simpanan/surat-kuasa/{{ $nia->id }}')" type="button">
                         <i class="fa fa-file-text"></i> Surat Kuasa Simpanan Tabungan
                     </button>
+                    @if ($nia->status === 'A')
+                        <a href="/simpanan/{{ $nia->id }}/tutup-rekening" class="btn btn-dark btn-sm">
+                            <i class="fa fa-lock"></i> Tutup Rekening
+                        </a>
+                    @elseif ($nia->status === 'T')
+                        <span class="badge bg-danger">Rekening Ditutup</span>
+                    @endif
                 </div>
             </div>
         </div>
@@ -65,7 +72,8 @@
                                     <input autocomplete="off" type="text" name="nik" id="nik" class="form-control" value="{{$nia->anggota->nik}}" disabled>
                                     <small class="text-danger" id="msg_nik"></small>
                                 </div>
-                                
+
+                                @if ($nia->status === 'A')
                                 <div class="input-group input-group-static my-3">
                                     <label>TRANSAKSI SIMPANAN</label>
                                 </div>
@@ -97,10 +105,15 @@
                                     <input autocomplete="off" type="text" name="jumlah" id="jumlah" class="form-control" value="">
                                     <small class="text-danger" id="msg_jumlah"></small>
                                 </div>
-                                
+
                                     <button id="simpanTransaksi" class="btn btn-primary btn-sm float-end ms-2" type="button">
                                     Simpan Transaksi
                                 </button>
+                                @else
+                                <div class="alert alert-danger mt-3 mb-0">
+                                    <i class="fa fa-lock"></i> Rekening ini sudah <strong>DITUTUP</strong> dan tidak dapat melakukan transaksi.
+                                </div>
+                                @endif
                             </form>
                         </div>
                     </div>
@@ -343,10 +356,16 @@ $(document).ready(function() {
                 }
             },
             error: function(xhr, status, error) {
+                var msg = 'Terjadi kesalahan';
+                if (xhr && xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                } else if (error) {
+                    msg = 'Terjadi kesalahan: ' + error;
+                }
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
-                    text: 'Terjadi kesalahan: ' + error,
+                    title: 'Gagal',
+                    text: msg,
                 });
             }
         });

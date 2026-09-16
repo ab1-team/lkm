@@ -20,16 +20,16 @@
         <div class="page-title-wrapper">
             <div class="page-title-heading">
                 <div class="page-title-icon">
-                    <i class="fa fa-bank"></i>
+                    <i class="fa fa-lock"></i>
                 </div>
-                <div><b>Daftar Simpanan Dan Utang</b>
+                <div><b>Daftar Rekening Ditutup</b>
                     <div class="page-title-subheading">
                          {{ Session::get('nama_lembaga') }}
                     </div>
                 </div>
             </div>
         </div>
-    </div>   
+    </div>
     <div class="card-body">
         <div class="row">
             <div class="col-lg-">
@@ -57,17 +57,8 @@
             </div>
         </div>
         <div class="text-sm">
-            <span class="badge bg-success">
-                Simpanan Umum
-            </span>
-            <span class="badge bg-danger">
-                Simpanan Deposito
-            </span>
-            <span class="badge bg-warning">
-                Simpanan Program
-            </span>
-            <a href="/simpanan_ditutup" class="btn btn-outline-danger btn-sm float-end">
-                <i class="fa fa-lock"></i> Lihat Daftar Rekening Ditutup
+            <a href="/simpanan" class="btn btn-outline-secondary btn-sm">
+                <i class="fa fa-arrow-left"></i> Kembali ke Daftar Simpanan Aktif
             </a>
         </div>
     </div>
@@ -85,7 +76,7 @@
             },
             processing: true,
             serverSide: true,
-            ajax: "/simpanan",
+            ajax: "/simpanan_ditutup",
             columns: [
                 {
                     data: 'id',
@@ -108,9 +99,6 @@
                     name: 'jumlah',
                     visible: false,
                     searchable: false
-                    // render: function(data, type, row) {
-                    //     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(data);
-                    // }
                 },
                 {
                     data: 'tgl_buka',
@@ -122,17 +110,7 @@
                     data: 'status',
                     name: 'status',
                     orderable: false,
-                    searchable: false,
-                    render: function(data, type, row) {
-                        if (data === 'A') {
-                            return '<span class="badge badge-success">Aktif</span>';
-                        } else if (data === 'T') {
-                            return '<span class="badge badge-danger">Ditutup</span>';
-                        } else if (data === 'P') {
-                            return '<span class="badge badge-warning">Pending</span>';
-                        }
-                        return '<span class="badge badge-secondary">' + data + '</span>';
-                    }
+                    searchable: false
                 }
             ],
             order: [

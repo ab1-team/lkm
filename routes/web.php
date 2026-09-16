@@ -225,6 +225,7 @@ Route::put('/pengaturan/pengelola/{kec}', [SopController::class, 'pengelola'])->
 Route::put('/pengaturan/pinjaman/{kec}', [SopController::class, 'pinjaman'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/kolek/{kec}', [SopController::class, 'kolek'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/simpanan/{kec}', [SopController::class, 'simpanan'])->middleware('auth', 'is_aktif');
+Route::put('/pengaturan/saldo_minimal_simpanan', [SopController::class, 'saldoMinimal'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/asuransi/{kec}', [SopController::class, 'asuransi'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/spk/{kec}', [SopController::class, 'spk'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/spk_format/{kec}', [SopController::class, 'spkFormat'])->middleware('auth', 'is_aktif');
@@ -511,6 +512,9 @@ Route::get('/simpanan/get-transaksi', [SimpananController::class, 'getTransaksi'
 Route::post('/simpanan/simpan-transaksi', [SimpananController::class, 'simpanTransaksi']);
 Route::post('/simpanan/generate/{cif}', [SimpananController::class, 'generateSimpanan'])->middleware('auth', 'is_aktif');
 Route::resource('/simpanan', SimpananController::class)->middleware('auth', 'is_aktif');
+Route::get('/simpanan_ditutup', [SimpananController::class, 'indexDitutup'])->middleware('auth', 'is_aktif');
+Route::get('/simpanan/{simpanan}/tutup-rekening', [SimpananController::class, 'tutupRekeningKonfirmasi'])->middleware('auth', 'is_aktif');
+Route::post('/simpanan/{simpanan}/tutup-rekening', [SimpananController::class, 'tutupRekening'])->middleware('auth', 'is_aktif');
 Route::get('/bunga', [SimpananController::class, 'bunga'])->middleware('auth', 'is_aktif');
 Route::get('/bunga/info', [SimpananController::class, 'infoBunga'])->middleware('auth', 'is_aktif');
 Route::get('/simpan_bunga', [SimpananController::class, 'simpanBunga'])->middleware('auth');

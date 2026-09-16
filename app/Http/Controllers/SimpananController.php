@@ -50,7 +50,8 @@ class SimpananController extends Controller
                     'simpanan.*',
                     'anggota.namadepan as nama_anggota',
                     'js.nama_js as jenis_simpanan_nama'
-                );
+                )
+                ->where('simpanan.status', 'A');
 
             return DataTables::of($simpanan)
                 ->addColumn('nama_anggota', function ($row) {
@@ -243,6 +244,242 @@ class SimpananController extends Controller
         $nia = $simpanan->where('id', $simpanan->id)->with(['anggota', 'js'])->first();
         $title = ucwords($simpanan->anggota->namadepan);
         return view('simpanan.partials.detail')->with(compact('nia', 'title', 'hubungan'));
+    }
+
+    public function tutupRekeningKonfirmasi(Simpanan $simpanan)
+    {
+        $nia = $simpanan->where('id', $simpanan->id)->with(['anggota', 'js'])->first();
+
+        if (!$nia) {
+            abort(404);
+        }
+
+        if ($nia->status !== 'A') {
+            return redirect()->route('simpanan.show', $nia->id)
+                ->with('error', 'Rekening ini sudah tidak dalam status Aktif.');
+        }
+
+        $jenisSimpanan = JenisSimpanan::where('id', $nia->jenis_simpanan)->first();
+        $saldoMinimal = (int) ($jenisSimpanan->saldo_minimal ?? 20000);
+
+        $realTerbaru = RealSimpanan::where('cif', $nia->id)
+            ->latest('tgl_transaksi')
+            ->latest('lu')
+            ->orderBy('id', 'desc')
+            ->first();
+        $saldoSekarang = $realTerbaru ? (int) $realTerbaru->sum : 0;
+
+        $penarikanNasabah = max(0, $saldoSekarang - $saldoMinimal);
+        $biayaPenutupan = $saldoMinimal;
+
+        $title = 'Konfirmasi Tutup Rekening';
+        return view('simpanan.tutup_rekening', compact(
+            'nia', 'saldoSekarang', 'saldoMinimal', 'penarikanNasabah', 'biayaPenutupan', 'title'
+        ));
+    }
+
+    public function tutupRekening(Request $request, Simpanan $simpanan)
+    {
+        $nia = $simpanan->where('id', $simpanan->id)->first();
+
+        if (!$nia) {
+            return response()->json(['success' => false, 'message' => 'Rekening tidak ditemukan.'], 404);
+        }
+
+        if ($nia->status !== 'A') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Rekening ini tidak berstatus Aktif, tidak dapat ditutup.'
+            ], 422);
+        }
+
+        if (!$request->has('konfirmasi')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Konfirmasi penutupan rekening diperlukan.'
+            ], 422);
+        }
+
+        $jenisSimpanan = JenisSimpanan::where('id', $nia->jenis_simpanan)->first();
+        if (!$jenisSimpanan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Jenis simpanan tidak ditemukan.'
+            ], 422);
+        }
+
+        $saldoMinimal = (int) ($jenisSimpanan->saldo_minimal ?? 20000);
+        $tglSekarang = date('Y-m-d');
+
+        $realTerbaru = RealSimpanan::where('cif', $nia->id)
+            ->latest('tgl_transaksi')
+            ->latest('lu')
+            ->orderBy('id', 'desc')
+            ->first();
+        $saldoSekarang = $realTerbaru ? (int) $realTerbaru->sum : 0;
+
+        if ($saldoSekarang < $saldoMinimal) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Saldo saat ini (Rp ' . number_format($saldoSekarang, 0, ',', '.') .
+                            ') lebih kecil dari saldo minimal (Rp ' . number_format($saldoMinimal, 0, ',', '.') .
+                            '). Tarik saldo terlebih dahulu sebelum menutup rekening.'
+            ], 422);
+        }
+
+        $penarikanNasabah = $saldoSekarang - $saldoMinimal;
+        $biayaPenutupan = $saldoMinimal;
+        $userId = auth()->user()->id;
+        $nomorRekening = $nia->nomor_rekening;
+        $namaDebitur = $nia->anggota->namadepan ?? 'Nasabah';
+
+        DB::beginTransaction();
+        try {
+            if ($penarikanNasabah > 0) {
+                Transaksi::create([
+                    'tgl_transaksi'    => $tglSekarang,
+                    'rekening_debit'   => $jenisSimpanan->rek_simp,
+                    'rekening_kredit'  => $jenisSimpanan->rek_kas,
+                    'idtp'             => '0',
+                    'id_pinj'          => '0',
+                    'id_pinj_i'        => '0',
+                    'id_simp'          => $nia->id,
+                    'keterangan_transaksi' => 'Penutupan Rekening - Penarikan Saldo ' . $nomorRekening,
+                    'relasi'           => $namaDebitur,
+                    'jumlah'           => $penarikanNasabah,
+                    'urutan'           => '0',
+                    'id_user'          => $userId,
+                ]);
+
+                $idtPenarikan = Transaksi::max('idt');
+                RealSimpanan::create([
+                    'cif'           => $nia->id,
+                    'idt'           => $idtPenarikan,
+                    'kode'          => 3,
+                    'tgl_transaksi' => $tglSekarang,
+                    'real_d'        => $penarikanNasabah,
+                    'real_k'        => 0,
+                    'sum'           => $saldoMinimal,
+                    'lu'            => date('Y-m-d H:i:s'),
+                    'id_user'       => $userId,
+                ]);
+            }
+
+            Transaksi::create([
+                'tgl_transaksi'    => $tglSekarang,
+                'rekening_debit'   => $jenisSimpanan->rek_simp,
+                'rekening_kredit'  => $jenisSimpanan->rek_adm,
+                'idtp'             => '0',
+                'id_pinj'          => '0',
+                'id_pinj_i'        => '0',
+                'id_simp'          => $nia->id,
+                'keterangan_transaksi' => 'Penutupan Rekening - Biaya Admin Penutupan Buku Rekening ' . $nomorRekening,
+                'relasi'           => $namaDebitur,
+                'jumlah'           => $biayaPenutupan,
+                'urutan'           => '0',
+                'id_user'          => $userId,
+            ]);
+
+            $idtAdmin = Transaksi::max('idt');
+            RealSimpanan::create([
+                'cif'           => $nia->id,
+                'idt'           => $idtAdmin,
+                'kode'          => 8,
+                'tgl_transaksi' => $tglSekarang,
+                'real_d'        => $biayaPenutupan,
+                'real_k'        => 0,
+                'sum'           => 0,
+                'lu'            => date('Y-m-d H:i:s'),
+                'id_user'       => $userId,
+            ]);
+
+            Simpanan::where('id', $nia->id)->update([
+                'status'    => 'T',
+                'tgl_tutup' => $tglSekarang,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Rekening berhasil ditutup. Saldo sebesar Rp ' .
+                            number_format($penarikanNasabah, 0, ',', '.') . ' telah ditarik ke nasabah.',
+                'redirect' => '/simpanan'
+            ]);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menutup rekening: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function indexDitutup()
+    {
+        if (request()->ajax()) {
+            $lokasi = Session::get('lokasi');
+            $tableSimpanan = 'simpanan_anggota_' . $lokasi;
+            $tableAnggota  = 'anggota_' . $lokasi;
+
+            $simpanan = DB::table($tableSimpanan . ' as simpanan')
+                ->leftJoin($tableAnggota . ' as anggota', 'anggota.id', '=', 'simpanan.nia')
+                ->leftJoin('jenis_simpanan as js', 'js.id', '=', 'simpanan.jenis_simpanan')
+                ->select(
+                    'simpanan.*',
+                    'anggota.namadepan as nama_anggota',
+                    'js.nama_js as jenis_simpanan_nama'
+                )
+                ->where('simpanan.status', 'T');
+
+            return DataTables::of($simpanan)
+                ->addColumn('nama_anggota', function ($row) {
+                    return $row->nama_anggota ?? '-';
+                })
+                ->addColumn('jenis_simpanan', function ($row) {
+                    return $row->jenis_simpanan_nama ?? '-';
+                })
+                ->addColumn('status', function ($row) {
+                    return '<span class="badge bg-danger">Ditutup</span>';
+                })
+                ->editColumn('jumlah', function ($row) {
+                    return 'Rp ' . number_format($row->jumlah, 0, ',', '.');
+                })
+                ->editColumn('tgl_buka', function ($row) {
+                    return date('d/m/Y', strtotime($row->tgl_buka));
+                })
+                ->orderColumn('id', function ($query, $order) {
+                    $query->orderBy('simpanan.id', $order);
+                })
+                ->orderColumn('nomor_rekening', function ($query, $order) {
+                    $query->orderBy('simpanan.nomor_rekening', $order);
+                })
+                ->orderColumn('nama_anggota', function ($query, $order) {
+                    $query->orderBy('anggota.namadepan', $order);
+                })
+                ->orderColumn('jenis_simpanan', function ($query, $order) {
+                    $query->orderBy('js.nama_js', $order);
+                })
+                ->orderColumn('jumlah', function ($query, $order) {
+                    $query->orderBy('simpanan.jumlah', $order);
+                })
+                ->orderColumn('tgl_buka', function ($query, $order) {
+                    $query->orderBy('simpanan.tgl_buka', $order);
+                })
+                ->orderColumn('status', function ($query, $order) {
+                    $query->orderBy('simpanan.status', $order);
+                })
+                ->filterColumn('nama_anggota', function ($query, $keyword) {
+                    $query->where('anggota.namadepan', 'like', "%{$keyword}%");
+                })
+                ->filterColumn('jenis_simpanan', function ($query, $keyword) {
+                    $query->where('js.nama_js', 'like', "%{$keyword}%");
+                })
+                ->rawColumns(['status'])
+                ->make(true);
+        }
+        $title = 'Daftar Simpanan Ditutup';
+        return view('simpanan.index_ditutup')->with(compact('title'));
     }
 
 
@@ -530,6 +767,13 @@ class SimpananController extends Controller
 
         $simpanan = Simpanan::where('id', $cif)->first();
 
+        if ($simpanan && $simpanan->status !== 'A') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Rekening ini sudah ditutup dan tidak dapat melakukan transaksi.'
+            ], 422);
+        }
+
         if ($simpanan) {
             $parts = explode('/', $tglTransaksi);
             if (count($parts) == 3) {
@@ -550,6 +794,26 @@ class SimpananController extends Controller
 
         $jenisSimpanan = JenisSimpanan::where('id', $simpanan->jenis_simpanan)->first();
 
+        $saldoMinimal = (int) ($jenisSimpanan->saldo_minimal ?? 20000);
+
+        $kode = ($jenisMutasi == 1) ? 2 : 3;
+        $real = RealSimpanan::where('cif', $cif)->latest('tgl_transaksi')->latest('lu')->orderBy('id', 'desc')->first();
+        $jumlahBersih = str_replace(',', '', str_replace('.00', '', $jumlah));
+
+        $sumSebelumnya = $real ? $real->sum : 0;
+        $sumBaru = ($jenisMutasi == 1)
+            ? $sumSebelumnya + $jumlahBersih
+            : $sumSebelumnya - $jumlahBersih;
+
+        if ($jenisMutasi == 2 && $saldoMinimal > 0 && $sumBaru < $saldoMinimal) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Saldo simpanan tidak boleh kurang dari Saldo Minimal (' .
+                            number_format($saldoMinimal, 0, ',', '.') . '). ' .
+                            'Sisa saldo setelah penarikan: Rp ' . number_format($sumBaru, 0, ',', '.')
+            ], 422);
+        }
+
         $transaksi = new Transaksi();
         $transaksi->tgl_transaksi = Tanggal::tglNasional($tglTransaksi);
         $transaksi->rekening_debit = $jenisMutasi == '1' ? $jenisSimpanan->rek_kas : $jenisSimpanan->rek_simp;
@@ -563,15 +827,6 @@ class SimpananController extends Controller
         $transaksi->jumlah = str_replace(',', '', str_replace('.00', '', $jumlah));
         $transaksi->urutan = 0;
         $transaksi->id_user = auth()->user()->id;
-
-        $kode = ($jenisMutasi == 1) ? 2 : 3;
-        $real = RealSimpanan::where('cif', $cif)->latest('tgl_transaksi')->latest('lu')->orderBy('id', 'desc')->first();
-        $jumlahBersih = str_replace(',', '', str_replace('.00', '', $jumlah));
-
-        $sumSebelumnya = $real ? $real->sum : 0;
-        $sumBaru = ($jenisMutasi == 1)
-            ? $sumSebelumnya + $jumlahBersih
-            : $sumSebelumnya - $jumlahBersih;
 
         if ($transaksi->save()) {
                 $maxIdt = Transaksi::max('idt');

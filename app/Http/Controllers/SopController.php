@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AdminInvoice;
 use App\Models\AkunLevel1;
+use App\Models\JenisSimpanan;
 use App\Models\Kecamatan;
 use App\Models\TandaTanganDokumen;
 use App\Models\DokumenPinjaman;
@@ -34,8 +35,16 @@ class SopController extends Controller
 
         $instance_name = $kec->wa_session->instance_name ?? null;
 
+        $lokasi = Session::get('lokasi');
+        $jenisSimpananList = JenisSimpanan::where(function ($q) use ($lokasi) {
+                $q->where('lokasi', '0')->orWhere('lokasi', $lokasi);
+            })
+            ->where('kecuali', 'NOT LIKE', '%#' . $lokasi . '#%')
+            ->orderBy('id')
+            ->get();
+
         $title = "Personalisasi SOP";
-        return view('sop.index')->with(compact('title', 'kec', 'api', 'token', 'keywordSPK', 'fungsiSPK', 'api_key', 'instance_name'));
+        return view('sop.index')->with(compact('title', 'kec', 'api', 'token', 'keywordSPK', 'fungsiSPK', 'api_key', 'instance_name', 'jenisSimpananList'));
     }
 
     public function users()
@@ -317,6 +326,55 @@ class SopController extends Controller
         return response()->json([
             'success' => true,
             'msg' => 'Sistem Simpanan Berhasil Diperbarui.',
+        ]);
+    }
+
+    public function saldoMinimal(Request $request)
+    {
+        $items = $request->input('saldo_minimal', []);
+
+        if (! is_array($items)) {
+            $items = [];
+        }
+
+        $errors = [];
+        $updated = 0;
+
+        foreach ($items as $id => $value) {
+            $id = (int) $id;
+            if ($id <= 0) {
+                continue;
+            }
+
+            $valueClean = str_replace(',', '', (string) $value);
+            if ($valueClean === '' || ! is_numeric($valueClean)) {
+                $errors["saldo_minimal.{$id}"] = ['Saldo minimal harus diisi dengan angka.'];
+                continue;
+            }
+
+            $valueInt = (int) $valueClean;
+            if ($valueInt < 0) {
+                $errors["saldo_minimal.{$id}"] = ['Saldo minimal tidak boleh negatif.'];
+                continue;
+            }
+
+            $affected = JenisSimpanan::where('id', $id)->update([
+                'saldo_minimal' => $valueInt,
+            ]);
+            $updated += $affected;
+        }
+
+        if (! empty($errors)) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $errors,
+                'msg'     => 'Sebagian saldo minimal gagal diperbarui.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return response()->json([
+            'success' => true,
+            'msg'     => 'Saldo Minimal Simpanan Berhasil Diperbarui.',
         ]);
     }
 

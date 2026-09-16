@@ -86,6 +86,12 @@
                                         <span>Sistem Simpanan</span>
                                     </a>
                                 </div>
+                                <div class="mb-1">
+                                    <a role="tab" class="btn btn-white settings-nav-item" data-bs-toggle="tab" href="#tab-content-saldo-minimal">
+                                        <i class="fa-solid fa-coins"></i>
+                                        <span>Saldo Minimal Simpanan</span>
+                                    </a>
+                                </div>
                                 @endif
                                 <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item" id="asuransi" data-bs-toggle="tab" href="#tab-content-4">
@@ -255,6 +261,16 @@
                                         <div class="card-body">
                                             <h5 class="card-title">Pengaturan Simpanan</h5>
                                             @include('sop.partials._simpanan')
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane tabs-animation fade" id="tab-content-saldo-minimal" role="tabpanel">
+                                <div class="row">
+                                    <div class="main-card mb-3 card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Pengaturan Saldo Minimal Simpanan</h5>
+                                            @include('sop.partials._saldo_minimal')
                                         </div>
                                     </div>
                                 </div>
