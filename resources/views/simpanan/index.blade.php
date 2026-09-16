@@ -93,8 +93,8 @@
                     name: 'nomor_rekening'
                 },
                 {
-                    data: 'anggota.namadepan',
-                    name: 'anggota.namadepan'
+                    data: 'nama_anggota',
+                    name: 'nama_anggota'
                 },
                 {
                     data: 'jenis_simpanan',

@@ -39,7 +39,7 @@ class SimpananController extends Controller
     {
         if (request()->ajax()) {
             $simpanan = Simpanan::with(['anggota', 'js'])
-                ->orderBy('id', 'DESC');
+                ->select('simpanan.*');
             return DataTables::of($simpanan)
                 ->addColumn('nama_anggota', function ($row) {
                     return $row->anggota->namadepan ?? '-';
@@ -55,19 +55,23 @@ class SimpananController extends Controller
                     }
                     return $status;
                 })
-                ->addColumn('status', function ($row) {
-                    $status = '<span class="badge bg-secondary">-</span>';
-                    if ($row->status) {
-                        $badge = $row->status == 'A' ? 'success' : 'danger';
-                        $status = '<span class="badge bg-' . $badge . '">' . ($row->status == 'A' ? 'Aktif' : 'Non-Aktif') . '</span>';
-                    }
-                    return $status;
-                })
                 ->editColumn('jumlah', function ($row) {
                     return 'Rp ' . number_format($row->jumlah, 0, ',', '.');
                 })
                 ->editColumn('tgl_buka', function ($row) {
                     return date('d/m/Y', strtotime($row->tgl_buka));
+                })
+                ->orderColumn('nama_anggota', function ($query, $order) {
+                    $lokasi = Session::get('lokasi');
+                    $table = 'anggota_' . $lokasi;
+                    $query->orderByRaw(
+                        "(SELECT namadepan FROM {$table} WHERE {$table}.id = simpanan.nia) {$order}"
+                    );
+                })
+                ->orderColumn('jenis_simpanan', function ($query, $order) {
+                    $query->orderByRaw(
+                        "(SELECT nama_js FROM jenis_jasa WHERE jenis_jasa.id = simpanan.jenis_simpanan) {$order}"
+                    );
                 })
                 ->rawColumns(['status'])
                 ->make(true);
