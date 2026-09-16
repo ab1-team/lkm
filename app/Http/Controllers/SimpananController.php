@@ -28,6 +28,7 @@ use App\Utils\Tanggal;
 use DNS1D;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use PDF;
 use Session;
@@ -39,14 +40,15 @@ class SimpananController extends Controller
     {
         if (request()->ajax()) {
             $lokasi = Session::get('lokasi');
-            $tableAnggota = 'anggota_' . $lokasi;
+            $tableSimpanan = 'simpanan_anggota_' . $lokasi;
+            $tableAnggota  = 'anggota_' . $lokasi;
 
-            $simpanan = Simpanan::query()
-                ->leftJoin($tableAnggota, $tableAnggota . '.id', '=', 'simpanan.nia')
-                ->leftJoin('jenis_jasa as js', 'js.id', '=', 'simpanan.jenis_simpanan')
+            $simpanan = DB::table($tableSimpanan . ' as simpanan')
+                ->leftJoin($tableAnggota . ' as anggota', 'anggota.id', '=', 'simpanan.nia')
+                ->leftJoin('jenis_simpanan as js', 'js.id', '=', 'simpanan.jenis_simpanan')
                 ->select(
                     'simpanan.*',
-                    $tableAnggota . '.namadepan as nama_anggota',
+                    'anggota.namadepan as nama_anggota',
                     'js.nama_js as jenis_simpanan_nama'
                 );
 
@@ -78,10 +80,10 @@ class SimpananController extends Controller
                     $query->orderBy('simpanan.nomor_rekening', $order);
                 })
                 ->orderColumn('nama_anggota', function ($query, $order) {
-                    $query->orderBy('simpanan.nia', $order);
+                    $query->orderBy('anggota.namadepan', $order);
                 })
                 ->orderColumn('jenis_simpanan', function ($query, $order) {
-                    $query->orderBy('simpanan.jenis_simpanan', $order);
+                    $query->orderBy('js.nama_js', $order);
                 })
                 ->orderColumn('jumlah', function ($query, $order) {
                     $query->orderBy('simpanan.jumlah', $order);
@@ -92,8 +94,8 @@ class SimpananController extends Controller
                 ->orderColumn('status', function ($query, $order) {
                     $query->orderBy('simpanan.status', $order);
                 })
-                ->filterColumn('nama_anggota', function ($query, $keyword) use ($tableAnggota) {
-                    $query->where($tableAnggota . '.namadepan', 'like', "%{$keyword}%");
+                ->filterColumn('nama_anggota', function ($query, $keyword) {
+                    $query->where('anggota.namadepan', 'like', "%{$keyword}%");
                 })
                 ->filterColumn('jenis_simpanan', function ($query, $keyword) {
                     $query->where('js.nama_js', 'like', "%{$keyword}%");
