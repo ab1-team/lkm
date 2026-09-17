@@ -13,7 +13,7 @@
         display: flex;
         align-items: flex-start;
         gap: 14px;
-        background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+        background: #fff8e1;
         color: #664d03;
         border: 1px solid #ffe69c;
         border-left: 5px solid #dc3545;
@@ -82,6 +82,102 @@
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+    @endif
+
+    @if (isset($update_fitur_unread_count) && $update_fitur_unread_count > 0)
+    <style>
+        #updateFiturAlert {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: #fff3cd;
+            color: #664d03;
+            border: 1px solid #ffe69c;
+            border-left: 5px solid #ffc107;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(255, 193, 7, 0.08);
+        }
+
+        #updateFiturAlert .alert-icon {
+            flex-shrink: 0;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffc107;
+            color: #664d03;
+            border-radius: 50%;
+            font-size: 16px;
+        }
+
+        #updateFiturAlert .alert-body {
+            flex: 1;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        #updateFiturAlert strong {
+            color: #664d03;
+            font-weight: 700;
+        }
+
+        #updateFiturAlert a.alert-link {
+            color: #997404;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px solid #997404;
+            transition: opacity 0.15s ease;
+        }
+
+        #updateFiturAlert a.alert-link:hover {
+            opacity: 0.7;
+        }
+
+        #updateFiturAlert .btn-close {
+            filter: none;
+            opacity: 0.5;
+        }
+
+        #updateFiturAlert .btn-close:hover {
+            opacity: 0.9;
+        }
+    </style>
+    <div class="alert alert-dismissible fade show" role="alert" id="updateFiturAlert">
+        <div class="alert-icon">
+            <i class="fa fa-bullhorn"></i>
+        </div>
+        <div class="alert-body">
+            <strong>Update Fitur!</strong>
+            @if ($update_fitur_unread_count === 1 && $update_fitur_terbaru)
+                Terdapat <strong>1</strong> pembaruan fitur terbaru:
+                <strong>{{ $update_fitur_terbaru->judul }}</strong>.
+            @else
+                Terdapat <strong>{{ $update_fitur_unread_count }}</strong> pembaruan fitur terbaru yang belum Anda lihat.
+            @endif
+            <a href="{{ route('notif.timeline') }}" class="alert-link">Lihat semua update fitur</a>.
+        </div>
+        <button type="button" class="btn-close" id="btn-tutup-update-fitur" aria-label="Tandai sudah dibaca dan tutup"></button>
+    </div>
+    <script>
+        document.getElementById('btn-tutup-update-fitur')?.addEventListener('click', function () {
+            const alertEl = document.getElementById('updateFiturAlert');
+            if (!alertEl) return;
+            fetch('/notifikasi/tandai-dibaca', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+            }).then(() => {
+                alertEl.classList.remove('show');
+                alertEl.style.display = 'none';
+            }).catch(() => {
+                alertEl.classList.remove('show');
+                alertEl.style.display = 'none';
+            });
+        });
+    </script>
     @endif
 
     <!-- Trigger Button (Hidden) -->

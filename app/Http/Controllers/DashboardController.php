@@ -16,6 +16,7 @@ use App\Models\RencanaAngsuran;
 use App\Models\Saldo;
 use App\Models\Transaksi;
 use App\Models\JenisProdukPinjaman;
+use App\Models\UpdateFitur;
 use Illuminate\Support\Facades\Schema;
 use App\Utils\Keuangan;
 use App\Utils\Tanggal;
@@ -184,6 +185,16 @@ class DashboardController extends Controller
 
         $wa = \App\Models\Whatsapp::where('lokasi', Session::get('lokasi'))->first();
         $data['wa_instance_name'] = $wa->instance_name ?? null;
+
+        $updateFiturItems = UpdateFitur::dalamMasaNotif()->terbaruDulu()->get();
+        $cookieName = config('update_fitur.cookie_name');
+        $readAtCookie = request()->cookie($cookieName);
+        $readAt = $readAtCookie ? Carbon::parse($readAtCookie) : null;
+
+        $data['update_fitur_unread_count'] = $readAt
+            ? $updateFiturItems->where('tanggal', '>', $readAt)->count()
+            : $updateFiturItems->count();
+        $data['update_fitur_terbaru'] = $updateFiturItems->first();
 
         $data['title'] = "Dashboard";
         $data['nama_lkm'] = $kec->nama_kec;
