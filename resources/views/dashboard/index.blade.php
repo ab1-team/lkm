@@ -136,12 +136,30 @@
         }
 
         #updateFiturAlert .btn-close {
+            background: transparent;
             filter: none;
-            opacity: 0.5;
+            opacity: 1;
+            color: #052c65;
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1;
+            text-shadow: none;
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #updateFiturAlert .btn-close::before {
+            content: "\00d7";
+            font-size: 1.5rem;
+            line-height: 1;
+            color: #052c65;
         }
 
         #updateFiturAlert .btn-close:hover {
-            opacity: 0.9;
+            opacity: 0.7;
         }
     </style>
     <div class="alert alert-dismissible fade show" role="alert" id="updateFiturAlert">
