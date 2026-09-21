@@ -397,6 +397,32 @@ class PinjamanIndividuController extends Controller
             return response()->json($validate->errors(), Response::HTTP_MOVED_PERMANENTLY);
         }
 
+        $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
+        if ($kec && (int) ($kec->pembatasan_kk ?? 1) === 2) {
+            $kk = (string) ($ang->kk ?? '');
+            if (strlen($kk) === 16) {
+                $anggotaLainDenganKKSama = DB::table('anggota_'.Session::get('lokasi'))
+                    ->where('kk', $kk)
+                    ->where('id', '!=', $ang->id)
+                    ->pluck('id');
+
+                if ($anggotaLainDenganKKSama->isNotEmpty()) {
+                    $exists = PinjamanIndividu::whereIn('nia', $anggotaLainDenganKKSama)
+                        ->whereIn('status', ['P', 'V', 'W', 'A'])
+                        ->where('jenis_pinjaman', 'I')
+                        ->exists();
+
+                    if ($exists) {
+                        return response()->json([
+                            'success' => false,
+                            'msg' => 'Nomor KK '.$kk.' sudah pernah mengajukan pinjaman di Lembaga ini. KK tidak boleh lebih dari satu.',
+                            'errors' => ['pembatasan_kk' => ['Nomor KK sudah terdaftar sebagai peminjam aktif.']],
+                        ], Response::HTTP_ACCEPTED);
+                    }
+                }
+            }
+        }
+
         $jaminan = [];
         foreach ($request->data_jaminan as $key => $val) {
             $val = (Keuangan::startWith($key, 'nilai')) ? str_replace(',', '', str_replace('.00', '', $val)) : $val;

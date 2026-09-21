@@ -198,7 +198,7 @@ class AnggotaController extends Controller
             'status_pernikahan' => 'required',
             'alamat' => 'required',
             'domisi' => 'required',
-            'no_kk' => 'required',
+            'no_kk' => 'required|max:16',
             'jenis_usaha' => 'required',
             'nik_penjamin' => 'required|max:16',
             'penjamin' => 'required',
@@ -209,7 +209,7 @@ class AnggotaController extends Controller
 
         if (strlen($request->no_kk) >= 16) {
             if ($kec->hak_kredit == 1) {
-                $rules['no_kk'] = 'required|unique:anggota_' . Session::get('lokasi') . ',kk';
+                $rules['no_kk'] = 'required|max:16';
             }
         }
 
@@ -332,7 +332,7 @@ class AnggotaController extends Controller
             'status_pernikahan' => 'required',
             'alamat' => 'required',
             'domisi' => 'required',
-            'no_kk' => 'required',
+            'no_kk' => 'required|max:16',
             'jenis_usaha' => 'required',
             'nik_penjamin' => 'required|max:16',
             'penjamin' => 'required',
@@ -346,10 +346,7 @@ class AnggotaController extends Controller
         }
 
         if (strlen($request->no_kk) >= 16) {
-            $rules['no_kk'] = 'required';
-            if ($request->no_kk != $penduduk->kk) {
-                $rules['no_kk'] = 'required|unique:anggota_' . Session::get('lokasi') . ',kk';
-            }
+            $rules['no_kk'] = 'required|max:16';
         }
 
         $validate = Validator::make($data, $rules);

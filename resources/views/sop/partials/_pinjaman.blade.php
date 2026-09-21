@@ -139,6 +139,20 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="position-relative mb-3">
+                <label class="form-label" for="pembatasan_kk">Pembatasan KK</label><br>
+                <input type="radio" id="pembatasan_kk" name="pembatasan_kk" value="1"
+                    {{ ($kec->pembatasan_kk ?? 0) == 1 ? 'checked' : '' }}>
+                <label> Boleh Lebih dari Satu (Tidak ada pembatasan)</label><br>
+                <input type="radio" id="pembatasan_kk" name="pembatasan_kk" value="2"
+                    {{ ($kec->pembatasan_kk ?? 0) == 2 ? 'checked' : '' }}>
+                <label> Tidak Boleh Lebih dari Satu (KK hanya boleh terdaftar 1x)</label><br><br>
+                <small class="text-muted">Jika pembatasan diaktifkan, saat registrasi pinjaman akan dicek apakah KK sudah pernah terdaftar di kecamatan ini.</small>
+            </div>
+        </div>
+    </div>
 </form>
 
 <div class="d-flex justify-content-end">

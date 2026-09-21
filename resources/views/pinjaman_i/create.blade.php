@@ -37,12 +37,22 @@
                 url: form.attr('action'),
                 data: form.serialize(),
                 success: function(result) {
+                    if (result.success === false) {
+                        Swal.fire('Peringatan', result.msg || 'Terjadi kesalahan', 'warning')
+                        return
+                    }
+
                     Swal.fire('Berhasil', result.msg, 'success').then(() => {
                         window.location.href = '/detail_i/' + result.id
                     })
                 },
                 error: function(result) {
                     const respons = result.responseJSON;
+
+                    if (respons && respons.msg && (respons.errors || []).length === 0 && respons.success === false) {
+                        Swal.fire('Peringatan', respons.msg, 'warning')
+                        return
+                    }
 
                     Swal.fire('Error', 'Cek kembali input yang anda masukkan', 'error')
                     $.map(respons, function(res, key) {

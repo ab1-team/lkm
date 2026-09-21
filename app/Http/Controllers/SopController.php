@@ -202,10 +202,18 @@ class SopController extends Controller
             'hit_fee_agen',
             'jdwl_angsuran',
             'hak_kredit',
+            'pembatasan_kk',
             'provisi',
             'def_admin',
             'def_depe'
         ]);
+
+        $pembatasanKk = $request->input('pembatasan_kk');
+        if ($pembatasanKk === null || $pembatasanKk === '') {
+            $pembatasanKk = 1;
+        }
+
+        $data['pembatasan_kk'] = (int) $pembatasanKk;
 
         $validate = Validator::make($data, [
             'default_jasa'      => 'required',
@@ -216,6 +224,7 @@ class SopController extends Controller
             'hit_fee_agen'      => 'required',
             'jdwl_angsuran'     => 'required',
             'hak_kredit'        => 'required',
+            'pembatasan_kk'     => 'required|in:1,2',
             'provisi'           => 'required',
             'def_admin'         => 'required',
             'def_depe'          => 'required'
@@ -236,6 +245,7 @@ class SopController extends Controller
             'hit_fee_agen' => $data['hit_fee_agen'],
             'jdwl_angsuran' => $data['jdwl_angsuran'],
             'hak_kredit'    => $data['hak_kredit'],
+            'pembatasan_kk' => $data['pembatasan_kk'],
             'provisi'       => $data['provisi'],
             'def_admin'     => $data['def_admin'],
             'def_depe'      => $data['def_depe'],

@@ -88,7 +88,7 @@
                 <div class="position-relative mb-3">
                     <label for="no_kk">No. KK</label>
                     <input autocomplete="off" type="text" name="no_kk" id="no_kk" class="form-control"
-                        value="{{ $data_anggota->kk }}">
+                        maxlength="16" value="{{ $data_anggota->kk }}">
                     <small class="text-danger" id="msg_no_kk"></small>
                 </div>
             </div>
