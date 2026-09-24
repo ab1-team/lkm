@@ -8,6 +8,7 @@ use App\Models\Kecamatan;
 use App\Models\PinjamanIndividu;
 use App\Models\Rekening;
 use App\Models\Saldo;
+use App\Models\SistemAngsuran;
 use App\Models\Transaksi;
 use DB;
 use Session;
@@ -643,7 +644,7 @@ class Keuangan
             $sum_kolek_total[$i] = 0;
         }
 
-        $pinjaman_anggota = PinjamanIndividu::where('sistem_angsuran', '!=', '12')
+        $pinjaman_anggota = PinjamanIndividu::whereNotIn('sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
             ->where(function ($query) use ($data) {
                 $query->where([
                     ['status', 'A'],

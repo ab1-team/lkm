@@ -29,6 +29,7 @@ use App\Models\PinjamanAnggota;
 use App\Models\Rekening;
 use App\Models\SubLaporan;
 use App\Models\Saldo;
+use App\Models\SistemAngsuran;
 use App\Models\Transaksi;
 use App\Models\User;
 use App\Utils\ArusKas as UtilsArusKas;
@@ -725,8 +726,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
                         ->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'A'],
@@ -816,8 +816,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
                         ->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'L'],
@@ -893,8 +892,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
                         ->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'A'],
@@ -1143,8 +1141,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
                         ->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'A'],
@@ -1238,8 +1235,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
                         ->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'A'],
@@ -1344,8 +1340,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
                         ->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'A'],
@@ -1785,8 +1780,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
                         ->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'A'],
@@ -1886,7 +1880,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')->where(function ($query) use ($data) {
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'A'],
                                 [$data['tb_pinj_i'] . '.tgl_cair', '<=', $data['tgl_kondisi']]
@@ -2499,7 +2493,7 @@ class PelaporanController extends Controller
                         ->withSum(['real' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinkel . '.sistem_angsuran', '!=', '12')->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')->where(function ($query) use ($data) {
+                        ->whereNotIn($tb_pinkel . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinkel'] . '.status', 'A'],
                                 [$data['tb_pinkel'] . '.tgl_cair', '<=', $data['tgl_kondisi']]
@@ -2576,7 +2570,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')->where(function ($query) use ($data) {
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'A'],
                                 [$data['tb_pinj_i'] . '.jenis_pinjaman', 'I'],
@@ -2743,7 +2737,7 @@ class PelaporanController extends Controller
                         ->join($tb_kel, $tb_kel . '.id', '=', $tb_pinj . '.id_kel')
                         ->join('desa', $tb_angg . '.desa', '=', 'desa.kd_desa')
                         ->join('sebutan_desa', 'sebutan_desa.id', '=', 'desa.sebutan')
-                        ->where($tb_pinj . '.sistem_angsuran', '!=', '12')->where($tb_pinj . '.sistem_angsuran', '!=', '25')->where(function ($query) use ($data) {
+                        ->whereNotIn($tb_pinj . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj'] . '.status', 'A'],
                                 [$data['tb_pinj'] . '.tgl_cair', '<=', $data['tgl_kondisi']]
@@ -2808,7 +2802,7 @@ class PelaporanController extends Controller
                         ->join($tb_ang, $tb_ang . '.id', '=', $tb_pinj . '.nia')
                         ->join('desa', $tb_ang . '.desa', '=', 'desa.kd_desa')
                         ->join('sebutan_desa', 'sebutan_desa.id', '=', 'desa.sebutan')
-                        ->where($tb_pinj . '.sistem_angsuran', '!=', '12')->where($tb_pinj . '.sistem_angsuran', '!=', '25')->where($tb_pinj . '.status', 'P')
+                        ->whereNotIn($tb_pinj . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where($tb_pinj . '.status', 'P')
                         ->orderBy($tb_ang . '.desa', 'ASC')
                         ->orderBy($tb_pinj . '.tgl_proposal', 'ASC');
                 },
@@ -2859,7 +2853,7 @@ class PelaporanController extends Controller
                         ->join($tb_ang, $tb_ang . '.id', '=', $tb_pinj . '.nia')
                         ->join('desa', $tb_ang . '.desa', '=', 'desa.kd_desa')
                         ->join('sebutan_desa', 'sebutan_desa.id', '=', 'desa.sebutan')
-                        ->where($tb_pinj . '.sistem_angsuran', '!=', '12')->where($tb_pinj . '.sistem_angsuran', '!=', '25')->where($tb_pinj . '.status', 'V')
+                        ->whereNotIn($tb_pinj . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where($tb_pinj . '.status', 'V')
                         ->orderBy($tb_ang . '.desa', 'ASC')
                         ->orderBy($tb_pinj . '.tgl_verifikasi', 'ASC');
                 },
@@ -2910,7 +2904,7 @@ class PelaporanController extends Controller
                         ->join($tb_ang, $tb_ang . '.id', '=', $tb_pinj . '.nia')
                         ->join('desa', $tb_ang . '.desa', '=', 'desa.kd_desa')
                         ->join('sebutan_desa', 'sebutan_desa.id', '=', 'desa.sebutan')
-                        ->where($tb_pinj . '.sistem_angsuran', '!=', '12')->where($tb_pinj . '.sistem_angsuran', '!=', '25')->where($tb_pinj . '.status', 'W')
+                        ->whereNotIn($tb_pinj . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where($tb_pinj . '.status', 'W')
                         ->orderBy($tb_ang . '.desa', 'ASC')
                         ->orderBy($tb_pinj . '.tgl_tunggu', 'ASC');
                 },
@@ -2970,7 +2964,7 @@ class PelaporanController extends Controller
                         ->withSum(['real' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinkel . '.sistem_angsuran', '!=', '12')->where($tb_pinkel . '.sistem_angsuran', '!=', '25')->where(function ($query) use ($data) {
+                        ->whereNotIn($tb_pinkel . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinkel'] . '.status', 'A'],
                                 [$data['tb_pinkel'] . '.tgl_cair', '<=', $data['tgl_kondisi']]
@@ -3072,7 +3066,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', ['12', '25'])
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
                         ->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'A'],
@@ -3177,7 +3171,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')->where(function ($query) use ($data) {
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'A'],
                                 [$data['tb_pinj_i'] . '.tgl_cair', '<=', $data['tgl_kondisi']]
@@ -3273,7 +3267,7 @@ class PelaporanController extends Controller
                         ->withSum(['real' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinkel . '.sistem_angsuran', '!=', '12')->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')->where(function ($query) use ($data) {
+                        ->whereNotIn($tb_pinkel . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinkel'] . '.status', 'A'],
                                 [$data['tb_pinkel'] . '.tgl_cair', '<=', $data['tgl_kondisi']]
@@ -3377,7 +3371,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')->where(function ($query) use ($data) {
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'A'],
                                 [$data['tb_pinj_i'] . '.jenis_pinjaman', 'I'],
@@ -3484,7 +3478,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')->where(function ($query) use ($data) {
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'A'],
                                 [$data['tb_pinj_i'] . '.tgl_cair', '<=', $data['tgl_kondisi']]
@@ -3578,7 +3572,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')->where(function ($query) use ($data) {
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'A'],
                                 [$data['tb_pinj_i'] . '.jenis_pinjaman', 'I'],
@@ -3681,7 +3675,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')->where(function ($query) use ($data) {
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'A'],
                                 [$data['tb_pinj_i'] . '.tgl_cair', '<=', $data['tgl_kondisi']]
@@ -3781,7 +3775,7 @@ class PelaporanController extends Controller
                         ->join($tb_angg, $tb_angg . '.id', '=', $tb_pinj_i . '.nia')
                         ->join('desa', $tb_angg . '.desa', '=', 'desa.kd_desa')
                         ->join('sebutan_desa', 'sebutan_desa.id', '=', 'desa.sebutan')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
                         ->where(function ($query) use ($data) {
                             $query->where($data['tb_pinj_i'] . '.tgl_cair', 'LIKE', $data['tgl_cair'] . '%')
                                 ->where(function ($query) use ($data) {
@@ -3855,7 +3849,7 @@ class PelaporanController extends Controller
 
                     // Pre-compute jenis_pp mana saja yang punya pinkel sistem mingguan (12/25) di lokasi ini
                     $mingguan_jpp_ids = \DB::table($tb_pinkel)
-                        ->whereIn('sistem_angsuran', ['12', '25'])
+                        ->whereIn('sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
                         ->distinct()
                         ->pluck('jenis_pp')
                         ->toArray();
@@ -3881,7 +3875,7 @@ class PelaporanController extends Controller
                                 $q->whereIn($tb_pinkel . '.jenis_pp', $mingguan_jpp_ids)
                                     ->orWhereNotIn($tb_pinkel . '.sistem_angsuran', ['12', '25']);
                             } else {
-                                $q->whereNotIn($tb_pinkel . '.sistem_angsuran', ['12', '25']);
+                                $q->whereNotIn($tb_pinkel . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'));
                             }
                         })
                         ->where(function ($query) use ($data) {
@@ -3996,7 +3990,7 @@ class PelaporanController extends Controller
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->where($tb_pinj . '.sistem_angsuran', '!=', '12')->where($tb_pinj . '.sistem_angsuran', '!=', '25')->where(function ($query) use ($data) {
+                        ->whereNotIn($tb_pinj . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj'] . '.status', 'A'],
                                 [$data['tb_pinj'] . '.tgl_cair', '<=', $data['tgl_kondisi']]
@@ -4255,10 +4249,9 @@ class PelaporanController extends Controller
                 $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
             }], 'realisasi_jasa')
             ->where([
-                [$tb_pinkel . '.sistem_angsuran', '!=', '12'],
-                [$tb_pinkel . '.sistem_angsuran', '!=', '25'],
                 [$tb_pinkel . '.status', 'A']
             ])
+            ->whereNotIn($tb_pinkel . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
             ->whereRaw('(TIMESTAMPDIFF(MONTH, DATE_ADD(' . $tb_pinkel . '.tgl_cair, INTERVAL ' . $tb_pinkel . '.jangka MONTH), CURRENT_DATE)) BETWEEN -3 AND 0')
             ->with([
                 'rencana1' => function ($query) use ($data, $tb_pinkel) {
@@ -5245,7 +5238,7 @@ class PelaporanController extends Controller
                     ->withSum(['real_i' => function ($query) use ($data) {
                         $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                     }], 'realisasi_jasa')
-                    ->whereIn($tb_pinj_i . '.sistem_angsuran', ['12', '25'])->where(function ($query) use ($data) {
+                    ->whereIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where(function ($query) use ($data) {
                         $query->where([
                             [$data['tb_pinj_i'] . '.status', 'A'],
                             [$data['tb_pinj_i'] . '.jenis_pinjaman', 'I'],
@@ -5351,7 +5344,7 @@ class PelaporanController extends Controller
                     ->withSum(['real_i' => function ($query) use ($data) {
                         $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                     }], 'realisasi_jasa')
-                    ->whereIn($tb_pinj_i . '.sistem_angsuran', ['12', '25'])->where(function ($query) use ($data) {
+                    ->whereIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))->where(function ($query) use ($data) {
                         $query->where([
                             [$data['tb_pinj_i'] . '.status', 'A'],
                             [$data['tb_pinj_i'] . '.jenis_pinjaman', 'I'],
@@ -5461,7 +5454,7 @@ class PelaporanController extends Controller
 
                     // Pre-compute jenis_pp mana saja yang punya pinkel sistem mingguan (12/25) di lokasi ini
                     $mingguan_jpp_ids = \DB::table($tb_pinkel)
-                        ->whereIn('sistem_angsuran', ['12', '25'])
+                        ->whereIn('sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
                         ->distinct()
                         ->pluck('jenis_pp')
                         ->toArray();
@@ -5481,7 +5474,7 @@ class PelaporanController extends Controller
                                 $q->whereIn($tb_pinkel . '.jenis_pp', $mingguan_jpp_ids)
                                     ->orWhereNotIn($tb_pinkel . '.sistem_angsuran', ['12', '25']);
                             } else {
-                                $q->whereNotIn($tb_pinkel . '.sistem_angsuran', ['12', '25']);
+                                $q->whereNotIn($tb_pinkel . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'));
                             }
                         })
                         ->where(function ($query) use ($data) {
@@ -5598,7 +5591,7 @@ class PelaporanController extends Controller
                         ->withSum(['real' => function ($q) use ($data) {
                             $q->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->whereIn($tb_pinkel . '.sistem_angsuran', ['12', '25'])
+                        ->whereIn($tb_pinkel . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
                         ->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinkel'] . '.status', 'A'],
@@ -5719,7 +5712,7 @@ class PelaporanController extends Controller
                         ->withSum(['real' => function ($q) use ($data) {
                             $q->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
                         }], 'realisasi_jasa')
-                        ->whereIn($tb_pinkel . '.sistem_angsuran', ['12', '25'])
+                        ->whereIn($tb_pinkel . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
                         ->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinkel'] . '.status', 'A'],
@@ -6205,8 +6198,7 @@ class PelaporanController extends Controller
                         ->join('agent', $tb_pinj_i . '.id_agent', '=', 'agent.id')
                         ->join('desa', $tb_ang . '.desa', '=', 'desa.kd_desa')
                         ->join('sebutan_desa', 'sebutan_desa.id', '=', 'desa.sebutan')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
                         ->where(function ($query) use ($data, $tb_pinj_i) {
                             $query->where([
                                 [$tb_pinj_i . '.status', 'A'],
@@ -6292,8 +6284,7 @@ class PelaporanController extends Controller
                         ->join('agent', $tb_pinj_i . '.id_agent', '=', 'agent.id')
                         ->join('desa', $tb_ang . '.desa', '=', 'desa.kd_desa')
                         ->join('sebutan_desa', 'sebutan_desa.id', '=', 'desa.sebutan')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '12')
-                        ->where($tb_pinj_i . '.sistem_angsuran', '!=', '25')
+                        ->whereNotIn($tb_pinj_i . '.sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
                         ->where(function ($query) use ($data) {
                             $query->where([
                                 [$data['tb_pinj_i'] . '.status', 'A'],
@@ -6567,8 +6558,7 @@ class PelaporanController extends Controller
         }
 
         $tb_pinj_i = 'pinjaman_anggota_' . $data['kec']->id;
-        $pinjaman_agg = PinjamanIndividu::where('sistem_angsuran', '!=', '12')
-            ->where('sistem_angsuran', '!=', '25')
+        $pinjaman_agg = PinjamanIndividu::whereNotIn('sistem_angsuran', SistemAngsuran::idListByJenis('harian'))
             ->where(function ($query) use ($data) {
                 $query->where([
                     ['status', 'A'],

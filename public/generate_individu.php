@@ -1,5 +1,6 @@
 <?php
 ini_set('display_errors', '1');
+require_once __DIR__ . '/../app/helpers.php';
 $koneksi = mysqli_connect('cpanel.siupk.net', 'siupk_global', 'siupk_global', 'siupk_dbm');
 
 if (isset($_GET['lokasi']) && isset($_GET['where'])) {
@@ -201,16 +202,19 @@ if (isset($_GET['lokasi']) && isset($_GET['where'])) {
                 $wapok = $alokasi - $sump;
             }
 
-            if ($pk['sistem_angsuran'] == 20) {
-                $satuanwapok = bulatkan(@($alokasi / ($jangka - 12)));
-                if ($ke > 12) {
-                    $wapok = $satuanwapok;
-                } else {
-                    $wapok = 0;
-                }
-                if ($ke == $jangka) {
-                    $sump = $wapok * ($ke / $sapokok - 13);
-                    $wapok = $alokasi - $sump;
+            if (sistem_angsuran_is_bulanan_ditunda($koneksi, $pk['sistem_angsuran'])) {
+                $tunda = (int) sistem_angsuran_field($koneksi, $pk['sistem_angsuran'], 'tunda_bulan');
+                if ($tunda > 0 && $jangka > $tunda) {
+                    $satuanwapok = bulatkan(@($alokasi / ($jangka - $tunda)));
+                    if ($ke > $tunda) {
+                        $wapok = $satuanwapok;
+                    } else {
+                        $wapok = 0;
+                    }
+                    if ($ke == $jangka) {
+                        $sump = $wapok * ($ke / $sapokok - ($tunda + 1));
+                        $wapok = $alokasi - $sump;
+                    }
                 }
             }
 

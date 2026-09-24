@@ -19,6 +19,7 @@ use App\Models\Supplier;
 use App\Models\Transaksi;
 use App\Models\User;
 use App\Utils\Keuangan;
+use App\Utils\HitungSistemAngsuran;
 use App\Utils\Pinjaman;
 use App\Utils\Tanggal;
 use DB;
@@ -293,7 +294,7 @@ class PinjamanIndividuController extends Controller
         ])->first();
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
         $jenis_jasa = JenisJasa::all();
-        $sistem_angsuran = SistemAngsuran::all();
+        $sistem_angsuran = SistemAngsuran::orderByUsage()->get();
         $agent = Agent::where('lokasi', Session::get('lokasi'))->get();
         $jenis_pp = JenisProdukPinjaman::where(function ($query) {
             $query->where('lokasi', '0')
@@ -504,7 +505,7 @@ class PinjamanIndividuController extends Controller
             'real_i.transaksi',
         ])->where('id', $perguliran_i->id)->first();
         $jenis_jasa = JenisJasa::all();
-        $sistem_angsuran = SistemAngsuran::all();
+        $sistem_angsuran = SistemAngsuran::orderByUsage()->get();
         $sumber_bayar = Rekening::where('kode_akun', 'LIKE', '1.1.01%')->orderBy('kode_akun', 'asc')->get();
         $debet = Rekening::where([
             ['lev1', '1'],
@@ -548,7 +549,7 @@ class PinjamanIndividuController extends Controller
     {
         $title = 'Detail Pinjaman anggota '.$perguliran_i->anggota->namadepan;
         $real = RealAngsuranI::where('loan_id', $perguliran_i->id)->orderBy('tgl_transaksi', 'DESC')->orderBy('id', 'DESC')->first();
-        $sistem_angsuran = SistemAngsuran::all();
+        $sistem_angsuran = SistemAngsuran::orderByUsage()->get();
 
         $editjaminan = [
             [
@@ -656,7 +657,7 @@ class PinjamanIndividuController extends Controller
     {
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
         $jenis_jasa = JenisJasa::all();
-        $sistem_angsuran = SistemAngsuran::all();
+        $sistem_angsuran = SistemAngsuran::orderByUsage()->get();
         $jenis_pp = JenisProdukPinjaman::where(function ($query) {
             $query->where('lokasi', '0')
                 ->where('kecuali', 'NOT LIKE', '%#'.session('lokasi').'#%');
@@ -3334,41 +3335,8 @@ class PinjamanIndividuController extends Controller
         $sistem_pokok = $pinj_i->sis_pokok->sistem;
         $sistem_jasa = $pinj_i->sis_jasa->sistem;
 
-        if ($sa_pokok == 11) {
-            $tempo_pokok = ($jangka) - 24 / $sistem_pokok;
-        } elseif ($sa_pokok == 14) {
-            $tempo_pokok = ($jangka) - 3 / $sistem_pokok;
-        } elseif ($sa_pokok == 15) {
-            $tempo_pokok = ($jangka) - 2 / $sistem_pokok;
-        } elseif ($sa_pokok == 20) {
-            $tempo_pokok = ($jangka) - 12 / $sistem_pokok;
-        } else {
-            $tempo_pokok = $jangka / $sistem_pokok;
-            $tempo_pokok = floor($tempo_pokok);
-            // if ($jangka % 2 == 0) {
-            // } else {
-            //     $tempo_pokok = ceil($tempo_pokok);
-            // }
-        }
-
-        // dd($tempo_pokok, $jangka, $sistem_pokok);
-
-        if ($sa_jasa == 11) {
-            $tempo_jasa = ($jangka) - 24 / $sistem_jasa;
-        } elseif ($sa_jasa == 14) {
-            $tempo_jasa = ($jangka) - 3 / $sistem_jasa;
-        } elseif ($sa_jasa == 15) {
-            $tempo_jasa = ($jangka) - 2 / $sistem_jasa;
-        } elseif ($sa_jasa == 20) {
-            $tempo_jasa = ($jangka) - 12 / $sistem_jasa;
-        } else {
-            $tempo_jasa = $jangka / $sistem_jasa;
-            $tempo_jasa = floor($tempo_jasa);
-            // if ($jangka % 2 == 0) {
-            // } else {
-            //     $tempo_jasa = ceil($tempo_jasa);
-            // }
-        }
+        $tempo_pokok = HitungSistemAngsuran::hitung($pinj_i->sis_pokok, $jangka)['tempo'];
+        $tempo_jasa  = HitungSistemAngsuran::hitung($pinj_i->sis_jasa, $jangka)['tempo'];
 
         $ra = [];
         $alokasi_pokok = $alokasi;
@@ -3495,11 +3463,13 @@ class PinjamanIndividuController extends Controller
 
             $target_pokok = 0;
             $target_jasa = 0;
+            $is_pokok_harian_i = $pinj_i->sis_pokok && $pinj_i->sis_pokok->isHarian();
+            $interval_hari_i = $is_pokok_harian_i ? ($pinj_i->sis_pokok->interval_hari ?: 7) : null;
             for ($x = $index; $x <= $jumlah_angsuran; $x++) {
                 $bulan = substr($tgl, 5, 2);
                 $tahun = substr($tgl, 0, 4);
-                if ($sa_pokok == 12 || $sa_pokok == 25) {
-                    $tambah = $x * 7;
+                if ($is_pokok_harian_i) {
+                    $tambah = $x * $interval_hari_i;
                     $penambahan = "+$tambah days";
                 } else {
                     $penambahan = "+$x month";
@@ -3542,11 +3512,13 @@ class PinjamanIndividuController extends Controller
         } else {
             $target_pokok = 0;
             $target_jasa = 0;
+            $is_pokok_harian_i = $pinj_i->sis_pokok && $pinj_i->sis_pokok->isHarian();
+            $interval_hari_i = $is_pokok_harian_i ? ($pinj_i->sis_pokok->interval_hari ?: 7) : null;
             for ($x = $index; $x <= $jumlah_angsuran; $x++) {
                 $bulan = substr($tgl, 5, 2);
                 $tahun = substr($tgl, 0, 4);
-                if ($sa_pokok == 12 || $sa_pokok == 25) {
-                    $tambah = $x * 7;
+                if ($is_pokok_harian_i) {
+                    $tambah = $x * $interval_hari_i;
                     $penambahan = "+$tambah days";
                 } else {
                     $penambahan = "+$x month";
@@ -3638,29 +3610,8 @@ class PinjamanIndividuController extends Controller
         $sistem_pokok = $pinj_i->sis_pokok->sistem;
         $sistem_jasa = $pinj_i->sis_jasa->sistem;
 
-        if ($sa_pokok == 11) {
-            $tempo_pokok = ($jangka) - 24 / $sistem_pokok;
-        } elseif ($sa_pokok == 14) {
-            $tempo_pokok = ($jangka) - 3 / $sistem_pokok;
-        } elseif ($sa_pokok == 15) {
-            $tempo_pokok = ($jangka) - 2 / $sistem_pokok;
-        } elseif ($sa_pokok == 20) {
-            $tempo_pokok = ($jangka) - 12 / $sistem_pokok;
-        } else {
-            $tempo_pokok = floor($jangka / $sistem_pokok);
-        }
-
-        if ($sa_jasa == 11) {
-            $tempo_jasa = ($jangka) - 24 / $sistem_jasa;
-        } elseif ($sa_jasa == 14) {
-            $tempo_jasa = ($jangka) - 3 / $sistem_jasa;
-        } elseif ($sa_jasa == 15) {
-            $tempo_jasa = ($jangka) - 2 / $sistem_jasa;
-        } elseif ($sa_jasa == 20) {
-            $tempo_jasa = ($jangka) - 12 / $sistem_jasa;
-        } else {
-            $tempo_jasa = floor($jangka / $sistem_jasa);
-        }
+        $tempo_pokok = HitungSistemAngsuran::hitung($pinj_i->sis_pokok, $jangka)['tempo'];
+        $tempo_jasa  = HitungSistemAngsuran::hitung($pinj_i->sis_jasa, $jangka)['tempo'];
 
         $ra = [];
 
@@ -3715,12 +3666,14 @@ class PinjamanIndividuController extends Controller
 
         $target_pokok = 0;
         $target_jasa = 0;
+        $is_pokok_harian_ra = $pinj_i->sis_pokok && $pinj_i->sis_pokok->isHarian();
+        $interval_hari_ra = $is_pokok_harian_ra ? ($pinj_i->sis_pokok->interval_hari ?: 7) : null;
         for ($x = 1; $x <= $jangka; $x++) {
             $bulan = substr($tgl, 5, 2);
             $tahun = substr($tgl, 0, 4);
 
-            if ($sa_pokok == 12 || $sa_pokok == 25) {
-                $tambah = $x * 7;
+            if ($is_pokok_harian_ra) {
+                $tambah = $x * $interval_hari_ra;
                 $penambahan = "+$tambah days";
             } else {
                 $penambahan = "+$x month";
@@ -3757,12 +3710,14 @@ class PinjamanIndividuController extends Controller
         } else {
             $target_pokok = 0;
             $target_jasa = 0;
+            $is_pokok_harian_ra2 = $pinj_i->sis_pokok && $pinj_i->sis_pokok->isHarian();
+            $interval_hari_ra2 = $is_pokok_harian_ra2 ? ($pinj_i->sis_pokok->interval_hari ?: 7) : null;
             for ($x = 1; $x <= $jangka; $x++) {
                 $bulan = substr($tgl, 5, 2);
                 $tahun = substr($tgl, 0, 4);
 
-                if ($sa_pokok == 12 || $sa_pokok == 25) {
-                    $tambah = $x * 7;
+                if ($is_pokok_harian_ra2) {
+                    $tambah = $x * $interval_hari_ra2;
                     $penambahan = "+$tambah days";
                 } else {
                     $penambahan = "+$x month";

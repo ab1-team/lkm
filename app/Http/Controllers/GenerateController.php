@@ -13,6 +13,7 @@ use App\Models\RencanaAngsuran;
 use App\Models\RencanaAngsuranI;
 use App\Models\Simpanan;
 use App\Models\Transaksi;
+use App\Utils\HitungSistemAngsuran;
 use App\Utils\Keuangan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -239,32 +240,9 @@ class GenerateController extends Controller
 
             $sistem_pokok = ($pinkel->sis_pokok) ? $pinkel->sis_pokok->sistem : '1';
             $sistem_jasa = ($pinkel->sis_jasa) ? $pinkel->sis_jasa->sistem : '1';
-            
-            if ($sa_pokok == 11) {
-                $tempo_pokok        = ($jangka) - 24 / $sistem_pokok;
-            } else if ($sa_pokok == 14) {
-                $tempo_pokok        = ($jangka) - 3 / $sistem_pokok;
-            } else if ($sa_pokok == 15) {
-                $tempo_pokok        = ($jangka) - 2 / $sistem_pokok;
-            } else if ($sa_pokok == 20) {
-                $tempo_pokok        = ($jangka) - 12 / $sistem_pokok;
-            } else {
-                $tempo_pokok        = $jangka / $sistem_pokok;
-                $tempo_pokok = floor($tempo_pokok);
-            }
 
-            if ($sa_jasa == 11) {
-                $tempo_jasa        = ($jangka) - 24 / $sistem_jasa;
-            } else if ($sa_jasa == 14) {
-                $tempo_jasa        = ($jangka) - 3 / $sistem_jasa;
-            } else if ($sa_jasa == 15) {
-                $tempo_jasa        = ($jangka) - 2 / $sistem_jasa;
-            } else if ($sa_jasa == 20) {
-                $tempo_jasa        = ($jangka) - 12 / $sistem_jasa;
-            } else {
-                $tempo_jasa        = $jangka / $sistem_jasa;
-                $tempo_jasa = floor($tempo_jasa);
-            }
+            $tempo_pokok = HitungSistemAngsuran::hitung($pinkel->sis_pokok, $jangka)['tempo'];
+            $tempo_jasa  = HitungSistemAngsuran::hitung($pinkel->sis_jasa, $jangka)['tempo'];
             $ra = [];
             $alokasi_pokok = $alokasi;
             $sum_angsuran_jasa = 0;
@@ -367,13 +345,14 @@ class GenerateController extends Controller
                 $rencana[] = $data_rencana[strtotime($tgl_cair)];
             }
 
+            $is_pokok_harian_g = $pinkel->sis_pokok && $pinkel->sis_pokok->isHarian();
+            $interval_hari_g = $is_pokok_harian_g ? ($pinkel->sis_pokok->interval_hari ?: 7) : null;
             for ($x = $index; $x <= $jumlah_angsuran; $x++) {
                 $bulan  = substr($tgl_cair, 5, 2);
                 $tahun  = substr($tgl_cair, 0, 4);
-                if ($sa_pokok == 12 || $sa_pokok == 25) {
-                    $interval_hari = 7;
-                    $tambah = $x * $interval_hari;
-                    
+                if ($is_pokok_harian_g) {
+                    $tambah = $x * $interval_hari_g;
+
                     $jatuh = Carbon::parse($tgl_cair)->addDays($tambah);
                     $jatuh_tempo = $jatuh->toDateString();
                 } else {

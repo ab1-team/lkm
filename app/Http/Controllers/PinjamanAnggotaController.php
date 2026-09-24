@@ -11,6 +11,7 @@ use App\Models\PinjamanKelompok;
 use App\Models\RencanaAngsuran;
 use App\Models\StatusPinjaman;
 use App\Models\Transaksi;
+use App\Utils\HitungSistemAngsuran;
 use App\Utils\Keuangan;
 use App\Utils\Tanggal;
 use Illuminate\Database\Eloquent\Builder;
@@ -531,6 +532,9 @@ public function cariAnggota()
         $sistem_pokok = $pinkel->sis_pokok->sistem;
         $sistem_jasa = $pinkel->sis_jasa->sistem;
 
+        $is_pokok_harian_pa = $pinkel->sis_pokok && $pinkel->sis_pokok->isHarian();
+        $interval_hari_pa = $is_pokok_harian_pa ? ($pinkel->sis_pokok->interval_hari ?: 7) : null;
+
         if ($jenis_jasa == '2' || $jenis_jasa == '3') {
             $kec = \App\Models\Kecamatan::where('id', Session::get('lokasi'))->first();
             $bunga_per_bulan = ($pros_jasa / 100) / $jangka;
@@ -571,8 +575,8 @@ public function cariAnggota()
             $target_jasa = 0;
 
             for ($i = 1; $i <= $jangka; $i++) {
-                if ($sa_pokok == 12) {
-                    $tambah = $i * 7;
+                if ($is_pokok_harian_pa) {
+                    $tambah = $i * $interval_hari_pa;
                     $penambahan = "+$tambah days";
                 } else {
                     $penambahan = "+$i month";
@@ -613,29 +617,10 @@ public function cariAnggota()
             return true;
         }
 
-        if ($sa_pokok == 11) {
-            $tempo_pokok = ($jangka) - 24 / $sistem_pokok;
-        } else if ($sa_pokok == 14) {
-            $tempo_pokok = ($jangka) - 3 / $sistem_pokok;
-        } else if ($sa_pokok == 15) {
-            $tempo_pokok = ($jangka) - 2 / $sistem_pokok;
-        } else if ($sa_pokok == 20) {
-            $tempo_pokok = ($jangka) - 12 / $sistem_pokok;
-        } else {
-            $tempo_pokok = floor($jangka / $sistem_pokok);
-        }
-
-        if ($sa_jasa == 11) {
-            $tempo_jasa = ($jangka) - 24 / $sistem_jasa;
-        } else if ($sa_jasa == 14) {
-            $tempo_jasa = ($jangka) - 3 / $sistem_jasa;
-        } else if ($sa_jasa == 15) {
-            $tempo_jasa = ($jangka) - 2 / $sistem_jasa;
-        } else if ($sa_jasa == 20) {
-            $tempo_jasa = ($jangka) - 12 / $sistem_jasa;
-        } else {
-            $tempo_jasa = floor($jangka / $sistem_jasa);
-        }
+        $sa_pokok_model_pa = $pinkel->sis_pokok;
+        $sa_jasa_model_pa  = $pinkel->sis_jasa;
+        $tempo_pokok = HitungSistemAngsuran::hitung($sa_pokok_model_pa, $jangka)['tempo'];
+        $tempo_jasa  = HitungSistemAngsuran::hitung($sa_jasa_model_pa, $jangka)['tempo'];
 
         $rencana_angs = RencanaAngsuran::where([
             ['loan_id', $id_pinj],
@@ -665,8 +650,8 @@ public function cariAnggota()
             $bulan  = substr($tgl, 5, 2);
             $tahun  = substr($tgl, 0, 4);
 
-            if ($sa_pokok == 12) {
-                $tambah = $i * 7;
+            if ($is_pokok_harian_pa) {
+                $tambah = $i * $interval_hari_pa;
                 $penambahan = "+$tambah days";
             } else {
                 $penambahan = "+$i month";

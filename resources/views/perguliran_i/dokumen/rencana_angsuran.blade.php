@@ -36,7 +36,7 @@
     $sum_jasa = 0;
 
     $jenisAngsuran = 'Bulan';
-    if (in_array($pinkel->sistem_angsuran, ['12', '25'])) {
+    if ($pinkel->sis_pokok && $pinkel->sis_pokok->isHarian()) {
         $jenisAngsuran = 'Minggu';
     }
 @endphp

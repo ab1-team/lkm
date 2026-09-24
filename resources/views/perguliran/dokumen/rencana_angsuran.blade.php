@@ -83,7 +83,7 @@
             <td width="90">Jangka waktu</td>
             <td width="5" align="center">:</td>
             <td>
-                <b>{{ $pinkel->jangka }} {{ ($pinkel->sistem_angsuran == 12 || $pinkel->sistem_angsuran == 25) ? 'Minggu' : 'Bulan' }}</b>
+                <b>{{ $pinkel->jangka }} {{ ($pinkel->sis_pokok && $pinkel->sis_pokok->isHarian()) ? 'Minggu' : 'Bulan' }}</b>
             </td>
         </tr>
         <tr>

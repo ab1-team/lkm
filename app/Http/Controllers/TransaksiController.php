@@ -20,6 +20,7 @@ use App\Models\Rekening;
 use App\Models\RencanaAngsuran;
 use App\Models\RencanaAngsuranI;
 use App\Models\Saldo;
+use App\Models\SistemAngsuran;
 use App\Models\Transaksi;
 use App\Models\User;
 use App\Utils\Inventaris as UtilsInventaris;
@@ -1716,7 +1717,8 @@ class TransaksiController extends Controller
     public function formAngsuran($id_pinkel)
     {
         $pinkel_raw = PinjamanKelompok::where('id', $id_pinkel)->first();
-        $tgl_target = in_array($pinkel_raw->sistem_angsuran, [12, 25])
+        $isHarian = in_array((int) $pinkel_raw->sistem_angsuran, SistemAngsuran::idListByJenis('harian'), true);
+        $tgl_target = $isHarian
             ? date('Y-m-d')
             : date('Y-m-t');
 
