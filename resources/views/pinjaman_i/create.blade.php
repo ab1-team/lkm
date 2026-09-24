@@ -32,36 +32,63 @@
             $('small').html('')
 
             var form = $('#FormRegisterProposal')
-            $.ajax({
-                type: 'post',
-                url: form.attr('action'),
-                data: form.serialize(),
-                success: function(result) {
-                    if (result.success === false) {
-                        Swal.fire('Peringatan', result.msg || 'Terjadi kesalahan', 'warning')
-                        return
+
+            var saPokok = $('#sistem_angsuran_pokok').val()
+            var saJasa = $('#sistem_angsuran_jasa').val()
+
+            function submitProposal() {
+                $.ajax({
+                    type: 'post',
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function(result) {
+                        if (result.success === false) {
+                            Swal.fire('Peringatan', result.msg || 'Terjadi kesalahan', 'warning')
+                            return
+                        }
+
+                        Swal.fire('Berhasil', result.msg, 'success').then(() => {
+                            window.location.href = '/detail_i/' + result.id
+                        })
+                    },
+                    error: function(result) {
+                        const respons = result.responseJSON;
+
+                        if (respons && respons.msg && (respons.errors || []).length === 0 && respons.success === false) {
+                            Swal.fire('Peringatan', respons.msg, 'warning')
+                            return
+                        }
+
+                        Swal.fire('Error', 'Cek kembali input yang anda masukkan', 'error')
+                        $.map(respons, function(res, key) {
+                            $('#' + key).parent('.input-group.input-group-static').addClass(
+                                'is-invalid')
+                            $('#msg_' + key).html(res)
+                        })
                     }
+                })
+            }
 
-                    Swal.fire('Berhasil', result.msg, 'success').then(() => {
-                        window.location.href = '/detail_i/' + result.id
-                    })
-                },
-                error: function(result) {
-                    const respons = result.responseJSON;
+            if (saPokok && saJasa && saPokok !== saJasa) {
+                var pok = $('#sistem_angsuran_pokok option:selected').text().trim()
+                var jas = $('#sistem_angsuran_jasa option:selected').text().trim()
+                Swal.fire({
+                    title: 'Sistem Angsuran Berbeda',
+                    html: 'Sistem angsuran pokok dan sistem angsuran jasa berbeda:<br><br>' +
+                        '<b>Pokok:</b> ' + pok + '<br>' +
+                        '<b>Jasa:</b> ' + jas + '<br><br>' +
+                        'Apakah anda yakin akan menyimpan seperti ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Simpan',
+                    cancelButtonText: 'Batal',
+                }).then((r) => {
+                    if (r.isConfirmed) submitProposal()
+                })
+                return
+            }
 
-                    if (respons && respons.msg && (respons.errors || []).length === 0 && respons.success === false) {
-                        Swal.fire('Peringatan', respons.msg, 'warning')
-                        return
-                    }
-
-                    Swal.fire('Error', 'Cek kembali input yang anda masukkan', 'error')
-                    $.map(respons, function(res, key) {
-                        $('#' + key).parent('.input-group.input-group-static').addClass(
-                            'is-invalid')
-                        $('#msg_' + key).html(res)
-                    })
-                }
-            })
+            submitProposal()
         })
 
         function formRegister(nia) {

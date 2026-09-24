@@ -32,26 +32,53 @@
             $('small').html('')
 
             var form = $('#FormRegisterProposal')
-            $.ajax({
-                type: 'post',
-                url: form.attr('action'),
-                data: form.serialize(),
-                success: function(result) {
-                    Swal.fire('Berhasil', result.msg, 'success').then(() => {
-                        window.location.href = '/detail/' + result.id
-                    })
-                },
-                error: function(result) {
-                    const respons = result.responseJSON;
 
-                    Swal.fire('Error', 'Cek kembali input yang anda masukkan', 'error')
-                    $.map(respons, function(res, key) {
-                        $('#' + key).parent('.input-group.input-group-static').addClass(
-                            'is-invalid')
-                        $('#msg_' + key).html(res)
-                    })
-                }
-            })
+            var saPokok = $('#sistem_angsuran_pokok').val()
+            var saJasa = $('#sistem_angsuran_jasa').val()
+
+            function submitProposal() {
+                $.ajax({
+                    type: 'post',
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function(result) {
+                        Swal.fire('Berhasil', result.msg, 'success').then(() => {
+                            window.location.href = '/detail/' + result.id
+                        })
+                    },
+                    error: function(result) {
+                        const respons = result.responseJSON;
+
+                        Swal.fire('Error', 'Cek kembali input yang anda masukkan', 'error')
+                        $.map(respons, function(res, key) {
+                            $('#' + key).parent('.input-group.input-group-static').addClass(
+                                'is-invalid')
+                            $('#msg_' + key).html(res)
+                        })
+                    }
+                })
+            }
+
+            if (saPokok && saJasa && saPokok !== saJasa) {
+                var pok = $('#sistem_angsuran_pokok option:selected').text().trim()
+                var jas = $('#sistem_angsuran_jasa option:selected').text().trim()
+                Swal.fire({
+                    title: 'Sistem Angsuran Berbeda',
+                    html: 'Sistem angsuran pokok dan sistem angsuran jasa berbeda:<br><br>' +
+                        '<b>Pokok:</b> ' + pok + '<br>' +
+                        '<b>Jasa:</b> ' + jas + '<br><br>' +
+                        'Apakah anda yakin akan menyimpan seperti ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Simpan',
+                    cancelButtonText: 'Batal',
+                }).then((r) => {
+                    if (r.isConfirmed) submitProposal()
+                })
+                return
+            }
+
+            submitProposal()
         })
 
         function formRegister(id_kel) {
