@@ -2202,7 +2202,7 @@ class TransaksiController extends Controller
         ])->orderBy('jatuh_tempo', 'DESC')->first();
         $data['ra_angsuran_ke'] = RencanaAngsuranI::where([
             ['loan_id', $data['real']->loan_id],
-            ['target_pokok', '>=', $data['real']->sum_pokok],
+            ['target_pokok', '<=', $data['real']->sum_pokok],
             ['angsuran_ke', '!=', '0'],
         ])->orderBy('target_pokok', 'ASC')->first();
         $data['pinkel'] = PinjamanIndividu::where('id', $data['real']->loan_id)->with([

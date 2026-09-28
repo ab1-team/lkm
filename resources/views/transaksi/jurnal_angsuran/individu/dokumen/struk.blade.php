@@ -162,8 +162,13 @@
             <td width="15%">Loan ID</td>
             <td width="11%"><strong>: {{ $pinkel->id }} - {{ $pinkel->jpp->nama_jpp }}</strong></td>
             <td colspan="2">
-                <div align="right">Angsuran ke: {{ ($ra_angsuran_ke && $ra_angsuran_ke->angsuran_ke > 0) ? $ra_angsuran_ke->angsuran_ke : 1 }}
-                    dari {{ $jum_angsuran }}</div>
+                <div align="right">Angsuran ke:
+                    @php
+                        $_ak = $ra_angsuran_ke ? (int) $ra_angsuran_ke->angsuran_ke : 0;
+                        if ($_ak <= 0) { $_ak = 1; }
+                    @endphp
+                    {{ $_ak }} dari {{ $jum_angsuran }}
+                </div>
             </td>
             <th class="bottom top">STATUS PINJAMAN</th>
             <th class="bottom top">POKOK</th>
