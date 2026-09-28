@@ -2204,7 +2204,7 @@ class TransaksiController extends Controller
             ['loan_id', $data['real']->loan_id],
             ['target_pokok', '<=', $data['real']->sum_pokok],
             ['angsuran_ke', '!=', '0'],
-        ])->orderBy('target_pokok', 'ASC')->first();
+        ])->orderBy('target_pokok', 'DESC')->first();
         $data['pinkel'] = PinjamanIndividu::where('id', $data['real']->loan_id)->with([
             'anggota',
             'jpp',
