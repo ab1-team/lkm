@@ -444,13 +444,18 @@
         })
 
         $(document).on('change', '#harga_satuan,#jumlah', function(e) {
-            var harga = ($('#harga_satuan').val()) ? $('#harga_satuan').val() : 0
-            var jumlah = ($('#jumlah').val()) ? $('#jumlah').val() : 0
+            var hargaRaw = $('#harga_satuan').val() || '0'
+            var jumlahRaw = $('#jumlah').val() || '0'
 
-            harga = parseInt(harga.split(',').join('').split('.00').join(''))
+            var harga = parseInt(String(hargaRaw).split(',').join('').split('.00').join('')) || 0
+            var jumlah = parseInt(String(jumlahRaw).split(',').join('').split('.00').join('')) || 0
 
             var harga_perolehan = harga * jumlah
             $('#harga_perolehan').val(formatter.format(harga_perolehan))
+
+            if ($('#nominal').length) {
+                $('#nominal').val(formatter.format(harga_perolehan))
+            }
         })
 
         $(document).on('click', '#SimpanTransaksi', function(e) {
@@ -460,13 +465,22 @@
 
             var form = $('#FormTransaksi')
             var sumber_dana = $('#sumber_dana').val()
-            var nominalRaw = $('#nominal').val()
-            var nominal = parseInt(nominalRaw.split(',').join('').split('.00').join('')) || 0
+
+            var nominal = 0
+            if ($('#nominal').length && $('#nominal').val()) {
+                var nominalRaw = String($('#nominal').val())
+                nominal = parseInt(nominalRaw.split(',').join('').split('.00').join('')) || 0
+            } else if ($('#harga_satuan').length && $('#jumlah').length) {
+                var harga = parseInt(String($('#harga_satuan').val() || '0').split(',').join('').split('.00').join('')) || 0
+                var jumlah = parseInt(String($('#jumlah').val() || '0').split(',').join('').split('.00').join('')) || 0
+                nominal = harga * jumlah
+            }
 
             var cekSaldo = function(callback) {
                 var lev1 = sumber_dana.split('.')[0]
                 var skipAkun = ['1.2.02', '1.2.04', '1.1.04']
 
+                if (!sumber_dana) return callback(true)
                 if (lev1 != '1') return callback(true)
                 if (skipAkun.some(function(p) { return sumber_dana.indexOf(p) === 0 })) return callback(true)
                 if (nominal < 0) return callback(true)

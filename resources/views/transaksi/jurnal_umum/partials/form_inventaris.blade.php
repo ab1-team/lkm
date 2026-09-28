@@ -72,8 +72,21 @@
 </div>
 </div>
 
+<input type="hidden" name="nominal" id="nominal" value="0">
+
 <script>
     $("#harga_satuan").maskMoney({
         allowNegative: true
     });
+
+    function syncNominalInventaris() {
+        var harga = parseInt(String($('#harga_satuan').val() || '0').split(',').join('').split('.00').join('')) || 0;
+        var jumlah = parseInt(String($('#jumlah').val() || '0').split(',').join('').split('.00').join('')) || 0;
+        var total = harga * jumlah;
+        if ($('#nominal').length) {
+            $('#nominal').val(total);
+        }
+    }
+
+    $(document).on('change keyup', '#harga_satuan, #jumlah', syncNominalInventaris);
 </script>
