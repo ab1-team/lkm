@@ -2203,8 +2203,13 @@ class TransaksiController extends Controller
         $data['ra_angsuran_ke'] = RencanaAngsuranI::where([
             ['loan_id', $data['real']->loan_id],
             ['target_pokok', '<=', $data['real']->sum_pokok],
+            ['target_jasa', '<=', $data['real']->sum_jasa],
             ['angsuran_ke', '!=', '0'],
         ])->orderBy('target_pokok', 'DESC')->first();
+        $data['max_angsuran_ke'] = RencanaAngsuranI::where([
+            ['loan_id', $data['real']->loan_id],
+            ['angsuran_ke', '!=', '0'],
+        ])->orderByRaw('CAST(angsuran_ke AS UNSIGNED) DESC')->first();
         $data['pinkel'] = PinjamanIndividu::where('id', $data['real']->loan_id)->with([
             'anggota',
             'jpp',
@@ -2287,9 +2292,14 @@ class TransaksiController extends Controller
         ])->orderBy('jatuh_tempo', 'DESC')->first();
         $data['ra_angsuran_ke'] = RencanaAngsuranI::where([
             ['loan_id', $data['real']->loan_id],
-            ['target_pokok', '>=', $data['real']->sum_pokok],
+            ['target_pokok', '<=', $data['real']->sum_pokok],
+            ['target_jasa', '<=', $data['real']->sum_jasa],
             ['angsuran_ke', '!=', '0'],
-        ])->orderBy('target_pokok', 'ASC')->first();
+        ])->orderBy('target_pokok', 'DESC')->first();
+        $data['max_angsuran_ke'] = RencanaAngsuranI::where([
+            ['loan_id', $data['real']->loan_id],
+            ['angsuran_ke', '!=', '0'],
+        ])->orderByRaw('CAST(angsuran_ke AS UNSIGNED) DESC')->first();
         $data['pinkel'] = PinjamanIndividu::where('id', $data['real']->loan_id)->with([
             'anggota',
             'anggota.d',
@@ -2322,9 +2332,14 @@ class TransaksiController extends Controller
         ])->orderBy('jatuh_tempo', 'DESC')->first();
         $data['ra_angsuran_ke'] = RencanaAngsuranI::where([
             ['loan_id', $data['real']->loan_id],
-            ['target_pokok', '>=', $data['real']->sum_pokok],
+            ['target_pokok', '<=', $data['real']->sum_pokok],
+            ['target_jasa', '<=', $data['real']->sum_jasa],
             ['angsuran_ke', '!=', '0'],
-        ])->orderBy('target_pokok', 'ASC')->first();
+        ])->orderBy('target_pokok', 'DESC')->first();
+        $data['max_angsuran_ke'] = RencanaAngsuranI::where([
+            ['loan_id', $data['real']->loan_id],
+            ['angsuran_ke', '!=', '0'],
+        ])->orderByRaw('CAST(angsuran_ke AS UNSIGNED) DESC')->first();
         $data['pinkel'] = PinjamanIndividu::where('id', $data['real']->loan_id)->with([
             'anggota',
             'anggota.d',

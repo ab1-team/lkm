@@ -166,8 +166,10 @@
                     @php
                         $_ak = $ra_angsuran_ke ? (int) $ra_angsuran_ke->angsuran_ke : 0;
                         if ($_ak <= 0) { $_ak = 1; }
+                        $_max = $max_angsuran_ke ? (int) $max_angsuran_ke->angsuran_ke : 0;
+                        if ($_max <= 0) { $_max = 1; }
                     @endphp
-                    {{ $_ak }} dari {{ $jum_angsuran }}
+                    {{ $_ak }} dari {{ $_max }}
                 </div>
             </td>
             <th class="bottom top">STATUS PINJAMAN</th>
