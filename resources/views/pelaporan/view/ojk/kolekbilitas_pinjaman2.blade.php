@@ -333,7 +333,7 @@ $section = 0;
                         </tr>
 
                         <tr>
-                            <td class="t l b" align="center" colspan="3">
+                            <td class="t l b" align="center" colspan="2">
                                 @php
                                     $total_risiko = 0;
                                     foreach ($kolek_items as $idx => $item) {
