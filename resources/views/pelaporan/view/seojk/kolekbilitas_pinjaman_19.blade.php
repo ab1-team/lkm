@@ -71,11 +71,12 @@
         @foreach ($jenis_pp as $jpp)
             @foreach ($jpp->pinjaman_individu as $pinkel)
                 @php
+                    $desa_baru = empty($kd_desa_all) || end($kd_desa_all) !== $pinkel->kd_desa;
                     $kd_desa_all[] = $pinkel->kd_desa;
                     $desa = $pinkel->kd_desa;
                 @endphp
 
-                @if (array_count_values($kd_desa_all)[$pinkel->kd_desa] <= '1')
+                @if ($desa_baru)
                     @if ($section != $desa && count($kd_desa_all) > 1)
                         @php
                             $t_alokasi += $j_alokasi;

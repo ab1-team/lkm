@@ -67,11 +67,12 @@
          
             @foreach ($jpp->pinjaman_anggota as $pinkel)
                 @php
+                    $desa_baru = empty($kd_desa) || end($kd_desa) !== $pinkel->kd_desa;
                     $kd_desa[] = $pinkel->kd_desa;
                     $desa = $pinkel->kd_desa;
 
                 @endphp
-                @if (array_count_values($kd_desa)[$pinkel->kd_desa] <= '1')
+                @if ($desa_baru)
                     @if ($section != $desa && count($kd_desa) > 1)
                         @php
                             $j_pross = $j_saldo / $j_alokasi;

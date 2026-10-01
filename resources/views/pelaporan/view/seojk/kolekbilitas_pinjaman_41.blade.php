@@ -1,6 +1,19 @@
 @php
     use App\Utils\Tanggal;
     $section = 0;
+
+    $pinjaman_gabungan = collect();
+    foreach ($jenis_pp_i as $jpp_i) {
+        foreach ($jpp_i->pinjaman_individu as $pinkel) {
+            $pinkel->nama_jpp = $jpp_i->nama_jpp;
+            $pinjaman_gabungan->push($pinkel);
+        }
+    }
+    $pinjaman_gabungan = $pinjaman_gabungan->sortBy([
+        ['kd_desa', 'asc'],
+        ['id_agent', 'asc'],
+        ['tgl_cair', 'asc'],
+    ])->values();
 @endphp
 
 @extends('pelaporan.layout.base')
@@ -70,14 +83,14 @@
             @endforeach
         </tr>
 
-        @foreach ($jenis_pp_i as $jpp_i)
-            @foreach ($jpp_i->pinjaman_individu as $pinkel)
+        @foreach ($pinjaman_gabungan as $pinkel)
                 @php
+                    $desa_baru = empty($kd_desa_all) || end($kd_desa_all) !== $pinkel->kd_desa;
                     $kd_desa_all[] = $pinkel->kd_desa;
                     $desa = $pinkel->kd_desa;
                 @endphp
 
-                @if (array_count_values($kd_desa_all)[$pinkel->kd_desa] <= '1')
+                @if ($desa_baru)
                     @if ($section != $desa && count($kd_desa_all) > 1)
                         @php
                             $t_alokasi += $j_alokasi;
@@ -204,7 +217,7 @@
                 <tr>
                     <td class="t l b" align="center">{{ $nomor++ }}</td>
                     <td class="t l b" align="left">{{ $pinkel->namadepan }} - {{ $pinkel->id }}</td>
-                    <td class="t l b" align="left">{{ $jpp_i->nama_jpp }}</td>
+                    <td class="t l b" align="left">{{ $pinkel->nama_jpp }}</td>
                     <td class="t l b" align="right">{{ number_format($saldo_pokok) }}</td>
                     <td class="t l b" align="right">{{ number_format($tunggakan_pokok) }}</td>
                     <td class="t l b" align="right">{{ $kolek_hari ?? 0 }}</td>
@@ -224,7 +237,6 @@
                     }
                 @endphp
             @endforeach
-        @endforeach
 
         @if (count($kd_desa_all) > 0)
             @php
