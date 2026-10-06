@@ -171,13 +171,19 @@
                     @endphp
                     @foreach ($kec->saham as $sa)
                         @php
-                            $jrp_saham1 += $sa->rp_saham;
-                            $pros_saham1 += $sa->pros_saham;
+                            // Saham bisa tersimpan sebagai string berformat ("499.000.000", "0,5%"),
+                            // jadi bersihkan dulu sebelum dijumlahkan/diformat.
+                            $rp_saham = (float) preg_replace('/[^0-9,\.-]/', '', (string) $sa->rp_saham);
+                            $rp_saham = (float) str_replace(',', '', (string) $rp_saham);
+                            $pros_saham = (float) str_replace(',', '.', rtrim((string) $sa->pros_saham, '%'));
+
+                            $jrp_saham1 += $rp_saham;
+                            $pros_saham1 += $pros_saham;
                         @endphp
                         <tr>
                             <td class="style9 bottom align-center">{{ $sa->nama_saham }}&nbsp;</td>
                             <td class="style9 bottom align-center" width="33%">
-                                {{ number_format($sa->rp_saham) }}&nbsp;</td>
+                                {{ number_format($rp_saham) }}&nbsp;</td>
                             <td class="style9 bottom align-center" width="33%">{{ $sa->pros_saham }}&nbsp;</td>
                         </tr>
                     @endforeach
@@ -358,7 +364,7 @@
                 <td width="70" align="center"></td>
                 <td width="50" align="center"></td>
                 <td width="60" align="center">
-                    <strong><u>{{ strtoupper(trim($dir->namadepan . ' ' . $dir->namabelakang)) }}</u></strong>
+                    <strong><u>{{ strtoupper(trim(optional($dir)->namadepan . ' ' . optional($dir)->namabelakang)) }}</u></strong>
                 </td>
             </tr>
             <tr>
@@ -367,7 +373,9 @@
                 <td width="50" align="center"></td>
                 <td width="60" align="center">
                     <strong>
-                        {{ session('lokasi') == '362' && $dir->jabatan == 1 ? 'Direktur Utama' : $dir->j->nama_jabatan }}
+                        @if ($dir)
+                            {{ (int) $dir->jabatan === 1 ? 'Direktur Utama' : ($dir->j->nama_jabatan ?? '') }}
+                        @endif
                     </strong>
                 </td>
             </tr>

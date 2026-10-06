@@ -127,6 +127,28 @@ baris header, baris body, subtotal, baris total, dan tabel nested.
    view-nya masih mengelompokkan per desa. Menghapus orderBy-nya di sana
    memecahkan urutan tanpa manfaat.
 
+9. `$data['jabatan']` / `$data['level']` **tidak pernah diisi** oleh
+   `preview()` — dia menyimpan keduanya sebagai variabel lokal (`$jabatan`,
+   `$level`) lalu hanya menaruh `$data['dir']`. `PF()` pernah membaca
+   `$data['jabatan']` dan meledak `Undefined array key "jabatan"` di 31 lokasi.
+   Perhatikan selalu: kalau sebuah report method membaca key `$data` yang
+   tidak di-set `preview()`, itu bug — bukan data yang bermasalah.
+   Pengecualian per-lokasi seperti `if (lokasi == 362)` jangan dipindahkan ke
+   view sebagai penentu logic; pakai nilai sebenarnya (`jabatan == 1`).
+
+10. Data tabular tidak selalu numerik. `saham.rp_saham` bisa tersimpan sebagai
+    string berformat (`'499.000.000'`, `'0,5%'`) sehingga `number_format()`
+    melempar "A non-numeric value encountered". Bersihkan dulu:
+    `str_replace(',', '.', rtrim($v, '%'))`.
+
+11. Laporan yang dirender untuk satu lokasi saja bisa menyamar benar di
+    lokasi itu. `PF()` punya cabang khusus `362` sehingga error-nya tidak
+    muncul di sana. **Scan semua lokasi** saat memperbaiki laporan profil:
+
+    ```php
+    foreach (Kecamatan::all() as $kec) { /* invoke PF, catat yang gagal */ }
+    ```
+
 ## Verifikasi
 
 ```bash
@@ -176,9 +198,32 @@ tahun berjalan), bukan asumsi.
 Catatan:
 - `ojk/kolekbilitas_pinjaman.blade.php` **tidak dipakai** controller mana pun
   (view yang aktif adalah `kolekbilitas_pinjaman2` untuk KBP dan KBP2).
-- `DRP`/`DRPA` masih satu tabel per jenis produk;flatten per desa sudah
+- `DRP`/`DRPA` masih satu tabel per jenis produk; flatten per desa sudah
   terkonfirmasi lewat DB (77 baris utuh, 21 desa, urut `tgl_cair`+`id`).
 - Penghapusan `orderBy(...desa...)` sengaja hanya di 6 method OJK
   (`DRP`, `DRPL`, `DRPA`, `KBP2`, `pinjaman_diberi`, `piutang`,
   `piutang_gabungan`). Jangan ikut mengubah method lain tanpa flattening
   view-nya.
+
+## PF / Profil OJK
+
+Terpisah dari tiga aturan di atas, tapi sering ikut disentuh bersamaan.
+`profil_o.blade.php` + `PF()`. Semua **32 lokasi** sudah bisa dirender
+(sebelum diperbaiki: 31 gagal `Undefined array key "jabatan"`).
+
+Ketika memperbaiki PF atau `profil_o`, selalu scan semua lokasi, bukan cuma satu:
+
+```php
+foreach (App\Models\Kecamatan::all() as $kec) {
+    Session::put('lokasi', $kec->id);
+    // build $data seperti preview(), invoke PF(), catat exception-nya
+}
+```
+
+Tiga lokasi punya kondisi data khusus yang sudah ditangani:
+- **362 (Cerme)** — punya logika "Direktur Utama" sendiri. Hardcoded
+  `362` di view sudah diganti cukup cek `$dir->jabatan === 1` untuk semua lokasi.
+- **428 (Sukodadi)** — `saham.rp_saham` & `pros_saham` tersimpan sebagai string
+  berformat; view sudah membersihkannya sebelum `number_format()`.
+- **234 (Wonosari)** — tidak punya user jabatan=1 level=1 sama sekali.
+  Bagian tanda tangan dibiarkan kosong, bukan fatal.

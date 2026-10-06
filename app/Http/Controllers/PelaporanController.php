@@ -480,22 +480,16 @@ class PelaporanController extends Controller
             ->select('users.*')
             ->get();
 
-       $data['dir'] = User::where('users.lokasi', Session::get('lokasi'))
-            ->whereNotNull('users.jabatan')
-            ->where(function($query) use ($data) {
-                if (Session::get('lokasi') == 362) {
-                    $query->where('users.jabatan', 1)
-                          ->where('users.level', 1);
-                } else {
-                    $query->where('users.jabatan', $data['jabatan'])
-                          ->where('users.level', $data['level'] );
-                }
-            })
-            ->where('users.sejak', '<=', date('Y-m-t', strtotime($data['tahun'] . '-' . $data['bulan'] . '-01')))
-            ->join('jabatan', 'users.jabatan', '=', 'jabatan.id')
-            ->orderBy('jabatan.urutan', 'asc')
-            ->select('users.*')
-            ->first();
+        // Direktur sudah dicari preview() dengan jabatan=1, level=1 (lihat $dir).
+        // Jangan query ulang: $data['jabatan']/$data['level'] tidak pernah diisi.
+        if (empty($data['dir'])) {
+            $data['dir'] = User::where('users.lokasi', Session::get('lokasi'))
+                ->whereNotNull('users.jabatan')
+                ->where('users.jabatan', 1)
+                ->where('users.level', 1)
+                ->where('users.sejak', '<=', date('Y-m-t', strtotime($data['tahun'] . '-' . $data['bulan'] . '-01')))
+                ->first();
+        }
 
         $view = view('pelaporan.view.ojk.profil_o', $data)->render();
 
