@@ -307,7 +307,7 @@
                         @forelse ($pengurus as $u)
                             <tr>
                                 <td class="style9 bottom align-center">
-                                    {{ trim($u->namadepan . ' ' . $u->namabelakang) }}&nbsp;
+                                    {{ strtoupper(trim($u->namadepan . ' ' . $u->namabelakang)) }}&nbsp;
                                 </td>
                                 <td class="style9 bottom align-center">{{ $u->nik ?? '-' }}&nbsp;</td>
                                 <td class="style9 bottom align-center">{{ $u->j->nama_jabatan ?? '-' }}&nbsp;</td>
@@ -358,7 +358,7 @@
                 <td width="70" align="center"></td>
                 <td width="50" align="center"></td>
                 <td width="60" align="center">
-                    <strong><u>{{ $dir->namadepan }} {{ $dir->namabelakang }}</u></strong>
+                    <strong><u>{{ strtoupper(trim($dir->namadepan . ' ' . $dir->namabelakang)) }}</u></strong>
                 </td>
             </tr>
             <tr>

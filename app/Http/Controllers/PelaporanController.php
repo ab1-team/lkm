@@ -34,6 +34,7 @@ use App\Models\Transaksi;
 use App\Models\User;
 use App\Utils\ArusKas as UtilsArusKas;
 use App\Utils\Calk as UtilsCalk;
+use App\Utils\ExcelExporter;
 use App\Utils\Keuangan;
 use App\Utils\Tanggal;
 use DB;
@@ -41,6 +42,7 @@ use Dompdf\Dompdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use PDF;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Session;
 
 class PelaporanController extends Controller
@@ -342,10 +344,34 @@ class PelaporanController extends Controller
             $html = $result;
             if (ob_get_length()) ob_end_clean();
 
-            $filename = ($request->laporan ?? 'laporan')
+            $slug = $request->laporan;
+            if ($request->laporan == 20 || $request->laporan == 21) {
+                $slug = $request->sub_laporan;
+            }
+
+            $filename = $this->sanitizeFilename((string) $slug)
                 . '_' . $data['tahun']
-                . ($data['bulanan'] ? '_' . $data['bulan'] : '')
-                . '.xls';
+                . ($data['bulanan'] ? '_' . $data['bulan'] : '');
+
+            // Laporan OJK: native .xlsx agar kolom NIK/Loan ID tetap string.
+            // Jalur HTML -> .xls tidak dapat mengikat NIK 16 digit sebagai teks.
+            if ($this->isOjkReport($request->laporan)) {
+                $filename .= '.xlsx';
+
+                $spreadsheet = (new ExcelExporter)
+                    ->fromHtml($html)
+                    ->setShowGridlines(false)
+                    ->getSpreadsheet();
+
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
+                header('Content-Disposition: attachment;filename="' . $filename . '"');
+                header('Cache-Control: max-age=0');
+
+                (new Xlsx($spreadsheet))->save('php://output');
+                exit;
+            }
+
+            $filename .= '.xls';
 
             header('Content-Type: application/vnd.ms-excel; charset=utf-8');
             header('Content-Disposition: attachment;filename="' . $filename . '"');
@@ -355,6 +381,26 @@ class PelaporanController extends Controller
             exit;
         }
         return $result;
+    }
+
+    /**
+     * Laporan OJK (kecamatan = 20, kabupaten = 21) diekspor sebagai native xlsx.
+     */
+    private function isOjkReport($laporan): bool
+    {
+        return (string) $laporan === '20' || (string) $laporan === '21';
+    }
+
+    /**
+     * Bersihkan nama file dari karakter yang tidak aman / karakter proprietary Excel.
+     */
+    private function sanitizeFilename(string $name): string
+    {
+        $name = preg_replace('/[\x00-\x1F\x7F]/u', '', $name) ?? $name;
+        $name = str_replace(['\\', '/', ':', '*', '?', '"', '<', '>', '|'], '-', $name);
+        $name = preg_replace('/\s+/', '_', trim($name)) ?? $name;
+
+        return $name !== '' ? $name : 'laporan';
     }
 
     private function cover(array $data)
@@ -584,8 +630,8 @@ class PelaporanController extends Controller
                                 [$tb_simp . '.tgl_tutup', '>=', $data['tgl_kondisi']]
                             ]);
                         })
-                        ->orderBy($tb_angg . '.desa', 'ASC')
-                        ->orderBy($tb_simp . '.tgl_buka', 'ASC');
+                        ->orderBy($tb_simp . '.tgl_buka', 'ASC')
+                        ->orderBy($tb_simp . '.id', 'ASC');
                 },
                 'simpanan.realSimpananTerbesar' => function ($query) use ($data) {
                     $query->where('tgl_transaksi', '<=', $data['tgl_kondisi'])
@@ -750,7 +796,6 @@ class PelaporanController extends Controller
                             ]);
                         })
 
-                        ->orderBy($tb_angg . '.desa', 'ASC')
                         ->orderBy($tb_pinj_i . '.tgl_cair', 'ASC');
                 },
                 'pinjaman_individu.saldo' => function ($query) use ($data) {
@@ -824,7 +869,6 @@ class PelaporanController extends Controller
                                 [$data['tb_pinj_i'] . '.tgl_lunas', '<=', $data['tgl_kondisi']]
                             ]);
                         })
-                        ->orderBy($tb_angg . '.desa', 'ASC')
                         ->orderBy($tb_pinj_i . '.tgl_cair', 'ASC');
                 },
                 'pinjaman_individu.saldo' => function ($query) use ($data) {
@@ -916,7 +960,6 @@ class PelaporanController extends Controller
                             ]);
                         })
 
-                        ->orderBy($tb_angg . '.desa', 'ASC')
                         ->orderBy($tb_pinj_i . '.tgl_cair', 'ASC');
                 },
                 'pinjaman_individu.saldo' => function ($query) use ($data) {
@@ -967,7 +1010,9 @@ class PelaporanController extends Controller
                     ->join($tb_anggota, $tb_simpanan . '.nia', $tb_anggota . '.id')
                     ->where('tgl_buka', '<=', $data['tgl_kondisi'],)->where(function ($query) use ($data) {
                         $query->whereRaw('tgl_buka = tgl_tutup')->orwhere('tgl_tutup', '>', $data['tgl_kondisi']);
-                    });
+                    })
+                    ->orderBy($tb_simpanan . '.tgl_buka', 'ASC')
+                    ->orderBy($tb_simpanan . '.id', 'ASC');
             },
             'simpanan.trx' => function ($query) use ($data) {
                 $query->where('tgl_transaksi', '<=', $data['tgl_kondisi'])->where(function ($query) {
@@ -1020,7 +1065,9 @@ class PelaporanController extends Controller
                         ->join($tb_anggota, $tb_simpanan . '.nia', $tb_anggota . '.id')
                         ->where('tgl_buka', '<=', $data['tgl_kondisi'],)->where(function ($q2) use ($data) {
                             $q2->whereRaw('tgl_buka = tgl_tutup')->orwhere('tgl_tutup', '>', $data['tgl_kondisi']);
-                        });
+                        })
+                        ->orderBy($tb_simpanan . '.tgl_buka', 'ASC')
+                        ->orderBy($tb_simpanan . '.id', 'ASC');
                 }
             ]);
         }
@@ -1086,7 +1133,9 @@ class PelaporanController extends Controller
                         }], 'realisasi_pokok')
                         ->withSum(['real_i' => function ($query) use ($data) {
                             $query->where('tgl_transaksi', 'LIKE', '%' . $data['tahun'] . '-' . $data['bulan'] . '-%');
-                        }], 'realisasi_jasa'); // Add closing parenthesis and square bracket here
+                        }], 'realisasi_jasa')
+                        ->orderBy($tb_pinj_i . '.tgl_cair', 'ASC')
+                        ->orderBy($tb_pinj_i . '.id', 'ASC');
                 }
             ])->get();
 
@@ -1131,7 +1180,7 @@ class PelaporanController extends Controller
                     $tb_ang = 'anggota_' . $data['kec']->id;
                     $data['tb_pinj_i'] = $tb_pinj_i;
 
-                    $query->select($tb_pinj_i . '.*', $tb_ang . '.namadepan', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
+                    $query->select($tb_pinj_i . '.*', $tb_ang . '.namadepan', $tb_ang . '.nik', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
                         ->join($tb_ang, $tb_ang . '.id', '=', $tb_pinj_i . '.nia')
                         ->join('desa', $tb_ang . '.desa', '=', 'desa.kd_desa')
                         ->join('sebutan_desa', 'sebutan_desa.id', '=', 'desa.sebutan')
@@ -1224,7 +1273,7 @@ class PelaporanController extends Controller
                     $tb_angg = 'anggota_' . $data['kec']->id;
                     $data['tb_pinj_i'] = $tb_pinj_i;
 
-                    $query->select($tb_pinj_i . '.*', $tb_angg . '.namadepan', '.nik', 'agent.agent AS nama_agent', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
+                    $query->select($tb_pinj_i . '.*', $tb_angg . '.namadepan', $tb_angg . '.nik', 'agent.agent AS nama_agent', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
                         ->join($tb_angg, $tb_angg . '.id', '=', $tb_pinj_i . '.nia')
                         ->join('agent', $tb_pinj_i . '.id_agent', '=', 'agent.id')
                         ->join('desa', $tb_angg . '.desa', '=', 'desa.kd_desa')
@@ -1273,9 +1322,8 @@ class PelaporanController extends Controller
                                 [$data['tb_pinj_i'] . '.tgl_lunas', '>=', "$data[tahun]-01-01"]
                             ]);
                         })
-                        ->orderBy($tb_angg . '.desa', 'ASC')
-                        ->orderBy($tb_pinj_i . '.id_agent', 'ASC')
-                        ->orderBy($tb_pinj_i . '.tgl_cair', 'ASC');
+                        ->orderBy($tb_pinj_i . '.tgl_cair', 'ASC')
+                        ->orderBy($tb_pinj_i . '.id', 'ASC');
                 },
                 'pinjaman_individu.saldo' => function ($query) use ($data) {
                     $query->where('tgl_transaksi', '<=', $data['tgl_kondisi']);
@@ -1329,7 +1377,7 @@ class PelaporanController extends Controller
                     $tb_angg = 'anggota_' . $data['kec']->id;
                     $data['tb_pinj_i'] = $tb_pinj_i;
 
-                    $query->select($tb_pinj_i . '.*', $tb_angg . '.namadepan', 'agent.agent AS nama_agent', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
+                    $query->select($tb_pinj_i . '.*', $tb_angg . '.namadepan', $tb_angg . '.nik', 'agent.agent AS nama_agent', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
                         ->join($tb_angg, $tb_angg . '.id', '=', $tb_pinj_i . '.nia')
                         ->join('agent', $tb_pinj_i . '.id_agent', '=', 'agent.id')
                         ->join('desa', $tb_angg . '.desa', '=', 'desa.kd_desa')
@@ -1378,9 +1426,8 @@ class PelaporanController extends Controller
                                 [$data['tb_pinj_i'] . '.tgl_lunas', '>=', "$data[tahun]-01-01"]
                             ]);
                         })
-                        ->orderBy($tb_angg . '.desa', 'ASC')
-                        ->orderBy($tb_pinj_i . '.id_agent', 'ASC')
-                        ->orderBy($tb_pinj_i . '.tgl_cair', 'ASC');
+                        ->orderBy($tb_pinj_i . '.tgl_cair', 'ASC')
+                        ->orderBy($tb_pinj_i . '.id', 'ASC');
                 },
                 'pinjaman_individu.saldo' => function ($query) use ($data) {
                     $query->where('tgl_transaksi', '<=', $data['tgl_kondisi']);
@@ -1476,6 +1523,7 @@ class PelaporanController extends Controller
                     $tb_pinkel . '.*',
                     $tb_kel . '.nama_kelompok',
                     $tb_kel . '.ketua',
+                    $tb_kel . '.kd_kelompok',
                     'desa.nama_desa',
                     'desa.kd_desa',
                     'desa.kode_desa',
@@ -1487,8 +1535,8 @@ class PelaporanController extends Controller
                 ->where(function ($q) use ($statusFilter) {
                     $statusFilter($q);
                 })
-                ->orderBy($tb_kel . '.desa', 'ASC')
                 ->orderBy($tb_pinkel . '.tgl_cair', 'ASC')
+                ->orderBy($tb_pinkel . '.id', 'ASC')
                 ->get();
 
             $realSumPokok = collect();
@@ -1583,6 +1631,7 @@ class PelaporanController extends Controller
                 ->select(
                     $tb_pinj_i . '.*',
                     $tb_angg . '.namadepan',
+                    $tb_angg . '.nik',
                     'agent.agent AS nama_agent',
                     'desa.nama_desa',
                     'desa.kd_desa',
@@ -1596,9 +1645,8 @@ class PelaporanController extends Controller
                 ->where(function ($q) use ($statusFilterI) {
                     $statusFilterI($q);
                 })
-                ->orderBy($tb_angg . '.desa', 'ASC')
-                ->orderBy($tb_pinj_i . '.id_agent', 'ASC')
                 ->orderBy($tb_pinj_i . '.tgl_cair', 'ASC')
+                ->orderBy($tb_pinj_i . '.id', 'ASC')
                 ->get();
 
             $realSumPokokI = collect();
@@ -1769,7 +1817,7 @@ class PelaporanController extends Controller
                     $tb_angg = 'anggota_' . $data['kec']->id;
                     $data['tb_pinj_i'] = $tb_pinj_i;
 
-                    $query->select($tb_pinj_i . '.*', $tb_angg . '.namadepan', 'agent.agent AS nama_agent', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
+                    $query->select($tb_pinj_i . '.*', $tb_angg . '.namadepan', $tb_angg . '.nik', 'agent.agent AS nama_agent', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
                         ->join($tb_angg, $tb_angg . '.id', '=', $tb_pinj_i . '.nia')
                         ->join('agent', $tb_pinj_i . '.id_agent', '=', 'agent.id')
                         ->join('desa', $tb_angg . '.desa', '=', 'desa.kd_desa')
@@ -1818,9 +1866,8 @@ class PelaporanController extends Controller
                                 [$data['tb_pinj_i'] . '.tgl_lunas', '>=', "$data[tahun]-01-01"]
                             ]);
                         })
-                        ->orderBy($tb_angg . '.desa', 'ASC')
-                        ->orderBy($tb_pinj_i . '.id_agent', 'ASC')
-                        ->orderBy($tb_pinj_i . '.tgl_cair', 'ASC');
+                        ->orderBy($tb_pinj_i . '.tgl_cair', 'ASC')
+                        ->orderBy($tb_pinj_i . '.id', 'ASC');
                 },
                 'pinjaman_individu.saldo' => function ($query) use ($data) {
                     $query->where('tgl_transaksi', '<=', $data['tgl_kondisi']);
@@ -3055,7 +3102,7 @@ class PelaporanController extends Controller
                     $tb_angg = 'anggota_' . $data['kec']->id;
                     $data['tb_pinj_i'] = $tb_pinj_i;
 
-                    $query->select($tb_pinj_i . '.*', $tb_angg . '.namadepan', 'agent.agent AS nama_agent', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
+                    $query->select($tb_pinj_i . '.*', $tb_angg . '.namadepan', $tb_angg . '.nik', 'agent.agent AS nama_agent', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
                         ->join($tb_angg, $tb_angg . '.id', '=', $tb_pinj_i . '.nia')
                         ->join('agent', $tb_pinj_i . '.id_agent', '=', 'agent.id')
                         ->join('desa', $tb_angg . '.desa', '=', 'desa.kd_desa')
@@ -6193,7 +6240,7 @@ class PelaporanController extends Controller
                 'pinjaman_individu' => function ($query) use ($data, $tb_pinj_i) {
                     $tb_ang = 'anggota_' . $data['kec']->id;
 
-                    $query->select($tb_pinj_i . '.*', $tb_ang . '.namadepan', 'agent.agent AS nama_agent', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
+                    $query->select($tb_pinj_i . '.*', $tb_ang . '.namadepan', $tb_ang . '.nik', 'agent.agent AS nama_agent', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
                         ->join($tb_ang, $tb_ang . '.id', '=', $tb_pinj_i . '.nia')
                         ->join('agent', $tb_pinj_i . '.id_agent', '=', 'agent.id')
                         ->join('desa', $tb_ang . '.desa', '=', 'desa.kd_desa')
@@ -6279,7 +6326,7 @@ class PelaporanController extends Controller
                     $tb_ang = 'anggota_' . $data['kec']->id;
                     $data['tb_pinj_i'] = $tb_pinj_i;
 
-                    $query->select($tb_pinj_i . '.*', $tb_ang . '.namadepan', 'agent.agent AS nama_agent', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
+                    $query->select($tb_pinj_i . '.*', $tb_ang . '.namadepan', $tb_ang . '.nik', 'agent.agent AS nama_agent', 'desa.nama_desa', 'desa.kd_desa', 'desa.kode_desa', 'sebutan_desa.sebutan_desa')
                         ->join($tb_ang, $tb_ang . '.id', '=', $tb_pinj_i . '.nia')
                         ->join('agent', $tb_pinj_i . '.id_agent', '=', 'agent.id')
                         ->join('desa', $tb_ang . '.desa', '=', 'desa.kd_desa')

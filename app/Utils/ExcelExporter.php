@@ -16,6 +16,20 @@ class ExcelExporter
     private $sheet;
     private $currentRow = 1;
 
+    /**
+     * Header yang wajib dipaksa menjadi teks (bukan angka).
+     *
+     * NIK/KTP/Identitas 16 digit akan dibulatkan Excel menjadi 0 pada digit
+     * ke-16 karena batas presisi IEEE 754 hanya 15 digit signifikan.
+     * Loan ID & CIF/no. anggota juga harus dipertahankan persis.
+     */
+    private const TEXT_COLUMNS = [
+        'nik', 'no nik', 'no ktp', 'no identitas', 'nomor identitas', 'nomor ktp',
+        'loan id', 'loanid', 'public id', 'id pinjaman',
+        'cif', 'no anggota', 'nomor anggota', 'nomor rekening', 'no rekening',
+        'id debitur', 'kode anggota',
+    ];
+
     public function __construct()
     {
         $this->spreadsheet = new Spreadsheet();
@@ -544,6 +558,9 @@ class ExcelExporter
             $maxCols = max($maxCols, $colCount);
         }
 
+        // Kolom identitas (NIK/Loan ID/CIF) dipaksa jadi teks
+        $textColumns = $this->detectTextColumns($table);
+
         // Track merged cells
         $mergedCells = [];
         
@@ -570,7 +587,10 @@ class ExcelExporter
                 $dataType = $this->detectDataType($value, $cell);
                 
                 // Tulis ke cell
-                if ($dataType === DataType::TYPE_NUMERIC) {
+                if (in_array($colIndex, $textColumns, true)) {
+                    // Paksa teks: NIK 16 digit tidak boleh jadi float
+                    $this->bindText($colIndex, $this->currentRow, $value);
+                } elseif ($dataType === DataType::TYPE_NUMERIC) {
                     $isNegative = false;
                     $cleanValue = $value;
                     if (preg_match('/^\((.+)\)$/', $value, $m)) {
@@ -699,6 +719,97 @@ class ExcelExporter
                 $dimension->setAutoSize(false);
             }
         }
+    }
+
+    /**
+     * Cari indeks kolom yang header-nya kolom identitas (NIK/KTP/Loan ID/CIF).
+     *
+     * Header dibaca dari baris <th>. Karena tabel memakai colspan, posisi kolom
+     * dihitung dengan jalan berjalan (akumulasi colspan) sama seperti writeTable().
+     * <th> dengan colspan diperluas ke seluruh rentang kolomnya.
+     */
+    private function detectTextColumns(array $table): array
+    {
+        $textColumns = [];
+
+        foreach ($table['rows'] as $row) {
+            $hasHeaderCell = false;
+            foreach ($row['cells'] as $cell) {
+                if ($cell['tag'] === 'th') {
+                    $hasHeaderCell = true;
+                    break;
+                }
+            }
+            if (! $hasHeaderCell) {
+                continue;
+            }
+
+            $colIndex = 1;
+            foreach ($row['cells'] as $cell) {
+                $colspan = max(1, (int) $cell['colspan']);
+
+                if ($cell['tag'] === 'th') {
+                    $label = $this->normalizeHeader($cell['value']);
+                    if ($label !== '' && $this->isIdentityHeader($label)) {
+                        for ($i = 0; $i < $colspan; $i++) {
+                            $textColumns[] = $colIndex + $i;
+                        }
+                    }
+                }
+
+                $colIndex += $colspan;
+            }
+        }
+
+        return array_values(array_unique($textColumns));
+    }
+
+    /**
+     * Normalisasi teks header: lowercase, buang titik/garis, collapse whitespace.
+     */
+    private function normalizeHeader(string $value): string
+    {
+        $label = mb_strtolower(trim($value));
+        $label = str_replace(['.', '_'], ' ', $label);
+        $label = preg_replace('/\s+/', ' ', $label) ?? $label;
+
+        return trim($label);
+    }
+
+    /**
+     * Apakah header ini kolom identitas yang wajib dipaksa jadi teks?
+     */
+    private function isIdentityHeader(string $label): bool
+    {
+        if (in_array($label, self::TEXT_COLUMNS, true)) {
+            return true;
+        }
+
+        // Cocokkan juga kolom yang menempel pada label lain,
+        // mis. "NIK" pada "NIK" / "NIK PENJAMIN" / "NO. KTP PEMINJAM"
+        foreach (self::TEXT_COLUMNS as $needle) {
+            if (str_contains($label, $needle)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Tulis nilai sebagai teks murni.
+     *
+     * - NULL/kosong -> string kosong "" (tipe tetap string, bukan numeric).
+     * - Angka panjang (>= 16 digit, mis. NIK) tidak pernah lewat konversi float.
+     * - Number format dipaksa "@" (Text) supaya Excel tidak memformat ulang.
+     */
+    private function bindText(int $col, int $row, string $value): void
+    {
+        $value = trim($value);
+
+        $this->sheet->setCellValueExplicitByColumnAndRow($col, $row, $value, DataType::TYPE_STRING);
+        $this->sheet->getCellByColumnAndRow($col, $row)->getStyle()->getNumberFormat()
+            ->setFormatCode('@');
     }
 
     /**

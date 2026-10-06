@@ -1,7 +1,6 @@
 	@php
 	use App\Utils\Keuangan;
 	$keuangan = new Keuangan();
-	$section = 0;
 	$empty = false;
 	@endphp
 
@@ -90,27 +89,19 @@
 			$k_alokasi = 0;
 			$k_saldo = 0;
 
-			$kd_desa = [];
 	@endphp
 
-	@if ($nomor > 1)
-		<div class="break"></div>
-
-		@php
-		$empty = false;
-		@endphp
-	@endif
 	<table width="96%" border="0" align="center" cellpadding="3" cellspacing="0">
 		<tr>
-			<td height="20" colspan="10" class="bottom">
+			<td height="20" colspan="12" class="bottom">
 
 			</td>
-			<td height="20" colspan="2" class="bottom">
+			<td height="20" colspan="3" class="bottom">
 				<
 			</td>
 		</tr>
 		<tr>
-			<td height="20" colspan="12" class="style6 bottom align-center"><br>DAFTAR RINCIAN PINJAMAN YANG DIBERIKAN
+			<td height="20" colspan="15" class="style6 bottom align-center"><br>DAFTAR RINCIAN PINJAMAN YANG DIBERIKAN
 				(Lunas) <br><br></td>
 		</tr>
 	</table>
@@ -131,8 +122,11 @@
 	<table width="96%" border="0" align="center" cellpadding="3" cellspacing="0">
 		<tr align="center" height="30px" class="style9 ">
 			<th width="2%" rowspan="2" class="left bottom">No</th>
-			<th width="20%" rowspan="2" class="left bottom">Peminjam - Loan ID</a></th>
-			<th width="10%" rowspan="2" class="left bottom">Jenis Penggunaan</a></th>
+			<th width="7%" rowspan="2" class="left bottom">LOAN ID</a></th>
+			<th width="9%" rowspan="2" class="left bottom">NAMA DEBITUR</a></th>
+			<th width="6%" rowspan="2" class="left bottom">CIF / NO. ANGGOTA</a></th>
+			<th width="6%" rowspan="2" class="left bottom">NIK</a></th>
+			<th width="8%" rowspan="2" class="left bottom">Jenis Penggunaan</a></th>
 			<th width="7%" rowspan="2" class="left bottom">Periode Pembayaran</a></th>
 			<th colspan="2" class="left bottom">Jangka Waktu</a></th>
 			<th colspan="2" class="left bottom">Suku Bunga</a></th>
@@ -149,7 +143,7 @@
 
 		</tr>
 		<tr>
-			<th colspan="12" class="style27 top left right align-left">INDIVIDU</td>
+			<th colspan="15" class="style27 top left right align-left">INDIVIDU</td>
 		</tr>
 		@php
 			$sumalokasi = 0;
@@ -162,26 +156,10 @@
 
 		@endphp
 
-		@php
-			$kd_desa[] = $pinj_i->kd_desa;
-			$desa = $pinj_i->kd_desa;
-		@endphp
-		@if (array_count_values($kd_desa)[$pinj_i->kd_desa] <= '1' ) 
-			@if ($section !=$desa && count($kd_desa)> 1)
-
-
-			@endif
-			
-			<tr>
-				<td class="t l b" align="center"></td>
-				<td class="style27 left top right" colspan="11">{{$pinj_i->nama_desa}}</td>
-			</tr>
 			@php
+				$nomor++;
 				$kidp =$pinj_i['id'];
 
-				$nomor = 1;
-				$section = $pinj_i->kd_desa;
-				$nama_desa = $pinj_i->sebutan_desa . ' ' . $pinj_i->nama_desa;
 				$apros_jasa =number_format($pinj_i['pros_jasa'] - $pinj_i['jangka'],2);
 
 				$ktgl1 = $pinj_i['tgl_cair'];
@@ -189,12 +167,7 @@
 				$atgl2 = date('Y-m-d', strtotime($kpenambahan, strtotime($ktgl1)));
 				$apros_jasa =number_format($pinj_i['pros_jasa']/$pinj_i['jangka'],2);
 				$saldopinjaman =date($tgl."-".$kidp);
-
-
 			@endphp
-		@endif
-
-
 
 			@php
 				$jumlah_lunas += 1;
@@ -299,8 +272,11 @@
 							
 
 								<tr align="right" height="15px" class="style9">
-									<td class="left top" align="center">{{ $nomor++ }}</td>
-									<td class="left top" align="left">{{ $pinj_i->namadepan }}{{$pinj_i->id}}</td>
+									<td class="left top" align="center">{{ $nomor }}</td>
+									<td class="left top" align="left">{{ $pinj_i->id }}</td>
+									<td class="left top" align="left">{{ strtoupper($pinj_i->namadepan) }}</td>
+									<td class="left top" align="left">{{ $pinj_i->nia }}</td>
+									<td class="left top" align="left">{{ $pinj_i->nik }}</td>
 									<td class="left top" align="left">Pinjaman Modal Kerja</td>
 									<td class="left top" align="center">{{$pinj_i->angsuran_pokok->nama_sistem}}</td>
 									<td class="left top" align="center">{{ Tanggal::tglIndo($pinj_i->tgl_cair) }}</td>
@@ -315,23 +291,24 @@
 									@endif
 									<td class="left top">{{$kolek}}</td>
 									<td class="left top right" align="left">{{$keterangan}}</td>
+									<td class="left top"></td>
 								</tr>
 							@endforeach
 
-							@if (count($kd_desa) > 0)
+							@if ($jumlah_lunas > 0)
 
 
 
 								<tr class="style9">
-									<th colspan="8" class="left top" align="center" style="background:rgba(0,0,0, 0.3);">
+									<th colspan="10" class="left top" align="center" style="background:rgba(0,0,0, 0.3);">
 										TOTAL({{$jumlah_lunas}} Anggota)</th>
 									<th class="left top" align="right">{{number_format($k_alokasi)}}</th>
 									<th class="left top" align="right">{{number_format($k_saldo)}}</th>
-									<th colspan="2" class="left right top" align="right"></th>
+									<th colspan="3" class="left right top" align="right"></th>
 								</tr>
 
 								<tr>
-									<td class="style10 top" colspan="12"><b>Keterangan</b> : Data yang ditampilkan diatas
+									<td class="style10 top" colspan="15"><b>Keterangan</b> : Data yang ditampilkan diatas
 										merupakan Individu aktif pada tahun berjalan {{$tahun}}, untuk menampilkan data Individu
 										aktif tahun lalu dapat memilih mode tahun lalu {{$y12}},</td>
 								</tr>

@@ -2,7 +2,6 @@
     use App\Utils\Keuangan;
     use App\Utils\Tanggal;
     $keuangan = new Keuangan();
-    $section = 0;
     $empty = false;
 @endphp
 
@@ -107,7 +106,6 @@
         $j_saldo_pokok = 0;
         $t_saldo_pokok = 0;
         $t_alokasi = 0;
-        $kd_desa = [];
     @endphp
 
     @if ($nomor > 1)
@@ -148,8 +146,11 @@
     <table width="96%" border="0" align="center" cellpadding="3" cellspacing="0">
         <tr align="center" height="30px" class="style9">
             <th width="2%" rowspan="2" class="left bottom">No</th>
-            <th width="20%" rowspan="2" class="left bottom">Peminjam - Loan ID</th>
-            <th width="10%" rowspan="2" class="left bottom">Jenis Penggunaan</th>
+            <th width="7%" rowspan="2" class="left bottom">LOAN ID</th>
+            <th width="9%" rowspan="2" class="left bottom">NAMA DEBITUR</th>
+            <th width="6%" rowspan="2" class="left bottom">CIF / NO. ANGGOTA</th>
+            <th width="6%" rowspan="2" class="left bottom">NIK</th>
+            <th width="8%" rowspan="2" class="left bottom">Jenis Penggunaan</th>
             <th width="7%" rowspan="2" class="left bottom">Periode Pembayaran</th>
             <th colspan="2" class="left bottom">Jangka Waktu</th>
             <th colspan="2" class="left bottom">Suku Bunga</th>
@@ -168,7 +169,7 @@
             <th width="5%" class="left bottom right ">Nilai</th>
         </tr>
         <tr>
-            <th colspan="14" class="style27 top left right align-left">NASABAH PENERIMA INDIVIDU</th>
+            <th colspan="17" class="style27 top left right align-left">NASABAH PENERIMA INDIVIDU</th>
         </tr>
 
         @php
@@ -181,7 +182,7 @@
         @foreach ($jpp->pinjaman_individu as $pinj_i)
             @php
                 $jaminan = json_decode($pinj_i->jaminan, true);
-    
+
                 // Check if json_decode was successful and returned an array
                 if (is_array($jaminan) && isset($jaminan['jenis_jaminan'])) {
                     if ($jaminan['jenis_jaminan'] == '1') {
@@ -198,7 +199,7 @@
                     }
                     elseif ($jaminan['jenis_jaminan'] == '4') {
                         $agunan = $jaminan['nama_jaminan'] ?? '-';
-                        $nilai_agunan = isset($jaminan['nilai_jaminan']) ? 'Rp ' . number_format($jaminan['nilai_jaminan'], 0, '.', ',') : '-';
+                        $nilai_agunan = isset($jaminan['nilai_jaminan']) ? 'Rp ' . number_format((float) $jaminan['nilai_jaminan'], 0, '.', ',') : '-';
                     }
                     else {
                         $agunan = "Tanah";
@@ -209,46 +210,15 @@
                     $agunan = "Tidak ada data";
                     $nilai_agunan = "-";
                 }
-    
-                $kd_desa[] = $pinj_i->kd_desa;
-                $desa = $pinj_i->kd_desa;
+
+                $kidp = $pinj_i['id'];
+                $nomor++;
+                $kpros_jasa = number_format($pinj_i['pros_jasa'] - $pinj_i['jangka'], 2);
+                $ktgl1 = $pinj_i['tgl_cair'];
+                $kpenambahan = "+" . $pinj_i['jangka'] . " month";
+                $ktgl2 = date('Y-m-d', strtotime($kpenambahan, strtotime($ktgl1)));
+                $kpros_jasa = number_format($pinj_i['pros_jasa'] / $pinj_i['jangka'], 2);
             @endphp
-            @if (array_count_values($kd_desa)[$pinj_i->kd_desa] <= '1' ) 
-                @if ($section != $desa && count($kd_desa)> 1)
-                    <tr style="font-weight: bold; border: 1px solid;">
-                        <td class="t l b" colspan="8" align="left" height="15">
-                            Jumlah {{ $nama_desa }}
-                        </td>
-                        <td class="t l b" align="right">{{number_format($j_alokasi)}}</td>
-                        <td class="t l b" align="right">{{number_format($j_saldo)}}</td>
-                        <td colspan="4"class="t l b" align="right"></td>
-                    </tr>
-                @endif
-
-                <tr>
-                    <td class="t l b" align="center"></td>
-                    <td class="style27 left top right" colspan="13">
-                        {{ $pinj_i->kode_desa }}. {{$pinj_i->nama_desa}}
-                    </td>
-                </tr>
-
-                @php
-                    $kidp = $pinj_i['id'];
-
-                    $nomor = 1;
-                    $section = $pinj_i->kd_desa;
-                    $nama_desa = $pinj_i->sebutan_desa . ' ' . $pinj_i->nama_desa;
-                    $kpros_jasa = number_format($pinj_i['pros_jasa'] - $pinj_i['jangka'],2);
-
-                    $ktgl1 = $pinj_i['tgl_cair'];
-                    $kpenambahan = "+".$pinj_i['jangka']." month";
-                    $ktgl2 = date('Y-m-d', strtotime($kpenambahan, strtotime($ktgl1)));
-                    $kpros_jasa = number_format($pinj_i['pros_jasa']/$pinj_i['jangka'],2);
-
-                    $j_alokasi = 0;
-                    $j_saldo = 0;
-                @endphp
-            @endif
 
             @php
                 $jumlah_aktif += 1;
@@ -379,8 +349,11 @@
             @endphp
 
             <tr align="right" height="15px" class="style9">
-                <td class="left top" align="center">{{ $nomor++ }}</td>
-                <td class="left top" align="left">{{ $pinj_i->namadepan }} -{{$pinj_i->id}}</td>
+                <td class="left top" align="center">{{ $nomor }}</td>
+                <td class="left top" align="left">{{ $pinj_i->id }}</td>
+                <td class="left top" align="left">{{ strtoupper($pinj_i->namadepan) }}</td>
+                <td class="left top" align="left">{{ $pinj_i->nia }}</td>
+                <td class="left top" align="left">{{ $pinj_i->nik }}</td>
                 <td class="left top" align="left">Pinjaman Modal Kerja</td>
                 <td class="left top" align="center">{{$pinj_i->angsuran_pokok->nama_sistem}}</td>
                 <td class="left top" align="center">{{ Tanggal::tglIndo($pinj_i->tgl_cair) }}</td>
@@ -406,33 +379,24 @@
             @endphp
         @endforeach
 
-        @if (count($kd_desa) > 0)
-        <tr style="font-weight: bold; border: 1px solid;">
-            <td class="t l b" colspan="8" align="left" height="15">
-                Jumlah {{ $nama_desa }}
-            </td>
-            <td class="t l b" align="right">{{number_format($j_alokasi)}}</td>
-            <td class="t l b" align="right">{{number_format($j_saldo)}}</td>
-            <td colspan="4"class="t l b" align="right"></td>
-        </tr>
-
+        @if ($jumlah_aktif > 0)
         <tr class="style9">
-            <th colspan="8" class="left top" align="center"style="background:rgba(0,0,0, 0.3);">TOTAL KESELURUHAN({{$jumlah_aktif}} Anggota)</th>
+            <th colspan="10" class="left top" align="center" style="background:rgba(0,0,0, 0.3);">TOTAL KESELURUHAN({{$jumlah_aktif}} Anggota)</th>
             <th class="left top" align="right">{{number_format($t_alokasi)}}</th>
             <th class="left top" align="right">{{number_format($t_saldo_pokok)}}</th>
-            <th colspan="4" class="left right top" align="right"></th>
+            <th colspan="5" class="left right top" align="right"></th>
         </tr>
 
         <tr class="style9">
-            <th colspan="14" class="top" align="center">&nbsp;</th>
+            <th colspan="17" class="top" align="center">&nbsp;</th>
         </tr>
 
         <tr>
-            <td class="style10 top" colspan="14"><b>Keterangan</b> : Data yang ditampilkan diatas merupakan Individu aktif pada tahun berjalan {{$tahun}}, untuk menampilkan data Individu aktif tahun lalu dapat memilih mode tahun lalu {{ $tahun - 1 }}.</td>
+            <td class="style10 top" colspan="17"><b>Keterangan</b> : Data yang ditampilkan diatas merupakan Individu aktif pada tahun berjalan {{$tahun}}, untuk menampilkan data Individu aktif tahun lalu dapat memilih mode tahun lalu {{ $tahun - 1 }}.</td>
         </tr>
 
         <tr>
-            <td class="style10 top" colspan="14">
+            <td class="style10 top" colspan="17">
                 <b>Kolektibilitas</b> : 
                 @foreach ($kolek_items as $idx => $item)
                     {{ $item['nama'] }} ({{ $item['durasi'] }} {{ $item['satuan'] }})@if ($idx < count($kolek_items) - 1), @endif
@@ -444,7 +408,7 @@
 
     <table class="p" border="0" align="center" width="96%" cellspacing="0" cellpadding="0" style="font-size: 12px;"> 
         <tr>
-            <td colspan="16">
+            <td colspan="17">
                 <div style="margin-top: 14px;"></div>
                 {!! json_decode(str_replace('{tanggal}', $tanggal_kondisi, $kec->ttd->tanda_tangan_pelaporan), true) !!}
             </td>

@@ -387,7 +387,7 @@
             <td width="50%" align="center">
                 {{ $kec->nama_kec }}, {{ Tanggal::tglLatin($tgl_kondisi) }}<br>
                 {{ $nama_lembaga }}<br><br><br><br><br>
-                <strong><u>{{ $dir->namadepan ?? '' }} {{ $dir->namabelakang ?? '' }}</u></strong><br>
+                <strong><u>{{ strtoupper(trim(($dir->namadepan ?? '') . ' ' . ($dir->namabelakang ?? ''))) }}</u></strong><br>
                 <strong>
                     @if (!empty($dir) && isset($dir->jabatan))
                         {{ $dir->j->nama_jabatan ?? 'Direktur' }}

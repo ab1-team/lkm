@@ -1,6 +1,20 @@
 @php
     use App\Utils\Tanggal;
-    $section = 0;
+
+    // Flatten seluruh produk pinjaman menjadi satu daftar (tanpa pengelompokan desa)
+    $pinjaman_gabungan = collect();
+    foreach ($jenis_pp as $jpp_i) {
+        foreach ($jpp_i->pinjaman_individu as $pinkel) {
+            $pinkel->nama_jpp = $jpp_i->nama_jpp;
+            $pinjaman_gabungan->push($pinkel);
+        }
+    }
+
+    // Urutkan berdasarkan Tanggal Pencairan ascending
+    $pinjaman_gabungan = $pinjaman_gabungan->sortBy([
+        ['tgl_cair', 'asc'],
+        ['id', 'asc'],
+    ])->values();
 @endphp
 
 @extends('pelaporan.layout.base')
@@ -15,7 +29,6 @@
 
         $jumlah_kolek = count($kolek_items);
         $nomor = 0;
-        $kd_desa_all = [];
 
         $t_alokasi = 0;
         $t_saldo = 0;
@@ -33,11 +46,14 @@
         for ($i = 1; $i <= $jumlah_kolek; $i++) {
             ${"j_kolek{$i}"} = 0;
         }
+
+        // No + Loan ID + Nama + CIF + NIK + Jenis + Saldo + Tunggakan + NH + kolek
+        $jumlah_kolom = 9 + $jumlah_kolek;
     @endphp
 
     <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
         <tr>
-            <td colspan="6" align="center">
+            <td colspan="{{ $jumlah_kolom }}" align="center">
                 <div style="font-size: 18px;">
                     <b>DAFTAR KOLEKTIBILITAS PINJAMAN</b>
                 </div>
@@ -50,76 +66,28 @@
             </td>
         </tr>
         <tr>
-            <td colspan="6" height="5"></td>
+            <td colspan="{{ $jumlah_kolom }}" height="5"></td>
         </tr>
     </table>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px; table-layout: fixed;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10px; table-layout: fixed;">
         <tr>
-            <th class="t l b" width="2%">No</th>
-            <th class="t l b" width="20%">Kreditur - Loan ID</th>
-            <th class="t l b" width="15%">Jenis</th>
-            <th class="t l b" width="8%">Saldo</th>
-            <th class="t l b" width="8%">Tunggakan</th>
+            <th class="t l b" width="3%">No</th>
+            <th class="t l b" width="9%">LOAN ID</th>
+            <th class="t l b" width="13%">NAMA DEBITUR</th>
+            <th class="t l b" width="9%">CIF / NO. ANGGOTA</th>
+            <th class="t l b" width="9%">NIK</th>
+            <th class="t l b" width="9%">Jenis</th>
+            <th class="t l b" width="7%">Saldo</th>
+            <th class="t l b" width="7%">Tunggakan</th>
             <th class="t l b" width="3%">NH</th>
             @foreach ($kolek_items as $idx => $kolek_item)
                 @php $kolek_num = $idx + 1; @endphp
-                <th class="t l b r" width="{{ $idx == $jumlah_kolek - 1 ? 14 : 10 }}%">{{ $kolek_item['nama'] }}</th>
+                <th class="t l b r" width="{{ $idx == $jumlah_kolek - 1 ? 10.3 : 10.3 }}%">{{ $kolek_item['nama'] }}</th>
             @endforeach
         </tr>
 
-        @foreach ($jenis_pp as $jpp)
-            @foreach ($jpp->pinjaman_individu as $pinkel)
-                @php
-                    $desa_baru = empty($kd_desa_all) || end($kd_desa_all) !== $pinkel->kd_desa;
-                    $kd_desa_all[] = $pinkel->kd_desa;
-                    $desa = $pinkel->kd_desa;
-                @endphp
-
-                @if ($desa_baru)
-                    @if ($section != $desa && count($kd_desa_all) > 1)
-                        @php
-                            $t_alokasi += $j_alokasi;
-                            $t_saldo += $j_saldo;
-                            $t_tunggakan_pokok += $j_tunggakan_pokok;
-                            $t_tunggakan_jasa += $j_tunggakan_jasa;
-
-                            for ($i = 1; $i <= $jumlah_kolek; $i++) {
-                                $t_kolek_total[$i] += ${"j_kolek{$i}"};
-                            }
-                        @endphp
-                        <tr style="font-weight: bold;">
-                            <td class="t l b" align="left" colspan="3">Jumlah {{ $nama_desa }}</td>
-                            <td class="t l b" align="right">{{ number_format($j_saldo) }}</td>
-                            <td class="t l b" align="right">{{ number_format($j_tunggakan_pokok) }}</td>
-                            <td class="t l b" align="right">&nbsp;</td>
-                            @for ($i = 1; $i <= $jumlah_kolek; $i++)
-                                @php $kolek_val = ${"j_kolek{$i}"} ?? 0; @endphp
-                                <td class="t l b {{ $i == $jumlah_kolek ? 'r' : '' }}" align="right">{{ number_format($kolek_val) }}</td>
-                            @endfor
-                        </tr>
-                    @endif
-
-                    <tr style="font-weight: bold;">
-                        <td class="t l b r" colspan="{{ 6 + $jumlah_kolek }}" align="left">{{ $pinkel->kode_desa }}. {{ $pinkel->nama_desa }}</td>
-                    </tr>
-
-                    @php
-                        $nomor = 1;
-                        $j_alokasi = 0;
-                        $j_saldo = 0;
-                        $j_tunggakan_pokok = 0;
-                        $j_tunggakan_jasa = 0;
-
-                        for ($i = 1; $i <= $jumlah_kolek; $i++) {
-                            ${"j_kolek{$i}"} = 0;
-                        }
-
-                        $section = $pinkel->kd_desa;
-                        $nama_desa = $pinkel->sebutan_desa . ' ' . $pinkel->nama_desa;
-                    @endphp
-                @endif
-
+        @foreach ($pinjaman_gabungan as $pinkel)
                 @php
                     $sum_pokok = 0;
                     $sum_jasa = 0;
@@ -230,8 +198,11 @@
 
                 <tr>
                     <td class="t l b" align="center">{{ $nomor++ }}</td>
-                    <td class="t l b" align="left">{{ $pinkel->namadepan }} - {{ $pinkel->id }}</td>
-                    <td class="t l b" align="left">{{ $jpp->nama_jpp }}</td>
+                    <td class="t l b" align="left">{{ $pinkel->id }}</td>
+                    <td class="t l b" align="left">{{ strtoupper($pinkel->namadepan) }}</td>
+                    <td class="t l b" align="left">{{ $pinkel->nia }}</td>
+                    <td class="t l b" align="left">{{ $pinkel->nik }}</td>
+                    <td class="t l b" align="left">{{ strtoupper($pinkel->nama_jpp) }}</td>
                     <td class="t l b" align="right">{{ number_format($saldo_pokok) }}</td>
                     <td class="t l b" align="right">{{ number_format($tunggakan_pokok) }}</td>
                     <td class="t l b" align="right">{{ $kolek_bulan ?? 0 }}</td>
@@ -242,44 +213,22 @@
                 </tr>
 
                 @php
-                    $j_alokasi += $pinkel->alokasi;
-                    $j_saldo += $saldo_pokok;
-                    $j_tunggakan_pokok += $tunggakan_pokok;
-                    $j_tunggakan_jasa += $tunggakan_jasa;
+                    $t_alokasi += $pinkel->alokasi;
+                    $t_saldo += $saldo_pokok;
+                    $t_tunggakan_pokok += $tunggakan_pokok;
+                    $t_tunggakan_jasa += $tunggakan_jasa;
                     for ($i = 1; $i <= $jumlah_kolek; $i++) {
-                        ${"j_kolek{$i}"} += ${"kolek{$i}"};
+                        $t_kolek_total[$i] += ${"kolek{$i}"};
                     }
                 @endphp
             @endforeach
-        @endforeach
 
-        @if (count($kd_desa_all) > 0)
-            @php
-                $t_alokasi += $j_alokasi;
-                $t_saldo += $j_saldo;
-                $t_tunggakan_pokok += $j_tunggakan_pokok;
-                $t_tunggakan_jasa += $j_tunggakan_jasa;
-                for ($i = 1; $i <= $jumlah_kolek; $i++) {
-                    $t_kolek_total[$i] += ${"j_kolek{$i}"};
-                }
-            @endphp
-
-            <tr style="font-weight: bold;">
-                <td class="t l b" align="left" colspan="3">Jumlah {{ $nama_desa }}</td>
-                <td class="t l b" align="right">{{ number_format($j_saldo) }}</td>
-                <td class="t l b" align="right">{{ number_format($j_tunggakan_pokok) }}</td>
-                <td class="t l b" align="right">&nbsp;</td>
-                @for ($i = 1; $i <= $jumlah_kolek; $i++)
-                    @php $j_kolek_val = ${"j_kolek{$i}"} ?? 0; @endphp
-                    <td class="t l b {{ $i == $jumlah_kolek ? 'r' : '' }}" align="right">{{ number_format($j_kolek_val) }}</td>
-                @endfor
-            </tr>
-
+        @if ($pinjaman_gabungan->count() > 0)
             <tr>
-                <td colspan="{{ 6 + $jumlah_kolek }}" style="padding: 0px !important;">
+                <td colspan="{{ $jumlah_kolom }}" style="padding: 0px !important;">
                     <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px; table-layout: fixed;">
                         <tr style="font-weight: bold;">
-                            <td class="t l b" align="center" colspan="3" height="20">J U M L A H</td>
+                            <td class="t l b" align="center" colspan="6" height="20">J U M L A H</td>
                             <td class="t l b" align="right">{{ number_format($t_saldo) }}</td>
                             <td class="t l b r" align="right">{{ number_format($t_tunggakan_pokok) }}</td>
                             <td class="t l b" align="right">&nbsp;</td>
@@ -289,7 +238,7 @@
                         </tr>
 
                         <tr style="font-weight: bold;">
-                            <td class="t l b" align="center" colspan="3" rowspan="2" height="20">Penyisihan Penghapusan Piutang (PPAP)</td>
+                            <td class="t l b" align="center" colspan="6" rowspan="2" height="20">Penyisihan Penghapusan Piutang (PPAP)</td>
                             <td class="t l b" colspan="2" align="center">Jumlah PPAP</td>
                             <td class="t l b" align="right">&nbsp;</td>
                             @foreach ($kolek_items as $idx => $item)
@@ -323,7 +272,7 @@
                         </tr>
 
                         <tr>
-                            <td colspan="{{ 6 + $jumlah_kolek }}" style="padding: 0px !important;">
+                            <td colspan="{{ $jumlah_kolom }}" style="padding: 0px !important;">
                                 <p style="font-size: 9px;">
                                     Keterangan (POJK No. 19/POJK.05/2021):<br>
                                     @foreach ($kolek_items as $idx => $item)
@@ -338,7 +287,7 @@
                         </tr>
 
                         <tr>
-                            <td colspan="{{ 6 + $jumlah_kolek }}">
+                            <td colspan="{{ $jumlah_kolom }}">
                                 <div style="margin-top: 16px;"></div>
                                 {!! json_decode(str_replace('{tanggal}', $tanggal_kondisi, $kec->ttd->tanda_tangan_pelaporan), true) !!}
                             </td>

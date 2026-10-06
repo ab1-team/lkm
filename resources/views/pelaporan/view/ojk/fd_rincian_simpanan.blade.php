@@ -98,9 +98,9 @@
         <thead>
             <tr>
                 <th class="border center">No</th>
-                <th class="border center">Nama anggota</th>
+                <th class="border center">NAMA PENYIMPAN</th>
                 <th class="border center">Jenis anggota</th>
-                <th class="border center">CIF</th>
+                <th class="border center">CIF / NO. ANGGOTA</th>
                 <th class="border center">NIK</th>
                 <th class="border center">Jenis simpanan</th>
                 <th class="border center">Saldo akhir</th>
@@ -113,52 +113,55 @@
         </thead>
         <tbody>
             @php
+                // Flatten seluruh jenis simpanan menjadi satu daftar, lalu urutkan
+                // berdasarkan Tanggal Penyimpanan (tgl_buka) ascending. Kalau loop
+                // per jenis simpanan, tanggal akan "reset" tiap produk.
+                $simpanan_semua = collect();
+                foreach ($jenis_simpanan as $jenis) {
+                    foreach ($jenis->simpanan as $simpanan) {
+                        $simpanan->nama_js = $jenis->nama_js;
+                        $simpanan_semua->push($simpanan);
+                    }
+                }
+                $simpanan_semua = $simpanan_semua->sortBy([
+                    ['tgl_buka', 'asc'],
+                    ['id', 'asc'],
+                ])->values();
+
                 $no = 1;
                 $total = 0;
-                $desa_sekarang = null;
             @endphp
 
-            @foreach($jenis_simpanan as $jenis)
-                @foreach($jenis->simpanan as $simpanan)
-                    @php
-                        $jumlah = $simpanan->realSimpananTerbesar->sum ?? 0;
-                        $total += $jumlah;
-                        $nama_desa = ucwords(strtolower($simpanan->nama_desa ?? 'Tanpa Desa'));
-                    @endphp
+            @foreach($simpanan_semua as $simpanan)
+                @php
+                    $jumlah = $simpanan->realSimpananTerbesar->sum ?? 0;
+                    $total += $jumlah;
+                @endphp
 
-                    {{-- Row desa jika berganti --}}
-                    @if($nama_desa !== $desa_sekarang)
-                        @php $desa_sekarang = $nama_desa; @endphp
-                        <tr class="row-desa">
-                            <td colspan="12" class="border">{{ $nama_desa }}</td>
-                        </tr>
-                    @endif
-
-                    <tr>
-                        <td class="border center">{{ $no++ }}</td>
-                        <td class="border">{{ ucwords(strtolower($simpanan->namadepan)) }}</td>
-                        <td class="border center">Anggota</td>
-                        <td class="border center">{{ $simpanan->id }}</td>
-                        <td class="border center">{{ $simpanan->nik }}</td>
-                        <td class="border center">{{ $jenis->nama_js }}</td>
-                        <td class="border right">{{ number_format($jumlah, 0, '.', ',') }}</td>
-                        <td class="border center">
-                            {{ date('d-m-Y', strtotime($simpanan->tgl_buka)) }}
-                        </td>
-                        <td class="border center">
-                            {{ $simpanan->tgl_tutup ? date('d-m-Y', strtotime($simpanan->tgl_tutup)) : '-' }}
-                        </td>
-                        <td class="border center">
-                            {{ $simpanan->bunga ?? '0' }}%
-                        </td>
-                        <td class="border center">
-                            {{ $simpanan->pajak ?? '0' }}%
-                        </td>
-                        <td class="border">
-                            {{ $simpanan->keterangan ?? '-' }}
-                        </td>
-                    </tr>
-                @endforeach
+                <tr>
+                    <td class="border center">{{ $no++ }}</td>
+                    <td class="border">{{ strtoupper($simpanan->namadepan) }}</td>
+                    <td class="border center">Anggota</td>
+                    <td class="border center">{{ $simpanan->id }}</td>
+                    <td class="border center">{{ $simpanan->nik }}</td>
+                    <td class="border center">{{ $simpanan->nama_js }}</td>
+                    <td class="border right">{{ number_format($jumlah, 0, '.', ',') }}</td>
+                    <td class="border center">
+                        {{ date('d-m-Y', strtotime($simpanan->tgl_buka)) }}
+                    </td>
+                    <td class="border center">
+                        {{ $simpanan->tgl_tutup ? date('d-m-Y', strtotime($simpanan->tgl_tutup)) : '-' }}
+                    </td>
+                    <td class="border center">
+                        {{ $simpanan->bunga ?? '0' }}%
+                    </td>
+                    <td class="border center">
+                        {{ $simpanan->pajak ?? '0' }}%
+                    </td>
+                    <td class="border">
+                        {{ $simpanan->keterangan ?? '-' }}
+                    </td>
+                </tr>
             @endforeach
         </tbody>
         <tfoot>

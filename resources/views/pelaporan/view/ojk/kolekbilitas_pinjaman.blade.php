@@ -1,6 +1,5 @@
 @php
     use App\Utils\Tanggal;
-    $section = 0;
     $nomor_jenis_pp = 0;
 @endphp
 
@@ -30,8 +29,7 @@
         @endphp
 
         @php
-            $kd_desa = [];
-            $nomor = 1;
+            $nomor = 0;
             $t_alokasi = 0;
             $t_saldo = 0;
             $t_tunggakan_pokok = 0;
@@ -64,40 +62,20 @@
         </table>
 
         <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px; table-layout: fixed;">
-         
+            @php
+                $j_alokasi = 0;
+                $j_saldo = 0;
+                $j_tunggakan_pokok = 0;
+                $j_tunggakan_jasa = 0;
+                $j_kolek1 = 0;
+                $j_kolek2 = 0;
+                $j_kolek3 = 0;
+            @endphp
+
             @foreach ($jpp->pinjaman_anggota as $pinkel)
                 @php
-                    $desa_baru = empty($kd_desa) || end($kd_desa) !== $pinkel->kd_desa;
-                    $kd_desa[] = $pinkel->kd_desa;
-                    $desa = $pinkel->kd_desa;
-
+                    $nomor++;
                 @endphp
-                @if ($desa_baru)
-                    @if ($section != $desa && count($kd_desa) > 1)
-                        @php
-                            $j_pross = $j_saldo / $j_alokasi;
-                            $t_alokasi += $j_alokasi;
-                            $t_saldo += $j_saldo;
-                            $t_tunggakan_pokok += $j_tunggakan_pokok;
-                            $t_tunggakan_jasa += $j_tunggakan_jasa;
-                            $t_kolek1 += $j_kolek1;
-                            $t_kolek2 += $j_kolek2;
-                            $t_kolek3 += $j_kolek3;
-                        @endphp
-                    @endif
-
-                    @php
-                        $j_alokasi = 0;
-                        $j_saldo = 0;
-                        $j_tunggakan_pokok = 0;
-                        $j_tunggakan_jasa = 0;
-                        $j_kolek1 = 0;
-                        $j_kolek2 = 0;
-                        $j_kolek3 = 0;
-                        $section = $pinkel->kd_desa;
-                        $nama_desa = $pinkel->sebutan_desa . ' ' . $pinkel->nama_desa;
-                    @endphp
-                @endif
 
                 @php
                     $sum_pokok = 0;
@@ -201,7 +179,7 @@
                 @endphp
             @endforeach
 
-            @if (count($kd_desa) > 0)
+            @if ($nomor > 0)
                 @php
                     $j_pross = $j_saldo / $j_alokasi;
                     $t_alokasi += $j_alokasi;

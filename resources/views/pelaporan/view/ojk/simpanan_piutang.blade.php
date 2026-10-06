@@ -81,17 +81,24 @@
 
 @php
     $jumlah_aktif = 0;
-@endphp
 
-@foreach ($jenis_simpanan as $js)
-@php
-    $jumlah_aktif_per_jenis = 0;
+    // Flatten seluruh jenis simpanan menjadi satu daftar, lalu urutkan berdasarkan
+    // Tanggal Penyimpanan (tgl_buka) ascending. Kalau loop per jenis simpanan,
+    // tanggal akan "reset" di setiap produk.
+    $simpanan_semua = collect();
+    foreach ($jenis_simpanan as $jenis) {
+        foreach ($jenis->simpanan as $simpanan) {
+            $simpanan->nama_js = $jenis->nama_js;
+            $simpanan_semua->push($simpanan);
+        }
+    }
+    $simpanan_semua = $simpanan_semua->sortBy([
+        ['tgl_buka', 'asc'],
+        ['id', 'asc'],
+    ])->values();
+
     $nomor = 1;
 @endphp
-
-@if ($js->nama_js != 'Simpanan Umum')
-    <div class="break"></div>
-@endif
 
 <table width="96%" border="0" align="center" cellpadding="3" cellspacing="0">
     <tr>
@@ -104,7 +111,7 @@
     </tr>
     <tr>
         <td height="20" colspan="2" class="style6 bottom align-center">
-            PENDATA UTANG & REGISTER {{ strtoupper($js->nama_js) }}
+            PENDATA UTANG & REGISTER SIMPANAN
         </td>
     </tr>
 </table>
@@ -127,7 +134,11 @@
 <table width="96%" border="0" align="center" cellpadding="3" cellspacing="0">
     <tr align="center" height="30px" class="style9">
         <th width="5" class="left bottom" rowspan="2">No</th>
-        <th class="left bottom" rowspan="2">Simpanan -ID</th>
+        <th class="left bottom" rowspan="2">LOAN ID</th>
+        <th class="left bottom" rowspan="2">NAMA PENYIMPAN</th>
+        <th class="left bottom" rowspan="2">CIF / NO. ANGGOTA</th>
+        <th class="left bottom" rowspan="2">NIK</th>
+        <th rowspan="2" class="left bottom">Jenis Simpanan</th>
         <th colspan="2" class="left bottom">Jangka Waktu</th>
         <th colspan="2" class="left right bottom">Bunga</th>
     </tr>
@@ -138,10 +149,9 @@
         <td class="left bottom right" align="center">Keterangan</td>
     </tr>
 
-    @foreach (($js->simpanan ?? collect()) as $simp)
+    @foreach ($simpanan_semua as $simp)
         @php
             $jumlah_aktif += 1;
-            $jumlah_aktif_per_jenis += 1;
             $tgl_buka = explode('-', $simp->tgl_buka);
             $tgl1 = new DateTime($simp->tgl_tutup);
             $tgl2 = new DateTime($simp->tgl_buka);
@@ -153,9 +163,11 @@
 
         <tr style="border: 1px solid;" align="right" height="15px" class="style9">
             <td class="left top" align="center">{{ $nomor++ }}</td>
-            <td class="left top" align="left">
-                {{ $simp->namadepan }} - {{ $simp->id }}
-            </td>
+            <td class="left top" align="left">{{ $simp->nomor_rekening }}</td>
+            <td class="left top" align="left">{{ strtoupper($simp->namadepan) }}</td>
+            <td class="left top" align="left">{{ $simp->id }}</td>
+            <td class="left top" align="left">{{ $simp->nik }}</td>
+            <td class="left top" align="left">{{ strtoupper($simp->nama_js) }}</td>
             <td class="left top" align="center">{{ $tgl2 }}</td>
             <td class="left top" align="center">{{ $simp ? $selisih->m : $selisih }}</td>
             <td class="left top" align="center">{{ $simp ? $simp->bunga : '0' }}</td>
@@ -164,11 +176,10 @@
     @endforeach
 
     <tr style="border: 1px solid;">
-        <th colspan="6" class="left top" align="center" style="background:rgba(0,0,0, 0.3);">
-            TOTAL ({{$jumlah_aktif_per_jenis}} Anggota)
+        <th colspan="10" class="left top" align="center" style="background:rgba(0,0,0, 0.3);">
+            TOTAL ({{ $jumlah_aktif }} Anggota)
         </th>
     </tr>
 </table>
 
-@endforeach
 @endsection
