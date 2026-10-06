@@ -240,7 +240,11 @@ class PelaporanController extends Controller
         $kec = Kecamatan::where('id', Session::get('lokasi'))->with([
             'kabupaten',
             'desa',
-            'saham',
+            // `urutan` diisi dari tab Data OJK (Personalisasi SOP) supaya urutan
+            // baris laporan sama dengan urutan yang disusun user.
+            'saham' => function ($query) {
+                $query->orderBy('urutan')->orderBy('id');
+            },
             'desa.saldo' => function ($query) use ($data) {
                 $query->where([
                     ['tahun', $data['tahun']]

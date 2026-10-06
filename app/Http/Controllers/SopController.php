@@ -6,6 +6,7 @@ use App\Models\AdminInvoice;
 use App\Models\AkunLevel1;
 use App\Models\JenisSimpanan;
 use App\Models\Kecamatan;
+use App\Models\Saham;
 use App\Models\TandaTanganDokumen;
 use App\Models\DokumenPinjaman;
 use App\Models\User;
@@ -16,6 +17,7 @@ use App\Utils\Tanggal;
 use DOMDocument;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Session;
@@ -1335,5 +1337,141 @@ class SopController extends Controller
             'success' => true,
             'deleted' => $deleted,
         ]);
+    }
+
+    /**
+     * Data pendukung laporan Profil OJK.
+     *
+     * Dua bagian:
+     *  1. Field di tabel `kecamatan` yang dicetak profil_o tapi belum punya
+     *     input di tab Personalisasi SOP lain.
+     *  2. Tabel `saham` (pemegang saham + direksi + komisaris). Kolom direksi
+     *     dan komisaris menempel per baris pemegang saham, mengikuti format
+     *     yang sudah dipakai di laporan.
+     */
+    public function ojk(Request $request, Kecamatan $kec)
+    {
+        $data = $request->only([
+            'sandi_lkm',
+            'ijin_usaha',
+            'dasar_catat',
+            'kode_pos',
+            'provinsi',
+            'desa_kec',
+        ]);
+
+        $validate = Validator::make($data, [
+            'ijin_usaha'  => 'nullable|max:255',
+            'dasar_catat' => 'nullable|max:20',
+            'kode_pos'    => 'nullable|max:50',
+            'provinsi'    => 'nullable|max:50',
+            'desa_kec'    => 'nullable|max:50',
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json($validate->errors(), Response::HTTP_MOVED_PERMANENTLY);
+        }
+
+        // Baris pemegang saham dikirim sebagai array of array.
+        $rows = $request->input('saham', []);
+
+        $clean = [];
+        foreach (is_array($rows) ? $rows : [] as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $nama = trim((string) ($row['nama_saham'] ?? ''));
+
+            // Baris tanpa nama pemegang saham diabaikan, tapi baris yang punya
+            // direksi/komisaris saja tetap dipakai (bisa sah tanpa pemegang saham).
+            if ($nama === '' && trim((string) ($row['nama_direksi'] ?? '')) === ''
+                && trim((string) ($row['nama_kom'] ?? '')) === '') {
+                continue;
+            }
+
+            $clean[] = [
+                'nama_saham'   => $nama,
+                'rp_saham'     => $this->ojkAngka($row['rp_saham'] ?? null),
+                'pros_saham'   => $this->ojkPersentase($row['pros_saham'] ?? null),
+                'nama_direksi' => $this->ojkTeks($row['nama_direksi'] ?? null),
+                'jab_direksi'  => $this->ojkTeks($row['jab_direksi'] ?? null),
+                'nama_kom'     => $this->ojkTeks($row['nama_kom'] ?? null),
+                'jab_kom'      => $this->ojkTeks($row['jab_kom'] ?? null),
+            ];
+        }
+
+        try {
+            DB::transaction(function () use ($kec, $data, $clean) {
+                // `sandi_lkm` nullable=NO di DB dan 20/32 lokasi masih berisi
+                // placeholder titik-titik. Kosong/titik-titik tidak boleh
+                // menimpa nilai yang sudah ada.
+                $sandi = trim(preg_replace('/\s+/', '', (string) $data['sandi_lkm']));
+                $placeholder = $sandi === '' || trim($sandi, '.') === '';
+
+                $update = [
+                    'ijin_usaha'  => $this->ojkTeks($data['ijin_usaha']),
+                    'dasar_catat' => $this->ojkTeks($data['dasar_catat']),
+                    'kode_pos'    => $this->ojkTeks($data['kode_pos']),
+                    'provinsi'    => $this->ojkTeks($data['provinsi']),
+                    'desa_kec'    => $this->ojkTeks($data['desa_kec']),
+                ];
+
+                if (! $placeholder) {
+                    $update['sandi_lkm'] = $sandi;
+                }
+
+                Kecamatan::where('id', $kec->id)->update($update);
+
+                // Tabel saham ditulis ulang mengikuti urutan form.
+                Saham::where('lokasi', $kec->id)->delete();
+                foreach ($clean as $i => $row) {
+                    Saham::create($row + ['lokasi' => $kec->id, 'urutan' => $i + 1]);
+                }
+            });
+        } catch (\Throwable $e) {
+            \Log::error('Gagal simpan pengaturan OJK lokasi ' . $kec->id . ': ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'msg'     => 'Pengaturan OJK gagal disimpan.',
+            ], 500);
+        }
+
+        return response()->json([
+            'success' => true,
+            'msg'     => 'Data OJK berhasil diperbarui.',
+        ]);
+    }
+
+    /** Bersihkan teks: buang CR/LF sisa copy-paste dari Excel & spasi ganda. */
+    private function ojkTeks($value): string
+    {
+        return trim(preg_replace('/\s*\R\s*/u', ' ', preg_replace('/\s+/u', ' ', (string) $value)));
+    }
+
+    /** Besaran rupiah: terima "499.000.000", "499,000,000", atau "490000000". */
+    private function ojkAngka($value): string
+    {
+        $v = preg_replace('/[^0-9]/', '', (string) $value);
+
+        return $v === '' ? '' : $v;
+    }
+
+    /** Persentase: terima "0,5%", "98.00", atau "0.2". Disimpan tanpa tanda %. */
+    private function ojkPersentase($value): string
+    {
+        $v = trim((string) $value);
+        if ($v === '') {
+            return '';
+        }
+
+        $v = str_replace(['%', ' '], '', $v);
+        // Koma sebagai desimal ("0,5") harus jadi titik.
+        if (!str_contains($v, '.') && str_contains($v, ',')) {
+            $v = str_replace(',', '.', $v);
+        }
+
+        return $v;
     }
 }

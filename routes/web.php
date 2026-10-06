@@ -221,6 +221,7 @@ Route::get('/pengaturan/ttd_spk', fn () => redirect('/ttd-dokumen?jenis=spk'))->
 Route::put('/pengaturan/pesan_whatsapp/{kec}', [SopController::class, 'pesanWhatsapp'])->middleware('auth', 'is_aktif');
 
 Route::put('/pengaturan/lembaga/{kec}', [SopController::class, 'lembaga'])->middleware('auth', 'is_aktif');
+Route::put('/pengaturan/ojk/{kec}', [SopController::class, 'ojk'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/pengelola/{kec}', [SopController::class, 'pengelola'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/pinjaman/{kec}', [SopController::class, 'pinjaman'])->middleware('auth', 'is_aktif');
 Route::put('/pengaturan/kolek/{kec}', [SopController::class, 'kolek'])->middleware('auth', 'is_aktif');

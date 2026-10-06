@@ -56,6 +56,12 @@
                                     </a>
                                 </div>
                                 <div class="mb-1">
+                                    <a role="tab" class="btn btn-white settings-nav-item" id="ojk" data-bs-toggle="tab" href="#tab-content-ojk">
+                                        <i class="fa-solid fa-building-columns"></i>
+                                        <span>Data OJK</span>
+                                    </a>
+                                </div>
+                                <div class="mb-1">
                                     <a role="tab" class="btn btn-white settings-nav-item" id="pengelola" data-bs-toggle="tab" href="#tab-content-2">
                                         <i class="fa-solid fa-person-chalkboard"></i>
                                         <span>Sebutan Pengelola</span>
@@ -143,6 +149,16 @@
                                         <div class="card-body">
                                             <h5 class="card-title">Identitas Lembaga</h5>
                                             @include('sop.partials._lembaga')
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane tabs-animation fade" id="tab-content-ojk" role="tabpanel">
+                                <div class="row">
+                                    <div class="main-card mb-3 card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Data OJK</h5>
+                                            @include('sop.partials._ojk')
                                         </div>
                                     </div>
                                 </div>

@@ -227,3 +227,33 @@ Tiga lokasi punya kondisi data khusus yang sudah ditangani:
   berformat; view sudah membersihkannya sebelum `number_format()`.
 - **234 (Wonosari)** — tidak punya user jabatan=1 level=1 sama sekali.
   Bagian tanda tangan dibiarkan kosong, bukan fatal.
+
+### Tab "Data OJK" (Personalisasi SOP)
+
+Semua kolom yang dicetak profil_o tapi belum punya input, dikumpulkan di satu
+tab baru: `resources/views/sop/partials/_ojk.blade.php`, route
+`PUT /pengaturan/ojk/{kec}` -> `SopController::ojk()`.
+
+Isinya **sudah ada** di tabel `kecamatan` (tidak perlu migration):
+`sandi_lkm`, `ijin_usaha`, `dasar_catat`, `kode_pos`, `provinsi`, `desa_kec`.
+Nama/alamat/telepon/email **sengaja tidak** diulang — sudah ada di tab
+Identitas Lembaga.
+
+Tabel `saham` ditulis ulang dari form: baris kosong dibuang, `urutan` diisi
+1..n. Relasi direksi/komisaris menempel per baris pemegang saham (format yang
+sudah dipakai laporan, bukan pilihan baru).
+
+Data existing itu kotor, jadi `SopController::ojk()` menormalkan saat menyimpan:
+- `499.000.000` / `3.000.000` -> `499000000` / `3000000` (titik = ribuan)
+- `0,5%` -> `0.5` (koma = desimal kalau tidak ada titik)
+- `AGUNG\r\nZAINURI` -> `AGUNG ZAINURI` (CRLF sisa copy-paste dari Excel)
+
+`sandi_lkm` nullable=NO di DB dan 20/32 lokasi masih berisi placeholder
+`.......................`. Form menampilkan placeholder itu sebagai kosong, dan
+server **tidak** menyimpan nilai kosong/titik-titik — jadi data lama tidak
+tertimpa diam-diam.
+
+Catatan: sudah ada halaman `/database/saham` (`SahamController`) untuk tabel
+`saham` per desa. Tab baru ini menggantikannya untuk keperluan laporan OJK
+(satu layar, tanpa modal per-baris). Kalau nanti kedua layar ini bentrok,
+sebaiknya `SahamController` diarahkan ke tab yang sama.
