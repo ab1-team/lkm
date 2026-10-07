@@ -397,6 +397,13 @@
                 function(result) {
                     $('#saldo').html(formatter.format(result.saldo))
                 })
+                .fail(function(xhr) {
+                    console.error('saldo gagal', xhr.responseJSON || xhr.status)
+                    $('#saldo').html('<span class="text-danger" title="' +
+                        ((xhr.responseJSON && xhr.responseJSON.message)
+                            ? xhr.responseJSON.message : 'Error ' + xhr.status) +
+                        '">Gagal memuat</span>')
+                })
             // --- Mapping sumber_dana ke disimpan_ke ---
             var pilihanSimpan = {
                 '1.2.02.01': '5.1.07.01',
@@ -495,6 +502,18 @@
                     } else {
                         callback(true)
                     }
+                }).fail(function(xhr) {
+                    console.error('cekSaldo gagal', xhr.responseJSON || xhr.status)
+                    Swal.fire({
+                        title: 'Gagal Memeriksa Saldo',
+                        html: 'Terjadi kesalahan saat menghitung saldo akun <b>' + sumber_dana +
+                            '</b>.<br><small class="text-muted">' +
+                            ((xhr.responseJSON && xhr.responseJSON.message)
+                                ? xhr.responseJSON.message : 'Error ' + xhr.status) +
+                            '</small>',
+                        icon: 'error'
+                    })
+                    callback(false)
                 })
             }
 
@@ -519,6 +538,9 @@
                                     '&bulan=' + bulan + '&hari=' + hari,
                                     function(res) {
                                         $('#saldo').html(formatter.format(res.saldo))
+                                    })
+                                    .fail(function(xhr) {
+                                        console.error('saldo gagal', xhr.responseJSON || xhr.status)
                                     })
                             })
                         } else {

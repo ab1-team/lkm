@@ -2379,6 +2379,13 @@ class TransaksiController extends Controller
 
             $data['tgl_kondisi'] = $tgl;
             $data['rek'] = Rekening::where('kode_akun', $data['kode_akun'])->first();
+
+            if (!$data['rek']) {
+                return response()->json([
+                    'saldo' => 0
+                ]);
+            }
+
             $data['transaksi'] = Transaksi::where('tgl_transaksi', 'LIKE', '%' . $tgl . '%')->where(function ($query) use ($data) {
                 $query->where('rekening_debit', $data['kode_akun'])->orwhere('rekening_kredit', $data['kode_akun']);
             })->with('user')->orderBy('tgl_transaksi', 'ASC')->orderBy('urutan', 'ASC')->orderBy('idt', 'ASC')->get();
@@ -2401,12 +2408,12 @@ class TransaksiController extends Controller
             foreach ($data['transaksi'] as $trx) {
                 if ($trx->rekening_debit == $data['rek']->kode_akun) {
                     $ref = $trx->rekening_kredit;
-                    $debit = $trx->jumlah;
+                    $debit = (float) $trx->jumlah;
                     $kredit = 0;
                 } else {
                     $ref = $trx->rekening_debit;
                     $debit = 0;
-                    $kredit = $trx->jumlah;
+                    $kredit = (float) $trx->jumlah;
                 }
     
                 if ($data['rek']->jenis_mutasi == 'debet') {
