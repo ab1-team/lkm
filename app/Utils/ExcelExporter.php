@@ -885,7 +885,7 @@ class ExcelExporter
                 if (str_contains($header, $label)) {
                     // "Kualitas" bisa berisi teks panjang ("Dalam Perhatian
                     // Khusus"), jadi lebarkan sedikit.
-                    $lebar[$i] = $label === 'kualitas' ? 20.0 : 12.0;
+                    $lebar[$i] = $label === 'kualitas' ? 22.0 : 13.0;
                     break;
                 }
             }
@@ -1054,9 +1054,9 @@ class ExcelExporter
         $alignment->setVertical(Alignment::VERTICAL_BOTTOM);
 
         // Wrap text hanya untuk sel yang benar-benar berbaris banyak.
-        // Kalau selalu menyala, Excel memotong header yang lebih panjang dari
-        // lebar kolom dengan tanda hubung ("Jenis Penggu- naan") dan
-        // memotong isi header itu sendiri ("Saldo Pinjaman").
+        // Kalau selalu menyala, Excel menampilkan header yang melebihi lebar
+        // kolom sebagai dua baris bertanda hubung ("Jenis Penggu- naan").
+        // Isi sel sendiri tetap utuh; yang teruswrap hanya tampilannya.
         $styleLower = strtolower($cell['style']);
         $nowrap = str_contains($styleLower, 'white-space:nowrap') || str_contains($styleLower, 'white-space: nowrap');
         $multiline = str_contains((string) ($cell['value'] ?? ''), "\n");

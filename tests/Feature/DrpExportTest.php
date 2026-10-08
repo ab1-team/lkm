@@ -6,7 +6,6 @@ use App\Support\Ojk\DrpPinjamanDiberikan;
 use App\Utils\ExcelExporter;
 use Illuminate\Support\Facades\Session;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
-use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Tests\TestCase;
 
@@ -77,13 +76,15 @@ class DrpExportTest extends TestCase
     private function sheet(): Worksheet
     {
         if ($this->sheet === null) {
-            $path = tempnam(sys_get_temp_dir(), 'drp').'.xlsx';
-            (new ExcelExporter)
+            // Dibaca dari object PhpSpreadsheet, bukan dari file .xlsx yang
+            // sudah disimpan: kolom bertwrap hanya mengubah tampilan, dan
+            // memuat ulang file membuat label header tampak terpotong
+            // ("Jenis Penggu- naan") sehingga pencocokan label gagal.
+            $this->sheet = (new ExcelExporter)
                 ->fromHtml($this->renderView())
                 ->setShowGridlines(false)
-                ->save($path);
-
-            $this->sheet = IOFactory::load($path)->getActiveSheet();
+                ->getSpreadsheet()
+                ->getActiveSheet();
         }
 
         return $this->sheet;
