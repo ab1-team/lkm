@@ -311,6 +311,10 @@ Route::get('/perguliran/dokumen/cetak_kartu_angsuran_anggota/{id}/{idtp}/{nia?}'
 
 Route::post('/perguliran/dokumen', [PinjamanKelompokController::class, 'dokumen'])->middleware('auth', 'is_aktif');
 
+Route::get('/perguliran/catatan/{perguliran}', [PinjamanKelompokController::class, 'catatan'])->middleware('auth', 'is_aktif');
+Route::delete('/perguliran/catatan/{perguliran}', [PinjamanKelompokController::class, 'deleteCatatan'])->middleware('auth', 'is_aktif');
+Route::post('/perguliran/catatan_bimbingan/{perguliran}', [PinjamanKelompokController::class, 'catatanBimbingan'])->middleware('auth', 'is_aktif');
+
 Route::post('/perguliran/kembali_proposal/{id}', [PinjamanKelompokController::class, 'kembaliProposal'])->middleware('auth', 'is_aktif');
 Route::post('/perguliran_i/waiting_edit_jaminan/{pinjaman}', [PinjamanIndividuController::class, 'Waiting_Jaminan'])->middleware('auth', 'is_aktif');
 
