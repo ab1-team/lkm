@@ -885,7 +885,10 @@ class ExcelExporter
                 if (str_contains($header, $label)) {
                     // "Kualitas" bisa berisi teks panjang ("Dalam Perhatian
                     // Khusus"), jadi lebarkan sedikit.
-                    $lebar[$i] = $label === 'kualitas' ? 22.0 : 13.0;
+                    // Lebar dibuat cukup untuk muat header satu baris
+                    // ("Periode Pembayaran", "Saldo Pinjaman (Baki Debet)"),
+                    // supaya Excel tidak memecahnya jadi dua baris.
+                    $lebar[$i] = $label === 'kualitas' ? 22.0 : 20.0;
                     break;
                 }
             }
