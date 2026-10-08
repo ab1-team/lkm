@@ -1,384 +1,153 @@
-@php
-    use App\Utils\Keuangan;
-    use App\Utils\Tanggal;
-    $keuangan = new Keuangan();
-    $empty = false;
-@endphp
-
 @extends('pelaporan.layout.base')
 
 @section('content')
 
-<style type="text/css">
-    .style6 {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 16px;
-        font-weight: bold;
-        -webkit-print-color-adjust: exact;
-    }
-
-    .style9 {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 11px;
-        -webkit-print-color-adjust: exact;
-    }
-
-    .style10 {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 10px;
-        -webkit-print-color-adjust: exact;
-    }
-
-    .top {
-        border-top: 1px solid #000000;
-    }
-
-    .bottom {
-        border-bottom: 1px solid #000000;
-    }
-
-    .left {
-        border-left: 1px solid #000000;
-    }
-
-    .right {
-        border-right: 1px solid #000000;
-    }
-
-    .all {
-        border: 1px solid #000000;
-    }
-
-    .style26 {
-        font-family: Arial, Helvetica, sans-serif
-    }
-
-    .style27 {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 11px;
-        font-weight: bold;
-    }
-
-    .align-justify {
-        text-align: justify;
-    }
-
-    .align-center {
-        text-align: center;
-    }
-
-    .align-right {
-        text-align: right;
-    }
-
-    .align-left {
-        text-align: left;
-    }
-</style>
-
-@php
-    $nomor = 0;
-    
-    // Parse JSON kolek configuration
-    $klk = json_decode($kec->kolek, true);
-    
-    // Filter hanya item yang tidak null
-    $kolek_items = [];
-    if (is_array($klk)) {
-        foreach ($klk as $index => $item) {
-            // Hanya include jika nama tidak null
-            if (!empty($item['nama'])) {
-                $kolek_items[] = $item;
-            }
-        }
-    }
-@endphp
-
-@foreach ($jenis_pp as $jpp)
     @php
-        if ($jpp->pinjaman_individu->isEmpty()) {
-            $empty = true;
-            continue;
-        }
-        $nomor++;
+        // Flat list kolom a-o. Urutan tgl_cair + id sudah diflatten di
+        // DrpPinjamanDiberikan; view ini tidak mengelompokkan per desa
+        // maupun per produk pinjaman.
+        $rows = $rows ?? collect();
+        $gap = $gap ?? ['total' => 0, 'per_kolom' => [], 'baris' => []];
+        $total = $total ?? [];
 
-        $jumlah_aktif = 0;
-        $j_saldo_pokok = 0;
-        $t_saldo_pokok = 0;
-        $t_alokasi = 0;
+        // Format nominal 1,234,567.89. Nilai di-cast ke float supaya
+        // number_format() tidak menolak string.
+        $uang = fn ($v) => number_format((float) ($v ?? 0), 2);
+        $tglFormat = fn ($v) => $v ? date('Y-m-d', strtotime((string) $v)) : '';
     @endphp
 
-    @if ($nomor > 1)
-    <div class="break"></div>
-        @php
-            $empty = false;
-        @endphp
-    @endif
+    <style>
+        .row-body td,
+        .row-body th { font-size: 8px; }
+        .uang { white-space: nowrap; }
+    </style>
 
-    <table width="96%" border="0" align="center" cellpadding="3" cellspacing="0">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
         <tr>
-            <td height="20" colspan="12" class="bottom"></td>
-            <td height="20" colspan="3" class="bottom">
-                
+            <td colspan="16" align="center">
+                <div style="font-size: 18px;">
+                    <b>DAFTAR RINCIAN PINJAMAN YANG DIBERIKAN</b>
+                </div>
+                <div style="font-size: 13px;">
+                    <b>{{ strtoupper($sub_judul) }}</b>
+                </div>
             </td>
         </tr>
-        <tr>
-            <td height="20" colspan="15" class="style6 bottom align-center"><br>DAFTAR RINCIAN PINJAMAN YANG DIBERIKAN
-                (Aktif) <br><br></td>
-        </tr>
     </table>
-                
-    <table width="96%" border="0" align="center" cellpadding="3" cellspacing="0">
+
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10px;">
         <tr>
-            <td width="20%" class="style9">NAMA LKM</td>
-            <td width="70%" class="style9">:{{ $kec->nama_lembaga_long }}</td>
+            <td class="t l b" style="width: 18%;">NAMA LKM</td>
+            <td class="t l b" style="width: 32%;">{{ $kec->nama_lembaga_long }}</td>
+            <td class="t l b" style="width: 18%;">SANDI LKM</td>
+            <td class="t l b" style="width: 32%;">{{ $kec->sandi_lkm }}</td>
         </tr>
         <tr>
-            <td width="20%" class="style9">SANDI LKM</td>
-            <td width="70%" class="style9">:{{ $kec->sandi_lkm }}</td>
-        </tr>
-        <tr>
-            <td width="20%" class="style9 bottom">PERIODE LAPORAN</td>
-            <td width="70%" class="style9 bottom">:{{ $tgl }}</td>
+            <td class="t l b">PERIODE LAPORAN</td>
+            <td class="t l b">{{ $tgl }}</td>
+            <td class="t l b">POSISI LAPORAN</td>
+            <td class="t l b">{{ date('d') }} {{ now()->translatedFormat('F Y') }}</td>
         </tr>
     </table>
 
-    <table width="96%" border="0" align="center" cellpadding="3" cellspacing="0">
-        <tr align="center" height="30px" class="style9">
-            <th width="2%" rowspan="2" class="left bottom">No</th>
-            <th width="7%" rowspan="2" class="left bottom">LOAN ID</th>
-            <th width="9%" rowspan="2" class="left bottom">NAMA DEBITUR</th>
-            <th width="6%" rowspan="2" class="left bottom">CIF / NO. ANGGOTA</th>
-            <th width="6%" rowspan="2" class="left bottom">NIK</th>
-            <th width="8%" rowspan="2" class="left bottom">Jenis Penggunaan</th>
-            <th width="7%" rowspan="2" class="left bottom">Periode Pembayaran</th>
-            <th colspan="2" class="left bottom">Jangka Waktu</th>
-            <th colspan="2" class="left bottom">Suku Bunga</th>
-            <th width="3%" rowspan="2" class="left bottom">Plafon</th>
-            <th width="7%" rowspan="2" class="left bottom">Baki Debet</th>
-            <th width="3%" rowspan="2" class="left bottom">Jumlah Tunggakan (X)</th>
-            <th width="3%" rowspan="2" class="left right bottom">Kolektibilitas</th>
+    <br>
+
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10px; table-layout: fixed;">
+        <tr align="center" height="34px">
+            <th width="3%"  rowspan="2" class="t l b">No</th>
+            <th  rowspan="2" class="t l b">Nama Nasabah Penerima</th>
+            <th width="4%"  rowspan="2" class="t l b">Jenis Nasabah</th>
+            <th width="9%"  rowspan="2" class="t l b">Nomor Identitas Nasabah</th>
+            <th width="4%"  rowspan="2" class="t l b">Jenis Penggu- naan</th>
+            <th width="4%"  rowspan="2" class="t l b">Sektor Usaha</th>
+            <th width="4%"  rowspan="2" class="t l b">Periode Pemba- yaran</th>
+            <th colspan="2" class="t l b">Jangka Waktu</th>
+            <th width="4%"  rowspan="2" class="t l b">Suku Bunga</th>
+            <th width="8%" rowspan="2" class="t l b">Nilai Pencairan</th>
+            <th width="8%" rowspan="2" class="t l b">Saldo Pinjaman</th>
+            <th width="8%"  rowspan="2" class="t l b">Tunggakan</th>
+            <th width="4%"  rowspan="2" class="t l b">Kualitas</th>
+            <th width="4%"  rowspan="2" class="t l b">Jenis Agunan</th>
+            <th width="8%"  rowspan="2" class="t l r b">Nilai Agunan</th>
         </tr>
-        <tr align="center" height="30px" class="style9">
-            <th width="5%" class="left bottom">Mulai</th>
-            <th width="5%" class="left bottom">Jatuh Tempo</th>
-            <th width="5%" class="left bottom">%</th>
-            <th width="5%" class="left bottom">Keterangan</th>
-        </tr>
-        <tr>
-            <th colspan="15" class="style27 top left right align-left">NASABAH PENERIMA INDIVIDU</th>
+        <tr align="center" height="20px">
+            <th width="6%" class="t l b" style="white-space:nowrap;">Mulai</th>
+            <th width="6%" class="t l b" style="white-space:nowrap;">Jatuh Tempo</th>
         </tr>
 
-        @php
-            $sumalokasi = 0;
-            $alokasi = 0;
-            $j_alokasi = 0;
-            $j_saldo = 0;
-        @endphp
-
-        @foreach ($jpp->pinjaman_individu as $pinj_i)
+        @foreach ($rows as $row)
             @php
-                $kidp = $pinj_i['id'];
-                $nomor++;
-                $kpros_jasa = number_format($pinj_i['pros_jasa'] - $pinj_i['jangka'], 2);
-                $ktgl1 = $pinj_i['tgl_cair'];
-                $kpenambahan = "+" . $pinj_i['jangka'] . " month";
-                $ktgl2 = date('Y-m-d', strtotime($kpenambahan, strtotime($ktgl1)));
-                $kpros_jasa = number_format($pinj_i['pros_jasa'] / $pinj_i['jangka'], 2);
+                // Baris dengan gap ditandai supaya reviewer bisa langsung
+                // tahu kolom mana yang belum terisi sandi / datanya.
+                $adaGap = ! empty($row['gap']);
+                $warnaGap = $adaGap ? 'background:rgba(255,255,255,0);' : '';
             @endphp
-
-            @php
-                $jumlah_aktif += 1;
-
-                $sum_pokok = 0;
-                $sum_jasa = 0;
-                $saldo_pokok = $pinj_i->alokasi;
-                $saldo_jasa = $pinj_i->pros_jasa == 0 ? 0 : $pinj_i->alokasi * ($pinj_i->pros_jasa / 100);
-                if ($pinj_i->saldo) {
-                    $sum_pokok = $pinj_i->saldo->sum_pokok;
-                    $sum_jasa = $pinj_i->saldo->sum_jasa;
-                    $saldo_pokok = $pinj_i->saldo->saldo_pokok;
-                    $saldo_jasa = $pinj_i->saldo->saldo_jasa;
-                }
-
-                if ($saldo_jasa < 0) {
-                    $saldo_jasa = 0;
-                }
-
-                if ($pinj_i->tgl_lunas <= $tgl_kondisi && $pinj_i->status == 'L') {
-                    $saldo_jasa = 0;
-                }
-
-                $target_pokok = 0;
-                $target_jasa = 0;
-                $wajib_pokok = 0;
-                $wajib_jasa = 0;
-                $angsuran_ke = 0;
-                $jatuh_tempo = 0;
-                if ($pinj_i->target) {
-                    $target_pokok = $pinj_i->target->target_pokok;
-                    $target_jasa = $pinj_i->target->target_jasa;
-                    $wajib_pokok = $pinj_i->target->wajib_pokok;
-                    $wajib_jasa = $pinj_i->target->wajib_jasa;
-                    $angsuran_ke = $pinj_i->target->angsuran_ke;
-                    $jatuh_tempo = $pinj_i->target->jatuh_tempo;
-                }
-
-                $tunggakan_pokok = $target_pokok - $sum_pokok;
-                if ($tunggakan_pokok < 0) {
-                    $tunggakan_pokok = 0;
-                }
-                $tunggakan_jasa = $target_jasa - $sum_jasa;
-                if ($tunggakan_jasa < 0) {
-                    $tunggakan_jasa = 0;
-                }
-
-                $pross = $saldo_pokok == 0 ? 0 : $saldo_pokok / $pinj_i->alokasi;
-
-                if ($pinj_i->tgl_lunas <= $tgl_kondisi && $pinj_i->status == 'L') {
-                    $tunggakan_pokok = 0;
-                    $tunggakan_jasa = 0;
-                    $saldo_pokok = 0;
-                    $saldo_jasa = 0;
-                } elseif ($pinj_i->tgl_lunas <= $tgl_kondisi && $pinj_i->status == 'R') {
-                    $tunggakan_pokok = 0;
-                    $tunggakan_jasa = 0;
-                    $saldo_pokok = 0;
-                    $saldo_jasa = 0;
-                } elseif ($pinj_i->tgl_lunas <= $tgl_kondisi && $pinj_i->status == 'H') {
-                    $tunggakan_pokok = 0;
-                    $tunggakan_jasa = 0;
-                    $saldo_pokok = 0;
-                    $saldo_jasa = 0;
-                }
-
-                $tgl_akhir = new DateTime($tgl_kondisi);
-                $tgl_awal = new DateTime($pinj_i->tgl_cair);
-                $selisih = $tgl_akhir->diff($tgl_awal);
-
-                $selisih = $selisih->y * 12 + $selisih->m;
-
-                $jum_nunggak = ceil($wajib_pokok == 0 ? 0 : $tunggakan_pokok/$wajib_pokok);
-
-                $_kolek = 0;
-                if ($wajib_pokok != '0') {
-                    $_kolek = $tunggakan_pokok / $wajib_pokok;
-                }
-                
-                $kolek_bulan = round($_kolek + ($selisih - $angsuran_ke));
-
-                $kolek_hari = 0;
-                if ($tunggakan_pokok <= 0) {
-                    $kolek_hari = 0;
-                } elseif ($jatuh_tempo != 0) {
-                    $kolek_hari = round((strtotime($tgl_kondisi) - strtotime($jatuh_tempo)) / (60 * 60 * 24))+(($jum_nunggak-1)*30);
-                    if ($kolek_hari < 0) {
-                        $kolek_hari = 0;
-                    }
-                }
-
-                // Logika penentuan kolektibilitas dari JSON
-                $keterangan = null;
-                $matched = false;
-                
-                foreach ($kolek_items as $idx => $item) {
-                    if (!is_array($item) || !isset($item['durasi'], $item['satuan'])) {
-                        continue;
-                    }
-
-                    $durasi = (int) $item['durasi'];
-                    $match = false;
-                    
-                    if ($item['satuan'] === 'hari' && isset($kolek_hari) && $kolek_hari < $durasi) {
-                        $match = true;
-                    } elseif ($item['satuan'] === 'bulan' && isset($kolek_bulan) && $kolek_bulan < $durasi) {
-                        $match = true;
-                    }
-
-                    if ($match) {
-                        $keterangan = $item['nama'];
-                        $matched = true;
-                        break;
-                    }
-                }
-
-                // Jika tidak ada yang cocok, ambil kategori terakhir
-                if (!$matched && count($kolek_items) > 0) {
-                    $last_item = end($kolek_items);
-                    $keterangan = $last_item['nama'];
-                }
-
-                // Jika pinjaman sudah lunas
-                if ($pinj_i->tgl_lunas <= $tgl_kondisi && ($pinj_i->status == 'L' || $pinj_i->status == 'H' || $pinj_i->status == 'R')) {
-                    $kolek_bulan = 0;
-                    $keterangan = $kolek_items[0]['nama'] ?? 'Lancar';
-                }
-            @endphp
-
-            <tr align="right" height="15px" class="style9">
-                <td class="left top" align="center">{{ $nomor }}</td>
-                <td class="left top" align="left">{{ $pinj_i->id }}</td>
-                <td class="left top" align="left">{{ strtoupper($pinj_i->namadepan) }}</td>
-                <td class="left top" align="left">{{ $pinj_i->nia }}</td>
-                <td class="left top" align="left">{{ $pinj_i->nik }}</td>
-                <td class="left top" align="left">Pinjaman Modal Kerja</td>
-                <td class="left top" align="center">{{$pinj_i->angsuran_pokok->nama_sistem}}</td>
-                <td class="left top" align="center">{{ Tanggal::tglIndo($pinj_i->tgl_cair) }}</td>
-                <td class="left top" align="center">{{ Tanggal::tglIndo($ktgl2)}}</td>
-                <td class="left top">{{$kpros_jasa}}%</td>
-                <td class="left top" align="center">per bulan</td>
-                <td class="left top">{{number_format($pinj_i->alokasi)}}</td>
-                <td class="left top">{{ number_format($saldo_pokok) }}</td>
-                <td class="left top">{{$kolek_bulan}}</td>
-                <td class="left top right" align="left">{{$keterangan}}</td>
+            <tr class="row-body" style="height: 22px;">
+                {{-- a --}}
+                <td class="t l b" style="{{ $warnaGap }}" align="center">{{ $row['no'] }}</td>
+                {{-- b — dua bagian saja: NAMA - ID. ID = simpanan.id atau pinjaman.id. --}}
+                <td class="t l b" style="{{ $warnaGap }} mso-number-format:'@';" align="left">{{ $row['nama_lengkap'] }}</td>
+                {{-- c --}}
+                <td class="t l b" style="{{ $warnaGap }}" align="center">{{ $row['jenis_nasabah'] }}</td>
+                {{-- d — string, bukan angka: 16 digit NIK tidak boleh dibulatkan --}}
+                <td class="t l b" style="{{ $warnaGap }} mso-number-format:'@';" align="left">{{ $row['nomor_identitas'] }}</td>
+                {{-- e --}}
+                <td class="t l b" style="{{ $warnaGap }}" align="center">{{ $row['jenis_penggunaan'] ?? '' }}</td>
+                {{-- f --}}
+                <td class="t l b" style="{{ $warnaGap }}" align="center">{{ $row['sektor_usaha'] ?? '' }}</td>
+                {{-- g --}}
+                <td class="t l b" style="{{ $warnaGap }}" align="center">{{ $row['periode_pembayaran'] }}</td>
+                {{-- h --}}
+                <td class="t l b" style="{{ $warnaGap }}" align="center">{{ $tglFormat($row['tgl_mulai']) }}</td>
+                <td class="t l b" style="{{ $warnaGap }}" align="center">{{ $tglFormat($row['tgl_jatuh_tempo']) }}</td>
+                {{-- i --}}
+                <td class="t l b" style="{{ $warnaGap }}" align="right">{{ number_format((float) $row['suku_bunga'], 2) }}%</td>
+                {{-- j --}}
+                <td class="t l b uang" style="{{ $warnaGap }}" align="right">{{ $uang($row['nilai_pencairan']) }}</td>
+                {{-- k --}}
+                <td class="t l b uang" style="{{ $warnaGap }}" align="right">{{ $uang($row['baki_debet']) }}</td>
+                {{-- l --}}
+                <td class="t l b uang" style="{{ $warnaGap }}" align="right">{{ $uang($row['tunggakan']) }}</td>
+                {{-- m --}}
+                <td class="t l b" style="{{ $warnaGap }}" align="center">{{ $row['kolektibilitas'] ?? $row['kolektibilitas_label'] }}</td>
+                {{-- n --}}
+                <td class="t l b" style="{{ $warnaGap }}" align="center">{{ $row['jenis_agunan'] ?? '' }}</td>
+                {{-- o --}}
+                <td class="t l r b uang" style="{{ $warnaGap }}" align="right">{{ $row['nilai_agunan'] === null ? '' : $uang($row['nilai_agunan']) }}</td>
             </tr>
-
-            @php
-                $j_alokasi += $pinj_i->alokasi;
-                $j_saldo += $saldo_pokok;
-            @endphp
-            
-            @php
-                $t_alokasi += $pinj_i->alokasi;
-                $t_saldo_pokok += $saldo_pokok;
-            @endphp
         @endforeach
 
-        @if ($jumlah_aktif > 0)
-        <tr class="style9">
-            <th colspan="9" class="left top" align="center" style="background:rgba(0,0,0, 0.3);">TOTAL KESELURUHAN({{$jumlah_aktif}} Anggota)</th>
-            <th class="left top" align="right">{{number_format($t_alokasi)}}</th>
-            <th class="left top" align="right">{{number_format($t_saldo_pokok)}}</th>
-            <th colspan="4" class="left right top" align="right"></th>
-        </tr>
-
-        <tr class="style9">
-            <th colspan="15" class="top" align="center">&nbsp;</th>
-        </tr>
-
-        <tr>
-            <td class="style10 top" colspan="15"><b>Keterangan</b> : Data yang ditampilkan diatas merupakan Individu aktif pada tahun berjalan {{$tahun}}, untuk menampilkan data Individu aktif tahun lalu dapat memilih mode tahun lalu {{ $tahun - 1 }}.</td>
-        </tr>
-
-        <tr>
-            <td class="style10 top" colspan="15">
-                <b>Kolektibilitas</b> : 
-                @foreach ($kolek_items as $idx => $item)
-                    {{ $item['nama'] }} ({{ $item['durasi'] }} {{ $item['satuan'] }})@if ($idx < count($kolek_items) - 1), @endif
-                @endforeach
-            </td>
-        </tr>
+        @if ($rows->isNotEmpty())
+            <tr class="row-body" style="font-weight: bold;">
+                {{-- colspan 10: kolom No s/d Suku Bunga (Jangka Waktu = 2 kolom fisik).
+                     Total baris ini menutup 16 kolom fisik: 10 + j + k + l + (m,n = 2) + o. --}}
+                <th colspan="10" class="t l b" align="right" style="background:rgba(0,0,0,0.3);">TOTAL ({{ $rows->count() }} Pinjaman)</th>
+                <th class="t l b uang" align="right" style="background:rgba(0,0,0,0.3);">{{ $uang($total['nilai_pencairan'] ?? 0) }}</th>
+                <th class="t l b uang" align="right" style="background:rgba(0,0,0,0.3);">{{ $uang($total['baki_debet'] ?? 0) }}</th>
+                <th class="t l b uang" align="right" style="background:rgba(0,0,0,0.3);">{{ $uang($total['tunggakan'] ?? 0) }}</th>
+                <th colspan="2" class="t l r b" align="right" style="background:rgba(0,0,0,0.3);"></th>
+                <th class="t l r b uang" align="right" style="background:rgba(0,0,0,0.3);">{{ $uang($total['nilai_agunan'] ?? 0) }}</th>
+            </tr>
         @endif
     </table>
 
-    <table class="p" border="0" align="center" width="96%" cellspacing="0" cellpadding="0" style="font-size: 12px;"> 
+    @if ($rows->isEmpty())
+        <table border="0" width="100%" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="t l b r" align="center" colspan="16" style="font-size: 11px; padding: 12px 0;">
+                    Tidak ada pinjaman aktif pada tanggal laporan ini.
+                </td>
+            </tr>
+        </table>
+    @endif
+
+    <table border="0" width="100%" cellspacing="0" cellpadding="0">
         <tr>
-            <td colspan="15">
-                <div style="margin-top: 14px;"></div>
+            <td colspan="16">
+                <div style="margin-top: 16px;"></div>
                 {!! json_decode(str_replace('{tanggal}', $tanggal_kondisi, $kec->ttd->tanda_tangan_pelaporan), true) !!}
             </td>
         </tr>
     </table>
-@endforeach
 
 @endsection

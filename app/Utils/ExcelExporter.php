@@ -2,18 +2,20 @@
 
 namespace App\Utils;
 
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Style\Font;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Style\Font;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ExcelExporter
 {
     private $spreadsheet;
+
     private $sheet;
+
     private $currentRow = 1;
 
     /**
@@ -49,7 +51,7 @@ class ExcelExporter
         // Parse HTML dengan DOMDocument
         $dom = new \DOMDocument();
         libxml_use_internal_errors(true);
-        $dom->loadHTML('<?xml encoding="UTF-8">' . $html);
+        $dom->loadHTML('<?xml encoding="UTF-8">'.$html);
         libxml_clear_errors();
 
         // Proses semua elemen secara berurutan (tabel, div, teks)
@@ -70,37 +72,44 @@ class ExcelExporter
             // Handle DOMText langsung (contoh: teks di dalam <li> tanpa wrapper)
             if ($node instanceof \DOMText) {
                 $text = trim($node->textContent);
-                if (!empty($text)) {
-                    $maxCols = $this->sheet->getHighestColumn() 
-                        ? \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->sheet->getHighestColumn()) 
+                if (! empty($text)) {
+                    $maxCols = $this->sheet->getHighestColumn()
+                        ? \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->sheet->getHighestColumn())
                         : 8;
                     $this->sheet->setCellValueByColumnAndRow(1, $this->currentRow, $text);
                     if ($maxCols > 1) {
                         $endCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($maxCols);
-                        $this->sheet->mergeCells('A' . $this->currentRow . ':' . $endCol . $this->currentRow);
+                        $this->sheet->mergeCells('A'.$this->currentRow.':'.$endCol.$this->currentRow);
                     }
                     $this->sheet->getCellByColumnAndRow(1, $this->currentRow)->getStyle()->getFont()->setName('Arial')->setSize(11);
                     $this->currentRow++;
                 }
+
                 continue;
             }
-            
-            if (!($node instanceof \DOMElement)) continue;
-            
+
+            if (! ($node instanceof \DOMElement)) {
+                continue;
+            }
+
             $tagName = strtolower($node->tagName);
-            
+
             if ($tagName === 'table') {
                 // Skip nested table (parent adalah td/th)
                 $parentTag = strtolower($node->parentNode->tagName);
-                if (in_array($parentTag, ['td', 'th'])) continue;
+                if (in_array($parentTag, ['td', 'th'])) {
+                    continue;
+                }
                 if ($node->parentNode->parentNode instanceof \DOMElement) {
                     $grandparentTag = strtolower($node->parentNode->parentNode->tagName);
-                    if (in_array($grandparentTag, ['td', 'th'])) continue;
+                    if (in_array($grandparentTag, ['td', 'th'])) {
+                        continue;
+                    }
                 }
-                
+
                 // Parse tabel utama
                 $table = $this->parseTableElement($node);
-                if (!empty($table['rows'])) {
+                if (! empty($table['rows'])) {
                     $this->writeTable($table);
                     $this->currentRow++;
                 }
@@ -112,33 +121,33 @@ class ExcelExporter
                 } else {
                     // Tulis div/p/heading sebagai baris teks
                     $text = trim($this->getInnerHTML($node));
-                    if (!empty($text)) {
+                    if (! empty($text)) {
                         // Hitung maxCols dari tabel sebelumnya
-                        $maxCols = $this->sheet->getHighestColumn() 
-                            ? \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->sheet->getHighestColumn()) 
+                        $maxCols = $this->sheet->getHighestColumn()
+                            ? \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($this->sheet->getHighestColumn())
                             : 8;
-                        
+
                         // Cek apakah right-aligned (seperti "Kode Akun")
                         $isRightAlign = false;
                         $styleAttr = $node->getAttribute('style');
                         $alignAttr = $node->getAttribute('align');
-                        
-                        if ($alignAttr === 'right' 
-                            || stripos($styleAttr, 'text-align:right') !== false 
+
+                        if ($alignAttr === 'right'
+                            || stripos($styleAttr, 'text-align:right') !== false
                             || stripos($styleAttr, 'text-align: right') !== false
                             || stripos($styleAttr, 'text-align : right') !== false) {
                             $isRightAlign = true;
                         }
-                        
+
                         // Cek juga parent node untuk style
-                        if (!$isRightAlign && $node->parentNode instanceof \DOMElement) {
+                        if (! $isRightAlign && $node->parentNode instanceof \DOMElement) {
                             $parentStyle = $node->parentNode->getAttribute('style');
-                            if (stripos($parentStyle, 'text-align:right') !== false 
+                            if (stripos($parentStyle, 'text-align:right') !== false
                                 || stripos($parentStyle, 'text-align: right') !== false) {
                                 $isRightAlign = true;
                             }
                         }
-                        
+
                         if ($isRightAlign) {
                             // Right-aligned: tulis di kolom terakhir, merge dari tengah
                             $startCol = max(1, $maxCols - 3); // Mulai dari kolom ke-5 (dari 8)
@@ -146,7 +155,7 @@ class ExcelExporter
                             if ($maxCols > $startCol) {
                                 $startColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($startCol);
                                 $endColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($maxCols);
-                                $this->sheet->mergeCells($startColLetter . $this->currentRow . ':' . $endColLetter . $this->currentRow);
+                                $this->sheet->mergeCells($startColLetter.$this->currentRow.':'.$endColLetter.$this->currentRow);
                             }
                             $this->sheet->getCellByColumnAndRow($startCol, $this->currentRow)->getStyle()->getAlignment()
                                 ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
@@ -155,14 +164,14 @@ class ExcelExporter
                             $this->sheet->setCellValueByColumnAndRow(1, $this->currentRow, $text);
                             if ($maxCols > 1) {
                                 $endCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($maxCols);
-                                $this->sheet->mergeCells('A' . $this->currentRow . ':' . $endCol . $this->currentRow);
+                                $this->sheet->mergeCells('A'.$this->currentRow.':'.$endCol.$this->currentRow);
                             }
                         }
-                        
+
                         // Style font
                         $font = $this->sheet->getCellByColumnAndRow($isRightAlign ? $startCol : 1, $this->currentRow)->getStyle()->getFont();
                         $font->setName('Arial');
-                        
+
                         if ($tagName === 'h1') {
                             $font->setSize(18)->setBold(true);
                         } elseif ($tagName === 'h2') {
@@ -174,13 +183,13 @@ class ExcelExporter
                         } else {
                             $font->setSize(11);
                         }
-                        
+
                         // Alignment center untuk heading
                         if (in_array($tagName, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])) {
                             $this->sheet->getCellByColumnAndRow(1, $this->currentRow)->getStyle()->getAlignment()
                                 ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                         }
-                        
+
                         $this->currentRow++;
                     }
                 }
@@ -200,10 +209,15 @@ class ExcelExporter
     {
         foreach ($node->childNodes as $child) {
             if ($child instanceof \DOMElement) {
-                if (strtolower($child->tagName) === 'table') return true;
-                if ($this->hasDescendantTable($child)) return true;
+                if (strtolower($child->tagName) === 'table') {
+                    return true;
+                }
+                if ($this->hasDescendantTable($child)) {
+                    return true;
+                }
             }
         }
+
         return false;
     }
 
@@ -213,16 +227,16 @@ class ExcelExporter
     private function parseTables(string $html): array
     {
         $tables = [];
-        
+
         // Gunakan DOMDocument untuk parse HTML
         $dom = new \DOMDocument();
         libxml_use_internal_errors(true);
-        $dom->loadHTML('<?xml encoding="UTF-8">' . $html);
+        $dom->loadHTML('<?xml encoding="UTF-8">'.$html);
         libxml_clear_errors();
 
         // Cari hanya tabel yang parent-nya BUKAN td/th/td
         $tableElements = $dom->getElementsByTagName('table');
-        
+
         foreach ($tableElements as $tableEl) {
             $parentTag = strtolower($tableEl->parentNode->tagName);
             // Skip nested table (parent adalah td, th, atau tabel lain)
@@ -236,9 +250,9 @@ class ExcelExporter
                     continue;
                 }
             }
-            
+
             $table = $this->parseTableElement($tableEl);
-            if (!empty($table['rows'])) {
+            if (! empty($table['rows'])) {
                 $tables[] = $table;
             }
         }
@@ -252,11 +266,11 @@ class ExcelExporter
     private function parseTableElement(\DOMElement $tableEl): array
     {
         $rows = [];
-        
+
         foreach ($tableEl->childNodes as $node) {
             if ($node instanceof \DOMElement) {
                 $tagName = strtolower($node->tagName);
-                
+
                 if ($tagName === 'thead' || $tagName === 'tbody' || $tagName === 'tfoot') {
                     foreach ($node->childNodes as $child) {
                         if ($child instanceof \DOMElement && strtolower($child->tagName) === 'tr') {
@@ -280,25 +294,25 @@ class ExcelExporter
         $rows = [];
         $normalCells = [];
         $currentCol = 0;
-        
+
         foreach ($tr->childNodes as $node) {
             if ($node instanceof \DOMElement && in_array(strtolower($node->tagName), ['td', 'th'])) {
                 $colspan = (int) ($node->getAttribute('colspan') ?: 1);
-                
+
                 // Cek apakah cell ini punya nested table
                 $nestedTables = $this->findAllNestedTables($node);
-                
-                if (!empty($nestedTables)) {
+
+                if (! empty($nestedTables)) {
                     // Parse semua nested table dengan column offset
                     $nestedStartCol = $currentCol;
                     foreach ($nestedTables as $nestedTable) {
                         $nestedRows = $this->parseNestedTable($nestedTable, $nestedStartCol, $colspan);
                         $rows = array_merge($rows, $nestedRows);
                     }
-                    
+
                     // Cek apakah ada konten teks sebelum/between/after tabel
                     $textContent = $this->getTextOutsideTables($node);
-                    if (!empty(trim($textContent))) {
+                    if (! empty(trim($textContent))) {
                         // Tambah sebagai baris teks dengan colspan penuh
                         $rows[] = [
                             'cells' => [[
@@ -324,19 +338,19 @@ class ExcelExporter
                         'tag' => strtolower($node->tagName),
                     ];
                 }
-                
+
                 $currentCol += $colspan;
             }
         }
-        
+
         // Jika ada cell normal, tambahkan sebagai baris
-        if (!empty($normalCells)) {
+        if (! empty($normalCells)) {
             $rows[] = [
                 'cells' => $normalCells,
                 'style' => $tr->getAttribute('style') ?: '',
             ];
         }
-        
+
         return $rows;
     }
 
@@ -347,6 +361,7 @@ class ExcelExporter
     {
         $tables = [];
         $this->findTablesRecursive($node, $tables);
+
         return $tables;
     }
 
@@ -380,14 +395,15 @@ class ExcelExporter
                 if (strtolower($child->tagName) === 'div') {
                     // Ambil teks dari div
                     $divText = trim($this->getInnerHTML($child));
-                    if (!empty($divText)) {
-                        $text .= $divText . "\n";
+                    if (! empty($divText)) {
+                        $text .= $divText."\n";
                     }
                 }
             } elseif ($child instanceof \DOMText) {
                 $text .= $child->textContent;
             }
         }
+
         return trim($text);
     }
 
@@ -398,7 +414,7 @@ class ExcelExporter
     {
         $rows = [];
         $nestedRows = [];
-        
+
         // Hitung jumlah kolom di nested table
         $nestedMaxCols = 0;
         foreach ($tableEl->childNodes as $node) {
@@ -427,17 +443,17 @@ class ExcelExporter
                 }
             }
         }
-        
+
         // Hitung colspan untuk cell pertama agar text full 1 baris
         // Contoh: parent=8 kolom, offset=0, nested punya 4 cell
         // → cell pertama colspan = parentColspan - offset - nestedMaxCols = 8 - 0 - 4 = 4
         // → cell 2,3,4 masing-masing colspan=1 → total = 4+1+1+1 = 7 kolom (kolom 8 kosong)
         $firstCellColspan = max(1, $parentColspan - $colOffset - $nestedMaxCols);
-        
+
         foreach ($tableEl->childNodes as $node) {
             if ($node instanceof \DOMElement) {
                 $tagName = strtolower($node->tagName);
-                
+
                 if ($tagName === 'thead' || $tagName === 'tbody' || $tagName === 'tfoot') {
                     foreach ($node->childNodes as $child) {
                         if ($child instanceof \DOMElement && strtolower($child->tagName) === 'tr') {
@@ -449,7 +465,7 @@ class ExcelExporter
                 }
             }
         }
-        
+
         return $rows;
     }
 
@@ -459,7 +475,7 @@ class ExcelExporter
     private function parseNestedRow(\DOMElement $tr, int $colOffset, int $firstCellColspan): array
     {
         $cells = [];
-        
+
         // Tambah empty cells untuk offset
         for ($i = 0; $i < $colOffset; $i++) {
             $cells[] = [
@@ -472,19 +488,19 @@ class ExcelExporter
                 'tag' => 'td',
             ];
         }
-        
+
         $isFirstCell = true;
-        
+
         foreach ($tr->childNodes as $node) {
             if ($node instanceof \DOMElement && in_array(strtolower($node->tagName), ['td', 'th'])) {
                 $cellColspan = (int) ($node->getAttribute('colspan') ?: 1);
-                
+
                 // Cell pertama: gunakan calculated colspan agar sesuai parent
                 if ($isFirstCell && $cellColspan === 1) {
                     $cellColspan = $firstCellColspan;
                     $isFirstCell = false;
                 }
-                
+
                 $cells[] = [
                     'value' => $this->getInnerHTML($node),
                     'raw_html' => $node->ownerDocument->saveHTML($node),
@@ -496,7 +512,7 @@ class ExcelExporter
                 ];
             }
         }
-        
+
         return [
             'cells' => $cells,
             'style' => $tr->getAttribute('style') ?: '',
@@ -515,8 +531,8 @@ class ExcelExporter
                 if (in_array($tag, ['div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'])) {
                     // Ambil teks dari div/p/heading, tambah newline
                     $childText = trim($this->getInnerHTML($child));
-                    if (!empty($childText)) {
-                        if (!empty($text)) {
+                    if (! empty($childText)) {
+                        if (! empty($text)) {
                             $text .= "\n";
                         }
                         $text .= $childText;
@@ -528,18 +544,18 @@ class ExcelExporter
                 } else {
                     // Tag lain (b, strong, span, dll) - ambil teks
                     $childText = trim($this->getInnerHTML($child));
-                    if (!empty($childText)) {
+                    if (! empty($childText)) {
                         $text .= $childText;
                     }
                 }
             } elseif ($child instanceof \DOMText) {
                 $textContent = trim($child->textContent);
-                if (!empty($textContent)) {
+                if (! empty($textContent)) {
                     $text .= $textContent;
                 }
             }
         }
-        
+
         return trim($text);
     }
 
@@ -563,29 +579,31 @@ class ExcelExporter
 
         // Track merged cells
         $mergedCells = [];
-        
+
         foreach ($table['rows'] as $rowIndex => $row) {
             $colIndex = 1;
-            
+
             // Parse row style
             $rowBg = $this->extractBackground($row['style']);
-            
+
             foreach ($row['cells'] as $cell) {
                 // Skip jika cell sudah di-merge
-                $cellKey = $this->currentRow . '_' . $colIndex;
-                
+                $cellKey = $this->currentRow.'_'.$colIndex;
+
                 // Cari cell berikutnya yang belum di-merge
                 while (isset($mergedCells[$this->currentRow][$colIndex])) {
                     $colIndex++;
                 }
-                
-                if ($colIndex > $maxCols) break;
-                
+
+                if ($colIndex > $maxCols) {
+                    break;
+                }
+
                 $value = $cell['value'];
-                
+
                 // Deteksi tipe data
                 $dataType = $this->detectDataType($value, $cell);
-                
+
                 // Tulis ke cell
                 if (in_array($colIndex, $textColumns, true)) {
                     // Paksa teks: NIK 16 digit tidak boleh jadi float
@@ -608,35 +626,37 @@ class ExcelExporter
                 } else {
                     $this->sheet->setCellValueByColumnAndRow($colIndex, $this->currentRow, $value);
                 }
-                
+
                 // Merge cells
                 if ($cell['colspan'] > 1 || $cell['rowspan'] > 1) {
                     $startCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
                     $endColIndex = $colIndex + $cell['colspan'] - 1;
                     $endCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($endColIndex);
                     $endRow = $this->currentRow + $cell['rowspan'] - 1;
-                    
-                    $mergeRange = $startCol . $this->currentRow . ':' . $endCol . $endRow;
+
+                    $mergeRange = $startCol.$this->currentRow.':'.$endCol.$endRow;
                     $this->sheet->mergeCells($mergeRange);
-                    
+
                     // Tandai cell yang di-merge
                     for ($r = $this->currentRow; $r <= $endRow; $r++) {
                         for ($c = $colIndex; $c <= $endColIndex; $c++) {
-                            if ($r === $this->currentRow && $c === $colIndex) continue;
+                            if ($r === $this->currentRow && $c === $colIndex) {
+                                continue;
+                            }
                             $mergedCells[$r][$c] = true;
                         }
                     }
                 }
-                
+
                 // Styling
                 $this->applyCellStyle($colIndex, $this->currentRow, $cell, $rowBg);
-                
+
                 $colIndex += $cell['colspan'];
             }
-            
+
             // Set row height dari style tr atau height attribute td
             if (preg_match('/height:\s*(\d+)/', $row['style'], $heightMatch)) {
-                $this->sheet->getRowDimension($this->currentRow)->setRowHeight((int)$heightMatch[1]);
+                $this->sheet->getRowDimension($this->currentRow)->setRowHeight((int) $heightMatch[1]);
             } else {
                 // Cek height attribute dari td
                 foreach ($row['cells'] as $c) {
@@ -645,10 +665,10 @@ class ExcelExporter
                         break;
                     }
                 }
-                
+
                 // Jika cell punya newline, set row height otomatis
                 foreach ($row['cells'] as $c) {
-                    if (!empty($c['value']) && substr_count($c['value'], "\n") > 0) {
+                    if (! empty($c['value']) && substr_count($c['value'], "\n") > 0) {
                         $lineCount = substr_count($c['value'], "\n") + 1;
                         $currentHeight = $this->sheet->getRowDimension($this->currentRow)->getRowHeight();
                         $minHeight = $lineCount * 15; // 15px per baris
@@ -659,35 +679,72 @@ class ExcelExporter
                     }
                 }
             }
-            
+
             $this->currentRow++;
         }
-        
+
         // Auto-size columns dengan min/max width
         for ($i = 1; $i <= $maxCols; $i++) {
             $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
             $this->sheet->getColumnDimension($colLetter)->setAutoSize(true);
         }
-        
-        // Set width yang lebih tepat setelah auto-size
+
+        // Set width yang lebih tepat sesudah auto-size
         $this->sheet->calculateColumnWidths();
-        
-        // Apply min/max width dan sesuaikan berdasarkan header
+
+        // Kunci lebar kolom identitas.
+        //
+        // Auto-size + calculateColumnWidths() memakai seluruh isi sheet,
+        // termasuk baris judul tabel di atas header ("NAMA LKM",
+        // "PT. LKM AKAS", judul laporan). Akibatnya kolom No ikut melebar
+        // mengikuti judul itu, dan kolom NIK melebar mengikuti "SANDI LKM".
+        // Lebar dihitung ulang hanya dari baris header tabel + isi data.
+        $lebarKunci = $this->lebarKolomData($maxCols);
+
+        for ($i = 1; $i <= $maxCols; $i++) {
+            $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
+            $dimension = $this->sheet->getColumnDimension($colLetter);
+
+            if (isset($lebarKunci[$i])) {
+                $dimension->setWidth($lebarKunci[$i]);
+                $dimension->setAutoSize(false);
+            }
+        }
+
+        // Apply min/max width dan sesuaikan berdasarkan header.
+        //
+        // PENTING: auto-size di Excel menghitung lebar TEKS, sehingga kolom
+        // yang isinya angka (kolom sandi c/e/f/g/n) ikut melebar mengikuti header
+        // yang panjang — nama/deskripsi seperti "Dalam Perhatian Khusus".
+        // Kolom itu isinya 1-2 digit, jadi lebarnya dikunci manual di sini.
+        $lebarSandi = $this->deteksiKolomSandi($maxCols);
+
         for ($i = 1; $i <= $maxCols; $i++) {
             $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
             $dimension = $this->sheet->getColumnDimension($colLetter);
             $currentWidth = $dimension->getWidth();
-            
-            // Deteksi header kolom untuk set width yang tepat
+
+            if (isset($lebarSandi[$i])) {
+                $dimension->setWidth($lebarSandi[$i]);
+                $dimension->setAutoSize(false);
+
+                continue;
+            }
+
+            // Deteksi header kolom untuk set width yang tepat.
+            // Baris header bisa lebih dari satu (mis. judul di baris 1-2 lalu
+            // sub-header di baris 7), jadi tabel dengan baris judul/identitas
+            // di atas ikut dipindai — jangan hanya 5 baris pertama.
             $headerText = '';
-            for ($row = 1; $row <= min(5, $this->currentRow); $row++) {
-                $cellValue = $this->sheet->getCell($colLetter . $row)->getValue();
-                if ($cellValue && !empty(trim($cellValue))) {
+            $batasHeader = min(12, $this->currentRow);
+            for ($row = 1; $row <= $batasHeader; $row++) {
+                $cellValue = $this->sheet->getCell($colLetter.$row)->getValue();
+                if ($cellValue && ! empty(trim($cellValue))) {
                     $headerText = strtolower(trim($cellValue));
                     break;
                 }
             }
-            
+
             // Set width berdasarkan tipe kolom
             if ($i === 1 && in_array($headerText, ['no', 'no.', 'no '])) {
                 // Kolom No
@@ -695,6 +752,13 @@ class ExcelExporter
                 $dimension->setAutoSize(false);
             } elseif (in_array($headerText, ['tanggal', 'tgl', 'date'])) {
                 // Kolom tanggal
+                $dimension->setWidth(14);
+                $dimension->setAutoSize(false);
+            } elseif (in_array($headerText, ['mulai', 'jatuh tempo', 'jatuh tempo akhir', 'tgl cair', 'tgl_lunas'])) {
+                // Sub-header kolom tanggal pada tabel yang judulnya di
+                // colspan (mis. "Jangka Waktu" > Mulai / Jatuh Tempo).
+                // Isinya YYYY-MM-DD = 10 karakter, jadi lebar minimum 8
+                // akan membuat sel terpotong vertikal.
                 $dimension->setWidth(14);
                 $dimension->setAutoSize(false);
             } elseif (in_array($headerText, ['ref id.', 'ref id', 'ref', 'kode', 'kode akun', 'kd. rek', 'kd.rek'])) {
@@ -719,6 +783,115 @@ class ExcelExporter
                 $dimension->setAutoSize(false);
             }
         }
+    }
+
+    /**
+     * Hitung lebar kolom dari baris header tabel dan baris data saja.
+     *
+     * Mengabaikan baris judul/identitas di atas tabel laporan, yang kalau
+     * ikut dihitung membuat kolom No dan kolom NIK melebar berlebihan.
+     *
+     * Header tabel dideteksi dari baris yang isinya 'no' (kolom a).
+     *
+     * @return array<int, float>
+     */
+    private function lebarKolomData(int $maxCols): array
+    {
+        $barisHeader = null;
+
+        for ($row = 1; $row <= min(12, $this->currentRow); $row++) {
+            $v = trim((string) $this->sheet->getCell('A'.$row)->getValue());
+            if (strcasecmp($v, 'no') === 0 || strcasecmp($v, 'no.') === 0) {
+                $barisHeader = $row;
+                break;
+            }
+        }
+
+        if ($barisHeader === null) {
+            return [];
+        }
+
+        $lebar = [];
+
+        for ($i = 1; $i <= $maxCols; $i++) {
+            $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
+
+            $panjang = 0;
+
+            // Header baris ini dan baris berikutnya (untuk sub-header seperti
+            // "Mulai" / "Jatuh Tempo" pada kolom dengan judul di colspan).
+            for ($row = $barisHeader; $row <= $barisHeader + 1; $row++) {
+                $panjang = max($panjang, mb_strlen(trim((string) $this->sheet->getCell($colLetter.$row)->getValue())));
+            }
+
+            // Isi data. Cukup beberapa baris pertama — laporan bisa ratusan
+            // baris dan setiap sel menambah biaya proses.
+            $dipakai = 0;
+            for ($row = $barisHeader + 2; $row <= $this->currentRow; $row++) {
+                if ($dipakai >= 40) {
+                    break;
+                }
+
+                $v = trim((string) $this->sheet->getCell($colLetter.$row)->getValue());
+                if ($v === '') {
+                    continue;
+                }
+
+                $panjang = max($panjang, mb_strlen($v));
+                $dipakai++;
+            }
+
+            $lebar[$i] = $panjang + 1.5;
+        }
+
+        return $lebar;
+    }
+
+    /**
+     * Lebar tetap untuk kolom yang isinya sandi angka pendek.
+     *
+     * Tanpa ini, auto-size_triggered oleh header panjang membuat kolom kode
+     * (Jenis Nasabah, Jenis Penggunaan, Sektor Usaha, Periode Pembayaran,
+     * Jenis Agunan) jadi tidak perlu lebar.
+     *
+     * @return array<int, float>
+     */
+    private function deteksiKolomSandi(int $maxCols): array
+    {
+        $sandikan = [
+            'jenis nasabah', 'jenis penggunaan', 'sektor usaha',
+            'periode pembayaran', 'jenis agunan', 'kualitas',
+        ];
+
+        $lebar = [];
+
+        for ($i = 1; $i <= $maxCols; $i++) {
+            $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
+
+            $header = null;
+            for ($row = 1; $row <= min(12, $this->currentRow); $row++) {
+                $v = trim((string) $this->sheet->getCell($colLetter.$row)->getValue());
+                if ($v !== '') {
+                    $header = mb_strtolower($v);
+                    break;
+                }
+            }
+
+            if ($header === null) {
+                continue;
+            }
+
+            foreach ($sandikan as $label) {
+                if (str_contains($header, $label)) {
+                    // "Kualitas" bisa berisi teks panjang ("Dalam Perhatian
+                    // Khusus"), jadi lebarkan sedikit.
+                    $lebar[$i] = $label === 'kualitas' ? 20.0 : 12.0;
+                    break;
+                }
+            }
+        }
+
+        return $lebar;
     }
 
     /**
@@ -818,16 +991,16 @@ class ExcelExporter
     private function detectDataType(string $value, array $cell): string
     {
         $value = trim($value);
-        
+
         if (empty($value)) {
             return DataType::TYPE_STRING;
         }
-        
+
         // Cek apakah header (th tag)
         if ($cell['tag'] === 'th') {
             return DataType::TYPE_STRING;
         }
-        
+
         // Cek apakah angka (format: 1,234,567.00 atau (1,234,567.00) atau 0)
         if (preg_match('/^\(?\d[\d,]*\.?\d*\)?$/', $value)) {
             // Cek digit signifikan — float presisi max ~15 digit
@@ -837,9 +1010,10 @@ class ExcelExporter
             if (strlen($digits) > 15) {
                 return DataType::TYPE_STRING;
             }
+
             return DataType::TYPE_NUMERIC;
         }
-        
+
         return DataType::TYPE_STRING;
     }
 
@@ -851,6 +1025,7 @@ class ExcelExporter
         if (preg_match('/background(?:-color)?:\s*([^;]+)/', $style, $match)) {
             return trim($match[1]);
         }
+
         return '';
     }
 
@@ -861,10 +1036,10 @@ class ExcelExporter
     {
         $cellObj = $this->sheet->getCellByColumnAndRow($col, $row);
         $style = $cellObj->getStyle();
-        
+
         // Alignment
         $alignment = $style->getAlignment();
-        
+
         switch ($cell['align']) {
             case 'center':
                 $alignment->setHorizontal(Alignment::HORIZONTAL_CENTER);
@@ -875,27 +1050,36 @@ class ExcelExporter
             default:
                 $alignment->setHorizontal(Alignment::HORIZONTAL_LEFT);
         }
-        
+
         $alignment->setVertical(Alignment::VERTICAL_BOTTOM);
-        $alignment->setWrapText(true);
-        
+
+        // Wrap text hanya untuk sel yang benar-benar berbaris banyak.
+        // Kalau selalu menyala, Excel memotong header yang lebih panjang dari
+        // lebar kolom dengan tanda hubung ("Jenis Penggu- naan") dan
+        // memotong isi header itu sendiri ("Saldo Pinjaman").
+        $styleLower = strtolower($cell['style']);
+        $nowrap = str_contains($styleLower, 'white-space:nowrap') || str_contains($styleLower, 'white-space: nowrap');
+        $multiline = str_contains((string) ($cell['value'] ?? ''), "\n");
+
+        $alignment->setWrapText(! $nowrap && $multiline);
+
         // Font - deteksi dari style attribute atau raw_html
         $font = new Font();
         $font->setName('Arial');
-        
+
         // Deteksi font-size dari style atau raw_html
         $fontSize = 11; // default
         $styleToCheck = $cell['style'];
         if (isset($cell['raw_html'])) {
-            $styleToCheck .= ' ' . $cell['raw_html'];
+            $styleToCheck .= ' '.$cell['raw_html'];
         }
-        
+
         // Cari font-size terbesar (untuk judul ambil yang terbesar)
         if (preg_match_all('/font-size:\s*(\d+)\s*px/i', $styleToCheck, $sizeMatches)) {
             $fontSize = max(array_map('intval', $sizeMatches[1]));
         }
         $font->setSize($fontSize);
-        
+
         // Deteksi bold dari tag th, style font-weight, atau konten <b>
         $isBold = false;
         if ($cell['tag'] === 'th') {
@@ -908,26 +1092,26 @@ class ExcelExporter
         if (isset($cell['raw_html']) && (stripos($cell['raw_html'], '<b') !== false || stripos($cell['raw_html'], '<strong') !== false)) {
             $isBold = true;
         }
-        
+
         $font->setBold($isBold);
         $style->setFont($font);
-        
+
         // Background
-        if (!empty($rowBg)) {
+        if (! empty($rowBg)) {
             $fill = $style->getFill();
             $fill->setFillType(Fill::FILL_SOLID);
-            
+
             // Parse background color
             if (preg_match('/rgb\((\d+),\s*(\d+),\s*(\d+)\)/', $rowBg, $colorMatch)) {
-                $r = dechex((int)$colorMatch[1]);
-                $g = dechex((int)$colorMatch[2]);
-                $b = dechex((int)$colorMatch[3]);
-                $fill->getStartColor()->setARGB('FF' . strtoupper(str_pad($r, 2, '0', STR_PAD_LEFT) . str_pad($g, 2, '0', STR_PAD_LEFT) . str_pad($b, 2, '0', STR_PAD_LEFT)));
+                $r = dechex((int) $colorMatch[1]);
+                $g = dechex((int) $colorMatch[2]);
+                $b = dechex((int) $colorMatch[3]);
+                $fill->getStartColor()->setARGB('FF'.strtoupper(str_pad($r, 2, '0', STR_PAD_LEFT).str_pad($g, 2, '0', STR_PAD_LEFT).str_pad($b, 2, '0', STR_PAD_LEFT)));
             } elseif (preg_match('/#([0-9A-Fa-f]{6})/', $rowBg, $colorMatch)) {
-                $fill->getStartColor()->setARGB('FF' . strtoupper($colorMatch[1]));
+                $fill->getStartColor()->setARGB('FF'.strtoupper($colorMatch[1]));
             }
         }
-        
+
         // Border - abu-abu tipis seperti default Excel
         $borders = $style->getBorders();
         $borders->getTop()->setBorderStyle(Border::BORDER_THIN)->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('FFB4B4B4'));
@@ -942,6 +1126,7 @@ class ExcelExporter
     public function setShowGridlines(bool $show): self
     {
         $this->sheet->setShowGridlines($show);
+
         return $this;
     }
 
