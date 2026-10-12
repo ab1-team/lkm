@@ -234,6 +234,10 @@
             </div>
             @if ($perguliran_i->status == 'A')
                 <div class="card-body ">
+                    <button type="button" id="btnCatatanBimbingan" class="btn btn-success flex-grow-1 mb-2"
+                        @if (!in_array('perguliran_i.catatan_bimbingan', Session::get('tombol', []))) disabled @endif>
+                        <b><i class="fa fa-book"></i> &nbsp; Catatan Bimbingan</b>
+                    </button>
                 @if ((auth()->user()->jabatan == '1' || auth()->user()->jabatan == '8') && auth()->user()->level == '1')
                         <button type="button" data-bs-toggle="modal" data-bs-target="#Rescedule"
                             class="btn btn-info flex-grow-1 me-2" style="background-color: rgb(240, 148, 0);"

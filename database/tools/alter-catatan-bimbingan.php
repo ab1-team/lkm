@@ -21,10 +21,13 @@ $kolom = $n[0];
 echo 'Database : '.$database."\n";
 echo 'Kolom   : '.$kolom.' (len '.strlen($kolom).")\n\n";
 
+// Dua pola tabel: pinjaman kelompok dan pinjaman anggota (individu).
+$pola = ['pinjaman_kelompok_[0-9]+', 'pinjaman_anggota_[0-9]+'];
+
 $tables = DB::select(
     "SELECT TABLE_NAME FROM information_schema.TABLES
-     WHERE TABLE_SCHEMA = ? AND TABLE_NAME REGEXP '^pinjaman_kelompok_[0-9]+$'",
-    [$database]
+     WHERE TABLE_SCHEMA = ? AND TABLE_NAME REGEXP ?",
+    [$database, '^('.implode('|', $pola).')$']
 );
 
 $total = 0;
@@ -37,7 +40,7 @@ foreach ($tables as $table) {
     $cek = DB::select(
         'SELECT COUNT(*) AS jml FROM information_schema.COLUMNS
          WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND COLUMN_NAME = ?',
-        [$database, $nama, 'catatan_bimbingan']
+        [$database, $nama, $kolom]
     );
 
     if ($cek[0]->jml > 0) {
@@ -52,11 +55,28 @@ foreach ($tables as $table) {
         echo "OK    $nama\n";
         $total++;
     } catch (\Throwable $e) {
-        echo "GAGAL $nama - ".$e->getMessage()."\n";
-        $gagal++;
+        // Tabel dengan data legacy '0000-00-00' ditolak MySQL saat ALTER
+        // di sql_mode ketat. Longgarkan hanya untuk sesi ini, lalu pulihkan.
+        $sqlModeAsli = DB::selectOne('SELECT @@SESSION.sql_mode m')->m;
+        $longgar = str_replace(
+            ['NO_ZERO_DATE', 'NO_ZERO_IN_DATE', 'STRICT_TRANS_TABLES'],
+            '',
+            $sqlModeAsli
+        );
+
+        try {
+            DB::statement('SET SESSION sql_mode = ?', [$longgar]);
+            DB::statement("ALTER TABLE `$database`.`$nama` ADD `$kolom` TEXT NULL AFTER `catatan_verifikasi`");
+            echo "OK    $nama (sql_mode dilonggarkan)\n";
+            $total++;
+        } catch (\Throwable $e2) {
+            echo 'GAGAL '.$nama.' - '.$e2->getMessage()."\n";
+            $gagal++;
+        } finally {
+            DB::statement('SET SESSION sql_mode = ?', [$sqlModeAsli]);
+        }
     }
 }
 
 echo "------------------------\n";
-echo "Database : $database\n";
-echo "Total ditambah: $total | Sudah ada: $skip | Gagal: $gagal\n";
+echo 'Total ditambah: '.$total.' | Sudah ada: '.$skip.' | Gagal: '.$gagal."\n";

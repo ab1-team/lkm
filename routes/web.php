@@ -352,6 +352,10 @@ Route::get('/perguliran_i/dokumen/cetak_kartu_angsuran_anggota/{id}/{idtp}/{nia?
 
 Route::post('/perguliran_i/dokumen', [PinjamanIndividuController::class, 'dokumen'])->middleware('auth', 'is_aktif');
 
+Route::get('/perguliran_i/catatan/{perguliran_i}', [PinjamanIndividuController::class, 'catatan'])->middleware('auth', 'is_aktif');
+Route::delete('/perguliran_i/catatan/{perguliran_i}', [PinjamanIndividuController::class, 'deleteCatatan'])->middleware('auth', 'is_aktif');
+Route::post('/perguliran_i/catatan_bimbingan/{perguliran_i}', [PinjamanIndividuController::class, 'catatanBimbingan'])->middleware('auth', 'is_aktif');
+
 Route::post('/perguliran_i/kembali_proposal/{id}', [PinjamanIndividuController::class, 'kembaliProposal'])->middleware('auth', 'is_aktif');
 Route::post('/perguliran_i/tdklayak/{id}', [PinjamanIndividuController::class, 'tdklayak'])->middleware('auth', 'is_aktif');
 Route::post('/perguliran_i/kembali_verifikasi/{id}', [PinjamanIndividuController::class, 'kembaliverifikasi'])->middleware('auth', 'is_aktif');

@@ -1067,6 +1067,86 @@ class PinjamanIndividuController extends Controller
         ], Response::HTTP_ACCEPTED);
     }
 
+    public function catatan(PinjamanIndividu $perguliran_i)
+    {
+        $catatan = collect(json_decode($perguliran_i->catatan_bimbingan, true));
+        $data_catatan = $catatan->sortByDesc('tanggal')->values();
+
+        $data_user = [];
+        $user = $catatan->pluck('user')->unique();
+        $users = User::whereIn('id', $user)->get();
+        foreach ($users as $user) {
+            $data_user[$user->id] = $user->namadepan.' '.$user->namabelakang;
+        }
+
+        return response()->json([
+            'success' => true,
+            'view' => view('perguliran_i.partials.catatan_bimbingan')->with(compact('data_catatan', 'data_user'))->render(),
+        ]);
+    }
+
+    public function deleteCatatan(Request $request, PinjamanIndividu $perguliran_i)
+    {
+        $catatan = collect(json_decode($perguliran_i->catatan_bimbingan, true));
+        $data_catatan = $catatan->sortByDesc('tanggal')->values();
+
+        $index = 1;
+        $catatan_bimbingan = [];
+        foreach ($data_catatan as $catatan) {
+            if ($index != $request->index) {
+                array_push($catatan_bimbingan, $catatan);
+            }
+
+            $index++;
+        }
+
+        PinjamanIndividu::where('id', $perguliran_i->id)->update([
+            'catatan_bimbingan' => json_encode($catatan_bimbingan),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'msg' => 'Catatan berhasil dihapus.',
+        ]);
+    }
+
+    public function catatanBimbingan(Request $request, PinjamanIndividu $perguliran_i)
+    {
+        $data = $request->only([
+            'tanggal_catatan',
+            'catatan_bimbingan',
+        ]);
+
+        $validate = Validator::make($data, [
+            'catatan_bimbingan' => 'required',
+        ]);
+
+        $data['catatan_bimbingan'] = str_replace('<br>', '', $data['catatan_bimbingan']);
+        if ($validate->fails() || strlen($data['catatan_bimbingan']) < 8) {
+            return response()->json($validate->errors(), Response::HTTP_MOVED_PERMANENTLY);
+        }
+
+        $catatan = json_decode($perguliran_i->catatan_bimbingan, true);
+        if (! $catatan) {
+            $catatan = [];
+        }
+
+        array_push($catatan, [
+            'tanggal' => Tanggal::tglNasional($data['tanggal_catatan']),
+            'catatan' => $data['catatan_bimbingan'],
+            'user' => auth()->user()->id,
+        ]);
+
+        PinjamanIndividu::where('id', $perguliran_i->id)->update([
+            'catatan_bimbingan' => json_encode($catatan),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'msg' => 'Catatan berhasil ditambahkan.',
+        ]);
+    }
+
     public function simpan(Request $request, $id)
     {
         $data = $request->only([
@@ -1472,6 +1552,37 @@ class PinjamanIndividuController extends Controller
         $data['type'] = $report[1];
 
         return $this->$file($request->id, $data);
+    }
+
+    public function CetakCatatancatatan_bimbingan($id, $data)
+    {
+        $data['kec'] = Kecamatan::where('id', Session::get('lokasi'))->first();
+        $data['pinkel'] = PinjamanIndividu::where('id', $id)->with([
+            'anggota',
+            'anggota.d',
+        ])->first();
+
+        $catatan = collect(json_decode($data['pinkel']->catatan_bimbingan, true));
+        $data['catatan'] = $catatan->sortByDesc('tanggal')->values();
+
+        $data_user = [];
+        $user = $catatan->pluck('user')->unique();
+        $users = User::whereIn('id', $user)->get();
+        foreach ($users as $user) {
+            $data_user[$user->id] = $user->namadepan.' '.$user->namabelakang;
+        }
+        $data['users'] = $data_user;
+
+        $data['judul'] = 'Catatan Bimbingan '.$data['pinkel']->anggota->namadepan.' - Loan ID. '.$data['pinkel']->id;
+        $view = view('perguliran_i.dokumen.catatan_bimbingan', $data)->render();
+
+        if ($data['type'] == 'pdf') {
+            $pdf = PDF::loadHTML($view);
+
+            return $pdf->stream();
+        } else {
+            return $view;
+        }
     }
 
     public function coverProposal($id, $data)

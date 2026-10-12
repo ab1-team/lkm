@@ -529,6 +529,99 @@
         @method('DELETE')
     </form>
 
+    <form action="/perguliran_i/catatan/{{ $perguliran_i->id }}" method="post" id="FormDeleteCatatan">
+        @csrf
+        @method('DELETE')
+
+        <input type="hidden" id="index" name="index">
+    </form>
+
+    {{-- Modal Catatan Bimbingan --}}
+    <div class="modal fade" id="CatatanBimbingan" tabindex="-1" aria-labelledby="CatatanBimbinganLabel"
+        aria-hidden="true" data-catatan-ada="{{ count(json_decode($perguliran_i->catatan_bimbingan, true) ?? []) > 0 ? '1' : '0' }}">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="CatatanBimbinganLabel">
+                        Catatan Bimbingan <span class="badge bg-info">Pinjaman.
+                            {{ $perguliran_i->id }}</span>
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="LayoutCatatanBimbingan">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-success btn-sm" id="CetakCatatanBimbingan">
+                        Cetak
+                    </button>
+                    <button type="button" id="BukaTambahCatatan" data-bs-toggle="modal"
+                        data-bs-target="#TambahCatatan" class="btn btn-dark btn-sm">
+                        Tambah Catatan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form action="/perguliran_i/dokumen?status={{ $perguliran_i->status }}" target="_blank" method="post"
+        id="FormCetakCatatanBimbingan">
+        @csrf
+
+        <input type="hidden" name="id" value="{{ $perguliran_i->id }}">
+        <input type="hidden" name="report" value="CetakCatatancatatan_bimbingan#pdf">
+    </form>
+
+    {{-- Modal Tambah Catatan Bimbingan --}}
+    <div class="modal fade" id="TambahCatatan" tabindex="-1" aria-labelledby="TambahCatatanLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="TambahCatatanLabel">
+                        Tambah Catatan Bimbingan
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/perguliran_i/catatan_bimbingan/{{ $perguliran_i->id }}" method="post"
+                        id="FormCatatanBimbingan">
+                        @csrf
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="position-relative mb-3">
+                                    <label for="tanggal_catatan">Tanggal</label>
+                                    <input autocomplete="off" type="text" name="tanggal_catatan"
+                                        id="tanggal_catatan" class="form-control date"
+                                        value="{{ date('d/m/Y') }}">
+                                    <small class="text-danger" id="msg_tanggal_catatan"></small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="position-relative mb-3">
+                                    <label for="catatan_bimbingan">Catatan</label>
+                                    <div id="editor" style="min-height: 150px;"></div>
+                                </div>
+
+                                <textarea name="catatan_bimbingan" id="catatan_bimbingan" class="d-none"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-sm" id="TutupFormTambahCatatan">Tutup</button>
+                    <button type="button" id="SimpanCatatanBimbingan" class="btn btn-dark btn-sm">
+                        Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="placeholder" class="d-none">
         <div class="row">
             <div class="col-lg-4 mb-3">
@@ -991,5 +1084,107 @@
 
             open_window(action)
         })
+
+        if (document.getElementById('editor')) {
+            var quill = new Quill('#editor', {
+                theme: 'snow'
+            });
+        }
+
+        var pindahKeTambahCatatan = false
+
+        $('#CatatanBimbingan').on('hidden.bs.modal', function() {
+            if (pindahKeTambahCatatan) {
+                pindahKeTambahCatatan = false
+
+                return
+            }
+
+            if ($(this).data('catatan-ada') == '1') {
+                window.location.reload()
+            }
+        })
+
+        $(document).on('click', '#btnCatatanBimbingan', function() {
+            catatan()
+        })
+
+        $(document).on('click', '#BukaTambahCatatan', function() {
+            pindahKeTambahCatatan = true
+        })
+
+        $(document).on('click', '#TutupFormTambahCatatan', function() {
+            $('#CatatanBimbingan').modal('show')
+            $('#TambahCatatan').modal('hide')
+        })
+
+        $(document).on('click', '#CetakCatatanBimbingan', function() {
+            $('#FormCetakCatatanBimbingan').submit()
+        })
+
+        $(document).on('click', '#SimpanCatatanBimbingan', function(e) {
+            e.preventDefault()
+
+            $('#catatan_bimbingan').val(quill.container.firstChild.innerHTML)
+            var form = $('#FormCatatanBimbingan')
+            $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: function(result) {
+                    Swal.fire('Berhasil', result.msg, 'success').then(() => {
+                        catatan()
+                    })
+                },
+                error: function(error) {
+                    Swal.fire('Error', 'Cek kembali input yang anda masukkan', 'error')
+                }
+            })
+        })
+
+        $(document).on('click', '.delete-catatan', function(e) {
+            e.preventDefault();
+
+            var index = $(this).attr('data-id')
+            $('input#index').val(index)
+
+            Swal.fire({
+                title: 'Hapus Catatan',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Hapus',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var form = $('#FormDeleteCatatan')
+                    $.ajax({
+                        type: form.attr('method'),
+                        url: form.attr('action'),
+                        data: form.serialize(),
+                        success: function(result) {
+                            if (result.success) {
+                                Swal.fire('Berhasil', result.msg, 'success').then(() => {
+                                    $('#CatatanBimbingan').modal('hide')
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        })
+
+        function catatan() {
+            $.ajax({
+                type: 'GET',
+                url: '/perguliran_i/catatan/{{ $perguliran_i->id }}',
+                success: function(result) {
+                    if (result.success) {
+                        $('#LayoutCatatanBimbingan').html(result.view)
+                        $('#CatatanBimbingan').modal('show')
+                        $('#TambahCatatan').modal('hide')
+                    }
+                }
+            })
+        }
     </script>
 @endsection
