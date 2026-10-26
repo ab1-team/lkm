@@ -115,8 +115,17 @@
         });
 
         let childWindow, loading;
+        let prosesSedangBerjalan = false; // guard anti double-click / popup ganda
+
         $(document).on('click', '#simpanBunga', function(e) {
             e.preventDefault();
+
+            // Cegah klik ganda / popup kedua untuk proses yang sama
+            if (prosesSedangBerjalan) {
+                return;
+            }
+            prosesSedangBerjalan = true;
+            $(this).prop('disabled', true).addClass('disabled');
 
             var bulan = $('select#bulants').val();
             var tahun = $('select#tahunts').val();
@@ -139,11 +148,23 @@
                         '&id=' + encodeURIComponent(cif);
 
             childWindow = window.open(url, '_blank');
+
+            // Popup diblokir browser: proses tidak dijalankan, lepaskan tombol
+            if (!childWindow) {
+                prosesSedangBerjalan = false;
+                $('#simpanBunga').prop('disabled', false).removeClass('disabled');
+                if (loading) { loading.close(); }
+                Swal.fire({
+                    title: "Popup diblokir",
+                    html: "Izinkan popup untuk window ini, lalu tekan Proses Kalkulasi kembali.",
+                    icon: "warning"
+                });
+            }
         });
 
         window.addEventListener('message', function(event) {
             if (event.data === 'closed') {
-                loading.close()
+                if (loading) { loading.close(); }
                 window.location.reload()
             }
         })

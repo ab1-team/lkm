@@ -28,6 +28,7 @@ use App\Utils\Tanggal;
 use DNS1D;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use PDF;
@@ -1022,9 +1023,130 @@ class SimpananController extends Controller
         $selisih = $datetime_awal->diff($datetime_akhir);
         $jumlah_hari = $selisih->days + 1;
 
-        return view('simpanan.partials.info_hitung_bunga', compact('jumlah_hari', 'tgl_awal', 'tgl_akhir', 'jb'));
+        // Peringatan: berapa rekening yang sudah punya transaksi bunga pada tanggal
+        // proses bulan ini. Digunakan user sebagai informasi sebelum menjalankan.
+        $jumlahRekeningAktif = Simpanan::where('status', 'A')->count();
+
+        $jumlahSudahDiproses = 0;
+        try {
+            $rekeningSudahDiproses = Transaksi::where('tgl_transaksi', Tanggal::tglNasional($tgl_trans))
+                ->whereNotNull('id_simp')
+                ->where('id_simp', '<>', '0')
+                ->whereIn('rekening_debit', [
+                    JenisSimpanan::whereNotNull('rek_bunga')->distinct()->pluck('rek_bunga')->toArray(),
+                ])
+                ->distinct()
+                ->pluck('id_simp')
+                ->toArray();
+
+            $jumlahSudahDiproses = count($rekeningSudahDiproses);
+        } catch (\Throwable $e) {
+            $jumlahSudahDiproses = 0;
+        }
+
+        return view('simpanan.partials.info_hitung_bunga', compact(
+            'jumlah_hari',
+            'tgl_awal',
+            'tgl_akhir',
+            'jb',
+            'jumlahSudahDiproses',
+            'jumlahRekeningAktif',
+            'tgl_trans',
+            'bulanTahun'
+        ));
     }
 
+
+    /**
+     * Cek apakah transaksi jenis tertentu untuk satu rekening & tanggal sudah ada.
+     *
+     * Kunci idempoten: rekening (id_simp) + tanggal transaksi + akun debit + akun kredit.
+     * Diperiksa di dua tempat:
+     *   - transaksi_{N}  : sumber transaksi (deleted_at IS NULL, global scope SoftDeletes)
+     *   - real_simpanan_{N}: daftar ringkas saldo, dicek lewat relasi ke transaksi
+     *                        memakai idt yang menunjuk transaksi tsb.
+     *
+     * Tidak memakai kode_simpan karena konvensinya berbeda antar writer
+     * (proses bunga menulis 5/6/7, generate saldo menulis 0/5/10).
+     */
+    private function transaksiBungaSudahAda($idSimp, $tglTransaksi, $rekDebit, $rekKredit)
+    {
+        $adaDiTransaksi = Transaksi::where('tgl_transaksi', $tglTransaksi)
+            ->where('rekening_debit', $rekDebit)
+            ->where('rekening_kredit', $rekKredit)
+            ->where('id_simp', $idSimp)
+            ->exists();
+
+        if ($adaDiTransaksi) {
+            return true;
+        }
+
+        // Cek real_simpanan: cari baris yang menunjuk transaksi bunga/pajak/admin
+        // dengan rekening + tanggal yang sama.
+        $adaDiReal = RealSimpanan::where('cif', $idSimp)
+            ->where('tgl_transaksi', $tglTransaksi)
+            ->whereHas('transaksi', function ($q) use ($rekDebit, $rekKredit) {
+                $q->where('rekening_debit', $rekDebit)
+                  ->where('rekening_kredit', $rekKredit)
+                  ->whereNull('deleted_at');
+            })
+            ->exists();
+
+        return $adaDiReal;
+    }
+
+    /**
+     * Kunci proses bunga untuk satu lokasi + bulan berjalan.
+     *
+     * Memakai cache (driver file) untuk mencegah dua proses bunga berjalan
+     * bersamaan pada bulan yang sama (penyebab utama transaksi dobel).
+     *
+     * Rantai proses dipecah menjadi beberapa request (batch 30 rekening),
+     * jadi kunci tidak bisa dipegang di satu request saja. Solusinya:
+     *   - kunci berisi "token pemilik" yang disimpan di session pengguna;
+     *   - request lanjutan (start > 0) dengan token yang sama boleh masuk
+     *     dan memperpanjang masa berlaku kunci;
+     *   - proses lain (token berbeda / tanpa token) ditolak dengan pesan jelas.
+     *
+     * TTL (3 jam) dipakai agar kunci tidak macet permanen bila proses mati
+     * mendadak.
+     */
+    private function ambilKunciBunga($tahun, $bulan)
+    {
+        $lokasi = Session::get('lokasi');
+        $namaKunci = 'bunga:lock:' . $lokasi . ':' . $tahun . '-' . $bulan;
+        $kunciSession = 'bunga:locktoken:' . $namaKunci;
+        // TTL 30 menit, diperpanjang setiap batch. Bila proses berhenti di
+        // tengah, kunci tetap kedaluwarsa sendiri (tidak macet permanen).
+        $ttl = 1800;
+
+        $tokenSaya = Session::get($kunciSession);
+        $tokenTersimpan = Cache::get($namaKunci);
+
+        // Pemegang kunci yang sama (rantai lanjutan) -> perpanjang & boleh masuk.
+        if ($tokenSaya !== null && $tokenTersimpan !== null && $tokenTersimpan === $tokenSaya) {
+            Cache::put($namaKunci, $tokenSaya, $ttl);
+
+            return ['nama' => $namaKunci, 'session' => $kunciSession, 'token' => $tokenSaya];
+        }
+
+        // Kunci milik orang lain -> tolak.
+        if ($tokenTersimpan !== null) {
+            return null;
+        }
+
+        // Kunci kosong: ambil secara atomik (add() bersifat atomik pada file store).
+        $tokenBaru = bin2hex(random_bytes(16));
+
+        if (!Cache::add($namaKunci, $tokenBaru, $ttl)) {
+            // Telah ada proses lain yang menang => tolak.
+            return null;
+        }
+
+        Session::put($kunciSession, $tokenBaru);
+
+        return ['nama' => $namaKunci, 'session' => $kunciSession, 'token' => $tokenBaru];
+    }
 
     public function simpanBunga()
     {
@@ -1034,6 +1156,69 @@ class SimpananController extends Controller
         $id = request()->get('id');
         $limit = 30;
 
+        // -- Kunci proses: satu proses bunga per lokasi + bulan.
+        $kunci = $this->ambilKunciBunga($tahun, $bulan);
+
+        if ($kunci === null) {
+            return response()->view('simpanan.partials.info_proses_bunga', [
+                'diproses' => false,
+                'pesan'    => 'Proses hitung bunga untuk bulan ini sedang berjalan di user lain. '
+                           . 'Mohon tunggu sampai proses selesai, lalu coba lagi.',
+            ]);
+        }
+
+        try {
+            $hasil = $this->jalankanProsesBunga($tahun, $bulan, $start, $id, $limit);
+
+            // Lepas kunci saat batch terakhir selesai.
+            if ($this->apakahBatchTerakhir($start, $id)) {
+                $this->lepasKunciBunga($kunci);
+            }
+
+            return $hasil;
+        } catch (\Throwable $e) {
+            // Proses gagal: lepaskan kunci agar tidak macet.
+            $this->lepasKunciBunga($kunci);
+            throw $e;
+        }
+    }
+
+    /**
+     * Lepas kunci proses bunga (hanya jika masih milik pemanggil).
+     */
+    private function lepasKunciBunga($kunci)
+    {
+        try {
+            if (isset($kunci['nama']) && isset($kunci['token'])
+                && Cache::get($kunci['nama']) === $kunci['token']) {
+                Cache::forget($kunci['nama']);
+            }
+            if (isset($kunci['session'])) {
+                Session::forget($kunci['session']);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Gagal melepas kunci bunga: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Apakah batch ini adalah batch terakhir dalam rantai?
+     * Perhitungan disamakan dengan jalankanProsesBunga().
+     */
+    private function apakahBatchTerakhir($start, $id)
+    {
+        if ($id == NULL || $id == "" || $id == 0) {
+            $count = Simpanan::where('status', 'A')->count();
+        } else {
+            $id_array = array_filter(array_map('trim', explode(',', $id)), 'is_numeric');
+            $count = Simpanan::whereIn('id', $id_array)->where('status', 'A')->count();
+        }
+
+        return ((int) $start + 30) >= ($count + 30);
+    }
+
+    private function jalankanProsesBunga($tahun, $bulan, $start, $id, $limit)
+    {
         if ($id == NULL || $id == "" || $id == 0) {
             $count = Simpanan::where('status', 'A')->count();
             $nia = Simpanan::where('status', 'A')
@@ -1118,6 +1303,11 @@ class SimpananController extends Controller
         $jumlah_hari = $selisih->days + 1;
 
         $hitung_bunga = $kec->hitung_bunga;
+
+        // Statistik proses (untuk ditampilkan di popup)
+        $jumlahDilewati = 0;   // transaksi yang sudah ada -> dilewati
+        $jumlahGagal    = 0;   // rekening yang gagal diproses
+        $jumlahDiproses = 0;   // rekening yang diproses (transaksi baru dibuat)
 
         foreach ($nia as $simp) {
             if (strtotime($tgl_trans) < strtotime($simp->tgl_buka)) {
@@ -1213,122 +1403,187 @@ class SimpananController extends Controller
                 ->first();
 
             $jenisSimpanan = JenisSimpanan::where('id', $simp->jenis_simpanan)->first();
-            $idmax = Transaksi::max('idt');
             $tanggal_formatted = Tanggal::tglNasional($tgl_trans);
 
-            $bungaExists = Transaksi::where('tgl_transaksi', $tanggal_formatted)
-                               ->where('rekening_debit', $jenisSimpanan->rek_bunga)
-                               ->where('rekening_kredit', $jenisSimpanan->rek_simp)
-                               ->where('id_simp', $simp->id)
-                               ->exists();
-            $pajakExists = Transaksi::where('tgl_transaksi', $tanggal_formatted)
-                               ->where('rekening_debit', $jenisSimpanan->rek_simp)
-                               ->where('rekening_kredit', $jenisSimpanan->rek_pajak)
-                               ->where('id_simp', $simp->id)
-                               ->exists();
-            $adminExists = Transaksi::where('tgl_transaksi', $tanggal_formatted)
-                               ->where('rekening_debit', $jenisSimpanan->rek_simp)
-                               ->where('rekening_kredit', $jenisSimpanan->rek_adm)
-                               ->where('id_simp', $simp->id)
-                               ->exists();
+            // -- Kunci idempoten: rekening + tanggal + akun debit + akun kredit.
+            //    Dicek di transaksi_{N} DAN real_simpanan_{N} (lihat helper private).
+            $bungaExists = $this->transaksiBungaSudahAda(
+                $simp->id,
+                $tanggal_formatted,
+                $jenisSimpanan->rek_bunga,
+                $jenisSimpanan->rek_simp
+            );
+            $pajakExists = $this->transaksiBungaSudahAda(
+                $simp->id,
+                $tanggal_formatted,
+                $jenisSimpanan->rek_simp,
+                $jenisSimpanan->rek_pajak
+            );
+            $adminExists = $this->transaksiBungaSudahAda(
+                $simp->id,
+                $tanggal_formatted,
+                $jenisSimpanan->rek_simp,
+                $jenisSimpanan->rek_adm
+            );
 
-            if (!$bungaExists && $bunga > 0) {
-                $idmax++;
-                $sum_baru = $realSimpanan ? $realSimpanan->sum + $bunga : $bunga;
-
-                $transaksi = new Transaksi();
-                $transaksi->tgl_transaksi = Tanggal::tglNasional($tgl_trans);
-                $transaksi->rekening_debit = $jenisSimpanan->rek_bunga;
-                $transaksi->rekening_kredit = $jenisSimpanan->rek_simp;
-                $transaksi->idtp = 0;
-                $transaksi->id_pinj = 0;
-                $transaksi->id_pinj_i = 0;
-                $transaksi->id_simp = $simp->id;
-                $transaksi->keterangan_transaksi = "Bunga " . $simp->nomor_rekening . " " . $simp->anggota->namadepan . " bulan " . $bulanTahun;
-                $transaksi->relasi = $simp->anggota->namadepan;
-                $transaksi->jumlah = $bunga;
-                $transaksi->urutan = 0;
-                $transaksi->id_user = auth()->user()->id;
-
-                if ($transaksi->save()) {
-                    RealSimpanan::create([
-                        'cif'           => $simp->id,
-                        'idt'           => $idmax,
-                        'kode'          => 5,
-                        'tgl_transaksi' => $tgl_trans,
-                        'real_d'        => 0,
-                        'real_k'        => $bunga,
-                        'sum'           => $sum_baru,
-                        'lu'            => now(),
-                        'id_user'       => $transaksi->id_user,
-                    ]);
-                }
+            if ($bungaExists) {
+                $jumlahDilewati++;
+            }
+            if ($pajakExists) {
+                $jumlahDilewati++;
+            }
+            if ($adminExists) {
+                $jumlahDilewati++;
             }
 
-            if (!$pajakExists && $pajak > 0) {
-                $idmax++;
-                $sum_baru = $realSimpanan ? $realSimpanan->sum - $pajak : $pajak;
+            // -- Semua transaksi untuk satu rekening (bunga+pajak+admin+real_simpanannya)
+            //    dibungkus satu DB::transaction agar gagal di tengah tidak menyisakan
+            //    data setengah jadi.
+            //
+            //    Catatan engine: transaksi_{N} memakai MyISAM (tidak bisa rollback),
+            //    real_simpanan_{N} memakai InnoDB (bisa rollback). Karena itu:
+            //      1) insert ke transaksi_{N} dilakukan SESUDAH seluruh validasi lolos
+            //         dan SEBELUM insert real_simpanan;
+            //      2) bila insert real_simpanan gagal, transaksi_{N} yang baru dibuat
+            //         dihapus (hard delete baris yang baru saja dibuat) agar tidak
+            //         menyisakan transaksi tanpa real_simpanan.
+            try {
+                DB::transaction(function () use (
+                    $simp, $jenisSimpanan, $realSimpanan, $tgl_trans, $tanggal_formatted,
+                    $bulanTahun, $bunga, $pajak, $admin,
+                    $bungaExists, $pajakExists, $adminExists
+                ) {
+                    $transaksiDibuat = [];
 
-                $transaksi = new Transaksi();
-                $transaksi->tgl_transaksi = Tanggal::tglNasional($tgl_trans);
-                $transaksi->rekening_debit = $jenisSimpanan->rek_simp;
-                $transaksi->rekening_kredit = $jenisSimpanan->rek_pajak;
-                $transaksi->idtp = 0;
-                $transaksi->id_pinj = 0;
-                $transaksi->id_pinj_i = 0;
-                $transaksi->id_simp = $simp->id;
-                $transaksi->keterangan_transaksi = "Pajak Bunga " . $simp->nomor_rekening . " " . $simp->anggota->namadepan . " bulan " . $bulanTahun;
-                $transaksi->relasi = $simp->anggota->namadepan;
-                $transaksi->jumlah = $pajak;
-                $transaksi->urutan = 0;
-                $transaksi->id_user = auth()->user()->id;
+                    if (!$bungaExists && $bunga > 0) {
+                        $sum_baru = $realSimpanan ? $realSimpanan->sum + $bunga : $bunga;
 
-                if ($transaksi->save()) {
-                    RealSimpanan::create([
-                        'cif'           => $simp->id,
-                        'idt'           => $idmax,
-                        'kode'          => 6,
-                        'tgl_transaksi' => $tgl_trans,
-                        'real_d'        => $pajak,
-                        'real_k'        => 0,
-                        'sum'           => $sum_baru,
-                        'lu'            => now(),
-                        'id_user'       => $transaksi->id_user,
-                    ]);
-                }
-            }
+                        $transaksi = new Transaksi();
+                        $transaksi->tgl_transaksi = $tanggal_formatted;
+                        $transaksi->rekening_debit = $jenisSimpanan->rek_bunga;
+                        $transaksi->rekening_kredit = $jenisSimpanan->rek_simp;
+                        $transaksi->idtp = 0;
+                        $transaksi->id_pinj = 0;
+                        $transaksi->id_pinj_i = 0;
+                        $transaksi->id_simp = $simp->id;
+                        $transaksi->keterangan_transaksi = "Bunga " . $simp->nomor_rekening . " " . $simp->anggota->namadepan . " bulan " . $bulanTahun;
+                        $transaksi->relasi = $simp->anggota->namadepan;
+                        $transaksi->jumlah = $bunga;
+                        $transaksi->urutan = 0;
+                        $transaksi->id_user = auth()->user()->id;
 
-            if (!$adminExists && $admin > 0) {
-                $idmax++;
-                $sum_baru = $realSimpanan ? $realSimpanan->sum - $admin : $admin;
+                        if ($transaksi->save()) {
+                            $transaksiDibuat[] = $transaksi->idt;
+                            try {
+                                RealSimpanan::create([
+                                    'cif'           => $simp->id,
+                                    // idt memakai id hasil insert transaksi (bukan max(idt)+1 manual)
+                                    'idt'           => $transaksi->idt,
+                                    'kode'          => 5,
+                                    'tgl_transaksi' => $tgl_trans,
+                                    'real_d'        => 0,
+                                    'real_k'        => $bunga,
+                                    'sum'           => $sum_baru,
+                                    'lu'            => now(),
+                                    'id_user'       => $transaksi->id_user,
+                                ]);
+                            } catch (\Throwable $e) {
+                                // Kompensasi: transaksi_{N} (MyISAM) tidak bisa di-rollback,
+                                // jadi hapus baris transaksi yang baru dibuat agar tidak
+                                // menyisakan transaksi tanpa real_simpanan.
+                                Transaksi::where('idt', $transaksi->idt)->forceDelete();
 
-                $transaksi = new Transaksi();
-                $transaksi->tgl_transaksi = Tanggal::tglNasional($tgl_trans);
-                $transaksi->rekening_debit = $jenisSimpanan->rek_simp;
-                $transaksi->rekening_kredit = $jenisSimpanan->rek_adm;
-                $transaksi->idtp = 0;
-                $transaksi->id_pinj = 0;
-                $transaksi->id_pinj_i = 0;
-                $transaksi->id_simp = $simp->id;
-                $transaksi->keterangan_transaksi = "Admin " . $simp->nomor_rekening . " " . $simp->anggota->namadepan;
-                $transaksi->relasi = $simp->anggota->namadepan;
-                $transaksi->jumlah = $admin;
-                $transaksi->urutan = 0;
-                $transaksi->id_user = auth()->user()->id;
+                                throw $e;
+                            }
+                        }
+                    }
 
-                if ($transaksi->save()) {
-                    RealSimpanan::create([
-                        'cif'           => $simp->id,
-                        'idt'           => $idmax,
-                        'kode'          => 7,
-                        'tgl_transaksi' => $tgl_trans,
-                        'real_d'        => $admin,
-                        'real_k'        => 0,
-                        'sum'           => $sum_baru,
-                        'lu'            => now(),
-                        'id_user'       => $transaksi->id_user,
-                    ]);
-                }
+                    if (!$pajakExists && $pajak > 0) {
+                        $sum_baru = $realSimpanan ? $realSimpanan->sum - $pajak : $pajak;
+
+                        $transaksi = new Transaksi();
+                        $transaksi->tgl_transaksi = $tanggal_formatted;
+                        $transaksi->rekening_debit = $jenisSimpanan->rek_simp;
+                        $transaksi->rekening_kredit = $jenisSimpanan->rek_pajak;
+                        $transaksi->idtp = 0;
+                        $transaksi->id_pinj = 0;
+                        $transaksi->id_pinj_i = 0;
+                        $transaksi->id_simp = $simp->id;
+                        $transaksi->keterangan_transaksi = "Pajak Bunga " . $simp->nomor_rekening . " " . $simp->anggota->namadepan . " bulan " . $bulanTahun;
+                        $transaksi->relasi = $simp->anggota->namadepan;
+                        $transaksi->jumlah = $pajak;
+                        $transaksi->urutan = 0;
+                        $transaksi->id_user = auth()->user()->id;
+
+                        if ($transaksi->save()) {
+                            $transaksiDibuat[] = $transaksi->idt;
+                            try {
+                                RealSimpanan::create([
+                                    'cif'           => $simp->id,
+                                    'idt'           => $transaksi->idt,
+                                    'kode'          => 6,
+                                    'tgl_transaksi' => $tgl_trans,
+                                    'real_d'        => $pajak,
+                                    'real_k'        => 0,
+                                    'sum'           => $sum_baru,
+                                    'lu'            => now(),
+                                    'id_user'       => $transaksi->id_user,
+                                ]);
+                            } catch (\Throwable $e) {
+                                Transaksi::where('idt', $transaksi->idt)->forceDelete();
+
+                                throw $e;
+                            }
+                        }
+                    }
+
+                    if (!$adminExists && $admin > 0) {
+                        $sum_baru = $realSimpanan ? $realSimpanan->sum - $admin : $admin;
+
+                        $transaksi = new Transaksi();
+                        $transaksi->tgl_transaksi = $tanggal_formatted;
+                        $transaksi->rekening_debit = $jenisSimpanan->rek_simp;
+                        $transaksi->rekening_kredit = $jenisSimpanan->rek_adm;
+                        $transaksi->idtp = 0;
+                        $transaksi->id_pinj = 0;
+                        $transaksi->id_pinj_i = 0;
+                        $transaksi->id_simp = $simp->id;
+                        $transaksi->keterangan_transaksi = "Admin " . $simp->nomor_rekening . " " . $simp->anggota->namadepan;
+                        $transaksi->relasi = $simp->anggota->namadepan;
+                        $transaksi->jumlah = $admin;
+                        $transaksi->urutan = 0;
+                        $transaksi->id_user = auth()->user()->id;
+
+                        if ($transaksi->save()) {
+                            $transaksiDibuat[] = $transaksi->idt;
+                            try {
+                                RealSimpanan::create([
+                                    'cif'           => $simp->id,
+                                    'idt'           => $transaksi->idt,
+                                    'kode'          => 7,
+                                    'tgl_transaksi' => $tgl_trans,
+                                    'real_d'        => $admin,
+                                    'real_k'        => 0,
+                                    'sum'           => $sum_baru,
+                                    'lu'            => now(),
+                                    'id_user'       => $transaksi->id_user,
+                                ]);
+                            } catch (\Throwable $e) {
+                                Transaksi::where('idt', $transaksi->idt)->forceDelete();
+
+                                throw $e;
+                            }
+                        }
+                    }
+
+                    return $transaksiDibuat;
+                });
+                $jumlahDiproses++;
+            } catch (\Throwable $e) {
+                // Catat kegagalan tanpa membatalkan seluruh batch.
+                \Illuminate\Support\Facades\Log::error('Proses bunga gagal untuk simpanan '
+                    . $simp->id . ' tgl ' . $tgl_trans . ': ' . $e->getMessage());
+                $jumlahGagal++;
             }
         }
 
@@ -1400,15 +1655,47 @@ class SimpananController extends Controller
 
                 <div role="progressbar" aria-valuenow="' . $persen . '" aria-valuemin="0" aria-valuemax="100" style="--value: ' . $persen . '"></div>
 
+                <div style="text-align:center; margin-top: 12px; font-size: 14px; color: #555;">
+                    Rekening diproses: <strong>' . $jumlahDiproses . '</strong>
+                    &nbsp;|&nbsp; Dilewati (sudah diproses): <strong>' . $jumlahDilewati . '</strong>
+                    &nbsp;|&nbsp; Gagal: <strong>' . $jumlahGagal . '</strong>
+                </div>
+
                 <script>document.querySelector("#next").click()</script>
             ';
-            exit;
+            // PENTING: gunakan return (bukan exit) supaya blok finally di
+            // simpanBunga() tetap berjalan dan kunci proses dilepas.
+            return;
         } else {
-            echo '<script>window.opener.postMessage("closed", "*"); window.close();</script>';
-            exit;
+            echo '<div style="text-align:center; margin-top: 30px; font-size: 15px; color: #333;">
+                <div style="font-size: 40px; color: #28a745;">&#10004;</div>
+                <strong>Proses hitung bunga selesai.</strong><br>
+                Rekening diproses: <strong>' . $jumlahDiproses . '</strong><br>
+                Dilewati (sudah diproses sebelumnya): <strong>' . $jumlahDilewati . '</strong><br>
+                Gagal: <strong>' . $jumlahGagal . '</strong>
+            </div>';
+            echo '<script>
+                if (window.opener) { window.opener.postMessage("closed", "*"); }
+                setTimeout(function(){ window.close(); }, 2500);
+            </script>';
+            // PENTING: gunakan return (bukan exit) supaya blok finally di
+            // simpanBunga() tetap berjalan dan kunci proses dilepas.
+            return;
         }
     }
 
+    /**
+     * CATATAN: method ini MATI (tidak dirouting di routes/web.php) dan tidak
+     * boleh dipakai ulang.
+     *
+     * Alasan:
+     *   - memakai variabel yang tidak terdefinisi ($jenisMutasi, $jumlah,
+     *     $jumlahBersih) sehingga akan error bila dipanggil;
+     *   - tidak punya idempoten, tanpa DB::transaction, tanpa lock;
+     *   - menulis kode_simpan 2/3 (setor/tarik), bukan bunga.
+     *
+     * Proses hitung bunga yang benar ada di simpanBunga() dan infoBunga().
+     */
     public function simpanTransaksiBunga(Request $request)
     {
         $tglTransaksi = now();
