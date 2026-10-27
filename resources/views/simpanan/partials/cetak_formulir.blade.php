@@ -10,7 +10,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: Arial, Helvetica, sans-serif;
             font-size: 11px;
@@ -18,25 +18,25 @@
             background: white;
             line-height: 1.2;
         }
-        
+
         .container {
             max-width: 210mm;
             margin: 0 auto;
             background: white;
             padding: 10px;
         }
-        
+
         .header {
             text-align: right;
             margin-bottom: 8px;
             font-size: 10px;
         }
-        
+
         .header-line {
             border-bottom: 2px solid #000;
             margin-bottom: 10px;
         }
-        
+
         .title {
             text-align: center;
             font-size: 14px;
@@ -44,47 +44,47 @@
             margin: 10px 0;
             letter-spacing: 1px;
         }
-        
+
         .title-line {
             border-bottom: 2px solid #000;
             margin-bottom: 15px;
         }
-        
+
         .form-group {
             display: flex;
             margin-bottom: 5px;
             align-items: flex-start;
         }
-        
+
         .form-label {
             width: 30%;
             padding-right: 10px;
             display: flex;
             align-items: center;
         }
-        
+
         .form-number {
             width: 30px;
             text-align: left;
         }
-        
+
         .form-colon {
             margin: 0 10px;
         }
-        
+
         .form-value {
             flex: 1;
             border-bottom: 1px solid #000;
             min-height: 18px;
             padding: 2px 5px;
         }
-        
+
         .checkbox-group {
             display: inline-flex;
             align-items: center;
             margin-right: 15px;
         }
-        
+
         .checkbox {
             width: 14px;
             height: 14px;
@@ -95,11 +95,11 @@
             line-height: 12px;
             font-size: 10px;
         }
-        
+
         .checkbox.checked::before {
             content: '✓';
         }
-        
+
         .sub-section {
             margin-left: 30px;
             padding: 8px;
@@ -107,47 +107,47 @@
             margin-top: 4px;
             margin-bottom: 8px;
         }
-        
+
         .sub-section-title {
             font-weight: bold;
             margin-bottom: 8px;
         }
-        
+
         .pernyataan {
             margin-top: 15px;
             border-top: 2px solid #000;
             padding-top: 8px;
         }
-        
+
         .pernyataan-title {
             font-weight: bold;
             margin-bottom: 5px;
         }
-        
+
         .pernyataan-content {
             text-align: justify;
             line-height: 1.3;
             margin-bottom: 4px;
         }
-        
+
         .signature-section {
             display: flex;
             justify-content: space-between;
             margin-top: 25px;
             margin-bottom: 20px;
         }
-        
+
         .signature-box {
             text-align: center;
             width: 45%;
         }
-        
+
         .footer {
             border-top: 2px solid #000;
             padding-top: 10px;
             font-size: 9px;
         }
-        
+
         @media print {
             body {
                 padding: 0;
@@ -166,11 +166,11 @@
             <div>No Rekening : {{ isset($simpanan) && $simpanan->nomor_rekening ? $simpanan->nomor_rekening : '_________________' }}</div>
         </div>
         <div class="header-line"></div>
-        
+
         <!-- Title -->
         <div class="title">FORMULIR SIMPANAN NASABAH</div>
         <div class="title-line"></div>
-        
+
         <!-- Form Fields -->
         <div class="form-group">
             <div class="form-label">
@@ -180,7 +180,7 @@
             <span class="form-colon">:</span>
             <div class="form-value">{{ isset($simpanan->anggota->nik) ? $simpanan->anggota->nik : '' }}</div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">2.</span>
@@ -189,7 +189,7 @@
             <span class="form-colon">:</span>
             <div class="form-value">{{ isset($simpanan->anggota->namadepan) ? $simpanan->anggota->namadepan : '' }}</div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">3.</span>
@@ -208,7 +208,7 @@
                 </span>
             </div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">4.</span>
@@ -224,7 +224,7 @@
                 @endif
             </div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">5.</span>
@@ -233,7 +233,7 @@
             <span class="form-colon">:</span>
             <div class="form-value">{{ isset($simpanan->anggota->alamat) ? $simpanan->anggota->alamat : '' }}</div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">6.</span>
@@ -242,7 +242,7 @@
             <span class="form-colon">:</span>
             <div class="form-value">{{ isset($simpanan->anggota->hp) ? $simpanan->anggota->hp : '' }}</div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">7.</span>
@@ -251,7 +251,7 @@
             <span class="form-colon">:</span>
             <div class="form-value">{{ isset($simpanan->anggota->agama) ? $simpanan->anggota->agama : '' }}</div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">8.</span>
@@ -273,7 +273,7 @@
                 </span>
             </div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">9.</span>
@@ -319,7 +319,7 @@
                 </span>
             </div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">10.</span>
@@ -328,7 +328,7 @@
             <span class="form-colon">:</span>
             <div class="form-value">{{ isset($simpanan->anggota->usaha) ? $simpanan->anggota->usaha : '' }}</div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">11.</span>
@@ -337,7 +337,7 @@
             <span class="form-colon">:</span>
             <div class="form-value">{{ isset($simpanan->anggota->tempat_kerja) ? $simpanan->anggota->tempat_kerja : '' }}</div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">12.</span>
@@ -346,7 +346,7 @@
             <span class="form-colon">:</span>
             <div class="form-value"></div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">13.</span>
@@ -372,7 +372,7 @@
                 </span>
             </div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">14.</span>
@@ -394,7 +394,7 @@
                 </span>
             </div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">15.</span>
@@ -416,7 +416,7 @@
                 </span>
             </div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">16.</span>
@@ -434,11 +434,11 @@
                 </span>
             </div>
         </div>
-        
+
         <!-- Sub Section - Kuasa -->
         <div class="sub-section">
             <div class="sub-section-title">Isikan Jika Status Permohonan Kuasa</div>
-            
+
             <div class="form-group" style="margin-bottom: 5px;">
                 <div class="form-label" style="width: 40%;">
                     <span class="form-number">1.</span>
@@ -447,7 +447,7 @@
                 <span class="form-colon">:</span>
                 <div class="form-value">{{ isset($simpanan->lembaga) ? $simpanan->lembaga : '' }}</div>
             </div>
-            
+
             <div class="form-group" style="margin-bottom: 5px;">
                 <div class="form-label" style="width: 40%;">
                     <span class="form-number">2.</span>
@@ -457,7 +457,7 @@
                 <div class="form-value">{{ isset($simpanan->jabatan) ? $simpanan->jabatan : '' }}</div>
             </div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">17.</span>
@@ -466,7 +466,7 @@
             <span class="form-colon">:</span>
             <div class="form-value">{{ isset($simpanan->pengampu) ? $simpanan->pengampu : '' }}</div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">18.</span>
@@ -475,7 +475,7 @@
             <span class="form-colon">:</span>
             <div class="form-value">{{ isset($simpanan->hubungan) ? $simpanan->hubungan : '' }}</div>
         </div>
-        
+
         <div class="form-group">
             <div class="form-label">
                 <span class="form-number">19.</span>
@@ -484,7 +484,7 @@
             <span class="form-colon">:</span>
             <div class="form-value">{{ isset($simpanan->anggota->nama_ibu) ? $simpanan->anggota->nama_ibu : '' }}</div>
         </div>
-        
+
         <!-- Pernyataan Section -->
         <div class="pernyataan">
             <div class="pernyataan-title">PERNYATAAN</div>
@@ -495,12 +495,12 @@
                 1. Semua data isian diatas adalah benar,
             </div>
             <div class="pernyataan-content">
-                2. Menyetujui serta tunduk pada ketentuan dan syarat umum yang berlaku pada pembukaan rekening di KOPERASI LEMBAGA KEUANGAN MIKRO,
+                2. Menyetujui serta tunduk pada ketentuan dan syarat umum yang berlaku pada pembukaan rekening di <strong>{{ $kec->nama_lembaga_sort ?? 'Lembaga Keuangan Mikro' }}</strong>,
             </div>
             <div class="pernyataan-content">
                 3. Dana yang saya setorkan dan pergunakan tidak berasal dari / untuk tujuan <i>money laundering</i> atau pencucian uang.
             </div>
-            
+
             <!-- Signature Section -->
             <div class="signature-section">
                 <div class="signature-box">
@@ -515,13 +515,13 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Footer -->
         <div class="footer">
             Dicetak Oleh: {{ auth()->check() ? auth()->user()->name : '' }} ; pada: {{ now()->format('Y-m-d H:i:s') }}
         </div>
     </div>
-    
+
     <script>
         window.onload = function() {
             window.print();

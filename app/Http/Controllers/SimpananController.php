@@ -493,6 +493,7 @@ class SimpananController extends Controller
 
     public function cetakFormulir(Simpanan $simpanan = null)
     {
+        $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
         if ($simpanan && $simpanan->id) {
             $simpanan = $simpanan->with(['anggota', 'js'])->find($simpanan->id);
             $title = 'Formulir Simpanan - ' . ($simpanan->anggota->namadepan ?? 'Nasabah');
@@ -501,7 +502,7 @@ class SimpananController extends Controller
             $title = 'Formulir Simpanan Nasabah';
         }
 
-        return view('simpanan.partials.cetak_formulir')->with(compact('title', 'simpanan'));
+        return view('simpanan.partials.cetak_formulir')->with(compact('title', 'simpanan', 'kec'));
     }
 
     public function cetakSertifikat(Simpanan $simpanan)
