@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Log;
 
 class SsoController extends Controller
 {
+    private const ID_KEC = 351;
+
     public function __construct(private readonly SsoTokenVerifier $verifier)
     {
     }
@@ -44,7 +46,7 @@ class SsoController extends Controller
             $serverName = (string) $request->server('SERVER_NAME');
             if (in_array($serverName, ['127.0.0.1', 'localhost'], true)
                 || str_ends_with($serverName, '.test')) {
-                $kec = Kecamatan::find(1);
+                $kec = Kecamatan::find(self::ID_KEC);
             }
         }
         if (! $kec) {
