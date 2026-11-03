@@ -9,8 +9,8 @@
                 <div class="page-title-icon">
                     <i class="fa fa-bank"></i>
                 </div>
-                <div><b>Kalkulasi Perhitungan Bunga dan Biaya</b>
-                    <div class="page-title-subheading">
+                <div><b style="color: #ffffff;">Kalkulasi Perhitungan Bunga dan Biaya</b>
+                    <div class="page-title-subheading" style="color: #ffffff; opacity: 1;">
                          {{ Session::get('nama_lembaga') }}
                     </div>
                 </div>
@@ -64,7 +64,7 @@
 
                                 </div>
                                 <div class="col-md-8">
-                                    <div class="alert alert-info d-flex " role="alert" style="background-color: #e7f3fe; color: #31708f; border: 1px solid #bce8f1;">
+                                    <div class="alert alert-info d-flex " role="alert" style="background-color: #B3EBF2; color: #000000; border: 1px solid #80DEEA;">
                                         <i class="fas fa-info-circle" style="font-size: 1.5rem; margin-right: 10px; margin-top: 10px; vertical-align:top"></i>
                                         <div id="info-bunga">
                                             
