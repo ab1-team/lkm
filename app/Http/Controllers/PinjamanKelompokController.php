@@ -1657,6 +1657,8 @@ class PinjamanKelompokController extends Controller
             'kelompok.d.sebutan_desa',
         ])->withCount('pinjaman_anggota')->first();
 
+        $kec = Kecamatan::where('id', Session::get('lokasi'))->with('kabupaten', 'kabupaten.wilayah', 'desa', 'ttd')->first();
+        $kab = $kec->kabupaten;
         $data['logo'] = $kab->id;
         $data['keuangan'] = $keuangan;
         $data['judul'] = 'Surat Rekomendasi Kredit ('.$data['pinkel']->kelompok->nama_kelompok.' - Loan ID. '.$data['pinkel']->id.')';
