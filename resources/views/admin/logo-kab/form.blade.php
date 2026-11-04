@@ -8,6 +8,12 @@
                     <h5 class="mb-0">{{ $title }}</h5>
                 </div>
                 <div class="card-body">
+                    @if (session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     @if ($errors->any())
                         <div class="alert alert-danger">
                             <ul class="mb-0">

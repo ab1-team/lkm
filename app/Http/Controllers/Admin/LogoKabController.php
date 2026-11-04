@@ -33,6 +33,11 @@ class LogoKabController extends Controller
      */
     private const MAKS_DIMENSI = 1200;
 
+    /**
+     * Alasan kegagalan terakhir saat menyimpan file.
+     */
+    private ?string $alasan = null;
+
     public function index()
     {
         $title = 'Logo Kabupaten';
@@ -79,7 +84,7 @@ class LogoKabController extends Controller
         $namaFile = $this->namaFile($id);
 
         if (! $this->simpan($request->file('file'), $id)) {
-            return back()->withInput()->with('error', "Logo {$namaFile} gagal disimpan. Gambar tidak bisa dikonversi ke PNG.");
+            return back()->withInput()->with('error', "Logo {$namaFile} gagal disimpan. ".$this->alasanGagal());
         }
 
         return redirect()->route('admin.logoKab.index')
@@ -109,7 +114,7 @@ class LogoKabController extends Controller
         $namaFile = $this->namaFile($kabupaten->id);
 
         if (! $this->simpan($request->file('file'), $kabupaten->id)) {
-            return back()->withInput()->with('error', "Logo {$namaFile} gagal disimpan. Gambar tidak bisa dikonversi ke PNG.");
+            return back()->withInput()->with('error', "Logo {$namaFile} gagal disimpan. ".$this->alasanGagal());
         }
 
         return redirect()->route('admin.logoKab.index')
@@ -177,9 +182,23 @@ class LogoKabController extends Controller
         $disk = Storage::disk('public');
         $target = $this->path($id);
 
+        $this->alasan = null;
+
+        // Folder tujuan harus ada sebelum menulis. Storage::put() melempar
+        // exception UnableToCreateDirectory yang TIDAK ditangkap Laravel kalau
+        // folder belum ada dan tidak bisa dibuat (mis. permission server),
+        // sehingga hasilnya 500 Internal Server Error.
+        if (! $this->siapkanFolder($disk)) {
+            $this->alasan = 'Folder ' . storage_path('app/public/' . self::FOLDER) . ' tidak bisa dibuat atau ditulis. Periksa permission folder storage.';
+
+            return false;
+        }
+
         $image = $this->bacaGambar($file->get());
 
         if (! $image) {
+            $this->alasan = 'Gambar tidak bisa dikonversi ke PNG.';
+
             return false;
         }
 
@@ -192,10 +211,54 @@ class LogoKabController extends Controller
         imagedestroy($image);
 
         if (! $berhasil || $isi === false) {
+            $this->alasan = 'Gambar tidak bisa dikonversi ke PNG.';
+
             return false;
         }
 
-        return $disk->put($target, $isi);
+        try {
+            $ok = $disk->put($target, $isi);
+        } catch (\Throwable $e) {
+            // Kegagalan menulis (permission, disk penuh, dll) ditampilkan
+            // sebagai pesan di form, bukan sebagai error 500.
+            report($e);
+
+            $this->alasan = 'File tidak bisa ditulis ke folder storage. Periksa permission folder storage.';
+
+            return false;
+        }
+
+        if (! $ok) {
+            $this->alasan = 'File tidak bisa ditulis ke folder storage. Periksa permission folder storage.';
+        }
+
+        return $ok;
+    }
+
+    /**
+     * Pastikan folder logo_kab ada dan bisa ditulis.
+     */
+    private function siapkanFolder($disk): bool
+    {
+        try {
+            if (! $disk->exists(self::FOLDER)) {
+                $disk->makeDirectory(self::FOLDER);
+            }
+
+            return $disk->exists(self::FOLDER);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return false;
+        }
+    }
+
+    /**
+     * Alasan kegagalan terakhir, untuk ditampilkan di form.
+     */
+    private function alasanGagal(): string
+    {
+        return $this->alasan ?: 'Gambar tidak bisa dikonversi ke PNG.';
     }
 
     /**

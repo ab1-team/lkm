@@ -257,4 +257,53 @@ class LogoKabUploadTest extends TestCase
         // Sama seperti /admin/update-fitur: tamu diarahkan ke halaman login.
         $this->get('/admin/logo-kab')->assertRedirect('/');
     }
+
+    /**
+     * Regression test untuk bug 500 Internal Server Error.
+     *
+     * Storage::put() melempar exception League\Flysystem\UnableToCreateDirectory
+     * yang TIDAK ditangkap Laravel, sehingga halaman /admin/logo-kab/{id}
+     * balas 500 saat folder storage/app/public/logo_kab belum ada / tidak
+     * bisa ditulis.
+     *
+     * Harusnya: exception ditangkap controller dan ditampilkan sebagai pesan
+     * error di form (bukan 500).
+     */
+    public function test_exception_dari_storage_tidak_menghasilkan_500(): void
+    {
+        $this->loginUser();
+
+        // Simulasikan Flysystem gagal saat menulis (folder tidak bisa dibuat).
+        $disk = \Mockery::mock(\Illuminate\Filesystem\FilesystemAdapter::class);
+        $disk->shouldReceive('exists')->with('logo_kab')->andReturn(true);
+        $disk->shouldReceive('put')
+            ->andThrow(new \League\Flysystem\UnableToCreateDirectory('Tidak bisa membuat folder.'));
+
+        Storage::shouldReceive('disk')->with('public')->andReturn($disk);
+
+        $response = $this->post('/admin/logo-kab', [
+            'nama_file' => self::KAB_ID,
+            'file' => $this->filePngPalsu(),
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHas('error');
+    }
+
+    /**
+     * Folder tujuan dibuat otomatis kalau belum ada (fresh deploy).
+     */
+    public function test_folder_tujuan_dibuat_otomatis_kalau_belum_ada(): void
+    {
+        $this->loginUser();
+
+        Storage::disk('public')->assertMissing('logo_kab');
+
+        $this->post('/admin/logo-kab', [
+            'nama_file' => self::KAB_ID,
+            'file' => $this->filePngPalsu(),
+        ])->assertRedirect('/admin/logo-kab');
+
+        Storage::disk('public')->assertExists('logo_kab/'.self::KAB_ID.'.png');
+    }
 }
