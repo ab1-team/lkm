@@ -30,7 +30,7 @@
         ];
 
         $jumlah_kolek = count($kolek_items);
-        $nomor = 0;
+        $nomor = 1;
 
         $t_alokasi = 0;
         $t_saldo = 0;
@@ -75,10 +75,10 @@
     <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10px; table-layout: fixed;">
         <tr>
             <th class="t l b" width="3%">No</th>
-            <th class="t l b" width="9%">LOAN ID</th>
-            <th class="t l b" width="12%">NAMA DEBITUR</th>
-            <th class="t l b" width="8%">CIF / NO. ANGGOTA</th>
-            <th class="t l b" width="8%">NIK</th>
+            <th class="t l b" width="5%">ID</th>
+            <th class="t l b" width="15%">NAMA DEBITUR</th>
+            <th class="t l b" width="5%">CIF</th>
+            <th class="t l b" width="12%">NIK</th>
             <th class="t l b" width="9%">Jenis</th>
             <th class="t l b" width="6%">Saldo</th>
             <th class="t l b" width="6%">Tunggakan</th>
@@ -175,10 +175,10 @@
 
                 <tr>
                     <td class="t l b" align="center">{{ $nomor++ }}</td>
-                    <td class="t l b" align="left">{{ $pinkel->id }}</td>
+                    <td class="t l b" align="right">{{ $pinkel->id }}</td>
                     <td class="t l b" align="left">{{ strtoupper($pinkel->namadepan) }}</td>
-                    <td class="t l b" align="left">{{ $pinkel->nia }}</td>
-                    <td class="t l b" align="left">{{ $pinkel->nik }}</td>
+                    <td class="t l b" align="right">{{ $pinkel->nia }}</td>
+                    <td class="t l b" align="center">{{ $pinkel->nik }}</td>
                     <td class="t l b" align="left">{{ strtoupper($pinkel->nama_jpp) }}</td>
                     <td class="t l b" align="right">{{ number_format($saldo_pokok) }}</td>
                     <td class="t l b" align="right">{{ number_format($tunggakan_pokok) }}</td>
