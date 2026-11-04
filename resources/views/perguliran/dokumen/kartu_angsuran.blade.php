@@ -179,12 +179,15 @@
         </table>
 
         @php
-            // Filter rencana untuk hanya menampilkan yang ada angsurannya (bukan angsuran ke-0 untuk sistem 2 mingguan)
-            $rencana_filtered = $pinkel->rencana->filter(function ($r) {
-                return $r->wajib_pokok != 0 || $r->wajib_jasa != 0;
-            });
-            
-            $baris_angsuran = ceil($rencana_filtered->count() / 2);
+            // Samakan dengan Rencana Angsuran: tampilkan seluruh jadwal (kecuali angsuran ke-0)
+            // dan gunakan nomor angsuran aslinya, termasuk baris bernilai 0 pada sistem mingguan/2 bulanan.
+            $rencana_filtered = $pinkel->rencana
+                ->filter(function ($r) {
+                    return (string) $r->angsuran_ke !== '0';
+                })
+                ->values();
+
+            $baris_angsuran = (int) ceil($rencana_filtered->count() / 2);
             $cek = 0;
         @endphp
 
@@ -216,7 +219,7 @@
                 @endphp
                 <tr>
                     <td class="l {{ $cek == $baris_angsuran ? 'b' : '' }}" align="center">
-                        {{ $cek }}
+                        {{ $rencana->angsuran_ke }}
                     </td>
                     <td class="l {{ $cek == $baris_angsuran ? 'b' : '' }}" align="center">
                         {{ Tanggal::tglIndo($rencana->jatuh_tempo) }}
@@ -235,7 +238,7 @@
                     
                     @if ($rencana_kanan)
                         <td class="l {{ $j == $baris_angsuran ? 'b' : '' }}" align="center">
-                            {{ $cek + $baris_angsuran }}
+                            {{ $rencana_kanan->angsuran_ke }}
                         </td>
                         <td class="l {{ $j == $baris_angsuran ? 'b' : '' }}" align="center">
                             {{ Tanggal::tglIndo($rencana_kanan->jatuh_tempo) }}
