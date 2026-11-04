@@ -9,6 +9,11 @@
         $sekretaris = isset($struktur_kelompok['sekretaris']) ? $struktur_kelompok['sekretaris'] : '';
         $bendahara = isset($struktur_kelompok['bendahara']) ? $struktur_kelompok['bendahara'] : '';
     }
+
+    // Logo kabupaten diunggah lewat /admin/logo-kab dan disimpan sebagai
+    // logo_kab/{id_kabupaten}.png. Kalau belum diunggah, gambar dilewati
+    // supaya dokumen tetap bisa dicetak.
+    $logoPath = storage_path('app/public/logo_kab/' . ($logo ?? '') . '.png');
 @endphp
 
 <head>
@@ -87,7 +92,10 @@
             style="font-size: 11px; position: relative; top: -20px;">
             <tr class="b">
                 <td align="center">
-                    <img src="../storage/app/public/logo_kab/{{ $logo }}.png" width="70" alt="{{ $logo }}.png" style="margin-bottom: 8px;">
+                    @if (file_exists($logoPath))
+                        <img src="../storage/app/public/logo_kab/{{ $logo }}.png" width="70" alt="{{ $logo }}.png"
+                            style="margin-bottom: 8px;">
+                    @endif
                 </td>
                 <td align="center">
                     <div style="font-size: 18px;">

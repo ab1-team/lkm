@@ -12,24 +12,26 @@
         ->orderBy('nama', 'ASC')
         ->get();
 
-    function active($curent, ...$_url)
-    {
-        $jumlah_url = count(request()->segments());
-        $url = request()->segment($jumlah_url);
+    if (! function_exists('active')) {
+        function active($curent, ...$_url)
+        {
+            $jumlah_url = count(request()->segments());
+            $url = request()->segment($jumlah_url);
 
-        if ($curent == $url) {
-            return 'active';
+            if ($curent == $url) {
+                return 'active';
+            }
+
+            if (in_array($url, $_url)) {
+                return 'active';
+            }
+
+            if (in_array(request()->segment($jumlah_url - 1), $_url)) {
+                return 'active';
+            }
+
+            return '';
         }
-
-        if (in_array($url, $_url)) {
-            return 'active';
-        }
-
-        if (in_array(request()->segment($jumlah_url - 1), $_url)) {
-            return 'active';
-        }
-
-        return '';
     }
 
     $links = [
@@ -193,6 +195,14 @@
                         <i class="material-icons opacity-10">dns</i>
                     </div>
                     <span class="nav-link-text ms-1">Menu</span>
+                </a>
+            </li>
+            <li class="nav-item nav-item-link {{ active('logo-kab') }}">
+                <a class="nav-link text-white {{ active('logo-kab') }}" href="{{ route('admin.logoKab.index') }}">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">image</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Logo Kabupaten</span>
                 </a>
             </li>
         </ul>

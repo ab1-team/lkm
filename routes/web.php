@@ -32,6 +32,7 @@ use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UpdateFiturController;
 use App\Http\Controllers\Admin\UpdateFiturController as AdminUpdateFiturController;
+use App\Http\Controllers\Admin\LogoKabController;
 use App\Models\Kecamatan;
 use App\Models\PinjamanKelompok;
 use App\Models\User;
@@ -537,6 +538,15 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->prefix('admin/update-fitur')->name('admin.updateFitur.')->group(function () {
     Route::resource('/', AdminUpdateFiturController::class)->parameters(['' => 'update_fitur']);
+});
+
+Route::middleware('master')->prefix('admin/logo-kab')->name('admin.logoKab.')->group(function () {
+    Route::get('/', [LogoKabController::class, 'index'])->name('index');
+    Route::get('/create', [LogoKabController::class, 'create'])->name('create');
+    Route::post('/', [LogoKabController::class, 'store'])->name('store');
+    Route::get('/{kabupaten}/edit', [LogoKabController::class, 'edit'])->name('edit');
+    Route::put('/{kabupaten}', [LogoKabController::class, 'update'])->name('update');
+    Route::delete('/{kabupaten}', [LogoKabController::class, 'destroy'])->name('destroy');
 });
 
 Route::get('/{invoice}', [PelaporanController::class, 'invoice']);
