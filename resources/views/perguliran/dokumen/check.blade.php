@@ -74,7 +74,7 @@
 
             <td>&nbsp;</td>
 
-            <td>{{ $pinkel->jenis_pp != '3' ? 'Ketua' : 'Pimpinan' }}</td>
+            <td>{{ $pinkel->jenis_pp != '3' ? 'Koordinator' : 'Pimpinan' }}</td>
             <td width="5">:</td>
             <td style="font-weight: bold;">{{ $ketua }}</td>
         </tr>

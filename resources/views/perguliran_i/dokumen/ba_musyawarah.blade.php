@@ -48,11 +48,6 @@
             <td>{{ $pinkel->kelompok->ketua }}</td>
         </tr>
         <tr>
-            <td>Notulen</td>
-            <td>:</td>
-            <td>{{ $pinkel->kelompok->sekretaris }}</td>
-        </tr>
-        <tr>
             <td>Narasumber</td>
             <td>:</td>
             <td>&nbsp;</td>
@@ -169,22 +164,17 @@
                 <td colspan="3">&nbsp;</td>
             </tr>
             <tr>
-                <td></td>
-                <td align="center" colspan="2">{{ $kec->nama_kec }}, _______________________</td>
+                <td colspan="3" align="center">{{ $kec->nama_kec }}, _______________________</td>
             </tr>
             <tr>
-                <td align="center">Ketua Kelompok</td>
-                <td align="center" colspan="2">Sekretaris Kelompok</td>
+                <td colspan="3" align="center">Koordinator Kelompok</td>
             </tr>
             <tr>
-                <td align="center" colspan="3" height="40">&nbsp;</td>
+                <td colspan="3" align="center" height="40">&nbsp;</td>
             </tr>
             <tr>
-                <td align="center">
+                <td colspan="3" align="center">
                     <b>{{ $pinkel->kelompok->ketua }}</b>
-                </td>
-                <td align="center" colspan="2">
-                    <b>{{ $pinkel->kelompok->sekretaris }}</b>
                 </td>
             </tr>
         </table>

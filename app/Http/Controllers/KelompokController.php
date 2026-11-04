@@ -153,8 +153,8 @@ class KelompokController extends Controller
             'telpon' => 'required',
             'tgl_berdiri' => 'required',
             'ketua' => 'required',
-            'sekretaris' => 'required',
-            'bendahara' => 'required',
+            'sekretaris' => 'nullable',
+            'bendahara' => 'nullable',
             'jenis_usaha' => 'required',
             'jenis_kegiatan' => 'required',
             'tingkat_kelompok' => 'required',
@@ -179,8 +179,8 @@ class KelompokController extends Controller
             'tingkat_kelompok' => $request->tingkat_kelompok,
             'fungsi_kelompok' => $request->fungsi_kelompok,
             'ketua' => $request->ketua,
-            'sekretaris' => $request->sekretaris,
-            'bendahara' => $request->bendahara,
+            'sekretaris' => $request->sekretaris ?? '',
+            'bendahara' => $request->bendahara ?? '',
             'uname' => $request->kode_kelompok,
             'pass' => $request->kode_kelompok,
             'online' => 'T',
@@ -261,8 +261,8 @@ class KelompokController extends Controller
             'telpon' => 'required',
             'tgl_berdiri' => 'required',
             'ketua' => 'required',
-            'sekretaris' => 'required',
-            'bendahara' => 'required',
+            'sekretaris' => 'nullable',
+            'bendahara' => 'nullable',
             'jenis_usaha' => 'required',
             'jenis_kegiatan' => 'required',
             'tingkat_kelompok' => 'required',
@@ -293,8 +293,8 @@ class KelompokController extends Controller
             'tingkat_kelompok' => $request->tingkat_kelompok,
             'fungsi_kelompok' => $request->fungsi_kelompok,
             'ketua' => $request->ketua,
-            'sekretaris' => $request->sekretaris,
-            'bendahara' => $request->bendahara
+            'sekretaris' => $request->sekretaris ?? '',
+            'bendahara' => $request->bendahara ?? ''
         ];
 
         $kel = Kelompok::where('id', $kelompok->id)->update($update);

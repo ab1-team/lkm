@@ -475,7 +475,7 @@
                         <div>Lembar 1 : Untuk Kelompok</div>
                         <div>Lembar 2 : Arsip Lembaga</div>
                     </td>
-                    <td style="font-weight: bold; font-size: 12px;" width="350" align="center">Ketua Kelompok</td>
+                    <td style="font-weight: bold; font-size: 12px;" width="350" align="center">Koordinator Kelompok</td>
                     <td style="font-weight: bold; font-size: 12px;" width="350" align="center">
                         <div>Anggota Pemanfaat</div>
                     </td>

@@ -45,7 +45,7 @@
                     1. {{ $pinkel->kelompok->d->sebutan_desa->sebutan_kades }} {{ $pinkel->kelompok->d->nama_desa }},
                 </div>
                 <div>
-                    2. Ketua Kelompok {{ $pinkel->kelompok->nama_kelompok }}
+                    2. Koordinator Kelompok {{ $pinkel->kelompok->nama_kelompok }}
                 </div>
                 <div>Di</div>
                 <div style="font-weight: bold; text-align: center;">
@@ -97,7 +97,7 @@
                         <td>5.</td>
                         <td>Tempat</td>
                         <td>:</td>
-                        <td>Rumah Ketua kelompok / {{ $ketua }}</td>
+                        <td>Rumah Koordinator kelompok / {{ $ketua }}</td>
                     </tr>
                     <tr>
                         <td>6.</td>

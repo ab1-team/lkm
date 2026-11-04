@@ -72,25 +72,13 @@
         </div>
         <div class="col-md-3">
             <div class="position-relative mb-3">
-                <label for="ketua" class="form-label">Nama Ketua</label>
+                <label for="ketua" class="form-label">Nama Koordinator</label>
                 <input autocomplete="off" type="text" name="ketua" id="ketua" class="form-control">
                 <small class="text-danger" id="msg_ketua"></small>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="position-relative mb-3">
-                <label for="sekretaris" class="form-label">Nama Sekretaris</label>
-                <input autocomplete="off" type="text" name="sekretaris" id="sekretaris" class="form-control">
-                <small class="text-danger" id="msg_sekretaris"></small>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="position-relative mb-3">
-                <label for="bendahara" class="form-label">Nama Bendahara</label>
-                <input autocomplete="off" type="text" name="bendahara" id="bendahara" class="form-control">
-                <small class="text-danger" id="msg_bendahara"></small>
-            </div>
-        </div>
+        <input type="hidden" name="sekretaris" id="sekretaris" value="">
+        <input type="hidden" name="bendahara" id="bendahara" value="">
     </div>
     <div class="row">
         <div class="col-md-3">

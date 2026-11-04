@@ -92,7 +92,7 @@
             <td>Jabatan</td>
             <td>:</td>
             <td>
-                <b>Ketua Kelompok</b>
+                <b>Koordinator Kelompok</b>
             </td>
         </tr>
         <tr>

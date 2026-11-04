@@ -100,7 +100,7 @@
                 </td>
 
                 <td align="center">11.</td>
-                <td>Nama Ketua</td>
+                <td>Nama Koordinator</td>
                 <td align="center">:</td>
                 <td>
                     <b>{{ $ketua }}</b>
@@ -256,7 +256,7 @@
                                 <td align="center">
                                     {{ $kec->sebutan_level_1 }}
                                 </td>
-                                <td colspan="2" align="center">Ketua Kelompok</td>
+                                <td colspan="2" align="center">Koordinator Kelompok</td>
                             </tr>
                         </table>
                     @endif

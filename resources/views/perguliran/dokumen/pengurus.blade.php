@@ -49,7 +49,7 @@
             <td>
                 <b>{{ $pinkel->kelompok->nama_kelompok }}</b>
             </td>
-            <td>{{ $pinkel->jenis_pp != '3' ? 'Ketua' : 'Pimpinan' }}</td>
+            <td>{{ $pinkel->jenis_pp != '3' ? 'Koordinator' : 'Pimpinan' }}</td>
             <td align="right">:</td>
             <td>
                 <b>{{ $ketua }}</b>
@@ -77,22 +77,15 @@
         <tr>
             <td class="l t b" height="14" align="center">1.</td>
             <td class="l t b">
-                {{ $pinkel->jenis_pp != '3' ? 'Ketua Kelompok' : 'Pimpinan' }}
+                {{ $pinkel->jenis_pp != '3' ? 'Koordinator Kelompok' : 'Pimpinan' }}
             </td>
             <td class="l t b r">{{ $ketua }}</td>
         </tr>
-        <tr>
-            <td class="l t b" height="14" align="center">2.</td>
-            <td class="l t b">
-                {{ $pinkel->jenis_pp != '3' ? 'Sekretaris Kelompok' : 'Penanggung Jawab' }}
-            </td>
-            <td class="l t b r">{{ $sekretaris }}</td>
-        </tr>
-        @if ($pinkel->jenis_pp != '3')
+        @if ($pinkel->jenis_pp == '3')
             <tr>
-                <td class="l t b" height="14" align="center">3.</td>
-                <td class="l t b">Bendahara Kelompok</td>
-                <td class="l t b r">{{ $bendahara }}</td>
+                <td class="l t b" height="14" align="center">2.</td>
+                <td class="l t b">Penanggung Jawab</td>
+                <td class="l t b r">{{ $sekretaris }}</td>
             </tr>
         @endif
         <tr>
@@ -106,7 +99,7 @@
             <td colspan="2">&nbsp;</td>
             <td align="center">
                 @if ($kec->ttd_pengurus_kelompok == '1')
-                    Ketua Kelompok
+                    Koordinator Kelompok
                 @else
                     {{ $pinkel->kelompok->d->sebutan_desa->sebutan_kades }} {{ $pinkel->kelompok->d->nama_desa }}
                 @endif

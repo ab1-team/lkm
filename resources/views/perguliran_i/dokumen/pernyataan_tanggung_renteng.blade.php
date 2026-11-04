@@ -58,17 +58,17 @@
 
         <ol>
             <li>
-                Memberikan kuasa kepada ketua kelompok untuk menarik tabungan anggota yang dikelola kelompok guna melunasi
+                Memberikan kuasa kepada koordinator kelompok untuk menarik tabungan anggota yang dikelola kelompok guna melunasi
                 tunggakan angsuran, apabila terjadi tunggakan angsuran dari satu, beberapa atau seluruh anggota kelompok;
             </li>
             <li>
-                Memberikan kuasa kepada ketua kelompok untuk mengambil dan/atau menjual jaminan anggota yang tidak
+                Memberikan kuasa kepada koordinator kelompok untuk mengambil dan/atau menjual jaminan anggota yang tidak
                 memenuhi kewajibannya tersebut dan akan memperhitungkan hasilnya untuk melunasi sisa pokok dan jasa kredit.
                 Kelebihan dari jumlah tersebut akan dikembalikan kepada masing-masing yang bersangkutan;
             </li>
             <li>
                 Sanggup menanggung pelunasan sisa angsuran dengan sistem tanggung renteng yang pelaksanaannya dikoordinir
-                oleh ketua kelompok demi kelancaran penyetoran angsuran dengan batas waktu yang telah disepakati dengan
+                oleh koordinator kelompok demi kelancaran penyetoran angsuran dengan batas waktu yang telah disepakati dengan
                 penuh tanggung jawab apabila seluruh tabungan anggota dan hasil penjualan jaminan belum mencukupi jumlah
                 kewajiban pelunasan angsuran.
             </li>
@@ -102,7 +102,7 @@
             <td align="center">
                 {{ $pinkel->anggota->d->sebutan_desa->sebutan_kades }} {{ $pinkel->anggota->d->nama_desa }}
             </td>
-            <td align="center">Ketua Kelompok {{ $pinkel->anggota->nama_kelompok }}</td>
+            <td align="center">Koordinator Kelompok {{ $pinkel->anggota->nama_kelompok }}</td>
         </tr>
         <tr>
             <td colspan="2" height="30"></td>

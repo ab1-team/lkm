@@ -186,33 +186,19 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="position-relative mb-3">
-                                                <label for="ketua">Nama Ketua</label>
+                                                <label for="ketua">Nama Koordinator</label>
                                                 <input autocomplete="off" type="text" name="ketua"
                                                     id="ketua" class="form-control"
                                                     value="{{ $kelompok->ketua }}">
                                                 <small class="text-danger" id="msg_ketua"></small>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="position-relative mb-3">
-                                                <label for="sekretaris">Nama Sekretaris</label>
-                                                <input autocomplete="off" type="text" name="sekretaris"
-                                                    id="sekretaris" class="form-control"
-                                                    value="{{ $kelompok->sekretaris }}">
-                                                <small class="text-danger" id="msg_sekretaris"></small>
-                                            </div>
-                                        </div>
+                                        <input type="hidden" name="sekretaris" id="sekretaris"
+                                            value="{{ $kelompok->sekretaris }}">
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="position-relative mb-3">
-                                                <label for="bendahara">Nama Bendahara</label>
-                                                <input autocomplete="off" type="text" name="bendahara"
-                                                    id="bendahara" class="form-control"
-                                                    value="{{ $kelompok->bendahara }}">
-                                                <small class="text-danger" id="msg_bendahara"></small>
-                                            </div>
-                                        </div>
+                                        <input type="hidden" name="bendahara" id="bendahara"
+                                            value="{{ $kelompok->bendahara }}">
                                         <div class="col-md-4">
                                             <div class="position-relative mb-3">
                                                 <label for="jenis_produk_pinjaman">Jenis Produk Pinjaman</label>

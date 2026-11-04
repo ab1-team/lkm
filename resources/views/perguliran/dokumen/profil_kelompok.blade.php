@@ -92,24 +92,17 @@
         <tr>
             <td width="30">&nbsp;</td>
             <td align="center">&nbsp;</td>
-            <td>1.&nbsp;{{ $pinkel->jenis_pp != '3' ? 'Ketua' : 'Pimpinan' }}</td>
+            <td>1.&nbsp;{{ $pinkel->jenis_pp != '3' ? 'Koordinator' : 'Pimpinan' }}</td>
             <td align="right">:</td>
             <td style="font-weight: bold;">{{ $ketua }}</td>
         </tr>
-        <tr>
-            <td width="30">&nbsp;</td>
-            <td align="center">&nbsp;</td>
-            <td>2.&nbsp;{{ $pinkel->jenis_pp != '3' ? 'Sekertaris' : 'Penanggung Jawab' }}</td>
-            <td align="right">:</td>
-            <td style="font-weight: bold;">{{ $sekretaris }}</td>
-        </tr>
-        @if ($pinkel->jenis_pp != '3')
+        @if ($pinkel->jenis_pp == '3')
             <tr>
                 <td width="30">&nbsp;</td>
                 <td align="center">&nbsp;</td>
-                <td>3.&nbsp;Bendahara</td>
+                <td>2.&nbsp;Penanggung Jawab</td>
                 <td align="right">:</td>
-                <td style="font-weight: bold;">{{ $bendahara }}</td>
+                <td style="font-weight: bold;">{{ $sekretaris }}</td>
             </tr>
         @endif
         <tr>
@@ -140,7 +133,7 @@
                 {{ $pinkel->kelompok->d->sebutan_desa->sebutan_desa }} {{ $pinkel->kelompok->d->nama_desa }} Kec.
                 {{ $kec->nama_kec }} {{ $kabupaten }} Prov. {{ ucwords(strtolower($kab->wilayah->nama)) }}.
                 {{ $pinkel->jenis_pp != '3' ? 'Kelompok' : 'Lembaga' }} yang
-                {{ $pinkel->jenis_pp != '3' ? 'diketuai' : 'dipimpin' }} oleh {{ $ketua }} ini sudah
+                {{ $pinkel->jenis_pp != '3' ? 'dikoordinasi' : 'dipimpin' }} oleh {{ $ketua }} ini sudah
                 berdiri sejak tanggal {{ Tanggal::tglLatin($pinkel->kelompok->tgl_berdiri) }} yang berfokus pada
                 jenis piutang {{ $pinkel->jpp->nama_spp }} ({{ $pinkel->jpp->deskripsi_jpp }}) serta memiliki jenis usaha
                 {{ $pinkel->kelompok->usaha->nama_usaha }} dalam kegiatan {{ $pinkel->kelompok->kegiatan->nama_jk }}.
@@ -158,7 +151,7 @@
         </tr>
         <tr>
             <td width="50%">&nbsp;</td>
-            <td align="center">Ketua Kelompok</td>
+            <td align="center">Koordinator Kelompok</td>
         </tr>
         <tr>
             <td colspan="2" height="30">&nbsp;</td>

@@ -37,7 +37,7 @@
                 <th width="">Alamat</th>
                 <th width="5%">Jenis</th>
                 <th width="8%">Anggota</th>
-                <th width="17%">Ketua Kelompok</th>
+                <th width="17%">Koordinator Kelompok</th>
                 <th width="13%">Alokasi Pendanaan</th>
             </tr>
         </thead>

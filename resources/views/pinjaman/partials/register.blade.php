@@ -182,28 +182,16 @@
                     @if ($kelompok?->jenis_produk_pinjaman != '3')
                         <div class="col-md-4">
                             <div class="position-relative mb-3">
-                                <label for="ketua" class="form-label">Ketua</label>
+                                <label for="ketua" class="form-label">Koordinator</label>
                                 <input autocomplete="off" type="text" name="ketua" id="ketua" class="form-control"
                                     value="{{ $kelompok?->ketua }}">
                                 <small class="text-danger" id="msg_ketua"></small>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="position-relative mb-3">
-                                <label for="sekretaris" class="form-label">Sekretaris</label>
-                                <input autocomplete="off" type="text" name="sekretaris" id="sekretaris"
-                                    class="form-control" value="{{ $kelompok?->sekretaris }}">
-                                <small class="text-danger" id="msg_sekretaris"></small>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="position-relative mb-3">
-                                <label for="bendahara" class="form-label">Bendahara</label>
-                                <input autocomplete="off" type="text" name="bendahara" id="bendahara"
-                                    class="form-control" value="{{ $kelompok?->bendahara }}">
-                                <small class="text-danger" id="msg_bendahara"></small>
-                            </div>
-                        </div>
+                        <input type="hidden" name="sekretaris" id="sekretaris"
+                            value="{{ $kelompok?->sekretaris }}">
+                        <input type="hidden" name="bendahara" id="bendahara"
+                            value="{{ $kelompok?->bendahara }}">
                     @else
                         <div class="col-md-6">
                             <div class="position-relative mb-3">

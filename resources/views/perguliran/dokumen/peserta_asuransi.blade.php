@@ -92,7 +92,7 @@
             </td>
         </tr>
         <tr>
-            <td>Ketua</td>
+            <td>Koordinator</td>
             <td align="center">:</td>
             <td>
                 <b>{{ $ketua }}</b>
@@ -189,7 +189,7 @@
                 {{ $kec->sebutan_level_1 }}
             </td>
             <td align="center" colspan="3">
-                Ketua Kelompok {{ $pinkel->kelompok->nama_kelompok }}
+                Koordinator Kelompok {{ $pinkel->kelompok->nama_kelompok }}
             </td>
         </tr>
         <tr>

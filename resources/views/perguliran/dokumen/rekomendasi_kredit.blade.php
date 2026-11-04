@@ -144,20 +144,14 @@
             </tr>
 
             <tr>
-                <td width="120" rowspan="3" style="vertical-align: top;">Nama Lengkap / Jabatan</td>
+                <td width="120" rowspan="{{ $pinkel->jenis_pp == '3' ? 2 : 1 }}" style="vertical-align: top;">Nama Lengkap / Jabatan</td>
                 <td width="5" align="center">:</td>
-                <td>{{ $ketua }} / {{ $pinkel->jenis_pp != '3' ? 'Ketua Kelompok' : 'Pimpinan' }}</td>
+                <td>{{ $ketua }} / {{ $pinkel->jenis_pp != '3' ? 'Koordinator Kelompok' : 'Pimpinan' }}</td>
             </tr>
-            <tr>
-                <td align="center">:</td>
-                <td>
-                    {{ $sekretaris }} / {{ $pinkel->jenis_pp != '3' ? 'Sekretaris Kelompok' : 'Penanggung Jawab' }}
-                </td>
-            </tr>
-            @if ($pinkel->jenis_pp != '3')
+            @if ($pinkel->jenis_pp == '3')
                 <tr>
                     <td align="center">:</td>
-                    <td>{{ $bendahara }} / Bendahara Kelompok</td>
+                    <td>{{ $sekretaris }} / Penanggung Jawab</td>
                 </tr>
             @endif
             <tr>

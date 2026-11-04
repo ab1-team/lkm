@@ -122,7 +122,7 @@
         </tr>
         <tr>
             <td>&nbsp;</td>
-            <td align="center">Ketua Kelompok {{ $pinkel->anggota->nama_kelompok }}</td>
+            <td align="center">Koordinator Kelompok {{ $pinkel->anggota->nama_kelompok }}</td>
         </tr>
         <tr>
             <td colspan="2" height="40"></td>

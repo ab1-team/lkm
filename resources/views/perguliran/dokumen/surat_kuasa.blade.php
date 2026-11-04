@@ -85,23 +85,7 @@
         <tr>
             <td height="15" class="l b" align="center">1</td>
             <td class="l b">{{ $ketua }}</td>
-            <td class="l b">Ketua</td>
-            <td class="l b r">
-                {{ $pinkel->kelompok->alamat_kelompok }}
-            </td>
-        </tr>
-        <tr>
-            <td height="15" class="l b" align="center">2</td>
-            <td class="l b">{{ $sekretaris }}</td>
-            <td class="l b">Sekretaris</td>
-            <td class="l b r">
-                {{ $pinkel->kelompok->alamat_kelompok }}
-            </td>
-        </tr>
-        <tr>
-            <td height="15" class="l b" align="center">3</td>
-            <td class="l b">{{ $bendahara }}</td>
-            <td class="l b">Bendahara</td>
+            <td class="l b">Koordinator</td>
             <td class="l b r">
                 {{ $pinkel->kelompok->alamat_kelompok }}
             </td>
@@ -181,28 +165,20 @@
                 <table border="0" width="100%" cellspacing="0" cellpadding="0"
                     style="font-size: 11px; margin-top: 8px;" class="p0">
                     <tr>
-                        <td colspan="3" align="center">
+                        <td align="center">
                             Pengurus kelompok Selaku Penerima Kuasa :
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="3" height="50"></td>
+                        <td height="50"></td>
                     </tr>
                     <tr>
-                        <td align="center" width="33%">
+                        <td align="center">
                             {{ $ketua }}
                         </td>
-                        <td align="center" width="33%">
-                            {{ $sekretaris }}
-                        </td>
-                        <td align="center" width="33%">
-                            {{ $bendahara }}
-                        </td>
                     </tr>
                     <tr>
-                        <td align="center">Ketua</td>
-                        <td align="center">Sekretaris</td>
-                        <td align="center">Bendahara</td>
+                        <td align="center">Koordinator</td>
                     </tr>
                 </table>
             </td>

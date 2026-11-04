@@ -54,7 +54,7 @@
             </td>
         </tr>
         <tr>
-            <td>Ketua</td>
+            <td>Koordinator</td>
             <td align="center">:</td>
             <td>
                 <b>{{ $pinkel->kelompok->ketua }}</b>

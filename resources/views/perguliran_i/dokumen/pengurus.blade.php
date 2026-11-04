@@ -39,7 +39,7 @@
             <td>
                 <b>{{ $pinkel->kelompok->nama_kelompok }}</b>
             </td>
-            <td>Ketua</td>
+            <td>Koordinator</td>
             <td align="right">:</td>
             <td>
                 <b>{{ $pinkel->kelompok->ketua }}</b>
@@ -66,18 +66,8 @@
         </tr>
         <tr>
             <td class="l t b" height="14" align="center">1.</td>
-            <td class="l t b">Ketua Kelompok</td>
+            <td class="l t b">Koordinator Kelompok</td>
             <td class="l t b r">{{ $pinkel->kelompok->ketua }}</td>
-        </tr>
-        <tr>
-            <td class="l t b" height="14" align="center">2.</td>
-            <td class="l t b">Sekertaris keompok</td>
-            <td class="l t b r">{{ $pinkel->kelompok->sekretaris }}</td>
-        </tr>
-        <tr>
-            <td class="l t b" height="14" align="center">3.</td>
-            <td class="l t b">Bendahara Kelompok</td>
-            <td class="l t b r">{{ $pinkel->kelompok->bendahara }}</td>
         </tr>
         <tr>
             <td colspan="3">&nbsp;</td>

@@ -91,7 +91,7 @@
         </tr>
         <tr>
             <td width="30">&nbsp;</td>
-            <td width="50">Nama Ketua</td>
+            <td width="50">Nama Koordinator</td>
             <td width="100">: &nbsp;
                 <b>{{ $pinkel->kelompok->ketua }}</b>
             </td>
@@ -102,10 +102,7 @@
         </tr>
         <tr>
             <td width="30">&nbsp;</td>
-            <td width="50">Nama Sekretaris </td>
-            <td width="100">: &nbsp;
-                <b>{{ $pinkel->kelompok->sekretaris }}</b>
-            </td>
+            <td colspan="2">&nbsp;</td>
             <td width="50">Jumlah Angsuran </td>
             <td width="100">: &nbsp;
                 <b>

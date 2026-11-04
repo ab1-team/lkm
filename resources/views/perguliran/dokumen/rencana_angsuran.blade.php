@@ -211,7 +211,7 @@
                                 {{ $kec->sebutan_level_1 }}
                             </td>
                             <td align="center" colspan="3">
-                                {{ $pinkel->jenis_pp != '3' ? 'Ketua Kelompok' : 'Pimpinan' }}
+                                {{ $pinkel->jenis_pp != '3' ? 'Koordinator Kelompok' : 'Pimpinan' }}
                                 {{ $pinkel->kelompok->nama_kelompok }}
                             </td>
                         </tr>

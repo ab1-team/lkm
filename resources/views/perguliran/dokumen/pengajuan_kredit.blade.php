@@ -154,28 +154,28 @@
         <td width="30">&nbsp;</td>
         <td>Jabatan</td>
         <td width="5" align="right">:</td>
-        <td style="font-weight: bold;">{{ $pinkel->jenis_pp != '3' ? 'Ketua Kelompok' : 'Pimpinan' }}</td>
+        <td style="font-weight: bold;">{{ $pinkel->jenis_pp != '3' ? 'Koordinator Kelompok' : 'Pimpinan' }}</td>
     </tr>
-    <tr>
-        <td width="30">&nbsp;</td>
-        <td>Nama Lengkap</td>
-        <td width="5" align="right">:</td>
-        <td style="font-weight: bold;">{{ $sekretaris }}</td>
-    </tr>
-    <tr>
-        <td width="30">&nbsp;</td>
-        <td>Alamat</td>
-        <td width="5" align="right">:</td>
-        <td style="font-weight: bold;">{{ $pinkel->kelompok->d->nama_desa }}</td>
-    </tr>
-    <tr>
-        <td width="30">&nbsp;</td>
-        <td>Jabatan</td>
-        <td width="5" align="right">:</td>
-        <td style="font-weight: bold;">
-            {{ $pinkel->jenis_pp != '3' ? 'Sekretaris Kelompok' : 'Penanggung Jawab' }}
-        </td>
-    </tr>
+    @if ($pinkel->jenis_pp == '3')
+        <tr>
+            <td width="30">&nbsp;</td>
+            <td>Nama Lengkap</td>
+            <td width="5" align="right">:</td>
+            <td style="font-weight: bold;">{{ $sekretaris }}</td>
+        </tr>
+        <tr>
+            <td width="30">&nbsp;</td>
+            <td>Alamat</td>
+            <td width="5" align="right">:</td>
+            <td style="font-weight: bold;">{{ $pinkel->kelompok->d->nama_desa }}</td>
+        </tr>
+        <tr>
+            <td width="30">&nbsp;</td>
+            <td>Jabatan</td>
+            <td width="5" align="right">:</td>
+            <td style="font-weight: bold;">Penanggung Jawab</td>
+        </tr>
+    @endif
     <tr>
         <td colspan="4">
             <table border="0" width="100%" cellspacing="0" cellpadding="0">
@@ -220,18 +220,16 @@
                         <td align="center">{{ $kec->nama_kec }}, {{ Tanggal::tglLatin($pinkel->tgl_proposal) }}</td>
                     </tr>
                     <tr>
-                        <td align="center" width="50%">Ketua Kelompok,</td>
-                        <td align="center" width="50%">Sekretaris Kelompok,</td>
+                        <td align="center" width="50%">
+                            {{ $pinkel->jenis_pp != '3' ? 'Koordinator Kelompok,' : 'Pimpinan,' }}
+                        </td>
                     </tr>
                     <tr>
-                        <td colspan="2" height="30"></td>
+                        <td height="30"></td>
                     </tr>
                     <tr>
                         <td align="center" width="50%" style="font-weight: bold; text-decoration: underline;">
                             {{ $ketua }}
-                        </td>
-                        <td align="center" width="50%" style="font-weight: bold; text-decoration: underline;">
-                            {{ $sekretaris }}
                         </td>
                     </tr>
                 </table>

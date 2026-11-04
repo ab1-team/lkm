@@ -134,30 +134,8 @@
         <tr>
             <td>Jabatan</td>
             <td align="center">:</td>
-            <td>Ketua Kelompok</td>
+            <td>Koordinator Kelompok</td>
         </tr>
-        @if (Session::get('lokasi') != '523')
-            <tr>
-                <td>Nama Lengkap</td>
-                <td align="center">:</td>
-                <td>{{ $sekretaris }}</td>
-            </tr>
-            <tr>
-                <td>Jabatan</td>
-                <td align="center">:</td>
-                <td>Sekretaris Kelompok</td>
-            </tr>
-            <tr>
-                <td>Nama Lengkap</td>
-                <td align="center">:</td>
-                <td>{{ $bendahara }}</td>
-            </tr>
-            <tr>
-                <td>Jabatan</td>
-                <td align="center">:</td>
-                <td>Bendahara Kelompok</td>
-            </tr>
-        @endif
     </table>
 
     <div style="text-align: justify; font-size: 14px;">
@@ -444,10 +422,10 @@
                             class="p">
                             <tr>
                                 <td width="50%" align="center">Pihak Pertama</td>
-                                <td width="25%" colspan="2" align="center">Pihak Kedua</td>
+                                <td width="50%" align="center">Pihak Kedua</td>
                             </tr>
                             <tr>
-                                <td colspan="3" height="50"></td>
+                                <td colspan="2" height="50"></td>
                             </tr>
                             <tr>
                                 <td align="center">
@@ -456,14 +434,10 @@
                                 <td align="center">
                                     <b>{{ $ketua }}</b>
                                 </td>
-                                <td align="center">
-                                    <b>{{ $sekretaris }}</b>
-                                </td>
                             </tr>
                             <tr>
                                 <td align="center">{{ $kec->sebutan_level_1 }}</td>
-                                <td align="center">Ketua</td>
-                                <td align="center">Sekretaris</td>
+                                <td align="center">Koordinator</td>
                             </tr>
                         </table>
                     @endif

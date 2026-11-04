@@ -112,7 +112,7 @@
             </td>
         </tr>
         <tr>
-            <td>Nama Ketua</td>
+            <td>Nama Koordinator</td>
             <td>:</td>
             <td>
                 <b>{{ $ketua }}</b>
@@ -124,11 +124,7 @@
             </td>
         </tr>
         <tr>
-            <td>Nama Sekretaris</td>
-            <td>:</td>
-            <td>
-                <b>{{ $sekretaris }}</b>
-            </td>
+            <td colspan="3">&nbsp;</td>
             <td>Petugas/PJ</td>
             <td>:</td>
             <td>

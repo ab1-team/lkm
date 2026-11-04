@@ -79,7 +79,7 @@
             @endif
             <li>
                 Sanggup menanggung pelunasan sisa angsuran dengan sistem tanggung renteng yang pelaksanaannya dikoordinir
-                oleh ketua kelompok demi kelancaran penyetoran angsuran dengan batas waktu yang telah disepakati dengan
+                oleh koordinator kelompok demi kelancaran penyetoran angsuran dengan batas waktu yang telah disepakati dengan
                 penuh tanggung jawab apabila seluruh tabungan anggota dan hasil penjualan jaminan belum mencukupi jumlah
                 kewajiban pelunasan angsuran.
             </li>
@@ -119,7 +119,7 @@
                             <td align="center" width="50%">
                                 Mengetahui,
                             </td>
-                            <td align="center" width="50%">Ketua Kelompok</td>
+                            <td align="center" width="50%">Koordinator Kelompok</td>
                         </tr>
                         <tr>
                             <td align="center">

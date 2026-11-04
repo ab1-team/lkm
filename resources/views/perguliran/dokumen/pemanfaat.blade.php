@@ -133,20 +133,16 @@
                     <table class="p0" border="0" width="100%" cellspacing="0" cellpadding="0"
                         style="font-size: 12px;">
                         <tr>
-                            <td colspan="3" height="10">&nbsp;</td>
+                            <td height="10">&nbsp;</td>
                         </tr>
                         <tr>
-                            <td align="center" width="33%">Ketua</td>
-                            <td align="center" width="33%">Sekretaris</td>
-                            <td align="center" width="33%">Bendahara</td>
+                            <td align="center">Koordinator</td>
                         </tr>
                         <tr>
-                            <td align="center" colspan="3" height="30">&nbsp;</td>
+                            <td align="center" height="30">&nbsp;</td>
                         </tr>
                         <tr style="font-weight: bold;">
                             <td align="center">{{ $ketua }}</td>
-                            <td align="center">{{ $sekretaris }}</td>
-                            <td align="center">{{ $bendahara }}</td>
                         </tr>
                     </table>
                 @endif

@@ -118,28 +118,14 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="position-relative mb-3">
-                        <label for="ketua" class="form-label">Ketua</label>
+                        <label for="ketua" class="form-label">Koordinator</label>
                         <input autocomplete="off" type="text" name="ketua" id="ketua" class="form-control"
                             value="{{ $ketua }}">
                         <small class="text-danger" id="msg_ketua"></small>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="position-relative mb-3">
-                        <label for="sekretaris" class="form-label">Sekretaris</label>
-                        <input autocomplete="off" type="text" name="sekretaris" id="sekretaris"
-                            class="form-control" value="{{ $sekretaris }}">
-                        <small class="text-danger" id="msg_sekretaris"></small>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="position-relative mb-3">
-                        <label for="bendahara" class="form-label">Bendahara</label>
-                        <input autocomplete="off" type="text" name="bendahara" id="bendahara"
-                            class="form-control" value="{{ $bendahara }}">
-                        <small class="text-danger" id="msg_bendahara"></small>
-                    </div>
-                </div>
+                <input type="hidden" name="sekretaris" id="sekretaris" value="{{ $sekretaris }}">
+                <input type="hidden" name="bendahara" id="bendahara" value="{{ $bendahara }}">
             </div>
         </div>
     </div>

@@ -63,7 +63,7 @@
             <td align="left" width="140">
                 <div>Kepada Yth.</div>
                 <div>
-                    Ketua dan Anggota Kelompok {{ $pinkel->kelompok->nama_kelompok }}
+                    Koordinator dan Anggota Kelompok {{ $pinkel->kelompok->nama_kelompok }}
                 </div>
                 <div>Di</div>
                 <div style=" text-align: center;">

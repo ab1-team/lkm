@@ -84,7 +84,7 @@
             <td>Jabatan</td>
             <td>:</td>
             <td>
-                <b>Ketua Kelompok</b>
+                <b>Koordinator Kelompok</b>
             </td>
         </tr>
         <tr>
@@ -137,7 +137,7 @@
         </tr>
         <tr>
             <td align="center">{{ $kec->sebutan_level_1 }} {{ $kec->nama_lembaga_sort }},</td>
-            <td align="center">Ketua Kelompok,</td>
+            <td align="center">Koordinator Kelompok,</td>
         </tr>
         <tr>
             <td colspan="2" height="80">

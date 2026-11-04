@@ -120,7 +120,7 @@
                         {{ $kec->sebutan_level_3 }}
                     </td>
                     <td align="center" colspan="3">
-                        Ketua Kelompok
+                        Koordinator Kelompok
                     </td>
                 </tr>
                 <tr>

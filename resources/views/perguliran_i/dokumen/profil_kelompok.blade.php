@@ -83,23 +83,9 @@
         <tr>
             <td width="30">&nbsp;</td>
             <td align="center">&nbsp;</td>
-            <td>1.&nbsp;Ketua</td>
+            <td>1.&nbsp;Koordinator</td>
             <td align="right">:</td>
             <td style="font-weight: bold;">{{ $pinkel->kelompok->ketua }}</td>
-        </tr>
-        <tr>
-            <td width="30">&nbsp;</td>
-            <td align="center">&nbsp;</td>
-            <td>2.&nbsp;Sekertaris</td>
-            <td align="right">:</td>
-            <td style="font-weight: bold;">{{ $pinkel->kelompok->sekretaris }}</td>
-        </tr>
-        <tr>
-            <td width="30">&nbsp;</td>
-            <td align="center">&nbsp;</td>
-            <td>3.&nbsp;Bendahara</td>
-            <td align="right">:</td>
-            <td style="font-weight: bold;">{{ $pinkel->kelompok->bendahara }}</td>
         </tr>
         <tr>
             <td width="30">&nbsp;</td>
@@ -145,7 +131,7 @@
         </tr>
         <tr>
             <td width="50%">&nbsp;</td>
-            <td align="center">Ketua Kelompok</td>
+            <td align="center">Koordinator Kelompok</td>
         </tr>
         <tr>
             <td colspan="2" height="30">&nbsp;</td>
