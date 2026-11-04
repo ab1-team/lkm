@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\AdminUser;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -17,6 +17,9 @@ use Tests\TestCase;
  *   3. nama file wajib merujuk ID kabupaten yang ada di tabel `kabupaten`;
  *   4. upload dengan nama sama menimpa file lama (bukan membuat duplikat);
  *   5. file hasil upload bisa dipakai dokumen (PNG valid, bukan teks).
+ *
+ * Login memakai guard yang sama dengan /admin/update-fitur, yaitu guard `web`
+ * (user LKM), bukan guard `master`.
  *
  * Catatan: fitur ini tidak menulis ke tabel `kabupaten` (hanya membaca untuk
  * validasi), jadi test ini tidak perlu membuat baris kabupaten. Data dibuat
@@ -39,19 +42,20 @@ class LogoKabUploadTest extends TestCase
         Storage::fake('public');
     }
 
-    private function loginAdmin(): void
+    private function loginUser(): void
     {
-        $admin = new AdminUser;
-        $admin->nama_lengkap = 'Administrator';
-        $admin->gmail = 'admin@test.com';
-        $admin->password = 'rahasia';
-        $admin->akses = 'master';
-        $admin->lokasi = '0';
-        $admin->kabupaten = '0';
-        $admin->provinsi = '0';
-        $admin->save();
+        // User LKM (guard web) — sama seperti yang dipakai /admin/update-fitur.
+        $user = new User;
+        $user->uname = 'uji-logo-kab';
+        $user->pass = 'rahasia';
+        $user->namadepan = 'Uji';
+        $user->namabelakang = 'Logo';
+        $user->lokasi = 351;
+        $user->hak_akses = '';
+        $user->akses_menu = '';
+        $user->akses_tombol = '';
 
-        $this->actingAs($admin, 'master');
+        $this->actingAs($user, 'web');
     }
 
     private function filePngPalsu(): UploadedFile
@@ -78,7 +82,7 @@ class LogoKabUploadTest extends TestCase
 
     public function test_halaman_index_tampil_dan_menampilkan_daftar_kabupaten(): void
     {
-        $this->loginAdmin();
+        $this->loginUser();
 
         $response = $this->get('/admin/logo-kab');
 
@@ -90,7 +94,7 @@ class LogoKabUploadTest extends TestCase
 
     public function test_halaman_create_tampil(): void
     {
-        $this->loginAdmin();
+        $this->loginUser();
 
         $response = $this->get('/admin/logo-kab/create');
 
@@ -101,7 +105,7 @@ class LogoKabUploadTest extends TestCase
 
     public function test_upload_png_disimpan_dengan_nama_id_kabupaten(): void
     {
-        $this->loginAdmin();
+        $this->loginUser();
 
         $response = $this->post('/admin/logo-kab', [
             'nama_file' => self::KAB_ID,
@@ -117,7 +121,7 @@ class LogoKabUploadTest extends TestCase
 
     public function test_upload_jpg_dikonversi_menjadi_png_asli(): void
     {
-        $this->loginAdmin();
+        $this->loginUser();
 
         $this->post('/admin/logo-kab', [
             'nama_file' => self::KAB_ID,
@@ -133,7 +137,7 @@ class LogoKabUploadTest extends TestCase
 
     public function test_nama_file_harus_merujuk_id_kabupaten_yang_ada(): void
     {
-        $this->loginAdmin();
+        $this->loginUser();
 
         $response = $this->post('/admin/logo-kab', [
             'nama_file' => 999999,
@@ -146,7 +150,7 @@ class LogoKabUploadTest extends TestCase
 
     public function test_nama_file_harus_angka(): void
     {
-        $this->loginAdmin();
+        $this->loginUser();
 
         $response = $this->post('/admin/logo-kab', [
             'nama_file' => 'bukan-angka',
@@ -158,7 +162,7 @@ class LogoKabUploadTest extends TestCase
 
     public function test_upload_tanpa_file_ditolak(): void
     {
-        $this->loginAdmin();
+        $this->loginUser();
 
         $response = $this->post('/admin/logo-kab', [
             'nama_file' => self::KAB_ID,
@@ -170,7 +174,7 @@ class LogoKabUploadTest extends TestCase
 
     public function test_upload_dengan_nama_sama_menimpa_file_lama(): void
     {
-        $this->loginAdmin();
+        $this->loginUser();
 
         $this->post('/admin/logo-kab', [
             'nama_file' => self::KAB_ID,
@@ -205,7 +209,7 @@ class LogoKabUploadTest extends TestCase
 
     public function test_gambar_besar_diskala_turun(): void
     {
-        $this->loginAdmin();
+        $this->loginUser();
 
         // PNG besar (3000x2000) harus diperkecil supaya file tidak membengkak.
         $lebar = 3000;
@@ -233,7 +237,7 @@ class LogoKabUploadTest extends TestCase
 
     public function test_hapus_logo_menghapus_file(): void
     {
-        $this->loginAdmin();
+        $this->loginUser();
 
         $this->post('/admin/logo-kab', [
             'nama_file' => self::KAB_ID,
@@ -250,6 +254,7 @@ class LogoKabUploadTest extends TestCase
 
     public function test_halaman_terlindungi_dari_tamu(): void
     {
-        $this->get('/admin/logo-kab')->assertRedirect('/master');
+        // Sama seperti /admin/update-fitur: tamu diarahkan ke halaman login.
+        $this->get('/admin/logo-kab')->assertRedirect('/');
     }
 }

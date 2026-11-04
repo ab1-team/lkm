@@ -540,7 +540,7 @@ Route::middleware('auth')->prefix('admin/update-fitur')->name('admin.updateFitur
     Route::resource('/', AdminUpdateFiturController::class)->parameters(['' => 'update_fitur']);
 });
 
-Route::middleware('master')->prefix('admin/logo-kab')->name('admin.logoKab.')->group(function () {
+Route::middleware('auth')->prefix('admin/logo-kab')->name('admin.logoKab.')->group(function () {
     Route::get('/', [LogoKabController::class, 'index'])->name('index');
     Route::get('/create', [LogoKabController::class, 'create'])->name('create');
     Route::post('/', [LogoKabController::class, 'store'])->name('store');
